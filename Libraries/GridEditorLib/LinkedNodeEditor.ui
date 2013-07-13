@@ -1,0 +1,182 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>LinkedNodeEditor</class>
+ <widget class="QWidget" name="LinkedNodeEditor">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>222</width>
+    <height>62</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Form</string>
+  </property>
+  <layout class="QGridLayout" name="gridLayout">
+   <property name="horizontalSpacing">
+    <number>-1</number>
+   </property>
+   <property name="verticalSpacing">
+    <number>0</number>
+   </property>
+   <property name="margin">
+    <number>0</number>
+   </property>
+   <item row="0" column="0">
+    <widget class="QFrame" name="frame">
+     <property name="frameShape">
+      <enum>QFrame::NoFrame</enum>
+     </property>
+     <property name="frameShadow">
+      <enum>QFrame::Plain</enum>
+     </property>
+     <layout class="QGridLayout" name="gridLayout_2">
+      <property name="verticalSpacing">
+       <number>0</number>
+      </property>
+      <property name="margin">
+       <number>0</number>
+      </property>
+      <item row="0" column="0">
+       <widget class="QCheckBox" name="checkNormal">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="1">
+       <widget class="QSpinBox" name="spCost">
+        <property name="minimum">
+         <number>-1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="2">
+       <widget class="ArrowWidget" name="arrowLeftToRight" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3" rowspan="2">
+       <widget class="QLabel" name="lblNodeName">
+        <property name="text">
+         <string>n2</string>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="0">
+       <widget class="QCheckBox" name="checkReverted">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="1">
+       <widget class="QSpinBox" name="spReversedCost">
+        <property name="minimum">
+         <number>-1</number>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="ArrowWidget" name="arrowRightToLeft" native="true">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Expanding" vsizetype="Preferred">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <customwidgets>
+  <customwidget>
+   <class>ArrowWidget</class>
+   <extends>QWidget</extends>
+   <header>ArrowWidget.h</header>
+   <container>1</container>
+  </customwidget>
+ </customwidgets>
+ <resources/>
+ <connections>
+  <connection>
+   <sender>checkNormal</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>spCost</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>13</x>
+     <y>15</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>44</x>
+     <y>15</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkReverted</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>spReversedCost</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>11</x>
+     <y>44</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>40</x>
+     <y>45</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkNormal</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>arrowLeftToRight</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>12</x>
+     <y>16</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>122</x>
+     <y>14</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>checkReverted</sender>
+   <signal>toggled(bool)</signal>
+   <receiver>arrowRightToLeft</receiver>
+   <slot>setEnabled(bool)</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>10</x>
+     <y>47</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>130</x>
+     <y>48</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+</ui>

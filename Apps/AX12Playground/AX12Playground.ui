@@ -1,0 +1,1631 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>AX12Playground</class>
+ <widget class="QDialog" name="AX12Playground">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>945</width>
+    <height>667</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>AX-12 Playground</string>
+  </property>
+  <layout class="QVBoxLayout" name="verticalLayout_2">
+   <item>
+    <widget class="QTabWidget" name="tabWidget">
+     <property name="currentIndex">
+      <number>1</number>
+     </property>
+     <widget class="QWidget" name="tabServosControl">
+      <attribute name="title">
+       <string>Servos control</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_5">
+       <item row="0" column="2">
+        <widget class="QSpinBox" name="sbSpeed">
+         <property name="suffix">
+          <string> RPM</string>
+         </property>
+         <property name="maximum">
+          <number>59</number>
+         </property>
+         <property name="singleStep">
+          <number>5</number>
+         </property>
+         <property name="value">
+          <number>50</number>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="5">
+        <widget class="QPushButton" name="btnSendAll">
+         <property name="text">
+          <string>Send all</string>
+         </property>
+         <property name="default">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="QLabel" name="lblMaxTorque">
+         <property name="text">
+          <string>Max Torque</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QLabel" name="lblSpeed">
+         <property name="text">
+          <string>Speed</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QSpinBox" name="sbMaxTorque">
+         <property name="suffix">
+          <string> %</string>
+         </property>
+         <property name="maximum">
+          <number>100</number>
+         </property>
+         <property name="singleStep">
+          <number>5</number>
+         </property>
+         <property name="value">
+          <number>100</number>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0" colspan="6">
+        <layout class="QGridLayout" name="gridLayout_3">
+         <property name="horizontalSpacing">
+          <number>-1</number>
+         </property>
+         <property name="verticalSpacing">
+          <number>0</number>
+         </property>
+         <item row="1" column="0">
+          <widget class="QLabel" name="lblServo1">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>1</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QSpinBox" name="sbPosition1">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="lblServo2">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>2</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="lblServo3">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>3</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="3">
+          <widget class="QSpinBox" name="sbPosition2">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="3">
+          <widget class="QSpinBox" name="sbPosition3">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="4">
+          <widget class="QPushButton" name="btnSend1">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="4">
+          <widget class="QPushButton" name="btnSend2">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="4">
+          <widget class="QPushButton" name="btnSend3">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QLabel" name="lblGoalPosition">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Goal Position</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QLabel" name="lblCurrentPosition">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Current Position</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QLabel" name="lblCurrentLoad">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+            </font>
+           </property>
+           <property name="text">
+            <string>Current Load</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>4</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="0">
+          <widget class="QLabel" name="label_4">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>5</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0">
+          <widget class="QLabel" name="label_5">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>6</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="0">
+          <widget class="QLabel" name="label_6">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>7</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>8</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="0">
+          <widget class="QLabel" name="label_8">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>9</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="0">
+          <widget class="QLabel" name="label_9">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>10</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="0">
+          <widget class="QLabel" name="lbl11">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>11</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="0">
+          <widget class="QLabel" name="lbl12_2">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>12</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="0">
+          <widget class="QLabel" name="lbl12">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>13</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="0">
+          <widget class="QLabel" name="label_13">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>14</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="0">
+          <widget class="QLabel" name="label_14">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>15</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="16" column="0">
+          <widget class="QLabel" name="label_15">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>16</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="17" column="0">
+          <widget class="QLabel" name="label_16">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>17</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="18" column="0">
+          <widget class="QLabel" name="label_17">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>18</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_18">
+           <property name="font">
+            <font>
+             <weight>75</weight>
+             <bold>true</bold>
+             <underline>false</underline>
+            </font>
+           </property>
+           <property name="text">
+            <string>Servo n°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="4">
+          <widget class="QPushButton" name="btnSend4">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="3">
+          <widget class="QSpinBox" name="sbPosition4">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="3">
+          <widget class="QSpinBox" name="sbPosition5">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="3">
+          <widget class="QSpinBox" name="sbPosition6">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="3">
+          <widget class="QSpinBox" name="sbPosition7">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="3">
+          <widget class="QSpinBox" name="sbPosition8">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="3">
+          <widget class="QSpinBox" name="sbPosition9">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="3">
+          <widget class="QSpinBox" name="sbPosition10">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="3">
+          <widget class="QSpinBox" name="sbPosition11">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="3">
+          <widget class="QSpinBox" name="sbPosition12">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="3">
+          <widget class="QSpinBox" name="sbPosition13">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="3">
+          <widget class="QSpinBox" name="sbPosition14">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="3">
+          <widget class="QSpinBox" name="sbPosition15">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="16" column="3">
+          <widget class="QSpinBox" name="sbPosition16">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="17" column="3">
+          <widget class="QSpinBox" name="sbPosition17">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="18" column="3">
+          <widget class="QSpinBox" name="sbPosition18">
+           <property name="suffix">
+            <string>°</string>
+           </property>
+           <property name="maximum">
+            <number>300</number>
+           </property>
+           <property name="singleStep">
+            <number>5</number>
+           </property>
+           <property name="value">
+            <number>150</number>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="4">
+          <widget class="QPushButton" name="btnSend5">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="4">
+          <widget class="QPushButton" name="btnSend6">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="4">
+          <widget class="QPushButton" name="btnSend7">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="4">
+          <widget class="QPushButton" name="btnSend8">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="4">
+          <widget class="QPushButton" name="btnSend9">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="4">
+          <widget class="QPushButton" name="btnSend10">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="4">
+          <widget class="QPushButton" name="btnSend11">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="4">
+          <widget class="QPushButton" name="btnSend12">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="4">
+          <widget class="QPushButton" name="btnSend13">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="4">
+          <widget class="QPushButton" name="btnSend14">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="4">
+          <widget class="QPushButton" name="btnSend15">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="16" column="4">
+          <widget class="QPushButton" name="btnSend16">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="17" column="4">
+          <widget class="QPushButton" name="btnSend17">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="18" column="4">
+          <widget class="QPushButton" name="btnSend18">
+           <property name="text">
+            <string>Go</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QLabel" name="lblPosition1">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QLabel" name="lblLoad1">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QLabel" name="lblPosition2">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QLabel" name="lblPosition3">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QLabel" name="lblPosition4">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QLabel" name="lblPosition5">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="1">
+          <widget class="QLabel" name="lblPosition6">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="1">
+          <widget class="QLabel" name="lblPosition7">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="1">
+          <widget class="QLabel" name="lblPosition8">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="1">
+          <widget class="QLabel" name="lblPosition9">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="1">
+          <widget class="QLabel" name="lblPosition10">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="1">
+          <widget class="QLabel" name="lblPosition11">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="1">
+          <widget class="QLabel" name="lblPosition13">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="1">
+          <widget class="QLabel" name="lblPosition14">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="1">
+          <widget class="QLabel" name="lblPosition15">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="16" column="1">
+          <widget class="QLabel" name="lblPosition16">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="17" column="1">
+          <widget class="QLabel" name="lblPosition17">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="18" column="1">
+          <widget class="QLabel" name="lblPosition18">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="1">
+          <widget class="QLabel" name="lblPosition12">
+           <property name="text">
+            <string>-°</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QLabel" name="lblLoad2">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="2">
+          <widget class="QLabel" name="lblLoad3">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="2">
+          <widget class="QLabel" name="lblLoad4">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="2">
+          <widget class="QLabel" name="lblLoad5">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="2">
+          <widget class="QLabel" name="lblLoad6">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="7" column="2">
+          <widget class="QLabel" name="lblLoad7">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="8" column="2">
+          <widget class="QLabel" name="lblLoad8">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="9" column="2">
+          <widget class="QLabel" name="lblLoad9">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="10" column="2">
+          <widget class="QLabel" name="lblLoad10">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="11" column="2">
+          <widget class="QLabel" name="lblLoad11">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="12" column="2">
+          <widget class="QLabel" name="lblLoad12">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="13" column="2">
+          <widget class="QLabel" name="lblLoad13">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="14" column="2">
+          <widget class="QLabel" name="lblLoad14">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="15" column="2">
+          <widget class="QLabel" name="lblLoad15">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="16" column="2">
+          <widget class="QLabel" name="lblLoad16">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="17" column="2">
+          <widget class="QLabel" name="lblLoad17">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="18" column="2">
+          <widget class="QLabel" name="lblLoad18">
+           <property name="text">
+            <string>- %</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab3AxisArm">
+      <attribute name="title">
+       <string>Hexapod control</string>
+      </attribute>
+      <layout class="QGridLayout" name="gridLayout_2">
+       <item row="6" column="0">
+        <widget class="QLabel" name="lblMoveSpeed">
+         <property name="text">
+          <string>Speed</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QDoubleSpinBox" name="sbMoveCoordZ">
+         <property name="suffix">
+          <string> mm</string>
+         </property>
+         <property name="decimals">
+          <number>0</number>
+         </property>
+         <property name="minimum">
+          <double>-100.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>100.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>0.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="lblMoveCoordZ">
+         <property name="text">
+          <string>Z</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="6" column="1">
+        <widget class="QDoubleSpinBox" name="sbMoveCoordSpeed">
+         <property name="suffix">
+          <string> RPM</string>
+         </property>
+         <property name="decimals">
+          <number>0</number>
+         </property>
+         <property name="maximum">
+          <double>114.000000000000000</double>
+         </property>
+         <property name="singleStep">
+          <double>5.000000000000000</double>
+         </property>
+         <property name="value">
+          <double>20.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QDoubleSpinBox" name="sbMoveCoordY">
+         <property name="suffix">
+          <string> mm</string>
+         </property>
+         <property name="decimals">
+          <number>0</number>
+         </property>
+         <property name="minimum">
+          <double>-100.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>100.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QDoubleSpinBox" name="sbMoveCoordX">
+         <property name="suffix">
+          <string> mm</string>
+         </property>
+         <property name="decimals">
+          <number>0</number>
+         </property>
+         <property name="minimum">
+          <double>-100.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>100.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="lblMoveCoordY">
+         <property name="text">
+          <string>Y</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <widget class="QLabel" name="lblMoveCoordX">
+         <property name="text">
+          <string>X</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label">
+         <property name="text">
+          <string>X rotation</string>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="text">
+          <string>Y rotation</string>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="0">
+        <widget class="QLabel" name="label_11">
+         <property name="text">
+          <string>Z rotation</string>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QDoubleSpinBox" name="sbMoveRotX">
+         <property name="suffix">
+          <string>°</string>
+         </property>
+         <property name="decimals">
+          <number>1</number>
+         </property>
+         <property name="minimum">
+          <double>-90.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>90.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="4" column="1">
+        <widget class="QDoubleSpinBox" name="sbMoveRotY">
+         <property name="suffix">
+          <string>°</string>
+         </property>
+         <property name="decimals">
+          <number>1</number>
+         </property>
+         <property name="minimum">
+          <double>-90.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>90.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="5" column="1">
+        <widget class="QDoubleSpinBox" name="sbMoveRotZ">
+         <property name="suffix">
+          <string>°</string>
+         </property>
+         <property name="decimals">
+          <number>1</number>
+         </property>
+         <property name="minimum">
+          <double>-90.000000000000000</double>
+         </property>
+         <property name="maximum">
+          <double>90.000000000000000</double>
+         </property>
+        </widget>
+       </item>
+       <item row="7" column="0" colspan="2">
+        <widget class="QPushButton" name="btnGoCoord">
+         <property name="text">
+          <string>Go</string>
+         </property>
+         <property name="default">
+          <bool>false</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="8" column="0" colspan="2">
+        <widget class="QPushButton" name="btnAuto">
+         <property name="text">
+          <string>Auto</string>
+         </property>
+         <property name="checkable">
+          <bool>true</bool>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="0">
+        <widget class="QLabel" name="label_26">
+         <property name="text">
+          <string>Robot coord Y</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="0">
+        <widget class="QLabel" name="label_27">
+         <property name="text">
+          <string>Robot coord X</string>
+         </property>
+        </widget>
+       </item>
+       <item row="10" column="1">
+        <widget class="QLabel" name="lblCoordX">
+         <property name="text">
+          <string>-</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="11" column="1">
+        <widget class="QLabel" name="lblCoordY">
+         <property name="text">
+          <string>-</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="9" column="0" colspan="2">
+        <widget class="QPushButton" name="btnAction">
+         <property name="text">
+          <string>Action</string>
+         </property>
+        </widget>
+       </item>
+       <item row="13" column="0">
+        <widget class="QLabel" name="label_28">
+         <property name="text">
+          <string>Robot coord theta</string>
+         </property>
+        </widget>
+       </item>
+       <item row="13" column="1">
+        <widget class="QLabel" name="lblCoordTheta">
+         <property name="text">
+          <string>-</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="2">
+        <spacer name="horizontalSpacer">
+         <property name="orientation">
+          <enum>Qt::Horizontal</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>40</width>
+           <height>20</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+       <item row="14" column="0">
+        <spacer name="verticalSpacer">
+         <property name="orientation">
+          <enum>Qt::Vertical</enum>
+         </property>
+         <property name="sizeHint" stdset="0">
+          <size>
+           <width>20</width>
+           <height>40</height>
+          </size>
+         </property>
+        </spacer>
+       </item>
+      </layout>
+     </widget>
+     <widget class="QWidget" name="tab">
+      <attribute name="title">
+       <string>UM6</string>
+      </attribute>
+      <widget class="QWidget" name="gridLayoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>240</x>
+         <y>60</y>
+         <width>501</width>
+         <height>151</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="sizeConstraint">
+         <enum>QLayout::SetDefaultConstraint</enum>
+        </property>
+        <property name="horizontalSpacing">
+         <number>0</number>
+        </property>
+        <item row="1" column="1">
+         <widget class="QLabel" name="lblUM6Theta">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_12">
+          <property name="text">
+           <string>Theta</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_10">
+          <property name="text">
+           <string>Phi</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="lblUM6Phi">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_19">
+          <property name="text">
+           <string>Psi</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QLabel" name="lblUM6Psi">
+          <property name="text">
+           <string>0</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QLabel" name="lblGyrosCalibrated">
+          <property name="text">
+           <string>-</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_20">
+          <property name="text">
+           <string>Gyros calibrated?</string>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QPushButton" name="btnCalibrateGyros">
+       <property name="geometry">
+        <rect>
+         <x>360</x>
+         <y>300</y>
+         <width>231</width>
+         <height>32</height>
+        </rect>
+       </property>
+       <property name="text">
+        <string>Calibrate Gyros</string>
+       </property>
+      </widget>
+     </widget>
+    </widget>
+   </item>
+  </layout>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

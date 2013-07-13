@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/tables">
+        <file alias="table2011">Resources/Table2011.png</file>
+        <file alias="table2012">Resources/Table2012.png</file>
+        <file alias="table2013">Resources/Table2013.png</file>
+    </qresource>
+    <qresource prefix="/objects">
+        <file alias="robot2011">Resources/Neobot.png</file>
+        <file alias="opponent">Resources/Opponent.png</file>
+        <file alias="obstacle">Resources/obstacle.png</file>
+        <file alias="king">Resources/King.png</file>
+        <file alias="queen">Resources/Queen.png</file>
+    </qresource>
+</RCC>

@@ -1,0 +1,21 @@
+<RCC>
+    <qresource prefix="/toolbar">
+        <file alias="upload">resources/File Transfer - Upload.png</file>
+        <file alias="control">resources/Games.png</file>
+        <file alias="connection">resources/Network.png</file>
+        <file alias="sharp">resources/sensor.png</file>
+        <file alias="positions">resources/Task Manager.png</file>
+        <file alias="log">resources/Toolbar - Playlist.png</file>
+        <file alias="strategies">resources/Library.png</file>
+        <file alias="ax12">resources/Android.png</file>
+    </qresource>
+    <qresource prefix="/app">
+        <file alias="AppIcon">resources/ProcessorNeobot.png</file>
+    </qresource>
+    <qresource prefix="/buttons">
+        <file alias="edit">resources/Pencil.png</file>
+        <file alias="export">resources/Toolbar - Redo.png</file>
+        <file alias="import">resources/Toolbar - Undo.png</file>
+        <file alias="reset">resources/Toolbar - Delete.png</file>
+    </qresource>
+</RCC>

@@ -11,3 +11,8 @@
 *.lai
 *.la
 *.a
+
+#Qt
+*.pro.user
+moc_*.cpp
+ui_*.h

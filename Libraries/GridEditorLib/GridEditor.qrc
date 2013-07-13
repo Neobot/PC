@@ -1,0 +1,14 @@
+<RCC>
+    <qresource prefix="/toolbar">
+        <file alias="background">resources/Light_Billboard.png</file>
+        <file alias="info">resources/Light_Info.png</file>
+        <file alias="zoomIn">resources/Light_Zoom_in.png</file>
+        <file alias="zoomOut">resources/Light_Zoom_out.png</file>
+        <file alias="link">resources/Link.png</file>
+        <file alias="area">resources/select_restangular.png</file>
+        <file alias="node">resources/node.png</file>
+    </qresource>
+    <qresource prefix="/app">
+        <file alias="AppIcon">resources/grid.png</file>
+    </qresource>
+</RCC>

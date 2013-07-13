@@ -1,0 +1,149 @@
+#include "ActionFactory.h"
+#include "StrategyManager.h"
+
+ActionFactory::ActionFactory(StrategyManager* manager, TrajectoryFinder* finder, StrategyMap* map, 
+							 Comm::RobotCommInterface* robot, Tools::Ax12MovementManager* ax12MovementsManager)
+{
+    _manager = manager;
+    _finder = finder;
+    _map = map;
+    _robot = robot;
+	_ax12MovementsManager = ax12MovementsManager;
+	_maxMovementSpeed = 100;
+}
+
+void ActionFactory::setMaxMovementSpeed(int maxSpeed)
+{
+	_maxMovementSpeed = maxSpeed;
+}
+
+int ActionFactory::getRealSpeed(int requestedSpeed) const
+{
+	return qBound(0, requestedSpeed, _maxMovementSpeed);
+}
+
+AbstractAction * ActionFactory::waitAction(int ms) const
+{
+    return new WaitAction(ms);
+}
+
+AbstractAction * ActionFactory::moveAction(Tools::NGridNode* destination, int speed, bool forceForward, bool forceBackward, Tools::Deplacement deplacementType) const
+{
+    return new MoveAction(destination, getRealSpeed(speed), forceForward, forceBackward, deplacementType, _finder);
+}
+
+AbstractAction *ActionFactory::moveAction(const QPointF &destinationPoint, int speed, bool forceForward, bool forceBackward, Tools::Deplacement deplacementType) const
+{
+    return new MoveAction(_manager->getGrid()->getNearestNode(destinationPoint), getRealSpeed(speed), forceForward, forceBackward, deplacementType, _finder);
+}
+
+AbstractAction *ActionFactory::moveAction(const QString &destinationAlias, int speed, bool forceForward, bool forceBackward, Tools::Deplacement deplacementType) const
+{
+    Tools::NGridNode* destination = _manager->getGrid()->getNode(destinationAlias);
+    if (destination)
+        return new MoveAction(destination, getRealSpeed(speed), forceForward, forceBackward, deplacementType, _finder);
+
+    return 0;
+}
+
+AbstractAction *ActionFactory::moveAction(Tools::NGridArea *destination, int speed, bool forceForward, bool forceBackward, Tools::Deplacement deplacementType) const
+{
+    return new MoveAction(destination, getRealSpeed(speed), forceForward, forceBackward, deplacementType, _finder);
+}
+
+AbstractAction *ActionFactory::moveAction(Tools::NGridArea *destinationArea, int speed, Tools::NGridNode *targetNode, bool forceForward, bool forceBackward, Tools::Deplacement deplacementType) const
+{
+    return new MoveAction(destinationArea, targetNode, getRealSpeed(speed), forceForward, forceBackward, deplacementType, _finder);
+}
+
+AbstractAction * ActionFactory::manualMoveAction(const Tools::Trajectory &trajectory, int speed, Tools::Movement movement, Tools::Deplacement deplacementType) const
+{
+    return new ManualMoveAction(trajectory, getRealSpeed(speed), movement, deplacementType, _finder);
+}
+
+AbstractAction* ActionFactory::manualMoveToPointAction(const Tools::RPoint& point, int speed, bool forward, Tools::Deplacement deplacementType) const
+{
+    Tools::Trajectory t;
+    t << Tools::RPoint(point);
+    return new ManualMoveAction(t, getRealSpeed(speed), forward ? Tools::AVANT_XY : Tools::ARRIERE_XY, deplacementType, _finder);
+}
+
+AbstractAction * ActionFactory::manualBackwardMoveAction(double mm, int speed) const
+{
+    return new RelativeMoveAction(-mm, getRealSpeed(speed), _finder, _map);
+}
+
+AbstractAction * ActionFactory::manualForwardMoveAction(double mm, int speed) const
+{
+    return new RelativeMoveAction(mm, getRealSpeed(speed), _finder, _map);
+}
+
+AbstractAction * ActionFactory::manualTurnMoveAction(double radian, int speed) const
+{
+    Tools::Trajectory t;
+    t << Tools::RPoint(0.0, 0.0, radian);
+    return new ManualMoveAction(t, getRealSpeed(speed), Tools::TOURNE_RADIAN, Tools::TURN_THEN_MOVE, _finder);
+}
+
+AbstractAction * ActionFactory::manualTurnToAction(const Tools::RPoint& point, int speed, bool clockwize) const
+{
+    Tools::Trajectory t;
+    t << Tools::RPoint(point);
+    return new ManualMoveAction(t, getRealSpeed(speed), clockwize ? Tools::TOURNE_VERS_XY : Tools::TOURNE_VERS_XY, Tools::TURN_THEN_MOVE, _finder);
+}
+
+AbstractAction * ActionFactory::manualAbsoluteTurnMoveAction(double radian, int speed) const
+{
+    Tools::Trajectory t;
+    t << Tools::RPoint(0.0, 0.0, radian);
+    return new ManualMoveAction(t, getRealSpeed(speed), Tools::ROTATE_TO_ABSOLUTE_ANGLE, Tools::TURN_THEN_MOVE, _finder);
+}
+
+AbstractAction * ActionFactory::actuatorAction(Comm::ServoId servoId, Comm::ServoPosition position, int estimatedDuration) const
+{
+	return new ActuatorAction(servoId, position, estimatedDuration, _robot, _manager);
+}
+
+ActionGroup * ActionFactory::actionList(const QList<AbstractAction *> &actions) const
+{
+	return new ActionGroup(actions);
+}
+
+OrientationSwitchCaseAction *ActionFactory::orientationSwitchCaseAction() const
+{
+	return new OrientationSwitchCaseAction(_manager);
+}
+
+AbstractAction *ActionFactory::ax12Action(quint8 id, float angle, float speed) const
+{
+    QList<quint8> idList;
+    idList << id;
+    QList<float> angleList;
+    angleList << angle;
+    QList<float> speedList;
+    speedList << speed;
+
+    return new AX12Action(idList, angleList, speedList, _robot);
+}
+
+AbstractAction *ActionFactory::ax12Action(quint8 id1, float angle1, quint8 id2, float angle2, float speed) const
+{
+    QList<quint8> idList;
+    idList << id1 << id2;
+    QList<float> angleList;
+    angleList << angle1 << angle2;
+    QList<float> speedList;
+    speedList << speed << speed;
+
+    return new AX12Action(idList, angleList, speedList, _robot);
+}
+
+AbstractAction* ActionFactory::ax12Movement(const QString& group, const QString& movement, float speedLimit) const
+{
+	return new AX12MovementAction(group, movement, speedLimit, true, _robot, _ax12MovementsManager);
+}
+
+AbstractAction* ActionFactory::asynchroneAx12Movement(const QString& group, const QString& movement, float speedLimit) const
+{
+	return new AX12MovementAction(group, movement, speedLimit, false, _robot, _ax12MovementsManager);
+}
