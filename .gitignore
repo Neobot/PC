@@ -12,7 +12,11 @@
 *.la
 *.a
 
+#
+Bin/*
+
 #Qt
 *.pro.user
 moc_*.cpp
 ui_*.h
+build-*
