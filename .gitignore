@@ -13,7 +13,7 @@
 *.a
 
 #
-Bin/*
+Bin/
 
 #Qt
 *.pro.user
