@@ -339,6 +339,7 @@ void NetworkClientCommInterface::read(quint8 instruction, const Comm::Data &data
 			}
 			else
 				RobotCommInterface::read(instruction, data);
+			break;
 		}
 		default:
 			RobotCommInterface::read(instruction, data);
