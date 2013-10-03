@@ -50,8 +50,8 @@ class Simulator : public QObject, public SimCommInterface, public Tools::LoggerI
 public:
     enum PlayableColor
     {
-		Blue,
-		Red
+        Red,
+        Yellow
     };
 
     Simulator(SimProtocol* protocol, int interval, double speed, Tools::AbstractLogger* logger = 0);

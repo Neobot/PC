@@ -33,8 +33,8 @@ NPlayer::NPlayer(QWidget *parent) :
 
 	_configSelector = new ChessUpConfigurationSelector(this);
 
-	addColorToCombobox(Qt::blue, ui.cbColor);
-	addColorToCombobox(Qt::red, ui.cbColor);
+    addColorToCombobox(Qt::red, ui.cbColor);
+    addColorToCombobox(Qt::yellow, ui.cbColor);
 
 	_viewModeButtonGroup = new QButtonGroup(this);
 	_viewModeButtonGroup->setExclusive(true);
@@ -360,7 +360,7 @@ void NPlayer::colorChanged()
 	_manager->setReversedStrategy(ui.cbColor->currentIndex() != 0);
 	//_manager->init();
 
-	_simulator->setRobotDefaultColor(ui.cbColor->currentIndex() == 0 ? Simulator::Blue : Simulator::Red);
+    _simulator->setRobotDefaultColor(ui.cbColor->currentIndex() == 0 ? Simulator::Red : Simulator::Yellow);
 
 	ui.graphicsView->refresh();
 }

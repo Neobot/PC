@@ -527,7 +527,7 @@ void Simulator::setRobotDefaultColor(PlayableColor color)
 
 void Simulator::setRobotDefaultPosition(bool mirrored)
 {
-	setRobotDefaultColor(mirrored ? Red : Blue);
+    setRobotDefaultColor(mirrored ? Yellow : Red);
 }
 
 void Simulator::addOpponentMovement(const QPointF &point)

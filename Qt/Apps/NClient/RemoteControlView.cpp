@@ -22,8 +22,8 @@ RemoteControlView::RemoteControlView(NetworkConnection *connection, QWidget *par
 {
 	ui->setupUi(this);
 
-	addColorToCombobox(Qt::blue, ui->cbColor);
-	addColorToCombobox(Qt::red, ui->cbColor);
+    addColorToCombobox(Qt::red, ui->cbColor);
+    addColorToCombobox(Qt::yellow, ui->cbColor);
 
 	_connection->registerRobotResponder(this);
 	_connection->registerNetworkResponder(this);

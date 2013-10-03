@@ -35,7 +35,7 @@ StrategiesView::StrategiesView(NetworkConnection *connection, QWidget *parent) :
 	connect(_resetMapper, SIGNAL(mapped(QString)), this, SLOT(resetFile(QString)));
 
     _gridEditor = new GridEditor(this, true, true);
-	_gridEditor->set2013Table();
+    _gridEditor->set2014Table();
 	_gridEditor->setWindowModality(Qt::WindowModal);
 	connect(_gridEditor, SIGNAL(accepted()), this, SLOT(editionFinished()));
 	connect(_gridEditor, SIGNAL(rejected()), this, SLOT(editionCanceled()));
