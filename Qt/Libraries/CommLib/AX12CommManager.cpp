@@ -11,11 +11,15 @@ const float MAX_ANGLE = 300;
 
 AX12::AX12() :
 	_CWAngleLimit(0), _CCWAngleLimit(300), _currentPosition(0), _currentSpeed(0), _currentLoad(0), _angleDiff(0), _goalChanged(false)
-{}
+{
+    setTimeout();
+}
 
 AX12::AX12(float minAngle, float maxAngle) :
 	_CWAngleLimit(minAngle), _CCWAngleLimit(maxAngle), _currentPosition(0), _currentSpeed(0), _currentLoad(0), _angleDiff(0), _goalChanged(false)
-{}
+{
+    setTimeout();
+}
 
 void AX12::setGoal(float angle, float torque)
 {
@@ -60,7 +64,12 @@ void AX12::lockServo()
 void AX12::releaseServo()
 {
 	_goalPosition = _currentPosition;
-	_maxTorque = 0;
+    _maxTorque = 0;
+}
+
+void AX12::setTimeout()
+{
+    _currentPosition = -1;
 }
 
 void AX12::setState(float position, float speed, float load)
@@ -582,5 +591,13 @@ void AX12CommManager::sendNextMessage()
 void AX12CommManager::requestTimeout()
 {
 	if (!_currentMessage.ids.isEmpty())
-		emit requestTimeoutReceived(_currentMessage.ids.first());
+    {
+        int id = _currentMessage.ids.first();
+        if (_servos.contains(id))
+        {
+            AX12& ax12 = _servos[id];
+            ax12.setTimeout();
+        }
+        emit requestTimeoutReceived(id);
+    }
 }

@@ -164,7 +164,10 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 				ids << id;
 			}
 
-			_listener->askAx12Positions(this, ids);
+            bool recursive;
+            d.take(recursive);
+
+            _listener->askAx12Positions(this, ids, recursive);
 			break;
 		}
 		case MOVE_AX12:

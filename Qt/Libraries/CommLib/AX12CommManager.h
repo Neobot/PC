@@ -25,6 +25,7 @@ namespace Comm
 		void lockServo();
 		void releaseServo();
 
+        void setTimeout();
 		void setState(float position, float speed, float load);
 		void getCommand(float &position, float &speed, float &torque) const;
 		float getAngleDifference() const;

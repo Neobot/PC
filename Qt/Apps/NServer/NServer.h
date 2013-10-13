@@ -48,6 +48,7 @@ private:
 	int _currentStrategyId;
 
 	QHash<NetworkCommInterface*, QList<quint8> > _requestedServoIds;
+    QHash<NetworkCommInterface*, bool > _requestedServoRecursivity;
 	bool _robotConnected;
 
 	Comm::AX12CommManager* _ax12Manager;
@@ -69,7 +70,7 @@ private:
 	void setStrategyFileData(int strategyNum, const QString& filename, const QByteArray &data);
 	void resetStrategyFile(int strategyNum, const QString& filename);
 
-	void askAx12Positions(NetworkCommInterface* networkInterface, const QList<quint8>& ids);
+    void askAx12Positions(NetworkCommInterface* networkInterface, const QList<quint8>& ids, bool recursive);
 	void moveAx12(float maxSpeed, QList<Comm::Ax12Info>& ax12s);
 	void lockAx12(const QMap<quint8, bool>& servoLockInfo);
 

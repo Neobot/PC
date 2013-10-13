@@ -60,7 +60,6 @@ const QList<quint8>& AX12StatusListener::getUnavailableServo() const
 void AX12StatusListener::startListening()
 {
 	connect(_manager, SIGNAL(servosStatusUpdated(quint8)), this, SLOT(registerId(quint8)));
-	connect(_manager, SIGNAL(requestTimeoutReceived(quint8)), this, SLOT(registerId(quint8)));
 	connect(_manager, SIGNAL(requestTimeoutReceived(quint8)), this, SLOT(registerUnavailableId(quint8)));
 }
 

@@ -131,12 +131,14 @@ void NetworkClientCommInterface::askSerialPorts()
 	getProtocol()->sendMessage(ASK_SERIAL_PORTS, Data());
 }
 
-void NetworkClientCommInterface::askAx12Positions(const QList<int> &ids)
+void NetworkClientCommInterface::askAx12Positions(const QList<int> &ids, bool recursive)
 {
 	Data d;
 	d.add((quint8)ids.count());
 	foreach(int id, ids)
 		d.add((quint8)id);
+
+    d.add(recursive);
 
 	getProtocol()->sendMessage(ASK_AX12_POSITIONS, d);
 }

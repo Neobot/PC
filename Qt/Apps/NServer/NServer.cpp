@@ -372,7 +372,7 @@ void NServer::resetStrategyFile(int strategyNum, const QString &filename)
 	_strategiesEnumerator.resetStrategyFile((StrategyEnumerator::Strategy)strategyNum, filename);
 }
 
-void NServer::askAx12Positions(NetworkCommInterface *networkInterface, const QList<quint8> &ids)
+void NServer::askAx12Positions(NetworkCommInterface *networkInterface, const QList<quint8> &ids, bool recursive)
 {
 	if (!_ax12Manager || _requestedServoIds.contains(networkInterface) || !_ax12MovementRunner || _ax12MovementRunner->isRunnning())
 		return;
@@ -383,6 +383,7 @@ void NServer::askAx12Positions(NetworkCommInterface *networkInterface, const QLi
 		_ax12Manager->requestAllServoStatus();
 
 	_requestedServoIds.insert(networkInterface, ids);
+    _requestedServoRecursivity[networkInterface] = recursive;
 }
 
 void NServer::moveAx12(float maxSpeed, QList<Comm::Ax12Info> &ax12s)
@@ -442,19 +443,13 @@ void NServer::servoStatus()
 
 void NServer::servoStatusTimeout(quint8 id)
 {
-	for(QHash<NetworkCommInterface*, QList<quint8> >::iterator it = _requestedServoIds.begin(); it != _requestedServoIds.end();)
+    for(QHash<NetworkCommInterface*, QList<quint8> >::iterator it = _requestedServoIds.begin(); it != _requestedServoIds.end();++it)
 	{
-		NetworkCommInterface* i = it.key();
-		i->sendAnnouncement(QByteArray("AX-12 status request timeout on id ").append(QByteArray::number(id)));
-		for(QHash<NetworkCommInterface*, QList<quint8> >::iterator it = _requestedServoIds.begin(); it != _requestedServoIds.end(); ++it)
-		{
-			it->removeAll(id);
-		}
-
-		if (it->isEmpty())
-			it = _requestedServoIds.erase(it);
-		else
-			++it;
+        if (it->contains(id))
+        {
+            NetworkCommInterface* i = it.key();
+            i->sendAnnouncement(QByteArray("AX-12 status request timeout on id ").append(QByteArray::number(id)));
+        }
 	}
 }
 

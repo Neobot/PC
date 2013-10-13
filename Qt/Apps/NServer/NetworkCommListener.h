@@ -30,7 +30,7 @@ public:
 	virtual void askAutoStrategyInfo(bool &isEnabled, int &strategyNum, QString &robotPort, QString &ax12Port, bool &simulation, bool &mirror) = 0;
 	virtual void setAutoStrategy(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror) = 0;
 
-	virtual void askAx12Positions(NetworkCommInterface* networkInterface, const QList<quint8>& ids) = 0;
+    virtual void askAx12Positions(NetworkCommInterface* networkInterface, const QList<quint8>& ids, bool recursive) = 0;
 	
 	virtual QByteArray askAx12MovementFile() = 0;
 	virtual void setAx12MovementFile(const QByteArray& data) = 0;

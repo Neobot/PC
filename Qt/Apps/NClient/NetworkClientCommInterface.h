@@ -35,7 +35,7 @@ public:
 
 	void askSerialPorts();
 
-	void askAx12Positions(const QList<int>& ids);
+    void askAx12Positions(const QList<int>& ids, bool recursive = false);
 	void moveAx12(const Comm::Ax12Info& ax12Info);
 	void moveAx12(const QList<Comm::Ax12Info>& ax12Infos);
 	void moveAx12Smoothed(float maxSpeed, const QList<Comm::Ax12Info> &ax12Infos);
