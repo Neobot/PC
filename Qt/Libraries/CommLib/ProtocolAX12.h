@@ -22,7 +22,8 @@ namespace Comm
 	    REG_WRITE = 0x04,
 	    ACTION = 0x05,
 	    RESET = 0x06,
-	    SYNC_WRITE = 0x83
+        SYNC_WRITE = 0x83,
+        SYNC_READ = 0x84 //Controller only
 	};
 
 	ProtocolAX12(QIODevice* device, Tools::AbstractLogger* logger = 0, bool bufferMode = true);

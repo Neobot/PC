@@ -53,12 +53,24 @@ namespace Comm
 
 	signals:
 		void allMessagesSent();
-		void servosStatusUpdated(quint8 id);
-		void requestTimeoutReceived(quint8 id);
+        void servosStatusUpdated(const QList<quint8>& ids);
+        void requestTimeoutReceived(const QList<quint8>& ids);
 
 	public:
-		AX12CommManager();
-		AX12CommManager(const QString& portname, BaudRateType baudrate, Tools::AbstractLogger* logger);
+        enum ReadingLoopMode
+        {
+            AUTO_MODE,
+            TIMER_MODE
+        };
+
+        enum ControllerMode
+        {
+            NO_CONTROLLER,
+            USB2AX_CONTROLLER
+        };
+
+        AX12CommManager(ControllerMode mode = USB2AX_CONTROLLER);
+        AX12CommManager(const QString& portname, BaudRateType baudrate, ControllerMode mode, Tools::AbstractLogger* logger);
 		~AX12CommManager();
 
 		bool open();
@@ -66,15 +78,8 @@ namespace Comm
 
 		ProtocolAX12* getProtocol() const;
 
-		enum ReadingLoopMode
-		{
-			AUTO_MODE,
-			TIMER_MODE
-		};
-
-		void askStartReadingLoop();
-		void askStopReadingLoop();
-		void forceStopReadingLoop();
+        void setControllerMode(ControllerMode mode);
+        ControllerMode getControllerMode() const;
 
 		void setReadingLoopMode(ReadingLoopMode mode);
 		void setTimerReadingLoopInterval(int ms = 200);
@@ -82,9 +87,7 @@ namespace Comm
 
 		void setRequestTimeout(int ms);
 
-		void clearServoList();
-		AX12* addServo(quint8 id, float minAngle = 0, float maxAngle = 300);
-		void removeServo(quint8 id);
+        void resetServo(quint8 id, float minAngle = 0, float maxAngle = 300);
 		
 		float getServoPosition(quint8 id) const;
 		float getServoLoad(quint8 id) const;
@@ -97,25 +100,25 @@ namespace Comm
 		void synchronize(quint8 id);
 		void synchronize(const QList<quint8>& servoIds);
 		
-		double calculateSmoothServosSpeed(float maxSpeed);	//return the estimated duration of the movement in ms
 		double calculateSmoothServosSpeed(const QList<quint8>& servoIds, float maxSpeed); //return the estimated duration of the movement in ms
 
 		void lockServo(quint8 id, bool synchronous = true);
 		void releaseServo(quint8 id, bool synchronous = true);
 
-		void requestServoStatus(quint8 id);
-
-	public slots:
-		void requestAllServoStatus();
-		void synchronize();
+        void requestServoStatus(quint8 id, bool loop = false);
+        void requestServoStatus(const QList<quint8>& ids, bool loop = false);
+        void cancelLoopStatusRequest(quint8 id);
+        void cancelLoopStatusRequest(const QList<quint8>& ids);
 
 	private:
+        ControllerMode _controllerMode;
 		Comm::ProtocolAX12* _protocol;
 		QHash<quint8, AX12> _servos;
+        QHash<quint8, int> _loopDemandCount;
+
 		QTimer* _readTimer;
 		bool _autoReadingLoop;
 		QTimer* _requestTimeoutTimer;
-		int _nbReadingLoopRequest;
 		ReadingLoopMode _readingLoopMode;
 		float _maxSpeed;
 		
@@ -141,18 +144,26 @@ namespace Comm
 		CommMessage _currentMessage;
 		QList<CommMessage> _messagePendingList;
 		
-		void askSendNextMessage();
+        void askStartReadingLoop();
+        void askStopReadingLoop();
+
+        void askSendNextRequestMessage();
+        void askSendNextSynchroMessage();
 		
 		void addServoCommandData(AX12& ax12, Data& data);
 		
 		void sendServoSynchronizeMessage(quint8 id);
 		void sendServoMultiSynchronizeMessage(const QList<quint8>& ids);
 		void sendServoRequestStatusMessage(quint8 id);
+        void sendServoMultiRequestStatusMessage(const QList<quint8>& ids);
+
+        void readReceivedData(quint8 id, Comm::Data data);
 
 	private slots:
 		void messageReceived(quint8 instruction, const Comm::Data&, quint8 id);
 		void sendNextMessage();
 		void requestTimeout();
+        void requestAllServoStatusForReadingLoop();
 	};
 }
 

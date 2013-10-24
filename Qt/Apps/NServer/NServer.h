@@ -14,6 +14,7 @@
 #include "Strategies/StrategyEnumerator.h"
 #include "Ax12MovementRunner.h"
 #include "AX12StatusListener.h"
+#include "ServerAX12RequestManager.h"
 
 class Pather;
 
@@ -47,14 +48,12 @@ private:
 	StrategyInterface* _currentStrategy;
 	int _currentStrategyId;
 
-	QHash<NetworkCommInterface*, QList<quint8> > _requestedServoIds;
-    QHash<NetworkCommInterface*, bool > _requestedServoRecursivity;
 	bool _robotConnected;
 
 	Comm::AX12CommManager* _ax12Manager;
 	Tools::Ax12MovementManager _ax12Movements;
-	Comm::Ax12MovementRunner* _ax12MovementRunner;
-	Comm::AX12StatusListener* _ax12StatusListener;
+    Comm::Ax12MovementRunner* _ax12MovementRunner;
+    QHash<NetworkCommInterface*, ServerAX12RequestManager*> _ax12Requests;
 
 	void sendGlobalAnnoucement(const QByteArray &message);
 	
@@ -87,15 +86,11 @@ private:
 	void setAx12MovementFile(const QByteArray& data);
 	void runAx12Movement(const QString& group, const QString& movement, float speedLimit);
 
-	void updateServoList(const QList<quint8>& ids);
-	void updateServoList(quint8 id);
 
 private slots:
 	void newConnection();
 	void removeConnection(int connectionIndex);
 
-	void servoStatus();
-	void servoStatusTimeout(quint8 id);
 	void ax12MovementFinished();
 
 	void strategyFinished();

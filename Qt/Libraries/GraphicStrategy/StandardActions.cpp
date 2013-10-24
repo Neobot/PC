@@ -208,7 +208,6 @@ void AX12MovementAction::execute()
 		return;
 	}
 
-	_robot->getAx12Manager()->askStartReadingLoop();
 	bool ok = _runner->startMovement(_group, _mvt, _speedLimit);
 
 	if (!ok || !_blocking)
@@ -217,7 +216,6 @@ void AX12MovementAction::execute()
 
 void AX12MovementAction::end()
 {
-	_robot->getAx12Manager()->askStopReadingLoop();
 	disconnect();
 }
 

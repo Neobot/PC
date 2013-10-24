@@ -136,12 +136,6 @@ bool StrategyManager::init()
 							parameters.stopCircleRadius, parameters.diagonalSmoothingMaxDistance, parameters.turnThenMoveMinAngle);
 	_trajectoryFinder->setAvoidingEnabled(parameters.enableAutoAvoiding);
 
-	//init AX-12
-	QList<int> servoList = parameters.ax12Ids;
-	_robot->getAx12Manager()->clearServoList();
-	foreach(int id, servoList)
-		_robot->getAx12Manager()->addServo(id);
-
 	//init actions
 	qDeleteAll(_actions);
 	_actions.clear();

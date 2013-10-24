@@ -56,7 +56,7 @@ void Leg::step(double angle, double size)
 		_coxaServo->setGoal(coxaAngle, 100);
 		_femurServo->setGoal(femurAngle, 100);
 		_tibiaServo->setGoal(tibiaAngle, 100);
-		_commManager->calculateSmoothServosSpeed(50);
+        //_commManager->calculateSmoothServosSpeed(50);
 
 		_footGoalPosition = _footInitPosition + _relativeCoxaPosition + centerTranslation;
 		_legStatus = Raising;
@@ -78,7 +78,7 @@ void Leg::stepPartTwo()
 	_coxaServo->setGoal(coxaAngle, 100);
 	_femurServo->setGoal(femurAngle, 100);
 	_tibiaServo->setGoal(tibiaAngle, 100);
-	_commManager->calculateSmoothServosSpeed(50);
+//	_commManager->calculateSmoothServosSpeed(50);
 }
 
 void Leg::moveBy(double x, double y, double z, double maxTorque)
@@ -246,61 +246,61 @@ Hexapod::Hexapod(AbstractLogger* logger, Comm::AX12CommManager* commManager, Com
 	_gaitCurrentStep(0), _gaitMaxStep(3), _autoWalk(false),
 	_currentCoord(0, 0, 0), _goalCoord(0, 0, 0), _currentAngle(0), _initOrientation(0)
 {
-	double offsetX = _hexaRadius * cos(Tools::pi/6);
+    /*double offsetX = _hexaRadius * cos(Tools::pi/6);
 	double offsetY = _hexaRadius * 0.5;
 
 	double legCos = _initLegLength * cos(Tools::pi/6);
 	double legSin = _initLegLength * 0.5;
 
-	_legs[0] = new Leg(_logger, _commManager,
-					   _commManager->addServo(1, _coxaMinAngle, _coxaMaxAngle),
-					   _commManager->addServo(7, _femurMinAngle, _femurMaxAngle),
-					   _commManager->addServo(13, _tibiaMinAngle, _tibiaMaxAngle),
+    _legs[0] = new Leg(_logger, _commManager,
+                       _commManager->resetServo(1, _coxaMinAngle, _coxaMaxAngle),
+                       _commManager->resetServo(7, _femurMinAngle, _femurMaxAngle),
+                       _commManager->resetServo(13, _tibiaMinAngle, _tibiaMaxAngle),
 					   _coxaLength, _femurLength, _tibiaLength,
 					   offsetX, -offsetY, 0,
 					   legCos, -legSin, -_initHeight,
 					   -PI_SUR_6);
 
 	_legs[1] = new Leg(_logger, _commManager,
-					   _commManager->addServo(2, _coxaMinAngle, _coxaMaxAngle),
-					   _commManager->addServo(8, _femurMinAngle, _femurMaxAngle),
-					   _commManager->addServo(14, _tibiaMinAngle, _tibiaMaxAngle),
-					   _coxaLength, _femurLength, _tibiaLength,
+                       _commManager->resetServo(2, _coxaMinAngle, _coxaMaxAngle),
+                       _commManager->resetServo(8, _femurMinAngle, _femurMaxAngle),
+                       _commManager->resetServo(14, _tibiaMinAngle, _tibiaMaxAngle),
+                       _coxaLength, _femurLength, _tibiaLength,
 					   0, -_hexaRadius, 0,
 					   0, -_initLegLength, -_initHeight,
 					   -3 * PI_SUR_6);
 
 	_legs[2] = new Leg(_logger, _commManager,
-					   _commManager->addServo(3, _coxaMinAngle, _coxaMaxAngle),
-					   _commManager->addServo(9, _femurMinAngle, _femurMaxAngle),
-					   _commManager->addServo(15, _tibiaMinAngle, _tibiaMaxAngle),
+                       _commManager->resetServo(3, _coxaMinAngle, _coxaMaxAngle),
+                       _commManager->resetServo(9, _femurMinAngle, _femurMaxAngle),
+                       _commManager->resetServo(15, _tibiaMinAngle, _tibiaMaxAngle),
 					   _coxaLength, _femurLength, _tibiaLength,
 					   -offsetX, -offsetY, 0,
 					   -legCos, -legSin, -_initHeight,
 					   -5 * PI_SUR_6);
 
 	_legs[3] = new Leg(_logger, _commManager,
-					   _commManager->addServo(4, _coxaMinAngle, _coxaMaxAngle),
-					   _commManager->addServo(10, _femurMinAngle, _femurMaxAngle),
-					   _commManager->addServo(16, _tibiaMinAngle, _tibiaMaxAngle),
+                       _commManager->resetServo(4, _coxaMinAngle, _coxaMaxAngle),
+                       _commManager->resetServo(10, _femurMinAngle, _femurMaxAngle),
+                       _commManager->resetServo(16, _tibiaMinAngle, _tibiaMaxAngle),
 					   _coxaLength, _femurLength, _tibiaLength,
 					   -offsetX, offsetY, 0,
 					   -legCos, legSin, -_initHeight,
 					   5 * PI_SUR_6);
 
 	_legs[4] = new Leg(_logger, _commManager,
-					   _commManager->addServo(5, _coxaMinAngle, _coxaMaxAngle),
-					   _commManager->addServo(11, _femurMinAngle, _femurMaxAngle),
-					   _commManager->addServo(17, _tibiaMinAngle, _tibiaMaxAngle),
+                       _commManager->resetServo(5, _coxaMinAngle, _coxaMaxAngle),
+                       _commManager->resetServo(11, _femurMinAngle, _femurMaxAngle),
+                       _commManager->resetServo(17, _tibiaMinAngle, _tibiaMaxAngle),
 					   _coxaLength, _femurLength, _tibiaLength,
 					   0, _hexaRadius, 0,
 					   0, _initLegLength, -_initHeight,
 					   3 * PI_SUR_6);
 
 	_legs[5] = new Leg(_logger, _commManager,
-					   _commManager->addServo(6, _coxaMinAngle, _coxaMaxAngle),
-					   _commManager->addServo(12, _femurMinAngle, _femurMaxAngle),
-					   _commManager->addServo(18, _tibiaMinAngle, _tibiaMaxAngle),
+                       _commManager->resetServo(6, _coxaMinAngle, _coxaMaxAngle),
+                       _commManager->resetServo(12, _femurMinAngle, _femurMaxAngle),
+                       _commManager->resetServo(18, _tibiaMinAngle, _tibiaMaxAngle),
 					   _coxaLength, _femurLength, _tibiaLength,
 					   offsetX, offsetY, 0,
 					   legCos, legSin, -_initHeight,
@@ -317,14 +317,14 @@ Hexapod::Hexapod(AbstractLogger* logger, Comm::AX12CommManager* commManager, Com
 	_legs[2]->setNextLeg(_legs[3]);
 	_legs[3]->setNextLeg(_legs[4]);
 	_legs[4]->setNextLeg(_legs[5]);
-	_legs[5]->setNextLeg(_legs[0]);
+    _legs[5]->setNextLeg(_legs[0]);*/
 
-	connect(_commManager, SIGNAL(servosStatusUpdated()), this, SLOT(servosStatusUpdated()));
+    //connect(_commManager, SIGNAL(servosStatusUpdated()), this, SLOT(servosStatusUpdated()));
 
-	for (int i = 0; i < 6; i++)
-		_legs[i]->initPosition();
+    //for (int i = 0; i < 6; i++)
+        //_legs[i]->initPosition();
 
-	_commManager->synchronize();
+    //_commManager->synchronize();
 }
 
 Leg *Hexapod::getLeg(quint8 legNo)
@@ -366,9 +366,9 @@ void Hexapod::moveBy(double length, double angle, double speed)
 		if (_legs[legNo]->isOnTheGround())
 			_legs[legNo]->moveBy(-length * cos(angle), -length * sin(angle), 0, 100);
 
-		_commManager->calculateSmoothServosSpeed(speed);
+//		_commManager->calculateSmoothServosSpeed(speed);
 	}
-	_commManager->synchronize();
+    //_commManager->synchronize();
 }
 
 void Hexapod::rotateBy(double angle, double speed)
@@ -383,9 +383,9 @@ void Hexapod::rotateBy(double angle, double speed)
 		if (_legs[legNo]->isOnTheGround())
 			_legs[legNo]->rotateBy(-angle, 100);
 
-		_commManager->calculateSmoothServosSpeed(speed);
+//		_commManager->calculateSmoothServosSpeed(speed);
 	}
-	_commManager->synchronize();
+    //_commManager->synchronize();
 }
 
 void Hexapod::updatePosition()

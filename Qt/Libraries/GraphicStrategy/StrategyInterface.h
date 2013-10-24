@@ -52,9 +52,6 @@ public:
 		double diagonalSmoothingMaxDistance;//mm
 		double lostReplanInterval;          //ms
 		double turnThenMoveMinAngle;		//radian
-
-		//servos
-		QList<int> ax12Ids;
 	};
 
 	StrategyInterface(const QDir& strategyDirectory, Tools::AbstractLogger* logger = 0);

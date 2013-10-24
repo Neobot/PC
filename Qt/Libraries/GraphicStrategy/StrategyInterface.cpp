@@ -121,12 +121,6 @@ void StrategyInterface::readParametersFromFile(Tools::NSettings &settings)
 		settings.setValue("turnThenMoveMinAngle", Tools::radianToDegree(_standardParameters.turnThenMoveMinAngle), "Minimum angle to the next point where the turn and move is allowed");
 	_standardParameters.turnThenMoveMinAngle = Tools::degreeToRadian(settings.value("turnThenMoveMinAngle").toDouble());
 	settings.endGroup();
-
-	settings.beginGroup("AX-12");
-	if (fileVersion == 1.0)
-		settings.setValueList("ids", Tools::convertListToVariantList<int>(_standardParameters.ax12Ids), QVariant::Int, "List of AX-12 which can be controlled.");
-	_standardParameters.ax12Ids = Tools::convertVariantListToList<int>(settings.value("ids").toList());
-	settings.endGroup();
 }
 
 void StrategyInterface::writeDefaultParametersToFile(Tools::NSettings &settings)
@@ -158,10 +152,6 @@ void StrategyInterface::writeDefaultParametersToFile(Tools::NSettings &settings)
 	settings.setValue("diagonalSmoothingMaxDistance", defaultParameters.diagonalSmoothingMaxDistance, "Maximum distance for the diagonal smoothing to apply.");
 	settings.setValue("lostReplanInterval", defaultParameters.lostReplanInterval, "Time in ms which define the maximum time allowed to the robot to accomplish his trajectory.");
 	settings.setValue("turnThenMoveMinAngle", Tools::radianToDegree(defaultParameters.turnThenMoveMinAngle), "Minimum angle to the next point where the turn and move is allowed in degrees.");
-	settings.endGroup();
-
-	settings.beginGroup("AX-12");
-	settings.setValueList("ids", Tools::convertListToVariantList<int>(defaultParameters.ax12Ids), QVariant::Int, "List of AX-12 which can be controlled.");
 	settings.endGroup();
 }
 

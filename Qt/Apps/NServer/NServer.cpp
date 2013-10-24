@@ -19,7 +19,7 @@ const QString AX12_MOVEMENT_FILENAME = "Ax12Movements.nax";
 
 NServer::NServer(Tools::AbstractLogger *logger, QObject *parent) :
 	QObject(parent), Tools::LoggerInterface(logger), _settings("Neobot", "NServer"), _tcpServer(0), _nextConnectionIndex(0), _robotInterface(0),
-	_simulator(0), _strategyManager(0), _currentStrategy(0), _currentStrategyId(-1), _robotConnected(false), _ax12Manager(0), _ax12MovementRunner(0), _ax12StatusListener(0)
+    _simulator(0), _strategyManager(0), _currentStrategy(0), _currentStrategyId(-1), _robotConnected(false), _ax12Manager(0), _ax12MovementRunner(0)
 {
 	_disconnectionMapper = new QSignalMapper(this);
 	connect(_disconnectionMapper, SIGNAL(mapped(int)), this, SLOT(removeConnection(int)));
@@ -150,6 +150,8 @@ void NServer::removeConnection(int index)
     if (networkInterface)
 	{
 		_connections.remove(index);
+        if (_ax12Requests.contains(networkInterface))
+            delete _ax12Requests.take(networkInterface);
 
         Comm::AbstractProtocol* protocol = networkInterface->getProtocol();
 		QIODevice* connection = protocol->getIODevice();
@@ -222,8 +224,8 @@ void NServer::cleanRobotConnection()
 	delete _ax12MovementRunner;
 	_ax12MovementRunner = 0;
 
-	delete _ax12StatusListener;
-	_ax12StatusListener = 0;
+    foreach(ServerAX12RequestManager* request, _ax12Requests)
+        request->setAX12CommManager(0);
 }
 
 bool NServer::pingReceived()
@@ -276,25 +278,23 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
 			_simulator = new Simulator(simulationProtocol, SIMULATION_REFRESH, SIMULATION_SPEED);
 		}
 
-		_ax12Manager = new Comm::AX12CommManager(ax12Port, BAUD115200, &logger());
+        _ax12Manager = new Comm::AX12CommManager(ax12Port, BAUD115200, Comm::AX12CommManager::USB2AX_CONTROLLER, &logger());
 		if (!_ax12Manager->open())
 		{
 			message = "The AX-12 are not available...";
 		}
 		else
-		{
-			connect(_ax12Manager, SIGNAL(requestTimeoutReceived(quint8)), this, SLOT(servoStatusTimeout(quint8)));
+        {
 			_ax12Manager->setRequestTimeout(200);
 			_ax12Manager->setReadingLoopMode(Comm::AX12CommManager::AUTO_MODE);
 			_ax12Manager->setTimerReadingLoopInterval(200);
 
 			_ax12MovementRunner = new Comm::Ax12MovementRunner(_ax12Manager, &_ax12Movements);
-			connect(_ax12MovementRunner, SIGNAL(movementFinished(bool,QString,QString)), this, SLOT(ax12MovementFinished()));
-
-			_ax12StatusListener = new Comm::AX12StatusListener(_ax12Manager);
-			connect(_ax12StatusListener, SIGNAL(allServoUpdated()), this, SLOT(servoStatus()));
-			_ax12StatusListener->startListening();
+            connect(_ax12MovementRunner, SIGNAL(movementFinished(bool,QString,QString)), this, SLOT(ax12MovementFinished()));
 		}
+
+        foreach(ServerAX12RequestManager* request, _ax12Requests)
+            request->setAX12CommManager(_ax12Manager);
 
 		_robotInterface = new Comm::RobotCommInterface(p, _ax12Manager, 0);
 		_robotInterface->disableNoticeOfReceiptChecking();
@@ -374,16 +374,13 @@ void NServer::resetStrategyFile(int strategyNum, const QString &filename)
 
 void NServer::askAx12Positions(NetworkCommInterface *networkInterface, const QList<quint8> &ids, bool recursive)
 {
-	if (!_ax12Manager || _requestedServoIds.contains(networkInterface) || !_ax12MovementRunner || _ax12MovementRunner->isRunnning())
+    if (!_ax12Manager)
 		return;
 
-	updateServoList(ids);
+    if (_ax12Requests.contains(networkInterface))
+        _ax12Requests[networkInterface] = new ServerAX12RequestManager(_ax12Manager, networkInterface);
 
-	if(_requestedServoIds.isEmpty())
-		_ax12Manager->requestAllServoStatus();
-
-	_requestedServoIds.insert(networkInterface, ids);
-    _requestedServoRecursivity[networkInterface] = recursive;
+    _ax12Requests[networkInterface]->setRequest(ids, recursive);
 }
 
 void NServer::moveAx12(float maxSpeed, QList<Comm::Ax12Info> &ax12s)
@@ -391,16 +388,17 @@ void NServer::moveAx12(float maxSpeed, QList<Comm::Ax12Info> &ax12s)
 	if (!_ax12Manager || _ax12MovementRunner->isRunnning())
 		return;
 
+    QList<quint8> ids;
 	foreach(const Comm::Ax12Info& info, ax12s)
 	{
-		updateServoList(info.id);
+        ids << info.id;
 		_ax12Manager->setGoal(info.id, info.angle, info.speed, info.torque, false);
 	}
 
 	if (maxSpeed > 0)
-		_ax12Manager->calculateSmoothServosSpeed(maxSpeed);
+        _ax12Manager->calculateSmoothServosSpeed(ids, maxSpeed);
 		
-	_ax12Manager->synchronize();
+    _ax12Manager->synchronize(ids);
 }
 
 void NServer::lockAx12(const QMap<quint8, bool> &servoLockInfo)
@@ -408,15 +406,13 @@ void NServer::lockAx12(const QMap<quint8, bool> &servoLockInfo)
 	if (!_ax12Manager || _ax12MovementRunner->isRunnning())
 		return;
 
-	updateServoList(servoLockInfo.keys());
-
+    QList<quint8> ids;
 	for(QMap<quint8, bool>::const_iterator it = servoLockInfo.constBegin(); it != servoLockInfo.constEnd(); ++it)
 	{
 		quint8 id = it.key();
 		bool locked = it.value();
 
-		if (!_ax12Manager->contains(id))
-			_ax12Manager->addServo(id);
+        ids << id;
 
 		if (locked)
 			_ax12Manager->lockServo(id, false);
@@ -424,33 +420,7 @@ void NServer::lockAx12(const QMap<quint8, bool> &servoLockInfo)
 			_ax12Manager->releaseServo(id, false);
 	}
 
-	_ax12Manager->synchronize();
-}
-
-void NServer::servoStatus()
-{
-	for(QHash<NetworkCommInterface*, QList<quint8> >::const_iterator it = _requestedServoIds.constBegin(); it != _requestedServoIds.constEnd(); ++it)
-	{
-		NetworkCommInterface* i = it.key();
-		const QList<quint8>& ids = *it;
-		QList<float> positions;
-		foreach(quint8 id, ids)
-			positions << _ax12Manager->getServoPosition(id);
-		i->sendAx12Positions(ids, positions);
-	}
-	_requestedServoIds.clear();
-}
-
-void NServer::servoStatusTimeout(quint8 id)
-{
-    for(QHash<NetworkCommInterface*, QList<quint8> >::iterator it = _requestedServoIds.begin(); it != _requestedServoIds.end();++it)
-	{
-        if (it->contains(id))
-        {
-            NetworkCommInterface* i = it.key();
-            i->sendAnnouncement(QByteArray("AX-12 status request timeout on id ").append(QByteArray::number(id)));
-        }
-	}
+    _ax12Manager->synchronize(ids);
 }
 
 QByteArray NServer::askAx12MovementFile()
@@ -478,33 +448,13 @@ void NServer::runAx12Movement(const QString& group, const QString& movement, flo
 	{
 		Q_ASSERT(!_ax12Manager->isReadingLoopStarted());
 
-		_ax12Manager->askStartReadingLoop();
 		_ax12MovementRunner->startMovement(group, movement, speedLimit);
 	}
 }
 
-void NServer::updateServoList(const QList<quint8> &ids)
-{
-	foreach(quint8 id, ids)
-	{
-		if (!_ax12Manager->contains(id))
-			_ax12Manager->addServo(id);
-	}
-
-	_ax12StatusListener->setIds(_ax12Manager->getAllServos());
-}
-
-void NServer::updateServoList(quint8 id)
-{
-	if (!_ax12Manager->contains(id))
-		_ax12Manager->addServo(id);
-
-	_ax12StatusListener->setIds(_ax12Manager->getAllServos());
-}
-
 void NServer::ax12MovementFinished()
 {
-	_ax12Manager->forceStopReadingLoop();
+
 }
 
 void NServer::strategyFinished()

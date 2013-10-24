@@ -109,12 +109,13 @@ void AX12::notifyCommandSent()
 
 //--------------------------------------------------------
 
-AX12CommManager::AX12CommManager() : _protocol(0), _nbReadingLoopRequest(0), _readingLoopMode(AUTO_MODE), _isBusy(false)
+AX12CommManager::AX12CommManager(ControllerMode mode)
+    : _controllerMode(mode), _protocol(0), _readingLoopMode(AUTO_MODE), _isBusy(false)
 {
 }
 
-AX12CommManager::AX12CommManager(const QString &portname, BaudRateType baudrate, Tools::AbstractLogger *logger) :
-	Tools::LoggerInterface(logger), _autoReadingLoop(false), _nbReadingLoopRequest(0), _readingLoopMode(AUTO_MODE), _isBusy(false)
+AX12CommManager::AX12CommManager(const QString &portname, BaudRateType baudrate, ControllerMode mode, Tools::AbstractLogger *logger) :
+    Tools::LoggerInterface(logger), _controllerMode(mode), _autoReadingLoop(false), _readingLoopMode(AUTO_MODE), _isBusy(false)
 {
 	QextSerialPort* port = new QextSerialPort(portname,  QextSerialPort::EventDriven);
 	port->setBaudRate(baudrate);
@@ -129,7 +130,7 @@ AX12CommManager::AX12CommManager(const QString &portname, BaudRateType baudrate,
 	_protocol->setDebugMode(true, false, false);
 
 	_readTimer = new QTimer(this);
-	connect(_readTimer, SIGNAL(timeout()), this, SLOT(requestAllServoStatus()));
+    connect(_readTimer, SIGNAL(timeout()), this, SLOT(requestAllServoStatusForReadingLoop()));
 
 	_requestTimeoutTimer = new QTimer(this);
 	_requestTimeoutTimer->setSingleShot(this);
@@ -178,39 +179,23 @@ void AX12CommManager::askStartReadingLoop()
 	if (!isOpened())
 		return;
 
-	if (_nbReadingLoopRequest == 0)
-	{
-		switch(_readingLoopMode)
-		{
-			case TIMER_MODE:
-				_readTimer->start();
-				break;
-			case AUTO_MODE:
-				_autoReadingLoop = true;
-				break;
-		}
-		requestAllServoStatus();
-	}
+    switch(_readingLoopMode)
+    {
+        case TIMER_MODE:
+            _readTimer->start();
+            break;
+        case AUTO_MODE:
+            _autoReadingLoop = true;
+            break;
+    }
 
-	++_nbReadingLoopRequest;
+    requestAllServoStatusForReadingLoop();
 }
 
 void AX12CommManager::askStopReadingLoop()
 {
-	--_nbReadingLoopRequest;
-
-	if (_nbReadingLoopRequest == 0)
-	{
-		_messagePendingList.clear();
-		_autoReadingLoop = false;
-		_readTimer->stop();
-	}
-}
-
-void AX12CommManager::forceStopReadingLoop()
-{
-	_nbReadingLoopRequest = 1;
-	askStopReadingLoop();
+    _autoReadingLoop = false;
+    _readTimer->stop();
 }
 
 void AX12CommManager::setReadingLoopMode(AX12CommManager::ReadingLoopMode mode)
@@ -233,29 +218,24 @@ void AX12CommManager::setRequestTimeout(int ms)
 	_requestTimeoutTimer->setInterval(ms);
 }
 
-void AX12CommManager::clearServoList()
-{
-	_servos.clear();
-}
-
 ProtocolAX12* AX12CommManager::getProtocol() const
 {
-	return _protocol;
+    return _protocol;
 }
 
-AX12 *AX12CommManager::addServo(quint8 id, float minAngle, float maxAngle)
+void AX12CommManager::setControllerMode(AX12CommManager::ControllerMode mode)
+{
+    _controllerMode = mode;
+}
+
+AX12CommManager::ControllerMode AX12CommManager::getControllerMode() const
+{
+    return _controllerMode;
+}
+
+void AX12CommManager::resetServo(quint8 id, float minAngle, float maxAngle)
 {
 	_servos.insert(id, AX12(minAngle, maxAngle));
-
-	if (_autoReadingLoop)
-		requestServoStatus(id);
-
-	return &_servos[id];
-}
-
-void AX12CommManager::removeServo(quint8 id)
-{
-	_servos.remove(id);
 }
 
 float AX12CommManager::getServoPosition(quint8 id) const
@@ -315,47 +295,61 @@ void AX12CommManager::releaseServo(quint8 id, bool synchronous)
 
 void AX12CommManager::messageReceived(quint8 instruction, const Comm::Data& data, quint8 id)
 {
-	// ignore messages sent to AX-12 (if RX & TX are connected together)
+    if (instruction == 0 && id == 0xFD && _controllerMode == USB2AX_CONTROLLER)
+    {
+        _requestTimeoutTimer->stop();
+        foreach(quint8 id, _currentMessage.ids)
+            readReceivedData(id, data);
 
-	if (instruction == 0 && _servos.contains(id))	// status instruction
+        QTimer::singleShot(1, this, SLOT(sendNextMessage()));
+        emit servosStatusUpdated(_currentMessage.ids);
+    }
+
+    else if (instruction == 0)
 	{
+        // ignore messages sent to AX-12 (if RX & TX are connected together)
+        //standard reading
 		_requestTimeoutTimer->stop();
+        readReceivedData(id, data);
 
-		// extract position, speed and load from data
-		Comm::Data d(data);
-		quint16 pos, speed, load;
-		d.take(pos).take(speed).take(load);
+        QTimer::singleShot(1, this, SLOT(sendNextMessage()));
 
-		float currentPos, currentSpeed, currentLoad;
-		currentPos = (float)pos * 300. / 1023.;
-
-		if (speed > 1023)
-			speed -= 1024;
-		currentSpeed = (float)speed * 114. / 1023.;
-
-		if (load > 1023)
-			load -= 1024;
-		currentLoad = (float)load * 100. / 2047.;
-
-		_servos[id].setState(currentPos, currentSpeed, currentLoad);
-
-		QTimer::singleShot(1, this, SLOT(sendNextMessage()));
-		emit servosStatusUpdated(id);
+        QList<quint8> ids;
+        ids << id;
+        emit servosStatusUpdated(ids);
 	}
+}
+
+void AX12CommManager::readReceivedData(quint8 id, Comm::Data data)
+{
+    // extract position, speed and load from data
+
+    quint16 pos, speed, load;
+    data.take(pos).take(speed).take(load);
+
+    float currentPos, currentSpeed, currentLoad;
+    currentPos = (float)pos * 300. / 1023.;
+
+    if (speed > 1023)
+        speed -= 1024;
+    currentSpeed = (float)speed * 114. / 1023.;
+
+    if (load > 1023)
+        load -= 1024;
+    currentLoad = (float)load * 100. / 2047.;
+
+    _servos[id].setState(currentPos, currentSpeed, currentLoad);
 }
 
 void AX12CommManager::setGoal(quint8 servoId, float angle, float speed, float torque, bool synchronous)
 {
-	if (_servos.contains(servoId))
-	{
-		AX12& servo = _servos[servoId];
+    AX12& servo = _servos[servoId];
 
-		servo.setGoal(angle, torque);
-		servo.setSpeed(speed);
+    servo.setGoal(angle, torque);
+    servo.setSpeed(speed);
 
-		if (synchronous)
-			synchronize(servoId);
-	}
+    if (synchronous)
+        synchronize(servoId);
 }
 
 double AX12CommManager::calculateSmoothServosSpeed(const QList<quint8>& servoIds, float maxSpeed)
@@ -365,38 +359,27 @@ double AX12CommManager::calculateSmoothServosSpeed(const QList<quint8>& servoIds
 	float maxAngleDiff = 0;
 	foreach(quint8 id, servoIds)
 	{
-		if (_servos.contains(id))
-		{
-			AX12& servo = _servos[id];
-			if (servo.getPosition() >= 0 && servo.isStopped())	// ignore if current position hasn't been received yet
-			{
-				float angleDiff = servo.getAngleDifference();
+        AX12& servo = _servos[id];
+        if (servo.getPosition() >= 0 && servo.isStopped())	// ignore if current position hasn't been received yet
+        {
+            float angleDiff = servo.getAngleDifference();
 
-				if (angleDiff > maxAngleDiff)
-					maxAngleDiff = angleDiff;
-			}
-		}
+            if (angleDiff > maxAngleDiff)
+                maxAngleDiff = angleDiff;
+        }
 	}
 
 	float movementTime = (maxAngleDiff > 0 ? maxAngleDiff : 1) / maxSpeed;
 	double movementTimeMs = (movementTime * 60. * 1000.) / 360.;
-	
-	foreach(quint8 id, servoIds)
-	{
-		if (_servos.contains(id))
-		{
-			AX12& servo = _servos[id];
-			if (servo.isStopped())
-				servo.setSpeed(servo.getAngleDifference() / movementTime);
-		}
-	}
+
+    foreach(quint8 id, servoIds)
+    {
+        AX12& servo = _servos[id];
+        if (servo.isStopped())
+            servo.setSpeed(servo.getAngleDifference() / movementTime);
+    }
 	
 	return movementTimeMs;
-}
-
-double AX12CommManager::calculateSmoothServosSpeed(float maxSpeed)
-{
-	return calculateSmoothServosSpeed(_servos.keys(), maxSpeed);
 }
 
 void AX12CommManager::addServoCommandData(AX12& ax12, Data& data)
@@ -421,116 +404,172 @@ void AX12CommManager::sendServoMultiSynchronizeMessage(const QList<quint8>& ids)
 	// Note: cannot send more than 143 bytes at once!
 	
 	Data data(Comm::LittleEndian);
-	data.add((quint8)0x1e);	// AX-12 memory address to write to
-	data.add((quint8)6);	// write 6 bytes per servo
+    data.add((quint8)0x1e);	// AX-12 memory address to write to
+    data.add((quint8)6);	// write 6 bytes per servo
 
-	int i=0;
-	foreach(quint8 id, ids)
-	{
-		if (_servos.contains(id))
-		{
-			AX12& servo = _servos[id];
-			
-			if (i > 9)		// send data if reach max length in one frame
-			{
-				_protocol->sendMessage(0xfe, ProtocolAX12::SYNC_WRITE, data);
-				data.clear();
-				data.add((quint8)0x1e);
-				data.add((quint8)6);
+    int i=0;
+    foreach(quint8 id, ids)
+    {
+        AX12& servo = _servos[id];
 
-				i = 0;
-			}
+        if (i > 9)		// send data if reach max length in one frame
+        {
+            _protocol->sendMessage(0xfe, ProtocolAX12::SYNC_WRITE, data);
+            data.clear();
+            data.add((quint8)0x1e);
+            data.add((quint8)6);
 
-			data.add(id);
-			addServoCommandData(servo, data);
+            i = 0;
+        }
 
-			servo.notifyCommandSent();
-		}
-	}
+        data.add(id);
+        addServoCommandData(servo, data);
 
-	_protocol->sendMessage(0xfe, ProtocolAX12::SYNC_WRITE, data);
+        servo.notifyCommandSent();
+    }
+
+    _protocol->sendMessage(0xfe, ProtocolAX12::SYNC_WRITE, data);
 }
 
 void AX12CommManager::sendServoSynchronizeMessage(quint8 id)
 {
-	if (!_protocol || !_protocol->isOpened())
-		return;
+    if (!_protocol || !_protocol->isOpened())
+        return;
 
-	if (_servos.contains(id))
-	{
-		AX12& servo = _servos[id];
-		float position, speed, torque;
-		servo.getCommand(position, speed, torque);
+    AX12& servo = _servos[id];
+    float position, speed, torque;
+    servo.getCommand(position, speed, torque);
 
-		Data data(Comm::LittleEndian);
-		data.add((quint8)0x1e);	// AX-12 memory address to write to
-		addServoCommandData(servo, data);
+    Data data(Comm::LittleEndian);
+    data.add((quint8)0x1e);	// AX-12 memory address to write to
+    addServoCommandData(servo, data);
 
-		_protocol->sendMessage(id, ProtocolAX12::WRITE_DATA, data);
+    _protocol->sendMessage(id, ProtocolAX12::WRITE_DATA, data);
 
-		servo.notifyCommandSent();
-	}
+    servo.notifyCommandSent();
 }
 
 
 void AX12CommManager::sendServoRequestStatusMessage(quint8 id)
 {
 	if (!_protocol || !_protocol->isOpened())
-		return;
-		
-	if (_servos.contains(id))
-	{
-		Data data(Comm::LittleEndian);
+        return;
 
-		data.add((quint8)0x24);	// read from address 0x24
-		data.add((quint8)6);	// read 6 bytes (current position, speed & load)
+    Data data(Comm::LittleEndian);
 
-		_protocol->sendMessage(id, ProtocolAX12::READ_DATA, data);
-		_requestTimeoutTimer->start();
-	}
+    data.add((quint8)0x24);	// read from address 0x24
+    data.add((quint8)6);	// read 6 bytes (current position, speed & load)
+
+    _protocol->sendMessage(id, ProtocolAX12::READ_DATA, data);
+    _requestTimeoutTimer->start();
 }
 
-void AX12CommManager::requestServoStatus(quint8 id)
+void AX12CommManager::sendServoMultiRequestStatusMessage(const QList<quint8> &ids)
 {
+    if (!_protocol || !_protocol->isOpened())
+        return;
+
+    Q_ASSERT(_controllerMode == USB2AX_CONTROLLER);
+
+    Data data(Comm::LittleEndian);
+
+    quint8 commID = 0xFD;
+    data.add((quint8)0x24);	// read from address 0x24
+    data.add((quint8)6);	// read 6 bytes (current position, speed & load)
+
+    foreach(quint8 id, ids)
+        data.add(id);
+
+    _protocol->sendMessage(commID, ProtocolAX12::SYNC_READ, data);
+    _requestTimeoutTimer->start();
+}
+
+void AX12CommManager::requestServoStatus(quint8 id, bool loop)
+{
+    if (loop)
+        _loopDemandCount[id]++;
+
 	CommMessage msg(id, CommMessage::StatusRequest);
 	_messagePendingList << msg;
-	askSendNextMessage();
+    askSendNextRequestMessage();
+
+    if (loop && !isReadingLoopStarted())
+        askStartReadingLoop();
 }
 
-void AX12CommManager::requestAllServoStatus()
+void AX12CommManager::requestServoStatus(const QList<quint8> &ids, bool loop)
 {
-	QList<quint8> ids = _servos.keys();
-	foreach(quint8 id, ids)
-	{
-		CommMessage msg(id, CommMessage::StatusRequest);
-		_messagePendingList << msg; //StatusRequest message support only one servo
-	}
-	askSendNextMessage();
+    if (loop)
+    {
+        foreach(quint8 id, ids)
+            _loopDemandCount[id]++;
+    }
+
+    CommMessage msg(ids, CommMessage::StatusRequest);
+    _messagePendingList << msg;
+    askSendNextRequestMessage();
+
+    if (loop && !isReadingLoopStarted())
+        askStartReadingLoop();
+}
+
+void AX12CommManager::requestAllServoStatusForReadingLoop()
+{
+    QList<quint8> ids;
+    for(QHash<quint8, int>::const_iterator it = _loopDemandCount.constBegin(); it != _loopDemandCount.constEnd(); ++it)
+    {
+        quint8 id = it.key();
+        int nb = *it;
+
+        if (nb > 0)
+            ids << id;
+    }
+
+    CommMessage msg(ids, CommMessage::StatusRequest);
+    _messagePendingList << msg;
+    askSendNextRequestMessage();
+}
+
+void AX12CommManager::cancelLoopStatusRequest(quint8 id)
+{
+    _loopDemandCount[id]--;
+    if (_loopDemandCount[id] <= 0)
+        _loopDemandCount.remove(id);
+
+    if (_loopDemandCount.isEmpty())
+        askStopReadingLoop();
+}
+
+void AX12CommManager::cancelLoopStatusRequest(const QList<quint8> &ids)
+{
+     foreach(quint8 id, ids)
+         cancelLoopStatusRequest(id);
 }
 
 void AX12CommManager::synchronize(quint8 id)
 {
 	CommMessage msg(id, CommMessage::Synchronization);
 	_messagePendingList << msg;
-	askSendNextMessage();
+    askSendNextSynchroMessage();
 }
 
 void AX12CommManager::synchronize(const QList<quint8>& servoIds)
 {
 	CommMessage msg(servoIds, CommMessage::Synchronization);
 	_messagePendingList << msg;
-	askSendNextMessage();
+    askSendNextSynchroMessage();
 }
 
-void AX12CommManager::synchronize()
+void AX12CommManager::askSendNextRequestMessage()
 {
-	synchronize(_servos.keys());
-}
-
-void AX12CommManager::askSendNextMessage()
-{
-	if (!_isBusy)
+    if (!_isBusy)
 		sendNextMessage();
+}
+
+void AX12CommManager::askSendNextSynchroMessage()
+{
+    if (_controllerMode != NO_CONTROLLER || !_isBusy)
+        sendNextMessage();
 }
 
 void AX12CommManager::sendNextMessage()
@@ -545,20 +584,33 @@ void AX12CommManager::sendNextMessage()
 			{
 				case CommMessage::StatusRequest:
 				{
-					quint8 id = _currentMessage.ids.first();
-					sendServoRequestStatusMessage(id);
-					if (_autoReadingLoop && contains(id))
-						requestServoStatus(id);
+                    if (_controllerMode == NO_CONTROLLER)
+                    {
+                        quint8 id = _currentMessage.ids.first();
+                        sendServoRequestStatusMessage(id);
+                        if (_autoReadingLoop)
+                            requestServoStatus(id);
+                    }
+                    else
+                    {
+                        sendServoMultiRequestStatusMessage(_currentMessage.ids);
+                        if (_autoReadingLoop)
+                            requestServoStatus(_currentMessage.ids);
+                    }
+
 					break;
 				}
 				case CommMessage::Synchronization:
 				{
 					if (_currentMessage.ids.count() > 1)
 					{
-						double estimatedTime = 1 + 0.7 * _currentMessage.ids.count() + 2;
-						sendServoMultiSynchronizeMessage(_currentMessage.ids);
-						QTimer::singleShot(3*estimatedTime, this, SLOT(sendNextMessage()));
-					}
+                        double estimatedTime = 0;
+                        if (_controllerMode == NO_CONTROLLER)
+                            estimatedTime = 1 + 0.7 * _currentMessage.ids.count() + 2;
+
+                        sendServoMultiSynchronizeMessage(_currentMessage.ids);
+                        QTimer::singleShot(3*estimatedTime, this, SLOT(sendNextMessage()));
+                    }
 					else
 					{
 						sendServoSynchronizeMessage(_currentMessage.ids.first());
@@ -590,14 +642,14 @@ void AX12CommManager::sendNextMessage()
 
 void AX12CommManager::requestTimeout()
 {
-	if (!_currentMessage.ids.isEmpty())
+    foreach(quint8 id, _currentMessage.ids)
     {
-        int id = _currentMessage.ids.first();
         if (_servos.contains(id))
         {
             AX12& ax12 = _servos[id];
             ax12.setTimeout();
         }
-        emit requestTimeoutReceived(id);
     }
+
+    emit requestTimeoutReceived(_currentMessage.ids);
 }

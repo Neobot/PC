@@ -22,6 +22,8 @@ namespace Comm
 			
 			bool hasUnavailableServo() const;
 			const QList<quint8>& getUnavailableServo() const;
+
+            bool isListening() const;
 			
 		public slots:
 			void startListening();
@@ -33,12 +35,15 @@ namespace Comm
 			QSet<quint8> _updatedIds;
 			QSet<quint8> _currentUnavailableIds;
 			QList<quint8> _unavailableIds;
+            bool _isListenning;
 			
 			void sendAllServoUpdatedMessage();
+
+            void registerId(quint8 id);
 			
 		private slots:
-			void registerId(quint8 id);
-			void registerUnavailableId(quint8 id);
+            void registerId(const QList<quint8>& ids);
+            void registerUnavailableId(const QList<quint8>& id);
 	};
 }
 

@@ -109,7 +109,7 @@ int NeobotStrategyLauncher::exec(const NeobotMainOptions& options, const QCoreAp
 			_protocol = _simulationProtocol;
 		}
 
-		Comm::AX12CommManager ax12Manager(options.ax12Portname.c_str(), BAUD1000000, _logger);
+        Comm::AX12CommManager ax12Manager(options.ax12Portname.c_str(), BAUD1000000, Comm::AX12CommManager::USB2AX_CONTROLLER, _logger);
 		ax12Manager.open();
 
 		Comm::RobotCommInterface robot(_protocol, &ax12Manager, _logger);

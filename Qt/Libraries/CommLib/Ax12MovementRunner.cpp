@@ -31,6 +31,8 @@ bool Ax12MovementRunner::startMovement(const QString &group, const QString &mvt,
 	_currentMvt = mvt;
 	_speedLimit = speedLimit;
 
+    _comm->requestServoStatus(_ids, true);
+
 	if (!_positions.isEmpty())
 	{
 		goToNextPosition();
@@ -104,6 +106,7 @@ void Ax12MovementRunner::timeout()
 void Ax12MovementRunner::movementEnd(bool status)
 {
 	_listener->stopListening();
+    _comm->cancelLoopStatusRequest(_ids);
 	_isRunning = false;
 	_asservedIds.clear();
 	_timer->stop();

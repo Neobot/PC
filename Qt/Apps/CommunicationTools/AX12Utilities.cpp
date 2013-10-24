@@ -37,7 +37,7 @@ bool AX12Utilities::openConnection(const QString& baudrate)
 	{
 		ui->gbScan->setEnabled(false);
 
-		_manager = new AX12CommManager(ui->cbPort->currentText(), CommUtil::getQextSerialPortBaudrate(baudrate), _logger);
+        _manager = new AX12CommManager(ui->cbPort->currentText(), CommUtil::getQextSerialPortBaudrate(baudrate), AX12CommManager::USB2AX_CONTROLLER, _logger);
 		return _manager->open();
 	}
 	else
@@ -76,22 +76,21 @@ void AX12Utilities::scanNextBaudrate()
 		if (!openConnection(baudrate))
 			logger() << "Error: Cannot open the connection" << Tools::endl;
 
-		_manager->clearServoList();
+        connect(_manager, SIGNAL(servosStatusUpdated(quint8)), this, SLOT(scanServosStatusUpdated(quint8)));
+        connect(_manager, SIGNAL(requestTimeoutReceived(quint8)), this, SLOT(scanRequestTimeoutReceived(quint8)));
+        connect(_manager, SIGNAL(allMessagesSent()), this, SLOT(allIdReceived()));
+
 		if (ui->rbAnyID->isChecked() || ui->rbAnyAny->isChecked())
 		{
+            QList<quint8> ids;
 			for(quint8 i = 0; i < 254; ++i)
-				_manager->addServo(i);
+                ids << i;
+            _manager->requestServoStatus(ids);
 		}
 		else
 		{
-			_manager->addServo(ui->spScannedId->value());
+            _manager->requestServoStatus(ui->spScannedId->value());
 		}
-
-		connect(_manager, SIGNAL(servosStatusUpdated(quint8)), this, SLOT(scanServosStatusUpdated(quint8)));
-		connect(_manager, SIGNAL(requestTimeoutReceived(quint8)), this, SLOT(scanRequestTimeoutReceived(quint8)));
-		connect(_manager, SIGNAL(allMessagesSent()), this, SLOT(allIdReceived()));
-
-		_manager->requestAllServoStatus();
 	}
 	else
 	{
@@ -100,14 +99,15 @@ void AX12Utilities::scanNextBaudrate()
 	}
 }
 
-void AX12Utilities::scanServosStatusUpdated(quint8 id)
+void AX12Utilities::scanServosStatusUpdated(const QList<quint8> &ids)
 {
-	logger() << "ID " << id << " found!" << Tools::endl;
+    foreach(quint8 id, ids)
+        logger() << "ID " << id << " found!" << Tools::endl;
 }
 
-void AX12Utilities::scanRequestTimeoutReceived(quint8 id)
+void AX12Utilities::scanRequestTimeoutReceived(const QList<quint8>& ids)
 {
-	Q_UNUSED(id);
+    Q_UNUSED(ids);
 }
 
 void AX12Utilities::allIdReceived()

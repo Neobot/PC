@@ -11,7 +11,7 @@ AX12Playground::AX12Playground(QWidget *parent) :
 	_logger = new StdoutLogger();
 	_logger->setBase(16);
 
-	_commManager = new Comm::AX12CommManager("/dev/ttyS3", BAUD115200, _logger);
+    _commManager = new Comm::AX12CommManager("/dev/ttyS3", BAUD115200, Comm::AX12CommManager::USB2AX_CONTROLLER, _logger);
 	_commManager->open();
 
 
@@ -33,7 +33,6 @@ AX12Playground::AX12Playground(QWidget *parent) :
 						   65, 235, 60, 240, 15, 285);
 
 	_commManager->setReadingLoopMode(Comm::AX12CommManager::AUTO_MODE);
-	_commManager->askStartReadingLoop();
 
 	_timerRefresh = new QTimer(this);
 	connect(_timerRefresh, SIGNAL(timeout()), this, SLOT(timerRefreshTick()));
@@ -256,7 +255,7 @@ void AX12Playground::on_btnSendAll_clicked()
 	_commManager->setGoal(17, p17, s, t, false);
 	_commManager->setGoal(18, p18, s, t, false);
 
-	_commManager->synchronize();
+    //_commManager->synchronize();
 }
 
 void AX12Playground::on_btnGoCoord_clicked()
@@ -343,6 +342,6 @@ void AX12Playground::move()
 	float speed = ui->sbMoveCoordSpeed->value();
 
 	_hexapod->moveCenterTo(x, y, z, xr, yr, zr, 100.0);
-	_commManager->calculateSmoothServosSpeed(speed);
-	_commManager->synchronize();
+    //_commManager->calculateSmoothServosSpeed(speed);
+    //_commManager->synchronize();
 }

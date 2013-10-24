@@ -16,9 +16,9 @@ ThreeAxisArm::ThreeAxisArm(AbstractLogger* logger, Comm::AX12CommManager* commMa
 	_servo2MinAngle(servo2MinAngle), _servo2MaxAngle(servo2MaxAngle),
 	_servo3MinAngle(servo3MinAngle), _servo3MaxAngle(servo3MaxAngle)
 {
-	_commManager->addServo(servo1Id, servo1MinAngle, servo1MaxAngle);
-	_commManager->addServo(servo2Id, servo2MinAngle, servo2MaxAngle);
-	_commManager->addServo(servo3Id, servo3MinAngle, servo3MaxAngle);
+    _commManager->resetServo(servo1Id, servo1MinAngle, servo1MaxAngle);
+    _commManager->resetServo(servo2Id, servo2MinAngle, servo2MaxAngle);
+    _commManager->resetServo(servo3Id, servo3MinAngle, servo3MaxAngle);
 }
 
 bool ThreeAxisArm::checkAngles(float servo1angle, float servo2angle, float servo3angle)
@@ -67,5 +67,5 @@ void ThreeAxisArm::moveTo(double x, double y, double z, float speed)
 	_commManager->setGoal(2, servo2goal, speed, 100.0, false);
 	_commManager->setGoal(3, servo3goal, speed, 100.0, false);
 
-	_commManager->synchronize();
+    //_commManager->synchronize();
 }

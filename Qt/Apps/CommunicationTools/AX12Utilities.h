@@ -31,8 +31,8 @@ private:
 private slots:
 	void scan();
 	void scanNextBaudrate();
-	void scanServosStatusUpdated(quint8 id);
-	void scanRequestTimeoutReceived(quint8 id);
+    void scanServosStatusUpdated(const QList<quint8>& ids);
+    void scanRequestTimeoutReceived(const QList<quint8>& ids);
 	void allIdReceived();
 };
 

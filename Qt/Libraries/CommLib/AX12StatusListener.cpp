@@ -4,7 +4,7 @@
 using namespace Comm;
 
 AX12StatusListener::AX12StatusListener(AX12CommManager* manager, QObject* parent) 
-	: QObject(parent), _manager(manager)
+    : QObject(parent), _manager(manager), _isListenning(false)
 {
 }
 
@@ -21,30 +21,41 @@ void  AX12StatusListener::sendAllServoUpdatedMessage()
 	_updatedIds.clear();
 	_currentUnavailableIds.clear();
 	_unavailableIds = _currentUnavailableIds.toList();
-	emit allServoUpdated();
+    emit allServoUpdated();
 }
 
 void AX12StatusListener::registerId(quint8 id)
 {
-	if (_idsToListen.contains(id))
-	{
-		if (_updatedIds.contains(id))
-			sendAllServoUpdatedMessage();
+    if (_idsToListen.contains(id))
+    {
+        if (_updatedIds.contains(id))
+            sendAllServoUpdatedMessage();
 
-		_updatedIds.insert(id);
+        _updatedIds.insert(id);
 
-		if (_updatedIds == _idsToListen)
-			sendAllServoUpdatedMessage();
-	}		
+        if (_updatedIds == _idsToListen)
+            sendAllServoUpdatedMessage();
+    }
 }
 
-void AX12StatusListener::registerUnavailableId(quint8 id)
+void AX12StatusListener::registerId(const QList<quint8> &ids)
 {
-	if (_idsToListen.contains(id))
-	{
-		_currentUnavailableIds.insert(id);
-		registerId(id);
-	}
+    foreach(quint8 id, ids)
+    {
+        registerId(id);
+    }
+}
+
+void AX12StatusListener::registerUnavailableId(const QList<quint8>& ids)
+{
+    foreach(quint8 id, ids)
+    {
+        if (_idsToListen.contains(id))
+        {
+            _currentUnavailableIds.insert(id);
+            registerId(id);
+        }
+    }
 }
 
 bool AX12StatusListener::hasUnavailableServo() const
@@ -54,17 +65,24 @@ bool AX12StatusListener::hasUnavailableServo() const
 
 const QList<quint8>& AX12StatusListener::getUnavailableServo() const
 {
-	return _unavailableIds;
+    return _unavailableIds;
+}
+
+bool AX12StatusListener::isListening() const
+{
+    return _isListenning;
 }
 
 void AX12StatusListener::startListening()
 {
-	connect(_manager, SIGNAL(servosStatusUpdated(quint8)), this, SLOT(registerId(quint8)));
-	connect(_manager, SIGNAL(requestTimeoutReceived(quint8)), this, SLOT(registerUnavailableId(quint8)));
+    connect(_manager, SIGNAL(servosStatusUpdated(QList<quint8>)), this, SLOT(registerId(QList<quint8>)));
+    connect(_manager, SIGNAL(requestTimeoutReceived(QList<quint8>)), this, SLOT(registerUnavailableId(QList<quint8>)));
+    _isListenning = true;
 }
 
 void AX12StatusListener::stopListening()
 {
-	disconnect(_manager, SIGNAL(servosStatusUpdated(quint8)), this, SLOT(registerId(quint8)));
-	disconnect(_manager, SIGNAL(requestTimeoutReceived(quint8)), this, SLOT(registerUnavailableId(quint8)));
+    disconnect(_manager, SIGNAL(servosStatusUpdated(QList<quint8>)), this, SLOT(registerId(QList<quint8>)));
+    disconnect(_manager, SIGNAL(requestTimeoutReceived(QList<quint8>)), this, SLOT(registerUnavailableId(QList<quint8>)));
+    _isListenning = false;
 }
