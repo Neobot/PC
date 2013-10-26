@@ -24,6 +24,7 @@ namespace Comm
 			const QList<quint8>& getUnavailableServo() const;
 
             bool isListening() const;
+            void setManager(AX12CommManager* manager);
 			
 		public slots:
 			void startListening();

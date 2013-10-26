@@ -2,6 +2,8 @@
 #define SERVERAX12REQUESTMANAGER_H
 
 #include <QObject>
+#include <QTimer>
+#include <QHash>
 
 namespace Comm
 {
@@ -26,13 +28,15 @@ private:
     NetworkCommInterface* _interface;
 
     QList<quint8> _requestedAX12Ids;
+    QHash<quint8, bool> _timeoutServo;
     bool _recursive;
     Comm::AX12StatusListener* _ax12StatusListener;
 
+    QTimer* _recursiveTimer;
+
 private slots:
-    void allServoUpdated();
-    void servoStatusTimeout(const QList<quint8>& ids);
-    
+    void sendPositions();
+    void allServoUpdated();    
 };
 
 #endif // SERVERAX12REQUESTMANAGER_H

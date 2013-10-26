@@ -218,14 +218,14 @@ void NServer::cleanRobotConnection()
 	delete _simulator;
 	_simulator = 0;
 
+    foreach(ServerAX12RequestManager* request, _ax12Requests)
+        request->setAX12CommManager(0);
+
 	delete _ax12Manager;
 	_ax12Manager = 0;
 
 	delete _ax12MovementRunner;
 	_ax12MovementRunner = 0;
-
-    foreach(ServerAX12RequestManager* request, _ax12Requests)
-        request->setAX12CommManager(0);
 }
 
 bool NServer::pingReceived()
@@ -377,7 +377,7 @@ void NServer::askAx12Positions(NetworkCommInterface *networkInterface, const QLi
     if (!_ax12Manager)
 		return;
 
-    if (_ax12Requests.contains(networkInterface))
+    if (!_ax12Requests.contains(networkInterface))
         _ax12Requests[networkInterface] = new ServerAX12RequestManager(_ax12Manager, networkInterface);
 
     _ax12Requests[networkInterface]->setRequest(ids, recursive);

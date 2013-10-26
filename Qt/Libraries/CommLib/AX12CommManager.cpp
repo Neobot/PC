@@ -67,6 +67,11 @@ void AX12::releaseServo()
     _maxTorque = 0;
 }
 
+bool AX12::isTimeout() const
+{
+    return _currentPosition < 0;
+}
+
 void AX12::setTimeout()
 {
     _currentPosition = -1;
@@ -133,16 +138,16 @@ AX12CommManager::AX12CommManager(const QString &portname, BaudRateType baudrate,
     connect(_readTimer, SIGNAL(timeout()), this, SLOT(requestAllServoStatusForReadingLoop()));
 
 	_requestTimeoutTimer = new QTimer(this);
-	_requestTimeoutTimer->setSingleShot(this);
+    _requestTimeoutTimer->setSingleShot(this);
 	_requestTimeoutTimer->setInterval(3); //+2 with USB
 	connect(_requestTimeoutTimer, SIGNAL(timeout()), this, SLOT(requestTimeout()));
 
-	connect(this, SIGNAL(requestTimeoutReceived(quint8)), this, SLOT(sendNextMessage()));
+    connect(this, SIGNAL(requestTimeoutReceived(QList<quint8>)), this, SLOT(sendNextMessage()));
 }
 
 AX12CommManager::~AX12CommManager()
 {
-	if (_protocol)
+    if (_protocol)
 	{
 		_messagePendingList.clear();
 		_readTimer->stop();
@@ -235,7 +240,15 @@ AX12CommManager::ControllerMode AX12CommManager::getControllerMode() const
 
 void AX12CommManager::resetServo(quint8 id, float minAngle, float maxAngle)
 {
-	_servos.insert(id, AX12(minAngle, maxAngle));
+    _servos.insert(id, AX12(minAngle, maxAngle));
+}
+
+bool AX12CommManager::isServoTimeout(quint8 id) const
+{
+    if (_servos.contains(id))
+        return _servos[id].isTimeout();
+    else
+        return false;
 }
 
 float AX12CommManager::getServoPosition(quint8 id) const
@@ -644,11 +657,8 @@ void AX12CommManager::requestTimeout()
 {
     foreach(quint8 id, _currentMessage.ids)
     {
-        if (_servos.contains(id))
-        {
-            AX12& ax12 = _servos[id];
-            ax12.setTimeout();
-        }
+        AX12& ax12 = _servos[id];
+        ax12.setTimeout();
     }
 
     emit requestTimeoutReceived(_currentMessage.ids);

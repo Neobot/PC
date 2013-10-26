@@ -73,8 +73,19 @@ bool AX12StatusListener::isListening() const
     return _isListenning;
 }
 
+void AX12StatusListener::setManager(AX12CommManager *manager)
+{
+    if (isListening())
+        stopListening();
+
+    _manager = manager;
+}
+
 void AX12StatusListener::startListening()
 {
+    if (!_manager)
+        return;
+
     connect(_manager, SIGNAL(servosStatusUpdated(QList<quint8>)), this, SLOT(registerId(QList<quint8>)));
     connect(_manager, SIGNAL(requestTimeoutReceived(QList<quint8>)), this, SLOT(registerUnavailableId(QList<quint8>)));
     _isListenning = true;
@@ -82,6 +93,9 @@ void AX12StatusListener::startListening()
 
 void AX12StatusListener::stopListening()
 {
+    if (!_manager)
+        return;
+
     disconnect(_manager, SIGNAL(servosStatusUpdated(QList<quint8>)), this, SLOT(registerId(QList<quint8>)));
     disconnect(_manager, SIGNAL(requestTimeoutReceived(QList<quint8>)), this, SLOT(registerUnavailableId(QList<quint8>)));
     _isListenning = false;

@@ -25,6 +25,7 @@ namespace Comm
 		void lockServo();
 		void releaseServo();
 
+        bool isTimeout() const;
         void setTimeout();
 		void setState(float position, float speed, float load);
 		void getCommand(float &position, float &speed, float &torque) const;
@@ -89,6 +90,7 @@ namespace Comm
 
         void resetServo(quint8 id, float minAngle = 0, float maxAngle = 300);
 		
+        bool isServoTimeout(quint8 id) const;
 		float getServoPosition(quint8 id) const;
 		float getServoLoad(quint8 id) const;
 		const AX12 getAX12(quint8 id) const;
