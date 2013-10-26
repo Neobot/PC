@@ -3,7 +3,7 @@
 #include "AX12StatusListener.h"
 #include "AX12CommManager.h"
 
-ServerAX12RequestManager::ServerAX12RequestManager(Comm::AX12CommManager *ax12Manager, NetworkCommInterface *commInterface, QObject *parent) :
+ServerAX12RequestManager::ServerAX12RequestManager(Comm::AX12CommManager *ax12Manager, NetworkCommInterface *commInterface, int updateIntervalInMs, QObject *parent) :
     QObject(parent), _ax12Manager(0), _interface(commInterface), _recursive(false)
 {
     _ax12StatusListener = new Comm::AX12StatusListener(ax12Manager, this);
@@ -11,7 +11,7 @@ ServerAX12RequestManager::ServerAX12RequestManager(Comm::AX12CommManager *ax12Ma
 
     setAX12CommManager(ax12Manager);
     _recursiveTimer = new QTimer;
-    _recursiveTimer->setInterval(200);
+    _recursiveTimer->setInterval(updateIntervalInMs);
     connect(_recursiveTimer, SIGNAL(timeout()), this, SLOT(sendPositions()));
 }
 

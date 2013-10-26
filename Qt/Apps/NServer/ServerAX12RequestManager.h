@@ -17,7 +17,7 @@ class ServerAX12RequestManager : public QObject
 {
     Q_OBJECT
 public:
-    explicit ServerAX12RequestManager(Comm::AX12CommManager* ax12Manager, NetworkCommInterface* commInterface, QObject *parent = 0);
+    explicit ServerAX12RequestManager(Comm::AX12CommManager* ax12Manager, NetworkCommInterface* commInterface, int updateIntervalInMs, QObject *parent = 0);
     ~ServerAX12RequestManager();
 
     void setAX12CommManager(Comm::AX12CommManager* ax12Manager);

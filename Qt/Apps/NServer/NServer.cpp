@@ -17,6 +17,9 @@ const double SIMULATION_SPEED = 0.4;
 const QString NEOBOT_SERVER_DATA_DIR_NAME = "NeobotServerData";
 const QString AX12_MOVEMENT_FILENAME = "Ax12Movements.nax";
 
+const QString USE_AX12_CONTROLLER_KEY = "UseAX12Controller";
+const QString AX12_UPDATE_INTERVAL_KEY = "AX12Updateinterval";
+
 NServer::NServer(Tools::AbstractLogger *logger, QObject *parent) :
 	QObject(parent), Tools::LoggerInterface(logger), _settings("Neobot", "NServer"), _tcpServer(0), _nextConnectionIndex(0), _robotInterface(0),
     _simulator(0), _strategyManager(0), _currentStrategy(0), _currentStrategyId(-1), _robotConnected(false), _ax12Manager(0), _ax12MovementRunner(0)
@@ -27,11 +30,22 @@ NServer::NServer(Tools::AbstractLogger *logger, QObject *parent) :
 	_dataDirectory = Tools::getDataDirectory();
 	_dataDirectory.mkdir(NEOBOT_SERVER_DATA_DIR_NAME);
 	_dataDirectory.cd(NEOBOT_SERVER_DATA_DIR_NAME);
+
+    initServerSettings();
 }
 
 NServer::~NServer()
 {
 	cleanRobotConnection();
+}
+
+void NServer::initServerSettings()
+{
+    if (!_settings.contains(USE_AX12_CONTROLLER_KEY))
+        _settings.setValue(USE_AX12_CONTROLLER_KEY, true);
+
+    if (!_settings.contains(AX12_UPDATE_INTERVAL_KEY))
+        _settings.setValue(AX12_UPDATE_INTERVAL_KEY, 200);
 }
 
 bool NServer::start()
@@ -76,7 +90,7 @@ bool NServer::start()
 
 	QTimer::singleShot(20 * 1000, this, SLOT(autoStart()));
 
-	return true;
+    return true;
 }
 
 void NServer::startPing()
@@ -278,7 +292,11 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
 			_simulator = new Simulator(simulationProtocol, SIMULATION_REFRESH, SIMULATION_SPEED);
 		}
 
-        _ax12Manager = new Comm::AX12CommManager(ax12Port, BAUD115200, Comm::AX12CommManager::USB2AX_CONTROLLER, &logger());
+        Comm::AX12CommManager::ControllerMode ax12ControllerMode = Comm::AX12CommManager::NO_CONTROLLER;
+        if (_settings.value(USE_AX12_CONTROLLER_KEY).toBool())
+            ax12ControllerMode = Comm::AX12CommManager::USB2AX_CONTROLLER;
+
+        _ax12Manager = new Comm::AX12CommManager(ax12Port, BAUD115200, ax12ControllerMode, &logger());
 		if (!_ax12Manager->open())
 		{
 			message = "The AX-12 are not available...";
@@ -378,7 +396,10 @@ void NServer::askAx12Positions(NetworkCommInterface *networkInterface, const QLi
 		return;
 
     if (!_ax12Requests.contains(networkInterface))
-        _ax12Requests[networkInterface] = new ServerAX12RequestManager(_ax12Manager, networkInterface);
+    {
+        int interval = _settings.value(AX12_UPDATE_INTERVAL_KEY).toInt();
+        _ax12Requests[networkInterface] = new ServerAX12RequestManager(_ax12Manager, networkInterface, interval);
+    }
 
     _ax12Requests[networkInterface]->setRequest(ids, recursive);
 }

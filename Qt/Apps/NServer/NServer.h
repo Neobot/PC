@@ -55,6 +55,8 @@ private:
     Comm::Ax12MovementRunner* _ax12MovementRunner;
     QHash<NetworkCommInterface*, ServerAX12RequestManager*> _ax12Requests;
 
+    void initServerSettings();
+
 	void sendGlobalAnnoucement(const QByteArray &message);
 	
 	void cleanRobotConnection();
