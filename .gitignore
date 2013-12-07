@@ -20,3 +20,5 @@ Bin/
 moc_*.cpp
 ui_*.h
 build-*
+
+Makefile

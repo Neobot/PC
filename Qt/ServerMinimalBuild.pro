@@ -5,6 +5,7 @@ TEMPLATE = subdirs
 CONFIG += ordered
 
 SUBDIRS = Libraries/ToolsLib \
+          Libraries/WidgetToolsLib \
           Libraries/CommLib \
           Libraries/GraphicStrategy \
           Libraries/Simulation \
