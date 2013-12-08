@@ -45,7 +45,7 @@ int main(int argc, char *argv[])
         QList<QObject*> testObjects;
 
         //CommLib Tests
-		//testObjects.push_back(new DataTests(&app));
+        testObjects.push_back(new DataTests(&app));
 //        testObjects.push_back(new ProtocolTests(&app));
 
 //        //ToolsLib Tests
@@ -55,7 +55,7 @@ int main(int argc, char *argv[])
 //        testObjects.push_back(new ZRangeTests(&app));
 //        testObjects.push_back(new DataMapTests(&app));
 //  	  testObjects.push_back(new NSettingsTests(&app));
-		testObjects.push_back(new Ax12MovementManagerTest(&app));
+        //testObjects.push_back(new Ax12MovementManagerTest(&app));
 
         //GraphicStrategy Tests
 		//testObjects.push_back(new PatherTests(&app));

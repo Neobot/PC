@@ -78,7 +78,7 @@ void Ax12MovementManagerTest::testMovements()
 	QCOMPARE(dm1.value(0).first.count(), 4);
 	QCOMPARE(dm1.value(1).first.count(), 4);
 	QCOMPARE(dm1.value(0).second.torque, 72.f);
-	QCOMPARE(dm1.value(1).second.torque, 50.f);
+    QCOMPARE(dm1.value(1).second.torque, 100.f);
 	QCOMPARE(dm1.value(0).second.maxSpeed, 42.3f);
 	QCOMPARE(dm1.value(1).second.maxSpeed, 60.f);
 	QCOMPARE((dm1.value(0).first.begin()).key(), 1);

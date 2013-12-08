@@ -12,6 +12,7 @@ public:
 private slots:
     void LittleEndianTest();
     void BigEndianTest();
+    void negativeTest();
     void SimpleBooleanTest();
     void ComplexBooleanTest();
     void intToBitArrayTest();
