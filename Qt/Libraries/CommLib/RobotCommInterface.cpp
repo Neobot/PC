@@ -29,9 +29,9 @@ void RobotCommInterface::addPositionToData(const RMovement& pos, Data& data)
 {
 	RPoint d = pos.getDestination();
 
-	data.add((quint16)d.getX());
-	data.add((quint16)d.getY());
-	data.add((quint16)(d.getTheta() * ANGLE_FACTOR));
+    data.add((qint16)d.getX());
+    data.add((qint16)d.getY());
+    data.add((qint16)(d.getTheta() * ANGLE_FACTOR));
 	data.add((quint8)pos.getType());
 	data.add((quint8)pos.getDeplacement());
     data.add((quint8)pos.getSpeed());
@@ -142,7 +142,7 @@ void RobotCommInterface::read(quint8 instruction, const Data& data)
 			}
 			case OPPONENT:
 			{
-				quint16 x, y;
+                qint16 x, y;
 				d.take(x).take(y);
 				_listener->opponentPosition(x, y);
 				break;
