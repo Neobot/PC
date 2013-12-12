@@ -229,9 +229,10 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 		{
 			QByteArray group, movement;
 			float speedLimit;
-			d.take(group).take(movement).take(speedLimit);
+            qint8 lastPositionIndex;
+            d.take(group).take(movement).take(speedLimit).take(lastPositionIndex);
 			
-			_listener->runAx12Movement(group, movement, speedLimit);
+            _listener->runAx12Movement(group, movement, speedLimit, lastPositionIndex);
 			
 			break;
 		}

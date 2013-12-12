@@ -21,7 +21,7 @@ namespace Comm
 	public:
 		Ax12MovementRunner(AX12CommManager* comm, Tools::Ax12MovementManager* manager, QObject* parent = 0);
 
-		bool startMovement(const QString& group, const QString& mvt, float speedLimit = 110.0f);
+        bool startMovement(const QString& group, const QString& mvt, float speedLimit = 110.0f, int lastPositionIndex = -1);
 		void stop();
 
 		bool isRunnning() const;
@@ -39,6 +39,8 @@ namespace Comm
 		float _speedLimit;
 		QString _currentGroup;
 		QString _currentMvt;
+        int _lastPositionIndex;
+        int _currentPositionIndex;
 		
 		float _stopAngle;
 		Tools::Curve _stopAngleCurve;

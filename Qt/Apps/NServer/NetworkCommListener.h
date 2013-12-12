@@ -34,7 +34,7 @@ public:
 	
 	virtual QByteArray askAx12MovementFile() = 0;
 	virtual void setAx12MovementFile(const QByteArray& data) = 0;
-	virtual void runAx12Movement(const QString& group, const QString& movement, float speedLimit) = 0;
+    virtual void runAx12Movement(const QString& group, const QString& movement, float speedLimit, int lastPositionIndex) = 0;
 
 	virtual void moveAx12(float maxSpeed, QList<Comm::Ax12Info>& ax12s) = 0;
 	virtual void lockAx12(const QMap<quint8, bool>& servoLockInfo) = 0;

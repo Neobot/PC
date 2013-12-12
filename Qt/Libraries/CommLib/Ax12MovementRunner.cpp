@@ -18,7 +18,7 @@ Ax12MovementRunner::Ax12MovementRunner(Comm::AX12CommManager *comm, Tools::Ax12M
 	connect(_timer, SIGNAL(timeout()), this, SLOT(timeout()));
 }
 
-bool Ax12MovementRunner::startMovement(const QString &group, const QString &mvt, float speedLimit)
+bool Ax12MovementRunner::startMovement(const QString &group, const QString &mvt, float speedLimit, int lastPositionIndex)
 {
 	if (_isRunning || !_comm->isOpened() || !_comm->isReadingLoopStarted())
 		return false;
@@ -30,6 +30,8 @@ bool Ax12MovementRunner::startMovement(const QString &group, const QString &mvt,
 	_currentGroup = group;
 	_currentMvt = mvt;
 	_speedLimit = speedLimit;
+    _lastPositionIndex = lastPositionIndex;
+    _currentPositionIndex = -1;
 
     _comm->requestServoStatus(_ids, true);
 
@@ -131,7 +133,13 @@ void Ax12MovementRunner::checkStatus()
 		}	
 		
 		if (done)
-			goToNextPosition();
+        {
+            ++_currentPositionIndex;
+            if (_lastPositionIndex >= 0 && _lastPositionIndex >= _currentPositionIndex)
+                movementEnd(true);
+            else
+                goToNextPosition();
+        }
 	}
 	else
 		movementEnd(false);

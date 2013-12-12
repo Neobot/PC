@@ -86,7 +86,7 @@ private:
 	
 	QByteArray askAx12MovementFile();
 	void setAx12MovementFile(const QByteArray& data);
-	void runAx12Movement(const QString& group, const QString& movement, float speedLimit);
+    void runAx12Movement(const QString& group, const QString& movement, float speedLimit, int lastPositionIndex);
 
 
 private slots:

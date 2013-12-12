@@ -463,13 +463,13 @@ void NServer::setAx12MovementFile(const QByteArray& data)
 	_ax12Movements.writeToFile(ax12MovementFile);
 }
 
-void NServer::runAx12Movement(const QString& group, const QString& movement, float speedLimit)
+void NServer::runAx12Movement(const QString& group, const QString& movement, float speedLimit, int lastPositionIndex)
 {
 	if (_ax12MovementRunner && !_ax12MovementRunner->isRunnning())
 	{
 		Q_ASSERT(!_ax12Manager->isReadingLoopStarted());
 
-		_ax12MovementRunner->startMovement(group, movement, speedLimit);
+        _ax12MovementRunner->startMovement(group, movement, speedLimit, lastPositionIndex);
 	}
 }
 

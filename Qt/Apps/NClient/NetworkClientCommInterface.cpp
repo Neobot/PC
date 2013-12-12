@@ -199,12 +199,13 @@ void NetworkClientCommInterface::setAx12Movements(const QByteArray& data)
 	getProtocol()->sendMessage(SET_AX12_MVT_FILE, d);
 }
 
-void NetworkClientCommInterface::runAx12Movement(const QString& group, const QString& movement, float speedLimit)
+void NetworkClientCommInterface::runAx12Movement(const QString& group, const QString& movement, float speedLimit, int lastPositionIndex)
 {
 	Data d;
 	d.add(group.toAscii());
 	d.add(movement.toAscii());
 	d.add(speedLimit);
+    d.add((qint8)lastPositionIndex);
 	
 	getProtocol()->sendMessage(RUN_AX12_MVT, d);
 }
