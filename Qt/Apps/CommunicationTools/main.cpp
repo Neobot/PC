@@ -1,4 +1,4 @@
-#include <QtGui/QApplication>
+#include <QApplication>
 #include <QStringList>
 #include "CommTools.h"
 #include "UtilitySelector.h"
@@ -37,7 +37,7 @@ void help(Tools::StdoutLogger& out)
 
 int stopWithError(const QString& errorMessage, Tools::StdoutLogger& out)
 {
-    out << errorMessage.toAscii().data() << Tools::endl << Tools::endl;
+    out << errorMessage.toLatin1().data() << Tools::endl << Tools::endl;
     help(out);
     return 1;
 }
@@ -79,7 +79,7 @@ int console(int argc, char *argv[], Tools::StdoutLogger& stdLogger)
 
         for(int i = 1; i < arg.count(); ++i)
         {
-            char option = arg.at(i).toAscii();
+            char option = arg.at(i).toLatin1();
             if (optionsWithValue.contains(option))
             {
                 if (arg.count() > 2 || arguments.isEmpty() || arguments.value(0).left(1) == "-")

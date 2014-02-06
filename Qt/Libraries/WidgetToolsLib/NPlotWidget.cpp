@@ -5,15 +5,14 @@ using namespace Tools;
 NPlotWidget::NPlotWidget(QWidget *parent) :
 	QCustomPlot(parent), _autoResize(true)
 {
-
-
-	setColor(Qt::white);
+    setBackground(QBrush(Qt::white));
 
 	legend->setVisible(true);
 	QFont legendFont = font();  // start out with MainWindow's font..
 	legendFont.setPointSize(9); // and make a bit smaller for legend
 	legend->setFont(legendFont);
-	legend->setPositionStyle(QCPLegend::psBottomRight);
+    axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
+
 }
 
 NPlotWidget::~NPlotWidget()
@@ -47,14 +46,19 @@ void NPlotWidget::setDefaultInteractionEnabled(bool value)
 {
 	if (value)
 	{
-		setRangeZoom(Qt::Horizontal | Qt::Vertical);
-		setInteraction(QCustomPlot::iSelectPlottables);
+        //setRangeZoom(Qt::Horizontal | Qt::Vertical);
+        //setInteraction(QCustomPlot::iSelectPlottables);
 	}
 	else
 	{
-		setRangeZoom(0);
-		setInteraction(QCustomPlot::iSelectPlottables, false);
-	}
+        //setRangeZoom(0);
+        //setInteraction(QCustomPlot::iSelectPlottables, false);
+    }
+}
+
+void NPlotWidget::setTitle(const QString &title)
+{
+    plotLayout()->addElement(0, 0, new QCPPlotTitle(this, title));
 }
 
 //------------
@@ -204,16 +208,16 @@ void MultiCurveWidget::customRescale()
 MultiBarWidget::MultiBarWidget(QWidget *parent) :
 	NPlotWidget(parent)
 {
-	setRangeZoom(Qt::Horizontal | Qt::Vertical);
-	setInteraction(QCustomPlot::iSelectPlottables);
+    //setRangeZoom(Qt::Horizontal | Qt::Vertical);
+    //setInteraction(QCustomPlot::iSelectPlottables);
 
-	setColor(Qt::white);
+     setBackground(QBrush(Qt::white));
 
 	legend->setVisible(true);
 	QFont legendFont = font();  // start out with MainWindow's font..
 	legendFont.setPointSize(9); // and make a bit smaller for legend
 	legend->setFont(legendFont);
-	legend->setPositionStyle(QCPLegend::psBottomRight);
+    axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
 }
 
 MultiBarWidget::~MultiBarWidget()

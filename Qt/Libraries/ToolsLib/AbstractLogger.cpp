@@ -16,7 +16,7 @@ void AbstractLogger::displayCharsAsNumbers(bool displayCharsAsNumbers) { _displa
 
 AbstractLogger& Tools::operator<<(AbstractLogger& logger, const QString& text)
 {
-    logger.log(text.toAscii().data());
+    logger.log(text.toLatin1().data());
     return logger;
 }
 

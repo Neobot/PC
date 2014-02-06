@@ -44,7 +44,7 @@ void NetworkCommInterface::sendStrategies()
 	QStringList strategies = StrategyEnumerator::getAvailableStrategies();
 	QString text = strategies.join(";;");
 	Data d;
-	d.append(text.toAscii());
+	d.append(text.toLatin1());
 	getProtocol(0)->sendMessage(Comm::SEND_STRATEGIES, d);
 }
 
@@ -56,7 +56,7 @@ void NetworkCommInterface::sendStrategyFiles(quint8 strategyNum, const QStringLi
 	data.add(count);
 	for(int i = 0; i < count; ++i)
 	{
-		QByteArray name = filenames.value(i).toAscii().mid(0, 255);
+		QByteArray name = filenames.value(i).toLatin1().mid(0, 255);
 		data.add(name);
 	}
 
@@ -68,7 +68,7 @@ void NetworkCommInterface::sendStrategyFileData(quint8 strategyNum, const QStrin
 	Data data;
 	data.add(strategyNum);
 
-	QByteArray name = filename.toAscii().mid(0, 255);
+	QByteArray name = filename.toLatin1().mid(0, 255);
 	data.add(name);
 	data.append(fileData);
 
@@ -102,7 +102,7 @@ void NetworkCommInterface::sendAvailableSerialPorts()
 	QList<QextPortInfo> ports = QextSerialEnumerator::getPorts();
 	foreach(const QextPortInfo& port, ports)
 	{
-		QByteArray portName = port.portName.toAscii();
+		QByteArray portName = port.portName.toLatin1();
 		data.add(portName);
 	}
 
@@ -245,7 +245,7 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 			bool mirror = false;
 			_listener->askAutoStrategyInfo(isEnabled, currentStratNum, robotPort, ax12Port, simu, mirror);
 
-			sendAutoStrategyInfo(isEnabled, currentStratNum, robotPort.toAscii(), ax12Port.toAscii(), simu, mirror);
+			sendAutoStrategyInfo(isEnabled, currentStratNum, robotPort.toLatin1(), ax12Port.toLatin1(), simu, mirror);
 			break;
 		}
 		case SET_AUTO_STRATEGY:

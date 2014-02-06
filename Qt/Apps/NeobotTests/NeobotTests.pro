@@ -21,7 +21,7 @@ INCLUDEPATH += $${LIBS_HEADER_DIR}/GraphicStrategy
 INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/Micropather
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport
+INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport/src
 
 SOURCES += main.cpp \
     DataTests.cpp \

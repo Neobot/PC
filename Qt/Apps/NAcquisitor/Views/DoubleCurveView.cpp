@@ -11,21 +11,19 @@ DoubleCurveView::DoubleCurveView(QWidget *parent) :
 	_c2->setPen(QPen(Qt::blue));
 	_c2->setName("Consigne");
 
-	setRangeZoom(Qt::Horizontal | Qt::Vertical);
-	setInteraction(QCustomPlot::iSelectPlottables);
+    //setRangeZoom(Qt::Horizontal | Qt::Vertical);
+    //setInteraction(QCustomPlot::iSelectPlottables);
 
 	addPlottable(_c1);
 	addPlottable(_c2);
 
-	setColor(Qt::white);
+    setBackground(QBrush(Qt::white));
 
 	legend->setVisible(true);
 	QFont legendFont = font();  // start out with MainWindow's font..
 	legendFont.setPointSize(9); // and make a bit smaller for legend
 	legend->setFont(legendFont);
-	legend->setPositionStyle(QCPLegend::psBottomRight);
-	//legend->setBrush(QBrush(QColor(255,255,255,230)));
-
+    axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
 }
 
 DoubleCurveView::~DoubleCurveView()
@@ -34,7 +32,7 @@ DoubleCurveView::~DoubleCurveView()
 
 void DoubleCurveView::setLabels(const QString &title, const QString &hAxis, const QString &vAxis)
 {
-	setTitle(title);
+    //setTitle(title);
 //	setAxisTitle(xBottom, hAxis);
 	//	setAxisTitle(yLeft, vAxis);
 }
@@ -94,8 +92,8 @@ void DoubleCurveView::clear()
 
 XYCurveView::XYCurveView(QWidget *parent) : DoubleCurveView(parent)
 {
-	_c2->setScatterStyle(QCP::ssCircle);
-	_c2->setScatterSize(6);
+    //_c2->setScatterStyle(QCP::ssCircle);
+    //_c2->setScatterSize(6);
 	_c2->setLineStyle(QCPCurve::lsNone);
 }
 

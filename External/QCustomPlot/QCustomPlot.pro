@@ -4,6 +4,9 @@
 #
 #-------------------------------------------------
 
+QT += widgets
+QT += printsupport
+
 CONFIG(debug, debug|release) {
     TARGET = QCustomPlot-d
 } else {

@@ -13,7 +13,7 @@ SensorsView::SensorsView(NetworkConnection *connection, QWidget *parent) :
 	ui->avoidingSensorsPlot->setDataNumberLimit(PLOT_MAX_NB_VALUES);
 	ui->avoidingSensorsPlot->setAutoResize(false);
 	ui->avoidingSensorsPlot->setAxisScale(0, 1000, 0, 255);
-	ui->avoidingSensorsPlot->legend->setPositionStyle(QCPLegend::psTopLeft);
+    //ui->avoidingSensorsPlot->legend->setPositionStyle(QCPLegend::psTopLeft);
 	ui->avoidingSensorsPlot->setAxisValuesVisible(false, true);
 	ui->avoidingSensorsPlot->setDefaultInteractionEnabled(false);
 
@@ -26,7 +26,7 @@ SensorsView::SensorsView(NetworkConnection *connection, QWidget *parent) :
 	ui->otherSensorsPlot->setDataNumberLimit(PLOT_MAX_NB_VALUES);
 	ui->otherSensorsPlot->setAutoResize(false);
 	ui->otherSensorsPlot->setAxisScale(0, 1000, 0, 255);
-	ui->otherSensorsPlot->legend->setPositionStyle(QCPLegend::psTopLeft);
+    //ui->otherSensorsPlot->legend->setPositionStyle(QCPLegend::psTopLeft);
 	ui->otherSensorsPlot->setAxisValuesVisible(false, true);
 	ui->otherSensorsPlot->setDefaultInteractionEnabled(false);
 

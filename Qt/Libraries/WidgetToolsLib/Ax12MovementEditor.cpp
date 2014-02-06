@@ -2,6 +2,8 @@
 #include "ui_Ax12MovementEditor.h"
 
 #include <QInputDialog>
+#include <QHeaderView>
+
 #include "SpinBoxDelegate.h"
 
 using namespace Tools;
@@ -88,7 +90,7 @@ void Ax12MovementEditor::refreshMovementTableIds()
 	QList<int> ids = _manager.getGroupIds(_currentGroup);
 
 	ui->movementTree->clear();
-	ui->movementTree->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+    ui->movementTree->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 	ui->movementTree->setColumnCount(ids.count() + 2);
 	for(int i = 0; i < ids.count(); ++i)
 	{
@@ -186,7 +188,7 @@ void Ax12MovementEditor::groupSelected(int index)
 	QList<int> ids = _manager.getGroupIds(_currentGroup);
 
 	ui->mvtIdsTable->clear();
-	ui->mvtIdsTable->horizontalHeader()->setResizeMode(QHeaderView::Fixed);
+    ui->mvtIdsTable->horizontalHeader()->setSectionResizeMode(QHeaderView::Fixed);
 	ui->mvtIdsTable->setColumnCount(ids.count() + 1);
 	ui->mvtIdsTable->setRowCount(1);
 

@@ -1,4 +1,5 @@
 WINDOWS_COMPILER=mingw
+CONFIG += c++11
 
 #set dir variables
 CONFIG(debug, debug|release) {

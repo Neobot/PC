@@ -1,4 +1,4 @@
-#include <QtGui/QApplication>
+#include <QApplication>
 
 #ifndef Q_OS_WIN32
 #include "AX12Playground.h"

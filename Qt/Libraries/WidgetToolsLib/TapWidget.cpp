@@ -14,7 +14,7 @@ TapWidget::TapWidget(QWidget *parent) :
     _tableWidget = new QTableWidget(0, 1, this);
     layout->addWidget(_tableWidget);
 
-    _tableWidget->horizontalHeader()->setResizeMode(QHeaderView::Stretch);
+    _tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::Stretch);
     _tableWidget->horizontalHeader()->hide();
     _tableWidget->verticalHeader()->setMinimumHeight(30);
     _tableWidget->verticalHeader()->hide();

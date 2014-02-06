@@ -1,5 +1,6 @@
 
 QT       -= core gui
+CONFIG += c++11
 
 CONFIG(debug, debug|release) {
     TARGET = Micropather-d

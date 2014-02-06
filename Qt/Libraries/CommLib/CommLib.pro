@@ -8,7 +8,7 @@ CONFIG += staticlib
 
 include( ../../BuildConfiguration.pri)
 
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport
+INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport/src
 INCLUDEPATH += ../ToolsLib
 
 unix:DEFINES = _TTY_POSIX_

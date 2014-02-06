@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+QT       += core gui widgets
 
 TARGET = NPlayer
 TEMPLATE = app
@@ -30,7 +30,7 @@ INCLUDEPATH += $${LIBS_HEADER_DIR}/Simulation
 INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/WidgetToolsLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport
+INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport/src
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/Micropather
 
 SOURCES += main.cpp\

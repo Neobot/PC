@@ -102,7 +102,7 @@ void StrategiesView::setStrategyFiles(int strategyNum, const QStringList &filena
 	{
 		ui->tableWidget->setColumnCount(5);
 		ui->tableWidget->setRowCount(filenames.count());
-		ui->tableWidget->horizontalHeader()->setResizeMode(QHeaderView::ResizeToContents);
+        ui->tableWidget->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
 		ui->tableWidget->horizontalHeader()->setStretchLastSection(true);
 
 		int row = 0;

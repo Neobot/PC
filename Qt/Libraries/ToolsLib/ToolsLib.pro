@@ -6,6 +6,8 @@ TARGET = NeobotTools
 TEMPLATE = lib
 CONFIG += staticlib
 
+QT += widgets
+
 include( ../../BuildConfiguration.pri)
 
 HEADERS += ToolsLib.h \

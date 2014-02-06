@@ -32,7 +32,7 @@ void runAll(const QList<QObject*>& testObjects)
                   << nbPassed << " passed, " << failedTests.count() << " failed" << std::endl;
 
         if (nbPassed != nbTests)
-            std::cout << std::endl << "Failed tests: " << failedTests.join(", ").toAscii().data() << std::endl;
+            std::cout << std::endl << "Failed tests: " << failedTests.join(", ").toLatin1().data() << std::endl;
 
 }
 
@@ -69,7 +69,7 @@ int main(int argc, char *argv[])
     }
     catch(QString e)
     {
-        std::cout << e.toAscii().data();
+        std::cout << e.toLatin1().data();
     }
     catch(...)
     {

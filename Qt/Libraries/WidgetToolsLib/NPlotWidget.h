@@ -20,6 +20,8 @@ namespace Tools
 
 		void setDefaultInteractionEnabled(bool value);
 
+        void setTitle(const QString& title);
+
 	protected:
 		bool _autoResize;
 	};

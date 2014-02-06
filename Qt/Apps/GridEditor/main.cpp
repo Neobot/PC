@@ -7,7 +7,7 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include "GridEditor.h"
 #include <QDir>
 

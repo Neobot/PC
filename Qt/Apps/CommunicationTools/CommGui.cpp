@@ -115,7 +115,7 @@ void CommGui::parseData(Data& data) const
     {
         for (int i = 0; i < text.length(); i++)
         {
-            quint8 a = text.at(i).toAscii();
+            quint8 a = text.at(i).toLatin1();
 
             if (a != 0)
                 data.add(a);

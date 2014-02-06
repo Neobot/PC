@@ -8,6 +8,9 @@ TARGET = NeobotWidgetTools
 TEMPLATE = lib
 CONFIG += staticlib
 
+QT += widgets
+QT += printsupport
+
 include( ../../BuildConfiguration.pri)
 
 INCLUDEPATH += ../ToolsLib

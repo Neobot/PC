@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network
+QT       += core gui network widgets printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,7 +32,7 @@ INCLUDEPATH += $${LIBS_HEADER_DIR}/GridEditorLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/WidgetToolsLib
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport
+INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport/src
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/QCustomPlot
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qtpropertybrowser/src
 

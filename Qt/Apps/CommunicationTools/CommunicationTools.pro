@@ -6,6 +6,8 @@ CONFIG += console
 macx:CONFIG -= app_bundle
 TEMPLATE = app
 
+QT += widgets
+
 DEPENDENCY_LIBS +=  NeobotComm \
                     NeobotWidgetTools \
                     NeobotTools
@@ -17,7 +19,7 @@ include( ../../BuildConfiguration.pri )
 INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/WidgetToolsLib
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport
+INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport/src
 
 macx:LIBS += -framework IOKit -framework CoreFoundation
 win32:LIBS += -lsetupapi -ladvapi32 -luser32

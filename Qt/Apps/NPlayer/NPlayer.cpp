@@ -205,7 +205,7 @@ void NPlayer::on_btnSaveLogAs_clicked()
 			return;
 		}
 
-		file.write(ui.textLogger->toPlainText().toAscii());
+		file.write(ui.textLogger->toPlainText().toLatin1());
 		file.close();
 
 		QMessageBox::information(this, "Log saved", QString("The log has been saved in \"").append(QFileInfo(filename).absoluteFilePath()).append("\"."));

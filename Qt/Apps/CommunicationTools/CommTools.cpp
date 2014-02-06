@@ -2,6 +2,8 @@
 #include "Data.h"
 #include "CommUtil.h"
 
+#include <unistd.h>
+
 
 CommTools::CommTools(const QString& portname, const QString& baudrate, Tools::AbstractLogger* logger, QObject *parent) :
     QObject(parent), _mode(Listening), _out(0), _logger(logger), _quiet(false)
@@ -70,7 +72,7 @@ void CommTools::startBaudrateTest(int n, QCoreApplication* app)
 #ifdef Q_OS_WIN32
         Sleep(1);
 #else
-        sleep(1);
+        sleep(1.f);
 #endif
         app->processEvents();
     }

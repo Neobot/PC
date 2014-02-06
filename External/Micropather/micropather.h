@@ -1,6 +1,6 @@
 /*
-Copyright (c) 2000-2009 Lee Thomason (www.grinninglizard.com)
-Grinning Lizard Utilities.
+Copyright (c) 2000-2013 Lee Thomason (www.grinninglizard.com)
+Micropather
 
 This software is provided 'as-is', without any express or implied 
 warranty. In no event will the authors be held liable for any 
@@ -33,12 +33,17 @@ distribution.
 	C++ that can be easily integrated into existing code. MicroPather focuses on being a path 
 	finding engine for video games but is a generic A* solver. MicroPather is open source, with 
 	a license suitable for open source or commercial use.
-
-	An overview of using MicroPather is in the <A HREF="../readme.htm">readme</A> or
-	on the Grinning Lizard website: http://grinninglizard.com/micropather/
 */
 
-#include <vector>
+// This probably works to remove, but isn't currently tested in STL mode.
+//#define GRINLIZ_NO_STL
+
+#ifdef GRINLIZ_NO_STL
+#	define MP_VECTOR micropather::MPVector
+#else
+#	include <vector>
+#	define MP_VECTOR std::vector
+#endif
 #include <float.h>
 
 #ifdef _DEBUG
@@ -65,17 +70,60 @@ distribution.
 	typedef uintptr_t		MP_UPTR;
 #elif defined (__GNUC__) && (__GNUC__ >= 3 )
 	#include <stdlib.h>
-        #include <stdint.h>
 	typedef uintptr_t		MP_UPTR;
 #else
 	// Assume not 64 bit pointers. Get a new compiler.
 	typedef unsigned MP_UPTR;
 #endif
 
-//#define MICROPATHER_STRESS
-
 namespace micropather
 {
+#ifdef GRINLIZ_NO_STL
+
+	/* WARNING: vector partial replacement. Does everything needed to replace std::vector
+	   for micropather, but only works on Plain Old Data types. Doesn't call copy/construct/destruct
+	   correctly for general use.
+	 */
+	template <typename T>
+	class MPVector {
+	public:
+		MPVector() : m_allocated( 0 ), m_size( 0 ), m_buf ( 0 ) {}
+		~MPVector()	{ delete [] m_buf; }
+
+		void clear()						{ m_size = 0; }	// see warning above
+		void resize( unsigned s )			{ capacity( s );
+											  m_size = s;
+											}	
+		T& operator[](unsigned i)			{ MPASSERT( i>=0 && i<m_size );
+											  return m_buf[i];
+											}
+		const T& operator[](unsigned i) const	{ MPASSERT( i>=0 && i<m_size );
+												  return m_buf[i];
+												}
+		void push_back( const T& t )		{ capacity( m_size+1 );
+											  m_buf[m_size++] = t;
+											}
+		unsigned size()	const				{ return m_size; }
+
+	private:
+		void capacity( unsigned cap ) {
+			if ( m_allocated < cap ) { 
+				unsigned newAllocated = cap * 3/2 + 16;
+				T* newBuf = new T[newAllocated];
+				MPASSERT( m_size <= m_allocated );
+				MPASSERT( m_size < newAllocated );
+				memcpy( newBuf, m_buf, sizeof(T)*m_size );
+				delete [] m_buf;
+				m_buf = newBuf;
+				m_allocated = newAllocated;
+			}
+		}
+		unsigned m_allocated;
+		unsigned m_size;
+		T* m_buf;
+	};
+#endif
+
 	/**
 		Used to pass the cost of states from the cliet application to MicroPather. This
 		structure is copied in a vector.
@@ -122,7 +170,7 @@ namespace micropather
 			exact values for every call to MicroPather::Solve(). It should generally be a simple,
 			fast function with no callbacks into the pather.
 		*/	
-		virtual void AdjacentCost( void* previouState, void* state, std::vector< micropather::StateCost > *adjacent ) = 0;
+        virtual void AdjacentCost( void* previousState, void* state, MP_VECTOR< micropather::StateCost > *adjacent ) = 0;
 
 		/**
 			This function is only used in DEBUG mode - it dumps output to stdout. Since void* 
@@ -246,6 +294,9 @@ namespace micropather
 									float _estToGoal, 
 									PathNode* _parent );
 
+		// Get a pathnode that is already in the pool.
+		PathNode* FetchPathNode( void* state );
+
 		// Store stuff in cache
 		bool PushCache( const NodeCost* nodes, int nNodes, int* start );
 
@@ -260,7 +311,7 @@ namespace micropather
 
 		// Return all the allocated states. Useful for visuallizing what
 		// the pather is doing.
-		void AllStates( unsigned frame, std::vector< void* >* stateVec );
+		void AllStates( unsigned frame, MP_VECTOR< void* >* stateVec );
 
 	private:
 		struct Block
@@ -294,6 +345,71 @@ namespace micropather
 	};
 
 
+	/* Used to cache results of paths. Much, much faster
+	   to return an existing solution than to calculate
+	   a new one. A post on this is here: http://grinninglizard.com/altera/programming/a-path-caching-2/
+	*/
+	class PathCache
+	{
+	public:
+		struct Item {
+			// The key:
+			void* start;
+			void* end;
+
+			bool KeyEqual( const Item& item ) const	{ return start == item.start && end == item.end; }
+			bool Empty() const						{ return start == 0 && end == 0; }
+
+			// Data:
+			void*	next;
+			float	cost;	// from 'start' to 'next'. FLT_MAX if unsolveable.
+
+			unsigned Hash() const {
+				const unsigned char *p = (const unsigned char *)(&start);
+				unsigned int h = 2166136261U;
+
+				for( unsigned i=0; i<sizeof(void*)*2; ++i, ++p ) {
+					h ^= *p;
+					h *= 16777619;
+				}
+				return h;
+			}
+		};
+
+		PathCache( int itemsToAllocate );
+		~PathCache();
+		
+		void Reset();
+		void Add( const MP_VECTOR< void* >& path, const MP_VECTOR< float >& cost );
+		void AddNoSolution( void* end, void* states[], int count );
+		int Solve( void* startState, void* endState, MP_VECTOR< void* >* path, float* totalCost );
+
+		int AllocatedBytes() const { return allocated * sizeof(Item); }
+		int UsedBytes() const { return nItems * sizeof(Item); }
+
+		int hit;
+		int miss;
+
+	private:
+		void AddItem( const Item& item );
+		const Item* Find( void* start, void* end );
+		
+		Item*	mem;
+		int		allocated;
+		int		nItems;
+	};
+
+	struct CacheData {
+		CacheData() : nBytesAllocated(0), nBytesUsed(0), memoryFraction(0), hit(0), miss(0), hitFraction(0) {}
+		int nBytesAllocated;
+		int nBytesUsed;
+		float memoryFraction;
+
+		int hit;
+		int miss;
+		float hitFraction;
+	};
+
 	/**
 		Create a MicroPather object to solve for a best path. Detailed usage notes are
 		on the main page.
@@ -308,6 +424,9 @@ namespace micropather
 			SOLVED,
 			NO_SOLUTION,
 			START_END_SAME,
+
+			// internal
+			NOT_CACHED
 		};
 
 		/**
@@ -323,15 +442,17 @@ namespace micropather
 								  will only need one main memory allocation. For a chess board, allocate 
 								  would be set to 8x8 (64)
 								- If your map is large, something like 1/4 the number of possible
-								  states is good. For example, Lilith3D normally has about 16,000 
-								  states, so 'allocate' should be about 4000.
+								  states is good.
 							    - If your state space is huge, use a multiple (5-10x) of the normal
 								  path. "Occasionally" call Reset() to free unused memory.
 			@param typicalAdjacent	Used to determine cache size. The typical number of adjacent states
 									to a given state. (On a chessboard, 8.) Higher values use a little
 									more memory.
+			@param cache		Turn on path caching. Uses more memory (yet again) but at a huge speed
+								advantage if you may call the pather with the same path or sub-path, which
+								is common for pathing over maps in games.
 		*/
-		MicroPather( Graph* graph, unsigned allocate = 250, unsigned typicalAdjacent=6 );
+		MicroPather( Graph* graph, unsigned allocate = 250, unsigned typicalAdjacent=6, bool cache=true );
 		~MicroPather();
 
 		/**
@@ -343,7 +464,7 @@ namespace micropather
 			@param totalCost	Output, the cost of the path, if found.
 			@return				Success or failure, expressed as SOLVED, NO_SOLUTION, or START_END_SAME.
 		*/
-		int Solve( void* startState, void* endState, std::vector< void* >* path, float* totalCost );
+		int Solve( void* startState, void* endState, MP_VECTOR< void* >* path, float* totalCost );
 
 		/**
 			Find all the states within a given cost from startState.
@@ -354,42 +475,37 @@ namespace micropather
 								larger 'near' sets and take more time to compute.)
 			@return				Success or failure, expressed as SOLVED or NO_SOLUTION.
 		*/
-		int SolveForNearStates( void* startState, std::vector< StateCost >* near, float maxCost );
+		int SolveForNearStates( void* startState, MP_VECTOR< StateCost >* near, float maxCost );
 
 		/** Should be called whenever the cost between states or the connection between states changes.
 			Also frees overhead memory used by MicroPather, and calling will free excess memory.
 		*/
 		void Reset();
 
-		/**
-			Return the "checksum" of the last path returned by Solve(). Useful for debugging,
-			and a quick way to see if 2 paths are the same.
-		*/
-		MP_UPTR Checksum()	{ return checksum; }
-
 		// Debugging function to return all states that were used by the last "solve" 
-		void StatesInPool( std::vector< void* >* stateVec );
+		void StatesInPool( MP_VECTOR< void* >* stateVec );
+		void GetCacheData( CacheData* data );
 
 	  private:
 		MicroPather( const MicroPather& );	// undefined and unsupported
 		void operator=( const MicroPather ); // undefined and unsupported
 		
-		void GoalReached( PathNode* node, void* start, void* end, std::vector< void* > *path );
+		void GoalReached( PathNode* node, void* start, void* end, MP_VECTOR< void* > *path );
 
-		void GetNodeNeighbors(	PathNode* node, std::vector< NodeCost >* neighborNode );
+		void GetNodeNeighbors(	PathNode* node, MP_VECTOR< NodeCost >* neighborNode );
 
 		#ifdef DEBUG
 		//void DumpStats();
 		#endif
 
-		PathNodePool				pathNodePool;
-		std::vector< StateCost >	stateCostVec;	// local to Solve, but put here to reduce memory allocation
-		std::vector< NodeCost >		nodeCostVec;	// local to Solve, but put here to reduce memory allocation
+		PathNodePool			pathNodePool;
+		MP_VECTOR< StateCost >	stateCostVec;	// local to Solve, but put here to reduce memory allocation
+		MP_VECTOR< NodeCost >	nodeCostVec;	// local to Solve, but put here to reduce memory allocation
+		MP_VECTOR< float >		costVec;
 
 		Graph* graph;
 		unsigned frame;						// incremented with every solve, used to determine if cached data needs to be refreshed
-		MP_UPTR checksum;						// the checksum of the last successful "Solve".
-		
+		PathCache* pathCache;
 	};
 };	// namespace grinliz
 

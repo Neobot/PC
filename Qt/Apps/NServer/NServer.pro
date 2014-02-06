@@ -11,6 +11,7 @@ TEMPLATE = app
 
 QT       += core
 QT       += network
+QT       += widgets
 
 DEPENDENCY_LIBS +=  NeobotStrategy \
                     NeobotSimulation \
@@ -26,7 +27,7 @@ INCLUDEPATH += $${LIBS_HEADER_DIR}/GraphicStrategy
 INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/Simulation
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport
+INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport/src
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/Micropather
 
 macx:LIBS += -framework IOKit -framework CoreFoundation

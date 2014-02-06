@@ -346,7 +346,7 @@ void Ax12View::saveMovements()
 	QTextStream stream(&data);
 	ui->movementEditor->getEditedMovements().writeToStream(stream);
 
-	_connection->getComm()->setAx12Movements(data.toAscii());
+	_connection->getComm()->setAx12Movements(data.toLatin1());
 }
 
 void Ax12View::exportMovements()

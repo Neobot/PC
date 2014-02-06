@@ -7,6 +7,8 @@ CONFIG += console
 CONFIG -= app_bundle
 TEMPLATE = app
 
+QT += widgets
+
 DEPENDENCY_LIBS +=  NeobotStrategy \
                     NeobotSimulation \
                     NeobotComm \
@@ -22,7 +24,7 @@ INCLUDEPATH += $${LIBS_HEADER_DIR}/GraphicStrategy
 INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/Simulation
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport
+INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport/src
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/Micropather
 
 SOURCES += main.cpp \

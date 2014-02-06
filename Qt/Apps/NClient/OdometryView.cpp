@@ -15,8 +15,7 @@ OdometryView::OdometryView(NetworkConnection *connection, QWidget *parent) :
 	ui->thetaDiagram->addCurve("Robot", QPen(Qt::red));
 
 	QCPCurve* c = ui->xyDiagram->addCurve("Objective", QPen(Qt::blue));
-	c->setScatterStyle(QCP::ssCircle);
-	c->setScatterSize(6);
+    c->setScatterStyle(QCPScatterStyle(QCPScatterStyle::ssCircle, 6));
 	c->setLineStyle(QCPCurve::lsNone);
 	ui->xDiagram->addCurve("Objective", QPen(Qt::blue));
 	ui->yDiagram->addCurve("Objective", QPen(Qt::blue));

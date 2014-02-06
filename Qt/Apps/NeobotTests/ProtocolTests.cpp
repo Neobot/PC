@@ -3,7 +3,6 @@
 #include <QtGlobal>
 #include <QTest>
 #include <QtDebug>
-#include <QtConcurrentRun>
 
 using namespace Comm;
 
@@ -101,7 +100,7 @@ void ProtocolTests::bufferedRead()
 {
     readingTestBegin();
 
-    char t1[3] = {0xFF, 0xFF, 3};
+    char t1[3] = {(char)0xFF,(char)0xFF, 3};
     char t2[4] = {42, 'H', 'i', 33};
 
     _buffer.write(t1, 3);
@@ -124,8 +123,8 @@ void ProtocolTests::bufferedRead()
 void ProtocolTests::invalidChecksumTest()
 {
     readingTestBegin();
-    char inv1[7] = {0xFF, 0xFF, 3, 33, 'A', 'H', 70};             //invalid checksum, correct checksum : 82
-    char val1[7] = {0xFF, 0xFF, 3, 42, 'H', 'i', 33};             //valid
+    char inv1[7] = {(char)0xFF, (char)0xFF, 3, 33, 'A', 'H', 70};             //invalid checksum, correct checksum : 82
+    char val1[7] = {(char)0xFF, (char)0xFF, 3, 42, 'H', 'i', 33};             //valid
 
     _buffer.write(inv1, 7);
     _buffer.write(val1, 7);
@@ -142,8 +141,8 @@ void ProtocolTests::invalidChecksumTest()
 void ProtocolTests::invalidHeaderTest()
 {
     readingTestBegin();
-    char inv3[7] = {0xFF, 0x3A, 3, 33, 'L', 'O', 64};             //invalid header
-    char val1[7] = {0xFF, 0xFF, 3, 42, 'H', 'i', 33};             //valid
+    char inv3[7] = {(char)0xFF, 0x3A, 3, 33, 'L', 'O', 64};             //invalid header
+    char val1[7] = {(char)0xFF, (char)0xFF, 3, 42, 'H', 'i', 33};             //valid
 
     _buffer.write(inv3, 7);
     _buffer.write(val1, 7);
@@ -162,8 +161,8 @@ void ProtocolTests::invalidLengthTest()
 {
     // The length is smaller than the frame -> one frame is skipped
     readingTestBegin();
-    char inv2[9] = {0xFF, 0xFF, 4, 33, 'L', 'A', 'S', 'A', 184};  //invalid lentgh
-    char val1[7] = {0xFF, 0xFF, 3, 42, 'H', 'i', 33};             //valid
+    char inv2[9] = {(char)0xFF, (char)0xFF, 4, 33, 'L', 'A', 'S', 'A', (char)184};  //invalid lentgh
+    char val1[7] = {(char)0xFF, (char)0xFF, 3, 42, 'H', 'i', 33};             //valid
 
     _buffer.write(inv2, 9);
     _buffer.write(val1, 7);
@@ -182,8 +181,8 @@ void ProtocolTests::invalidLengthTest2()
 {
     // The length is grater than the frame -> two frames are skipped
     readingTestBegin();
-    char inv2[9] = {0xFF, 0xFF, 8, 33, 'L', 'A', 'S', 'A', 184};  //invalid lentgh & checksum
-    char val1[7] = {0xFF, 0xFF, 3, 42, 'H', 'i', 33};             //valid
+    char inv2[9] = {(char)0xFF, (char)0xFF, 8, 33, 'L', 'A', 'S', 'A', (char)184};  //invalid lentgh & checksum
+    char val1[7] = {(char)0xFF, (char)0xFF, 3, 42, 'H', 'i', 33};             //valid
     //note : char inv2[9] = {0xFF, 0xFF, 7, 33, 'L', 'A', 'S', 'A', 184};
     //it leads to a false frame being seen as valid because the cheksum is 255.
 
@@ -204,8 +203,8 @@ void ProtocolTests::invalidLengthTest3()
 {
     // The length is too big, it's probably an error -> one frame is skipped.
     readingTestBegin();
-    char inv2[9] = {0xFF, 0xFF, 242, 100, 'L', 'A', 'S', 'A', 184};  //invalid lentgh
-    char val1[7] = {0xFF, 0xFF, 3, 42, 'H', 'i', 33};             //valid
+    char inv2[9] = {(char)0xFF, (char)0xFF, (char)242, 100, 'L', 'A', 'S', 'A', (char)184};  //invalid lentgh
+    char val1[7] = {(char)0xFF, (char)0xFF, 3, 42, 'H', 'i', 33};             //valid
 
     _buffer.write(inv2, 9);
     _buffer.write(val1, 7);

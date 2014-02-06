@@ -7,7 +7,7 @@
  * ----------------------------------------------------------------------------
  */
 
-#include <QtGui/QApplication>
+#include <QApplication>
 #include "NPlayer.h"
 
 int main(int argc, char *argv[])

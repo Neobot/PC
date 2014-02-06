@@ -1,7 +1,7 @@
 #include "ToolsLib.h"
 #include "vmath.h"
 #include <QtDebug>
-#include <QDesktopServices>
+#include <QStandardPaths>
 #include <QTransform>
 
 using namespace Tools;
@@ -207,7 +207,14 @@ QDir Tools::getDataDirectory()
 	d.mkpath("NeobotData");
 	d.cd("NeobotData");
 #else
-	d = QDir(QDesktopServices::storageLocation(QDesktopServices::DataLocation));
+    QStringList locations = QStandardPaths::standardLocations(QStandardPaths::DataLocation);
+    if (!locations.isEmpty())
+        d = QDir(locations.first());
+    else
+    {
+        d.mkpath("NeobotData");
+        d.cd("NeobotData");
+    }
 #endif
 
 	return d;

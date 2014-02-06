@@ -450,7 +450,7 @@ QByteArray NServer::askAx12MovementFile()
 	QTextStream stream(&result);
 	_ax12Movements.writeToStream(stream);
 
-	return result.toAscii();
+	return result.toLatin1();
 }
 
 void NServer::setAx12MovementFile(const QByteArray& data)
@@ -467,8 +467,6 @@ void NServer::runAx12Movement(const QString& group, const QString& movement, flo
 {
 	if (_ax12MovementRunner && !_ax12MovementRunner->isRunnning())
 	{
-		Q_ASSERT(!_ax12Manager->isReadingLoopStarted());
-
         _ax12MovementRunner->startMovement(group, movement, speedLimit, lastPositionIndex);
 	}
 }

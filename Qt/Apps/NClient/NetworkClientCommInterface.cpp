@@ -22,8 +22,8 @@ void NetworkClientCommInterface::connectToRobot(bool simulation, const QString &
 {
 	Data d;
 	d.add(simulation);
-	d.add(robotPort.toAscii());
-	d.add(ax12Port.toAscii());
+	d.add(robotPort.toLatin1());
+	d.add(ax12Port.toLatin1());
 
 	getProtocol()->sendMessage(CONNECT, d);
 }
@@ -69,7 +69,7 @@ void NetworkClientCommInterface::askStrategyFileData(quint8 strategyNum, const Q
 {
 	Data d;
 	d.add(strategyNum);
-	d.append(filename.toAscii());
+	d.append(filename.toLatin1());
 	getProtocol()->sendMessage(ASK_STRATEGY_FILE_DATA, d);
 }
 
@@ -78,7 +78,7 @@ void NetworkClientCommInterface::sendStrategyFileData(quint8 strategyNum, const 
 	Data d;
 	d.add(strategyNum);
 
-	QByteArray name = filename.toAscii().mid(0, 255);
+	QByteArray name = filename.toLatin1().mid(0, 255);
 	d.add(name);
 	d.append(data);
 
@@ -89,7 +89,7 @@ void NetworkClientCommInterface::resetStrategyFileData(quint8 strategyNum, const
 {
 	Data d;
 	d.add(strategyNum);
-	d.append(filename.toAscii());
+	d.append(filename.toLatin1());
 	getProtocol()->sendMessage(RESET_STRATEGY_FILE, d);
 }
 
@@ -120,8 +120,8 @@ void NetworkClientCommInterface::setAutoStrategy(bool enabled, quint8 strategyNu
 {
 	Data d;
 	d.add(strategyNum);
-	d.add(robotPort.toAscii());
-	d.add(ax12Port.toAscii());
+	d.add(robotPort.toLatin1());
+	d.add(ax12Port.toLatin1());
 	d.add(enabled, simulation | mirroredSimulation, mirroredSimulation);
 	getProtocol()->sendMessage(SET_AUTO_STRATEGY, d);
 }
@@ -202,8 +202,8 @@ void NetworkClientCommInterface::setAx12Movements(const QByteArray& data)
 void NetworkClientCommInterface::runAx12Movement(const QString& group, const QString& movement, float speedLimit, int lastPositionIndex)
 {
 	Data d;
-	d.add(group.toAscii());
-	d.add(movement.toAscii());
+	d.add(group.toLatin1());
+	d.add(movement.toLatin1());
 	d.add(speedLimit);
     d.add((qint8)lastPositionIndex);
 	
