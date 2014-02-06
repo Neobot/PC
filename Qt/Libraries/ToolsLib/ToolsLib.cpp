@@ -155,7 +155,7 @@ void Tools::displayTrajectory(const Tools::Trajectory& t, Tools::AbstractLogger*
 	{
 		int nbOfTurn = 0;
 		double currentAngle = 0;
-		foreach(const RPoint& p, t)
+        for(const RPoint& p : t)
 		{
 			if (p.getTheta() != currentAngle)
 				nbOfTurn++;

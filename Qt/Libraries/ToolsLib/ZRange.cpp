@@ -3,10 +3,9 @@
 
 ZRange::ZRange(double zBottom, double zTop) : _zBottom(zBottom), _zTop(zTop)
 {
-
 }
 
-ZRange::ZRange(const ZRange& other) : _zBottom(other._zBottom), _zTop(other._zTop)
+ZRange::ZRange(const ZRange& other) : ZRange(other._zBottom, other._zTop)
 {
 }
 
@@ -23,9 +22,9 @@ bool ZRange::intersected(const ZRange& range) const
 ZRange ZRange::intersection(const ZRange& range) const
 {
     if (intersected(range))
-	return ZRange(qMax(_zBottom, range._zBottom), qMin(_zTop, range._zTop));
+        return ZRange(qMax(_zBottom, range._zBottom), qMin(_zTop, range._zTop));
     else
-	return ZRange(0.0, 0.0);
+        return ZRange(0.0, 0.0);
 }
 
 bool ZRange::operator==(const ZRange& other) const

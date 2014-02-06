@@ -7,13 +7,9 @@ using namespace Tools;
 
 Point::Point(double x, double y) : _x(x), _y(y)  {}
 
-Point::Point(const QPointF& p) : _x(p.x()), _y(p.y())  {}
+Point::Point(const QPointF& p) : Point(p.x(), p.y())  {}
 
-Point::Point(const Point& p)
-{
-    _x = p._x;
-    _y = p._y;
-}
+Point::Point(const Point& p) : Point(p._x, p._y) {}
 
 double Point::getX() const
 {
