@@ -10,7 +10,6 @@ SUBDIRS = NeobotMain \
           GridEditor \
           NPlayer \
           AX12Playground \
-          NAcquisitor \
           NServer \
           NClient
 
