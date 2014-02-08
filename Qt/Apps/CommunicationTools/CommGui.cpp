@@ -30,6 +30,8 @@ CommGui::CommGui(QWidget *parent) :
 		ui.cbPort->insertItem(0, port.portName);
 
 	ui.cbPort->setCurrentIndex(0);
+
+   setGuiState(false);
 }
 
 CommGui::~CommGui()
@@ -49,15 +51,7 @@ void CommGui::openConnection()
 	if (!_connected && openPort(ui.cbPort->currentText(), ui.cbBaudRate->currentText(), static_cast<ProtocolType>(ui.cbProtocol->currentIndex())))
 	{
 		_connected = true;
-		ui.btnConnect->setText("Close");
-		ui.cbPort->setEnabled(false);
-		ui.cbBaudRate->setEnabled(false);
-		ui.cbProtocol->setEnabled(false);
-		ui.gbSendMessage->setEnabled(true);
-		ui.cbQuiet->setEnabled(true);
-		ui.cbDebugMode->setEnabled(true);
-		ui.cbValidMessage->setEnabled(true);
-		ui.btnStopRun->setEnabled(true);
+        setGuiState(_connected);
 	}
 }
 
@@ -66,15 +60,7 @@ void CommGui::closeConnection()
 	if (_connected && closePort())
 	{
 		_connected = false;
-		ui.btnConnect->setText("Open");
-		ui.cbPort->setEnabled(true);
-		ui.cbBaudRate->setEnabled(true);
-		ui.cbProtocol->setEnabled(true);
-		ui.gbSendMessage->setEnabled(false);
-		ui.cbQuiet->setEnabled(false);
-		ui.cbDebugMode->setEnabled(false);
-		ui.cbValidMessage->setEnabled(false);
-		ui.btnStopRun->setEnabled(false);
+        setGuiState(_connected);
 	}
 }
 
@@ -220,6 +206,19 @@ bool CommGui::closePort()
 
         return false;
     }
+}
+
+void CommGui::setGuiState(bool connectionOpened)
+{
+    ui.btnConnect->setText("Open");
+    ui.cbPort->setEnabled(!connectionOpened);
+    ui.cbBaudRate->setEnabled(!connectionOpened);
+    ui.cbProtocol->setEnabled(!connectionOpened);
+    ui.gbSendMessage->setEnabled(connectionOpened);
+    ui.cbQuiet->setEnabled(connectionOpened);
+    ui.cbDebugMode->setEnabled(connectionOpened);
+    ui.cbValidMessage->setEnabled(connectionOpened);
+    ui.btnStopRun->setEnabled(connectionOpened);
 }
 
 void CommGui::send(bool log)

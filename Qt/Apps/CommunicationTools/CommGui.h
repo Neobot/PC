@@ -45,6 +45,8 @@ private:
 	bool openPort(const QString& portname, const QString& baudrate, ProtocolType protocol);
     bool closePort();
 
+    void setGuiState(bool connectionOpened);
+
 private slots:
     void messageReceived(quint8 instruction, const Comm::Data&, quint8 id);
     void on_btnConnect_clicked();
