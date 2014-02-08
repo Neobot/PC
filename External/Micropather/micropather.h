@@ -64,7 +64,7 @@ distribution.
 #	define MPASSERT( x ) {}
 #endif
 
-
+#include <stdint.h>
 #if defined(_MSC_VER) && (_MSC_VER >= 1400 )
 	#include <stdlib.h>
 	typedef uintptr_t		MP_UPTR;
