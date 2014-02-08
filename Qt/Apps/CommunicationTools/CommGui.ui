@@ -484,7 +484,11 @@
        </widget>
       </item>
       <item row="1" column="3" colspan="3">
-       <widget class="QLineEdit" name="leData"/>
+       <widget class="QLineEdit" name="leData">
+        <property name="enabled">
+         <bool>false</bool>
+        </property>
+       </widget>
       </item>
       <item row="1" column="6">
        <widget class="QPushButton" name="btnSend">
