@@ -13,6 +13,8 @@ namespace Tools
 class GameState
 {
 public:
+    GameState();
+
     int _remainingTime;
     Tools::NGridNode* _robotposition;
     QPointF _opponentPosition;
