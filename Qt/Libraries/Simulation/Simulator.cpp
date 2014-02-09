@@ -141,7 +141,7 @@ void Simulator::simulationTimerEvent()
 	_simRobot->sendAvoidingSensorsValues(avoidingSharpsValues);
 
 	QList<quint8> otherSharpsValues;
-	QList<DataObject *> otherSharpList = _map->getObjects(SimulationMap::AvoidingSharpGroup);
+    QList<DataObject *> otherSharpList = _map->getObjects(SimulationMap::OtherSharpGroup);
 	for (QList<DataObject *>::iterator object = otherSharpList.begin(); object != otherSharpList.end(); ++object)
 	{
 		quint8 v = (quint8)(static_cast<SharpObject*>(*object))->getValue();
