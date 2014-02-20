@@ -260,11 +260,10 @@ void RobotCommInterface::read(quint8 instruction, const Data& data)
 				QStringList names = nameStr.split(";;");
 
 				_listener->parameterNames(names);
+                break;
 			}
 			default:
 				logger() << "Unkow instruction : " << instruction << Tools::endl;
-
-
 		}
 	}
 }

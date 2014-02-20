@@ -13,6 +13,7 @@ NPlotWidget::NPlotWidget(QWidget *parent) :
 	legend->setFont(legendFont);
     axisRect()->insetLayout()->setInsetAlignment(0, Qt::AlignBottom|Qt::AlignRight);
 
+   setDefaultInteractionEnabled(true);
 }
 
 NPlotWidget::~NPlotWidget()
@@ -44,20 +45,19 @@ void NPlotWidget::setAxisValuesVisible(bool x, bool y)
 
 void NPlotWidget::setDefaultInteractionEnabled(bool value)
 {
-	if (value)
+    if (value)
 	{
-        //setRangeZoom(Qt::Horizontal | Qt::Vertical);
-        //setInteraction(QCustomPlot::iSelectPlottables);
+        setInteractions(QCP::iRangeDrag | QCP::iRangeZoom | QCP::iSelectPlottables);
 	}
 	else
 	{
-        //setRangeZoom(0);
-        //setInteraction(QCustomPlot::iSelectPlottables, false);
+        setInteractions(0);
     }
 }
 
 void NPlotWidget::setTitle(const QString &title)
 {
+    plotLayout()->insertRow(0);
     plotLayout()->addElement(0, 0, new QCPPlotTitle(this, title));
 }
 

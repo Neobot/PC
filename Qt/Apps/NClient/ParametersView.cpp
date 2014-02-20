@@ -10,7 +10,7 @@ ParameterWidget::ParameterWidget(QWidget *parent) : QWidget(parent)
 	QHBoxLayout* layout = new QHBoxLayout(this);
 	layout->setMargin(0);
 
-	_lbl = new QLabel("Parameter", this);
+    _lbl = new QLabel("Unknown Parameter", this);
 	_spValue = new QDoubleSpinBox(this);
 	_spValue->setMinimum(-99999999999999);
 	_spValue->setMaximum(99999999999999);
