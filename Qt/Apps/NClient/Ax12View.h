@@ -96,7 +96,10 @@ private slots:
 	void importMovements();
 	
 	void movementEditorTabChanged(int index);
-	void runMovement();
+    void runMovement();
+
+    void runCurrentMovementUntil(int positionIndex);
+    void moveToCurrentMovementPosition(int positionIndex);
 
 };
 

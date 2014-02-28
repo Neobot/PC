@@ -2,6 +2,7 @@
 #include "ui_Ax12View.h"
 
 #include "NetworkClientCommInterface.h"
+#include "Ax12MovementManager.h"
 
 #include <QHBoxLayout>
 #include <QInputDialog>
@@ -42,6 +43,9 @@ Ax12View::Ax12View(NetworkConnection *connection, QWidget *parent) :
 	
 	connect(ui->movementEditor, SIGNAL(currentTabChanged(int)), this, SLOT(movementEditorTabChanged(int)));
 	connect(ui->btnRunMovement, SIGNAL(clicked()), this, SLOT(runMovement()));
+
+    connect(ui->movementEditor, SIGNAL(runCurrentMovementUntil(int)), this, SLOT(runCurrentMovementUntil(int)));
+    connect(ui->movementEditor, SIGNAL(moveToCurrentMovementPosition(int)), this, SLOT(moveToCurrentMovementPosition(int)));
 
 	connectionStatusChanged(_connection->getConnectionStatus());
 	_connection->registerNetworkResponder(this);
@@ -374,14 +378,47 @@ void Ax12View::importMovements()
 
 void Ax12View::runMovement()
 {
-	QString group = ui->movementEditor->getCurrentGroup();
-	QString mvt = ui->movementEditor->getCurrentMovement();
-	
-	Q_ASSERT(!group.isEmpty());
-	Q_ASSERT(!mvt.isEmpty());
-	
-	saveMovements();
-	_connection->getComm()->runAx12Movement(group, mvt, ui->spSpeedLimit->value());
+    runCurrentMovementUntil(-1);
+}
+
+void Ax12View::runCurrentMovementUntil(int positionIndex)
+{
+    QString group = ui->movementEditor->getCurrentGroup();
+    QString mvt = ui->movementEditor->getCurrentMovement();
+
+    Q_ASSERT(!group.isEmpty());
+    Q_ASSERT(!mvt.isEmpty());
+
+    saveMovements();
+    _connection->getComm()->runAx12Movement(group, mvt, ui->spSpeedLimit->value(), positionIndex);
+}
+
+void Ax12View::moveToCurrentMovementPosition(int positionIndex)
+{
+    QString group = ui->movementEditor->getCurrentGroup();
+    QString mvt = ui->movementEditor->getCurrentMovement();
+
+    Q_ASSERT(!group.isEmpty());
+    Q_ASSERT(!mvt.isEmpty());
+
+    Tools::Ax12MovementManager::DetailedPosition pos = ui->movementEditor->getEditedMovements().getDetailedMovement(group, mvt).value(positionIndex);
+
+    QMap<int, Tools::Ax12MovementManager::Ax12Position> ax12Pos = pos.first;
+
+    QList<Comm::Ax12Info> ax12InfoList;
+
+    for(QMap<int, Tools::Ax12MovementManager::Ax12Position>::const_iterator it = ax12Pos.constBegin(); it != ax12Pos.constEnd(); ++it)
+    {
+        Comm::Ax12Info info;
+        info.id = it.key();
+        info.angle = *it;
+        info.speed = pos.second.maxSpeed;
+        info.torque = pos.second.torque;
+
+        ax12InfoList << info;
+    }
+
+    _connection->getComm()->moveAx12(ax12InfoList);
 }
 
 //----------------------------------------------------------------------

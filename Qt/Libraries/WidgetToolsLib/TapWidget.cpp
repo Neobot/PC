@@ -24,6 +24,9 @@ TapWidget::TapWidget(QWidget *parent) :
 
     _tableWidget->setSelectionMode(QAbstractItemView::SingleSelection);
 
+    _tableWidget->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(_tableWidget, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(contextMenuRequested(QPoint)));
+
     connect(_tableWidget, SIGNAL(cellActivated(int, int)), this, SIGNAL(itemActivated(int)));
     connect(_tableWidget, SIGNAL(cellChanged(int,int)), this, SIGNAL(itemChanged(int)));
     connect(_tableWidget, SIGNAL(cellClicked(int,int)), this, SIGNAL(itemClicked(int)));
@@ -143,7 +146,14 @@ void TapWidget::setItemCheckable(QTableWidgetItem *item, bool value)
 	{
 		item->setFlags(item->flags() & ~Qt::ItemIsUserCheckable);
 		item->setData(Qt::CheckStateRole, QVariant());
-	}
+    }
+}
+
+void TapWidget::contextMenuRequested(const QPoint &pos)
+{
+    int itemIndex = _tableWidget->indexAt(pos).row();
+    if (itemIndex >= 0)
+        emit contextMenuRequestedForItem(itemIndex);
 }
 
 //------------------------------------------------------------------------

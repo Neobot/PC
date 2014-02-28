@@ -16,6 +16,8 @@ namespace Tools
 
 	signals:
 		void currentTabChanged(int index);
+        void runCurrentMovementUntil(int positionIndex);
+        void moveToCurrentMovementPosition(int positionIndex);
 		
 	public:
 		enum Tabs
@@ -72,6 +74,10 @@ namespace Tools
 
 		void idAdded(int row, int column);
 		void positionAdded(int row, int column);
+
+        void movementContextMenuRequested(QPoint pos);
+        void runUntilHere();
+        void moveToPosition();
 	};
 
 }

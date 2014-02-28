@@ -3,6 +3,7 @@
 
 #include <QInputDialog>
 #include <QHeaderView>
+#include <QMenu>
 
 #include "SpinBoxDelegate.h"
 
@@ -36,6 +37,9 @@ Ax12MovementEditor::Ax12MovementEditor(QWidget *parent) :
 	connect(ui->stackedWidget, SIGNAL(currentChanged(int)), this, SIGNAL(currentTabChanged(int)));
 
 	ui->mvtIdsTable->setItemDelegate(new SpinBoxDelegate(0, 254, this));
+
+    ui->movementTree->setContextMenuPolicy(Qt::CustomContextMenu);
+    connect(ui->movementTree, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(movementContextMenuRequested(QPoint)));
 }
 
 Ax12MovementEditor::~Ax12MovementEditor()
@@ -464,7 +468,38 @@ void Ax12MovementEditor::positionAdded(int row, int column)
 		else
 			_manager.setMovementTorque(_currentGroup, _currentMovement, row, value);
 	}
-	ui->movementTree->blockSignals(false);
+    ui->movementTree->blockSignals(false);
+}
+
+void Ax12MovementEditor::movementContextMenuRequested(QPoint pos)
+{
+    QMenu menu;
+
+    int positionIndex = ui->movementTree->indexAt(pos).row();
+    if (positionIndex >= 0 && positionIndex < ui->movementTree->rowCount() - 1)
+    {
+        QAction* action;
+        action = menu.addAction("Run until here", this, SLOT(runUntilHere()));
+        action->setData(positionIndex);
+
+        action = menu.addAction("Move to this position", this, SLOT(moveToPosition()));
+        action->setData(positionIndex);
+    }
+
+    if (!menu.isEmpty())
+        menu.exec(ui->movementTree->viewport()->mapToGlobal(pos));
+}
+
+void Ax12MovementEditor::runUntilHere()
+{
+    QAction* action = (QAction*)sender();
+    emit runCurrentMovementUntil(action->data().toInt());
+}
+
+void Ax12MovementEditor::moveToPosition()
+{
+    QAction* action = (QAction*)sender();
+    emit moveToCurrentMovementPosition(action->data().toInt());
 }
 
 void Ax12MovementEditor::groupRenamed(int index)

@@ -30,6 +30,7 @@ namespace Tools
 		void itemDoubleClicked(int);
 		void itemEntered(int);
 		void itemPressed(int);
+        void contextMenuRequestedForItem(int);
 
 	public:
 		explicit TapWidget(QWidget *parent = 0);
@@ -62,6 +63,9 @@ namespace Tools
 		bool _isCheckable;
 
 		void setItemCheckable(QTableWidgetItem* item, bool value);
+
+    private slots:
+        void contextMenuRequested(const QPoint & pos);
 	};
 }
 
