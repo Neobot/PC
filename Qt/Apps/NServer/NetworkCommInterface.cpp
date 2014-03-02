@@ -216,8 +216,7 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 		case ASK_AX12_MVT_FILE:
 		{
 			QByteArray fileData = _listener->askAx12MovementFile();
-			if(!fileData.isEmpty())
-				sendAx12Movements(fileData);
+            sendAx12Movements(fileData);
 			break;
 		}
 		case SET_AX12_MVT_FILE:
