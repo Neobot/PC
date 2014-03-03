@@ -14,7 +14,7 @@ Sharp::Sharp(const QVector2D& position, const QVector2D& direction, double heigh
 }
 
 Sharp::Sharp(const Sharp& other)
-    : _position(other._position), _direction(other._direction), _height(other._height),
+    : Sensor(other), _position(other._position), _direction(other._direction), _height(other._height),
       _calibrationCurve(other._calibrationCurve), _distance(other._distance), _threshold(other._threshold)
 {
 }
@@ -46,6 +46,11 @@ double Sharp::getHeight() const
 
 double Sharp::getDistance() const
 {
+    return getValue();
+}
+
+double Sharp::getValue() const
+{
     return _distance;
 }
 
@@ -62,5 +67,10 @@ Direction Sharp::getMovementDirection() const
 bool Sharp::isActive() const
 {
     return _distance > 0 && (_threshold <= 0.0 || _distance < _threshold);
+}
+
+double Sharp::getActivationThreshold() const
+{
+    return _threshold;
 }
 

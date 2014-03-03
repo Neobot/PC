@@ -101,7 +101,7 @@ AbstractAction * ActionFactory::manualAbsoluteTurnMoveAction(double radian, int 
 
 AbstractAction * ActionFactory::actuatorAction(Comm::ServoId servoId, Comm::ServoPosition position, int estimatedDuration) const
 {
-	return new ActuatorAction(servoId, position, estimatedDuration, _robot, _manager);
+    return new ActuatorAction(servoId, position, estimatedDuration, _robot);
 }
 
 ActionGroup * ActionFactory::actionList(const QList<AbstractAction *> &actions) const
@@ -145,5 +145,29 @@ AbstractAction* ActionFactory::ax12Movement(const QString& group, const QString&
 
 AbstractAction* ActionFactory::asynchroneAx12Movement(const QString& group, const QString& movement, float speedLimit) const
 {
-	return new AX12MovementAction(group, movement, speedLimit, false, _robot, _ax12MovementsManager);
+    return new AX12MovementAction(group, movement, speedLimit, false, _robot, _ax12MovementsManager);
+}
+
+AbstractAction *ActionFactory::waitForSharpToActivate(int otherSharpId, int timeoutInMs) const
+{
+    const Sharp* sharp = _manager->getOtherSharp(otherSharpId);
+    return new WaitUntilSensorAction(sharp, Sensor::OtherSharpSensorFamily, timeoutInMs, sharp->getActivationThreshold(), Sensor::LesserThan, _manager);
+}
+
+AbstractAction *ActionFactory::waitForSharpToActivateWithCustomValue(int otherSharpId, double threshold, int timeoutInMs) const
+{
+    const Sharp* sharp = _manager->getOtherSharp(otherSharpId);
+    return new WaitUntilSensorAction(sharp, Sensor::OtherSharpSensorFamily, timeoutInMs, threshold, Sensor::LesserThan, _manager);
+}
+
+AbstractAction *ActionFactory::waitForSharpToDesactivate(int otherSharpId, int timeoutInMs) const
+{
+    const Sharp* sharp = _manager->getOtherSharp(otherSharpId);
+    return new WaitUntilSensorAction(sharp, Sensor::OtherSharpSensorFamily, timeoutInMs, sharp->getActivationThreshold(), Sensor::GreaterThan, _manager);
+}
+
+AbstractAction *ActionFactory::waitForSharpToDesactivateWithCustomValue(int otherSharpId, double threshold, int timeoutInMs) const
+{
+    const Sharp* sharp = _manager->getOtherSharp(otherSharpId);
+    return new WaitUntilSensorAction(sharp, Sensor::OtherSharpSensorFamily, timeoutInMs, threshold, Sensor::GreaterThan, _manager);
 }

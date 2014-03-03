@@ -42,7 +42,9 @@ SOURCES += TrajectoryFinder.cpp \
     Strategies/HappyBirthdayCommands.cpp \
     AIEngine.cpp \
     Strategies/HappyBirthdayStrategy.cpp \
-    StandardActions.cpp
+    StandardActions.cpp \
+    Sensor.cpp \
+    ColorSensor.cpp
 HEADERS += TrajectoryFinder.h \
     Sharp.h \
     StrategyInterface.h \
@@ -64,7 +66,9 @@ HEADERS += TrajectoryFinder.h \
     Strategies/HappyBirthdayCommands.h \
     AIEngine.h \
     Strategies/HappyBirthdayStrategy.h \
-    StandardActions.h
+    StandardActions.h \
+    Sensor.h \
+    ColorSensor.h
 FORMS += StrategyDialog.ui
 
 

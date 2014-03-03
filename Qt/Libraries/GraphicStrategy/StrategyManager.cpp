@@ -286,6 +286,8 @@ void StrategyManager::otherSensors(const QList<quint8> &values)
 
 		++index;
 	}
+
+    emit sensorValuesReceived(Sensor::OtherSharpSensorFamily);
 }
 
 void StrategyManager::avoidingSensors(const QList<quint8> &values)
@@ -338,6 +340,8 @@ void StrategyManager::avoidingSensors(const QList<quint8> &values)
 	}
 	else if (avoidingNecessary)
 		_strategy->obstacleDetected();
+
+    emit sensorValuesReceived(Sensor::AvoidingSharpSensorFamily);
 }
 
 bool StrategyManager::initDone()
@@ -555,12 +559,17 @@ StrategyMap * StrategyManager::getMap() const
 
 const Sharp *StrategyManager::getAvoidingSharp(int index) const
 {
-	return _sharps.value(index, 0);
+    return _sharps.value(index, nullptr);
 }
 
 const Sharp *StrategyManager::getOtherSharp(int index) const
 {
-	return _scannerSharps.value(index, 0);
+    return _scannerSharps.value(index, nullptr);
+}
+
+const ColorSensor *StrategyManager::getColorSensor(int index) const
+{
+    return _colorSensors.value(index, nullptr);
 }
 
 const QMap<int, Sharp *> &StrategyManager::getAvoidingSharps() const
@@ -570,7 +579,24 @@ const QMap<int, Sharp *> &StrategyManager::getAvoidingSharps() const
 
 const QMap<int, Sharp *> &StrategyManager::getOtherSharps() const
 {
-	return _scannerSharps;
+    return _scannerSharps;
+}
+
+const QMap<int, ColorSensor *> &StrategyManager::getColorSensors() const
+{
+    return _colorSensors;
+}
+
+const Sensor *StrategyManager::getSensor(int index, Sensor::SensorFamily family) const
+{
+    switch(family)
+    {
+        case Sensor::AvoidingSharpSensorFamily:   return getAvoidingSharp(index);
+        case Sensor::OtherSharpSensorFamily:      return getOtherSharp(index);
+        case Sensor::ColorSensorFamily:     return getColorSensor(index);
+    }
+
+    return nullptr;
 }
 
 ActionFactory * StrategyManager::getActionFactory() const

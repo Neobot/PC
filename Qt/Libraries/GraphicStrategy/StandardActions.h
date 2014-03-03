@@ -2,11 +2,15 @@
 #define STANDARDACTIONS_H
 
 #include "AbstractAction.h"
+#include "Sensor.h"
+
 #include <RPoint.h>
 #include <Curve.h>
 #include <NGrid.h>
 #include <Instructions.h>
 #include <RMovement.h>
+
+#include <QTimer>
 
 class TrajectoryFinder;
 class StrategyMap;
@@ -95,13 +99,12 @@ private:
 class ActuatorAction : public AbstractAction
 {
 public:
-	ActuatorAction(Comm::ServoId servoId, Comm::ServoPosition position, int estimatedDuration, Comm::RobotCommInterface* robot, StrategyManager* manager, QObject* parent = 0);
+    ActuatorAction(Comm::ServoId servoId, Comm::ServoPosition position, int estimatedDuration, Comm::RobotCommInterface* robot, QObject* parent = 0);
 
 	void execute();
 	QString getActionName() const;
 
 private:
-	StrategyManager*	_manager;
 	Comm::ServoId	_id;
 	Comm::ServoPosition _position;
 	int _duration;
@@ -147,6 +150,31 @@ private:
 
 private slots:
 	void asynchroneEnd();
+};
+
+class WaitUntilSensorAction : public AbstractAction
+{
+    Q_OBJECT
+public:
+    WaitUntilSensorAction(const Sensor* sensor, Sensor::SensorFamily family, int timeoutMs, double threshold, int thresholdOperations, StrategyManager* manager, QObject* parent = 0);
+
+    void execute();
+    void end();
+    void stop();
+    QString getActionName() const;
+
+private:
+   const Sensor* _sensor;
+   Sensor::SensorFamily _family;
+
+   double _threshold;
+   double _thresholdOperations;
+
+   StrategyManager*	_manager;
+   QTimer* _timeout;
+
+private slots:
+    void testSensor(Sensor::SensorFamily family);
 };
 
 

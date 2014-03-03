@@ -5,6 +5,7 @@
 #include <AbstractLogger.h>
 #include "ActionFactory.h"
 #include "Sharp.h"
+#include "ColorSensor.h"
 #include "GameState.h"
 
 #include <QObject>
@@ -76,8 +77,13 @@ public:
 
     const Sharp* getAvoidingSharp(int index) const;
     const Sharp* getOtherSharp(int index) const;
+    const ColorSensor* getColorSensor(int index) const;
+
     const QMap<int, Sharp*>& getAvoidingSharps() const;
     const QMap<int, Sharp*>& getOtherSharps() const;
+    const QMap<int, ColorSensor *> &getColorSensors() const;
+
+    const Sensor *getSensor(int index, Sensor::SensorFamily family) const;
 
     StrategyMap* getMap() const;
     ActionFactory* getActionFactory() const;
@@ -103,6 +109,7 @@ private:
 	Tools::Ax12MovementManager* _ax12MovementManager;
     QMap<int, Sharp*>   _sharps;
     QMap<int, Sharp*>   _scannerSharps;
+    QMap<int, ColorSensor*>   _colorSensors;
 	QList<bool>			_microswitchStates;
     GameState           _currentState;
 
@@ -164,6 +171,8 @@ private slots:
 signals:
     void actionDone(bool result);
 	void strategyFinished();
+
+    void sensorValuesReceived(Sensor::SensorFamily family);
 };
 
 #endif // ACTIONMANAGER_H

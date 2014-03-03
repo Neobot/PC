@@ -4,6 +4,7 @@
 #include "StrategyManager.h"
 #include "Ax12MovementRunner.h"
 #include "ToolsLib.h"
+#include "Sharp.h"
 
 #include <QTimer>
 #include <QtDebug>
@@ -140,8 +141,8 @@ QString RelativeMoveAction::getActionName() const
 
 //actuator--------------------------------------------------------------------------------
 
-ActuatorAction::ActuatorAction(Comm::ServoId servoId, Comm::ServoPosition position, int estimatedDuration, Comm::RobotCommInterface* robot, StrategyManager *manager, QObject *parent)
-	: AbstractAction(parent), _manager(manager), _id(servoId), _position(position), _duration(estimatedDuration), _robot(robot)
+ActuatorAction::ActuatorAction(Comm::ServoId servoId, Comm::ServoPosition position, int estimatedDuration, Comm::RobotCommInterface* robot, QObject *parent)
+    : AbstractAction(parent), _id(servoId), _position(position), _duration(estimatedDuration), _robot(robot)
 {
 }
 
@@ -227,4 +228,52 @@ QString AX12MovementAction::getActionName() const
 void AX12MovementAction::asynchroneEnd()
 {
 	end();
+}
+
+//Wait until sharp-----------------------------------------------------------------------
+
+
+WaitUntilSensorAction::WaitUntilSensorAction(const Sensor *sensor, Sensor::SensorFamily family, int timeoutMs, double threshold, int thresholdOperations, StrategyManager *manager, QObject *parent)
+    : AbstractAction(parent), _sensor(sensor), _family(family), _threshold(threshold), _thresholdOperations(thresholdOperations), _manager(manager), _timeout(0)
+{
+    if (timeoutMs > 0)
+    {
+        _timeout = new QTimer(this);
+        _timeout->setSingleShot(true);
+        _timeout->setInterval(timeoutMs);
+        connect(_timeout, SIGNAL(timeout()), this, SLOT(failed()));
+    }
+}
+
+void WaitUntilSensorAction::execute()
+{
+    connect(_manager, SIGNAL(otherSensorsReceived()), this, SLOT(testSharp()));
+    if (_timeout)
+        _timeout->start();
+}
+
+void WaitUntilSensorAction::end()
+{
+    if (_timeout)
+        _timeout->stop();
+    disconnect();
+}
+
+void WaitUntilSensorAction::stop()
+{
+    end();
+}
+
+QString WaitUntilSensorAction::getActionName() const
+{
+    return QString("Scanning sensor");
+}
+
+void WaitUntilSensorAction::testSensor(Sensor::SensorFamily family)
+{
+    if (_family == family)
+    {
+        if (_sensor->testThreshold(_threshold, _thresholdOperations))
+            succeed();
+    }
 }

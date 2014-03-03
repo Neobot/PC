@@ -43,6 +43,11 @@ public:
 	AbstractAction* ax12Movement(const QString& group, const QString& movement, float speedLimit = 110.f) const;
 	AbstractAction* asynchroneAx12Movement(const QString& group, const QString& movement, float speedLimit = 110.f) const;
 
+    AbstractAction* waitForSharpToActivate(int otherSharpId, int timeoutInMs) const;
+    AbstractAction* waitForSharpToActivateWithCustomValue(int otherSharpId, double threshold, int timeoutInMs) const;
+    AbstractAction* waitForSharpToDesactivate(int otherSharpId, int timeoutInMs) const;
+    AbstractAction* waitForSharpToDesactivateWithCustomValue(int otherSharpId, double threshold, int timeoutInMs) const;
+
 private:
     StrategyManager*	_manager;
     TrajectoryFinder*	_finder;

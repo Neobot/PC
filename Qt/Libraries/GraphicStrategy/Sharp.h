@@ -3,10 +3,12 @@
 
 #include "Curve.h"
 #include "RMovement.h"
+#include "Sensor.h"
+
 #include <QVector2D>
 
 
-class Sharp
+class Sharp : public Sensor
 {
 public:
     Sharp();
@@ -21,11 +23,13 @@ public:
     double getHeight() const;
 
     void update(double value);
-    double getDistance() const;
+    double getDistance() const; //=getValue()
+    double getValue() const;
 
     Tools::Direction getMovementDirection() const;
 
     bool isActive() const;
+    double getActivationThreshold() const;
 
 protected:
     QVector2D _position; //position relative to the robot
