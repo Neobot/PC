@@ -29,6 +29,7 @@ public:
     void sendAvoidingSensorsValues(const QList<quint8> &sharps);
     void sendOtherSensorsValues(const QList<quint8>& sharps);
     void sendContactorsValues(quint8 contactors);
+    void sendColorSensorsvalues(const QList<QColor>& colors);
     void go(bool mirrored);
 	void sendNoticeOfReceipt(quint8 instruction, bool result);
     void sendArrived();

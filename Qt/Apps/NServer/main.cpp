@@ -5,6 +5,8 @@
 
 int main(int argc, char *argv[])
 {
+    Q_INIT_RESOURCE(Simulation);
+
 	QCoreApplication a(argc, argv);
 	
 	Tools::StdoutLogger logger;

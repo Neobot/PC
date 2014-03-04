@@ -1,6 +1,8 @@
 #include "RobotCommInterface.h"
 #include "Instructions.h"
 
+#include <QColor>
+
 using namespace Comm;
 using namespace Tools;
 
@@ -122,7 +124,28 @@ void RobotCommInterface::moveServo(quint8 servo, quint8 position)
 	Data data;
 	data.add(servo);
 	data.add(position);
-	getProtocol(0)->sendMessage(ACTIONS, data);
+    getProtocol(0)->sendMessage(ACTIONS, data);
+}
+
+void RobotCommInterface::askAvoidingSensors(bool recursive)
+{
+    Data data;
+    data.add(recursive);
+    getProtocol(0)->sendMessage(ASK_AVOIDING_SENSORS, data);
+}
+
+void RobotCommInterface::askOtherSensors(bool recursive)
+{
+    Data data;
+    data.add(recursive);
+    getProtocol(0)->sendMessage(ASK_OTHER_SENSORS, data);
+}
+
+void RobotCommInterface::askColorSensors(bool recursive)
+{
+    Data data;
+    data.add(recursive);
+    getProtocol(0)->sendMessage(ASK_COLOR_SENSORS, data);
 }
 
 void RobotCommInterface::read(quint8 instruction, const Data& data)
@@ -166,7 +189,8 @@ void RobotCommInterface::read(quint8 instruction, const Data& data)
 					d.take(value);
 					values << value;
 				}
-				_listener->avoidingSensors(values);
+
+                _listener->avoidingSensors(values);
 				break;
 			}
 			case OTHER_SENSORS:
@@ -181,6 +205,29 @@ void RobotCommInterface::read(quint8 instruction, const Data& data)
 				_listener->otherSensors(values);
 				break;
 			}
+            case COLOR_SENSORS:
+            {
+                quint8 value;
+                QList<quint8> values;
+                while(!d.isEmpty())
+                {
+                    d.take(value);
+                    values << value;
+                }
+
+                QList<QColor> colors;
+                for(QList<quint8>::const_iterator it = values.constBegin() + 2; it < values.constEnd(); it += 3)
+                {
+                    int red = *(it - 2);
+                    int green = *(it - 1);
+                    int blue = *it;
+
+                    colors << QColor(red, green, blue);
+                }
+
+                _listener->colorSensors(colors);
+                break;
+            }
 			case MICROSWITCHS:
 			{
 				quint8 value;

@@ -1,7 +1,9 @@
 #include "SimRobot.h"
 #include "Instructions.h"
 #include "ToolsLib.h"
+
 #include <QtDebug>
+#include <QColor>
 
 SimRobot::SimRobot(SimProtocol* protocol, SimCommInterface* networkInterface)
     : AbstractCommInterface(0), _protocol(protocol), _interface(networkInterface)
@@ -123,6 +125,24 @@ void SimRobot::sendContactorsValues(quint8 contactors)
     d.add(contactors);
 
     _protocol->sendMessage2(Comm::MICROSWITCHS, d);
+}
+
+void SimRobot::sendColorSensorsvalues(const QList<QColor> &colors)
+{
+    Comm::Data d;
+
+    foreach(const QColor& c, colors)
+    {
+        quint8 r = c.red();
+        quint8 g = c.green();
+        quint8 b = c.blue();
+
+        d.add(r);
+        d.add(g);
+        d.add(b);
+    }
+
+    _protocol->sendMessage2(Comm::COLOR_SENSORS, d);
 }
 
 void SimRobot::go(bool mirrored)

@@ -20,7 +20,8 @@ SOURCES += Simulator.cpp \
     ChessUpConfiguration.cpp \
     SharpObject.cpp \
     SimProtocol.cpp \
-    ContactorObject.cpp
+    ContactorObject.cpp \
+    ColorSensorObject.cpp
 HEADERS += Simulator.h \
     SimRobot.h \
     SimulationMap.h \
@@ -28,4 +29,8 @@ HEADERS += Simulator.h \
     ChessUpConfiguration.h \
     SharpObject.h \
     SimProtocol.h \
-    ContactorObject.h
+    ContactorObject.h \
+    ColorSensorObject.h
+
+RESOURCES += \
+    Simulation.qrc

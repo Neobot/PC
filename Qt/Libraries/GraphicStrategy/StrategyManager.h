@@ -147,6 +147,7 @@ private:
 	void avoidingSensors(const QList<quint8> &values);
 	void microswitchs(const QList<quint8>& values);
 	void otherSensors(const QList<quint8>& values);
+    void colorSensors(const QList<QColor> &values);
     bool initDone();
     bool go(bool mirrored);
     bool pingReceived();

@@ -27,6 +27,9 @@ namespace Comm
 	const quint8 SET_PARAMETERS = 50;
 	const quint8 ASK_PARAMETERS = 51;
     const quint8 ACTIONS = 60;
+    const quint8 ASK_AVOIDING_SENSORS = 70;
+    const quint8 ASK_OTHER_SENSORS = 71;
+    const quint8 ASK_COLOR_SENSORS = 72;
 
     //microC -> PC
     const quint8 COORD = 100;
@@ -37,6 +40,7 @@ namespace Comm
     const quint8 AVOIDING_SENSORS = 110;
     const quint8 MICROSWITCHS = 111;
     const quint8 OTHER_SENSORS = 112;
+    const quint8 COLOR_SENSORS = 113;
 
     const quint8 INIT_DONE = 120;
     const quint8 GO = 121;

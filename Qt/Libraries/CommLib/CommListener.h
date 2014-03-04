@@ -17,6 +17,7 @@ namespace Comm
 		virtual void avoidingSensors(const QList<quint8>& values) {Q_UNUSED(values);}
 		virtual void microswitchs(const QList<quint8>& values) {Q_UNUSED(values);}
 		virtual void otherSensors(const QList<quint8>& values) {Q_UNUSED(values);}
+        virtual void colorSensors(const QList<QColor>& values) {Q_UNUSED(values);}
 		virtual bool initDone() {return true;}
 		virtual bool go(bool mirrored) {Q_UNUSED(mirrored); return false;}
 		virtual bool pingReceived() {return true;}

@@ -56,6 +56,10 @@ namespace Comm
 		void sendNoticeOfReceipt(quint8 instruction, bool result);
 		void moveServo(quint8 servo, quint8 position);
 
+        void askAvoidingSensors(bool recursive);
+        void askOtherSensors(bool recursive);
+        void askColorSensors(bool recursive);
+
 	protected slots:
 		void read(quint8 instruction, const Comm::Data& data);
 

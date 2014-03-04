@@ -5,9 +5,12 @@
 #include "ChessUpObject.h"
 #include "ChessUpConfiguration.h"
 #include "SharpObject.h"
+#include "ColorSensorObject.h"
 #include "ContactorObject.h"
 #include "RPoint.h"
+
 #include <QtDebug>
+#include <QImage>
 
 class SimulationMap : public Tools::DataMap
 {
@@ -23,6 +26,7 @@ public:
 		AvoidingSharpGroup,
 		OtherSharpGroup,
 		ContactorGroup,
+        ColorSensorGroup,
 		OpponentGroup,
 		RobotGroup,
 		ObstacleGroup,
@@ -40,6 +44,8 @@ public:
 	SharpObject* getSharpInClaw();
 
 private:
+    QImage _colorMap;
+
 	void configureRobotSensors();
 	double distanceTo(Tools::DataObject* o1, Tools::DataObject* o2);
 	double distanceTo(Tools::LineObject* l1, Tools::CircleObject* c2);

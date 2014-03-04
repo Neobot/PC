@@ -64,7 +64,16 @@ void Comm::CommDispatcher::otherSensors(const QList<quint8> &values)
 		responder->otherSensors(values);
 
 	if (_main)
-		_main->otherSensors(values);
+        _main->otherSensors(values);
+}
+
+void CommDispatcher::colorSensors(const QList<QColor> &values)
+{
+    foreach(CommListener* responder, _responders)
+        responder->colorSensors(values);
+
+    if (_main)
+        _main->colorSensors(values);
 }
 
 bool Comm::CommDispatcher::initDone()

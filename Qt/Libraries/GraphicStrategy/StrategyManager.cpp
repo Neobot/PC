@@ -290,6 +290,28 @@ void StrategyManager::otherSensors(const QList<quint8> &values)
     emit sensorValuesReceived(Sensor::OtherSharpSensorFamily);
 }
 
+void StrategyManager::colorSensors(const QList<QColor> &values)
+{
+    if (!_initDone)
+        return;
+
+    int index = 0;
+    for(QList<QColor>::const_iterator it = values.constBegin(); it != values.constEnd(); ++it)
+    {
+        const QColor& value = *it;
+
+        ColorSensor* cs = _colorSensors.value(index);
+        if (!cs)
+            return;
+
+        //cs->updateValue(value);
+
+        ++index;
+    }
+
+    emit sensorValuesReceived(Sensor::ColorSensorFamily);
+}
+
 void StrategyManager::avoidingSensors(const QList<quint8> &values)
 {
 	if (!_initDone)

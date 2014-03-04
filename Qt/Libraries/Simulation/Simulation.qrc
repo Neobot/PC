@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/ColorMaps">
+        <file alias="2014ColorMap">Resources/Table2014.png</file>
+    </qresource>
+</RCC>

@@ -13,6 +13,7 @@
 int main(int argc, char *argv[])
 {
 	Q_INIT_RESOURCE(WidgetToolsLib);
+    Q_INIT_RESOURCE(Simulation);
 
     QApplication a(argc, argv);
 	a.setWindowIcon(QIcon(":/app/AppIcon"));
