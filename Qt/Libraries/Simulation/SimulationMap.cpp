@@ -66,8 +66,8 @@ void SimulationMap::configureRobotSensors()
     addObject(new Sharp20_150(QPointF(15, 170), Tools::degreeToRadian(90), 25), OtherSharpGroup);
 
     //color sensors
-    addObject(new ColorSensorObject(QPointF(0, -80)), ColorSensorGroup);
-    addObject(new ColorSensorObject(QPointF(0,  80)), ColorSensorGroup);
+    addObject(new ColorSensorObject(QVector2D(0, -150)), ColorSensorGroup);
+    addObject(new ColorSensorObject(QVector2D(0,  150)), ColorSensorGroup);
 }
 
 void SimulationMap::moveRobot(const RPoint& robot)
@@ -93,6 +93,13 @@ void SimulationMap::moveRobot(const RPoint& robot)
         ContactorObject* contactor = static_cast<ContactorObject*>(*object);
         contactor->setPositionAndRotation(RPoint(rPos.x(), rPos.y(), rRot));
     }
+
+    QList<Tools::DataObject *> colorSensorList = getObjects(ColorSensorGroup);
+    for (object = colorSensorList.begin(); object != colorSensorList.end(); ++object)
+    {
+        ColorSensorObject* cs = static_cast<ColorSensorObject*>(*object);
+        cs->setPositionAndRotation(RPoint(rPos.x(), rPos.y(), rRot));
+    }
 }
 
 void SimulationMap::updateSensors()
@@ -113,7 +120,7 @@ void SimulationMap::updateSensors()
      for (QList<Tools::DataObject *>::iterator itCs = colorSensorList.begin(); itCs != colorSensorList.end(); ++itCs)
      {
          ColorSensorObject* cs = static_cast<ColorSensorObject*>(*itCs);
-         QPointF p = getRobotPosition().toQPointF() + cs->getPosition();
+         QPointF p = cs->getPosition();
          if (p.x() >= 0 && p.y() >= 0)
          {
              QColor c(_colorMap.pixel(p.x(), p.y()));

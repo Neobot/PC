@@ -131,6 +131,7 @@ void Simulator::simulationTimerEvent()
 	_simRobot->sendCoordinates(robot.getX(), robot.getY(), robot.getTheta(), _moveForward);
 	_simRobot->sendObjective(_currentObjectve.getX(), _currentObjectve.getY(), _currentObjectve.getTheta());
 
+    //Avoiding sharps
 	QList<quint8> avoidingSharpsValues;
 	QList<DataObject *> avoidingSharpList = _map->getObjects(SimulationMap::AvoidingSharpGroup);
 	for (QList<DataObject *>::iterator object = avoidingSharpList.begin(); object != avoidingSharpList.end(); ++object)
@@ -140,6 +141,7 @@ void Simulator::simulationTimerEvent()
 	}
 	_simRobot->sendAvoidingSensorsValues(avoidingSharpsValues);
 
+    //Other sharps
 	QList<quint8> otherSharpsValues;
     QList<DataObject *> otherSharpList = _map->getObjects(SimulationMap::OtherSharpGroup);
 	for (QList<DataObject *>::iterator object = otherSharpList.begin(); object != otherSharpList.end(); ++object)
@@ -151,7 +153,7 @@ void Simulator::simulationTimerEvent()
 
 	_clawsSharp = (_map->getSharpInClaw()->getDistance() < 30);
 
-
+    //Contactors
 	quint8 contactorsValues = 0;
 	QList<DataObject *> contactorList = _map->getObjects(SimulationMap::ContactorGroup);
 
@@ -162,6 +164,17 @@ void Simulator::simulationTimerEvent()
 	}
 
 	_simRobot->sendContactorsValues(contactorsValues);
+
+    //Color sensors
+    QList<QColor> colorSensorValues;
+    QList<DataObject *> colorSensorList = _map->getObjects(SimulationMap::ColorSensorGroup);
+    for (QList<DataObject *>::iterator object = colorSensorList.begin(); object != colorSensorList.end(); ++object)
+    {
+        QColor c = static_cast<ColorSensorObject*>(*object)->getColor();
+        colorSensorValues.append(c);
+    }
+    _simRobot->sendColorSensorsvalues(colorSensorValues);
+
 
 	if (!_opponentMovements.empty())
 		updateOpponentPosition();

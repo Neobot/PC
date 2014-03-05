@@ -276,7 +276,8 @@ void NPlayer::customizeView()
 			ui.graphicsView->getScene()->setGroupDynamicSizeProperty(SimulationMap::OtherSharpGroup, true);
 			ui.graphicsView->getScene()->setGroupDynamicSizeProperty(SimulationMap::ContactorGroup, true);
 			ui.graphicsView->getScene()->setGroupVisibleProperty(SimulationMap::TableObstacleGroup, false);
-			ui.graphicsView->getScene()->setMap(_simulator->getMap());
+            ui.graphicsView->getScene()->setGroupDynamicProperty(SimulationMap::ColorSensorGroup, true);
+            ui.graphicsView->getScene()->setMap(_simulator->getMap());
 		}
 		else
 		{

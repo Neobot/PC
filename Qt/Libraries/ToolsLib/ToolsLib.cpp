@@ -207,7 +207,7 @@ QDir Tools::getDataDirectory()
 	d.mkpath("NeobotData");
 	d.cd("NeobotData");
 #else
-    QStringList locations = QStandardPaths::standardLocations(QStandardPaths::DataLocation);
+    QStringList locations = QStandardPaths::standardLocations(QStandardPaths::GenericDataLocation);
     if (!locations.isEmpty())
         d = QDir(locations.first());
     else

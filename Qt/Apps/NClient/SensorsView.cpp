@@ -111,7 +111,12 @@ void SensorsView::otherSensors(const QList<quint8> &values)
 	if (isViewActive())
 		ui->otherSensorBars->setValues(doubleValues);
 
-	_timeOther++;
+    _timeOther++;
+}
+
+void SensorsView::colorSensors(const QList<QColor> &values)
+{
+    ui->colorWidget->setColors(values);
 }
 
 void SensorsView::clear()

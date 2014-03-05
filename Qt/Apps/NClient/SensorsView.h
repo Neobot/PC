@@ -34,6 +34,7 @@ private:
 
 	void avoidingSensors(const QList<quint8>& values);
 	void otherSensors(const QList<quint8> &values);
+    void colorSensors(const QList<QColor> &values);
 
 private slots:
 	void clear();

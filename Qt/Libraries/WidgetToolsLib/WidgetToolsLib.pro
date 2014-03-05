@@ -29,7 +29,8 @@ HEADERS += TextEditLogger.h \
     NSettingsPropertyBrowser.h \
     Ax12MovementEditor.h \
     SpinBoxDelegate.h \
-    TapWidget.h
+    TapWidget.h \
+    ColorDisplayWidget.h
 
 SOURCES += TextEditLogger.cpp \
     SlidingStackedWidget.cpp \
@@ -41,7 +42,8 @@ SOURCES += TextEditLogger.cpp \
     NSettingsPropertyBrowser.cpp \
     Ax12MovementEditor.cpp \
     SpinBoxDelegate.cpp \
-    TapWidget.cpp
+    TapWidget.cpp \
+    ColorDisplayWidget.cpp
 
 RESOURCES += WidgetToolsLib.qrc
 
