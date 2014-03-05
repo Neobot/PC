@@ -62,17 +62,15 @@ void ColorDisplayWidget::setColors(const QList<QColor> &colors)
 
 void ColorDisplayWidget::addColor(const QColor &color)
 {
-    if (_colorWidgets.isEmpty())
-    {
-        addSpacer();
-    }
-
-    QLabel* widget = new QLabel("TEST", this);
+    QLabel* widget = new QLabel(QString("Capteur ").append(QString::number(_colorWidgets.count())), this);
+    widget->setAlignment(Qt::AlignCenter);
+    widget->setMaximumSize(100, 100);
     setWidgetColor(widget, color);
     _colorWidgets << widget;
-    _layout->addWidget(widget);
+    _layout->insertWidget(0, widget);
 
-    addSpacer();
+    if (_spacers.isEmpty())
+        addSpacer();
 }
 
 void ColorDisplayWidget::removeLastColor()
@@ -102,7 +100,7 @@ void ColorDisplayWidget::removeLastColor()
 
 void ColorDisplayWidget::addSpacer()
 {
-    QSpacerItem* spacer = new QSpacerItem(0,0, QSizePolicy::Expanding);
+    QSpacerItem* spacer = new QSpacerItem(10,0, QSizePolicy::Expanding);
     _layout->addSpacerItem(spacer);
 
     _spacers << spacer;
