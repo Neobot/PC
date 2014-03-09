@@ -265,11 +265,7 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
 		if (!simulation)
 		{
 			QextSerialPort* port = new QextSerialPort(robotPort,  QextSerialPort::EventDriven);
-			port->setBaudRate(BAUD115200);
-			port->setFlowControl(FLOW_OFF);
-			port->setParity(PAR_NONE);
-			port->setDataBits(DATA_8);
-			port->setStopBits(STOP_1);
+
 
 			connect(port, SIGNAL(dsrChanged(bool)), this, SLOT(serialPortStatusChanged(bool)));
 
@@ -283,6 +279,12 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
 				message = "The robot is not available right now. Try again later or use the simulation mode...";
 				return false;
 			}
+
+            port->setBaudRate(BAUD115200);
+            port->setFlowControl(FLOW_OFF);
+            port->setParity(PAR_NONE);
+            port->setDataBits(DATA_8);
+            port->setStopBits(STOP_1);
 		}
 		else
 		{
@@ -305,7 +307,7 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
         {
 			_ax12Manager->setRequestTimeout(200);
 			_ax12Manager->setReadingLoopMode(Comm::AX12CommManager::AUTO_MODE);
-			_ax12Manager->setTimerReadingLoopInterval(200);
+            _ax12Manager->setTimerReadingLoopInterval(200);
 
 			_ax12MovementRunner = new Comm::Ax12MovementRunner(_ax12Manager, &_ax12Movements);
             connect(_ax12MovementRunner, SIGNAL(movementFinished(bool,QString,QString)), this, SLOT(ax12MovementFinished()));

@@ -123,13 +123,9 @@ AX12CommManager::AX12CommManager(const QString &portname, BaudRateType baudrate,
     Tools::LoggerInterface(logger), _controllerMode(mode), _autoReadingLoop(false), _readingLoopMode(AUTO_MODE), _isBusy(false)
 {
 	QextSerialPort* port = new QextSerialPort(portname,  QextSerialPort::EventDriven);
-	port->setBaudRate(baudrate);
-	port->setFlowControl(FLOW_OFF);
-	port->setParity(PAR_NONE);
-	port->setDataBits(DATA_8);
-	port->setStopBits(STOP_1);
+    _baudrate = baudrate;
 
-	_protocol = new ProtocolAX12(port, logger, true);
+    _protocol = new ProtocolAX12(port, logger, true);
 
 	_protocol->beQuiet(true);
 	_protocol->setDebugMode(true, false, false);
@@ -170,6 +166,17 @@ bool AX12CommManager::open()
 
 	if (!connect(_protocol, SIGNAL(message(quint8, const Comm::Data&, quint8)), this, SLOT(messageReceived(quint8, const Comm::Data&, quint8))))
 		logger() << "The connection to the slot messageReceived() failed !" << Tools::endl;
+
+    if (ok)
+    {
+        static_cast<QextSerialPort*>(_protocol->getIODevice())->setFlowControl(FLOW_OFF);
+        static_cast<QextSerialPort*>(_protocol->getIODevice())->setParity(PAR_NONE);
+        static_cast<QextSerialPort*>(_protocol->getIODevice())->setDataBits(DATA_8);
+
+        static_cast<QextSerialPort*>(_protocol->getIODevice())->setBaudRate(_baudrate);
+
+        static_cast<QextSerialPort*>(_protocol->getIODevice())->setStopBits(STOP_1);
+    }
 
 	return ok;
 }
@@ -308,11 +315,14 @@ void AX12CommManager::releaseServo(quint8 id, bool synchronous)
 
 void AX12CommManager::messageReceived(quint8 instruction, const Comm::Data& data, quint8 id)
 {
+    Data d(data);
     if (instruction == 0 && id == 0xFD && _controllerMode == USB2AX_CONTROLLER)
     {
         _requestTimeoutTimer->stop();
         foreach(quint8 id, _currentMessage.ids)
-            readReceivedData(id, data);
+        {
+            readReceivedData(id, d);
+        }
 
         QTimer::singleShot(1, this, SLOT(sendNextMessage()));
         emit servosStatusUpdated(_currentMessage.ids);
@@ -323,7 +333,7 @@ void AX12CommManager::messageReceived(quint8 instruction, const Comm::Data& data
         // ignore messages sent to AX-12 (if RX & TX are connected together)
         //standard reading
 		_requestTimeoutTimer->stop();
-        readReceivedData(id, data);
+        readReceivedData(id, d);
 
         QTimer::singleShot(1, this, SLOT(sendNextMessage()));
 
@@ -333,7 +343,7 @@ void AX12CommManager::messageReceived(quint8 instruction, const Comm::Data& data
 	}
 }
 
-void AX12CommManager::readReceivedData(quint8 id, Comm::Data data)
+void AX12CommManager::readReceivedData(quint8 id, Comm::Data& data)
 {
     // extract position, speed and load from data
 

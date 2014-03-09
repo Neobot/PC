@@ -117,6 +117,7 @@ namespace Comm
 		Comm::ProtocolAX12* _protocol;
 		QHash<quint8, AX12> _servos;
         QHash<quint8, int> _loopDemandCount;
+        BaudRateType _baudrate;
 
 		QTimer* _readTimer;
 		bool _autoReadingLoop;
@@ -159,7 +160,7 @@ namespace Comm
 		void sendServoRequestStatusMessage(quint8 id);
         void sendServoMultiRequestStatusMessage(const QList<quint8>& ids);
 
-        void readReceivedData(quint8 id, Comm::Data data);
+        void readReceivedData(quint8 id, Data &data);
 
 	private slots:
 		void messageReceived(quint8 instruction, const Comm::Data&, quint8 id);

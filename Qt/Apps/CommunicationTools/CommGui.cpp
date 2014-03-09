@@ -135,7 +135,7 @@ void CommGui::messageReceived(quint8 instruction, const Comm::Data& data, quint8
 
 bool CommGui::openPort(const QString& portname, const QString& baudrate, ProtocolType protocol)
 {
-	QScopedPointer<QIODevice> port(CommUtil::getQextSerialPortDevice(portname, baudrate));
+    QScopedPointer<QextSerialPort> port(CommUtil::getQextSerialPortDevice(portname, baudrate));
 
 	switch(protocol)
 	{
@@ -181,6 +181,7 @@ bool CommGui::openPort(const QString& portname, const QString& baudrate, Protoco
 
 	_openedProtocolType = protocol;
 	_port = port.take();
+    ((QextSerialPort*)_port)->setBaudRate(CommUtil::getQextSerialPortBaudrate(baudrate));
 	return _port;
 }
 

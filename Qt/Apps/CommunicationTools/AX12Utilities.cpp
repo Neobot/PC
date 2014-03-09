@@ -77,7 +77,7 @@ void AX12Utilities::scanNextBaudrate()
 			logger() << "Error: Cannot open the connection" << Tools::endl;
 
         connect(_manager, SIGNAL(servosStatusUpdated(quint8)), this, SLOT(scanServosStatusUpdated(quint8)));
-        connect(_manager, SIGNAL(requestTimeoutReceived(quint8)), this, SLOT(scanRequestTimeoutReceived(quint8)));
+        connect(_manager, SIGNAL(requestTimeoutReceived(quint8)), this, SLOT(scanRequestTimeoutRecei(quint8)));
         connect(_manager, SIGNAL(allMessagesSent()), this, SLOT(allIdReceived()));
 
 		if (ui->rbAnyID->isChecked() || ui->rbAnyAny->isChecked())

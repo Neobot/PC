@@ -115,7 +115,7 @@ void NetworkCommInterface::sendAx12Positions(const QList<quint8> ids, const QLis
 	Data data;
 	data.add((quint8)nb);
 	for(int i = 0; i < nb; ++i)
-	{
+    {
 		data.add(ids.value(i));
 		data.add(positions.value(i));
 	}
@@ -173,15 +173,16 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 		case MOVE_AX12:
 		{
 			quint8 nb;
+            float maxSpeed;
+            d.take(maxSpeed);
 			d.take(nb);
 
 			QList<Comm::Ax12Info> infos;
-			float maxSpeed;
 			for(int i = 0; i < nb; ++i)
 			{
 				quint8 id;
 				float angle, speed, torque;
-				d.take(maxSpeed);
+
 				d.take(id);
 				d.take(angle).take(speed).take(torque);
 

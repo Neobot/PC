@@ -61,10 +61,10 @@ BaudRateType CommUtil::getQextSerialPortBaudrate(const QString& baudrate)
     }
 }
 
-QIODevice * CommUtil::getQextSerialPortDevice(const QString& portname, BaudRateType baudrate)
+QextSerialPort * CommUtil::getQextSerialPortDevice(const QString& portname, BaudRateType baudrate)
 {
     QextSerialPort* port = new QextSerialPort(portname,  QextSerialPort::EventDriven);
-    port->setBaudRate(baudrate);
+    //port->setBaudRate(baudrate);
     port->setFlowControl(FLOW_OFF);
     port->setParity(PAR_NONE);
     port->setDataBits(DATA_8);
@@ -73,7 +73,7 @@ QIODevice * CommUtil::getQextSerialPortDevice(const QString& portname, BaudRateT
     return port;
 }
 
-QIODevice * CommUtil::getQextSerialPortDevice(const QString& portname, const QString& baudrate)
+QextSerialPort * CommUtil::getQextSerialPortDevice(const QString& portname, const QString& baudrate)
 {
     return getQextSerialPortDevice(portname, getQextSerialPortBaudrate(baudrate));
 }
