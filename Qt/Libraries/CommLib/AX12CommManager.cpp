@@ -196,12 +196,12 @@ void AX12CommManager::askStartReadingLoop()
 
 	switch(_readingLoopMode)
 	{
-	case TIMER_MODE:
-		_readTimer->start();
-		break;
-	case AUTO_MODE:
-		_autoReadingLoop = true;
-		break;
+		case TIMER_MODE:
+			_readTimer->start();
+			break;
+		case AUTO_MODE:
+			_autoReadingLoop = true;
+			break;
 	}
 
 	requestAllServoStatusForReadingLoop();
@@ -608,44 +608,44 @@ void AX12CommManager::sendNextMessage()
 		{
 			switch(_currentMessage.type)
 			{
-			case CommMessage::StatusRequest:
-			{
-				if (_controllerMode == NO_CONTROLLER)
+				case CommMessage::StatusRequest:
 				{
-					quint8 id = _currentMessage.ids.first();
-					sendServoRequestStatusMessage(id);
-					if (_autoReadingLoop)
-						requestServoStatus(id);
-				}
-				else
-				{
-					sendServoMultiRequestStatusMessage(_currentMessage.ids);
-					if (_autoReadingLoop)
-						requestServoStatus(_currentMessage.ids);
-				}
-
-				break;
-			}
-			case CommMessage::Synchronization:
-			{
-				if (_currentMessage.ids.count() > 1)
-				{
-					double estimatedTime = 0;
 					if (_controllerMode == NO_CONTROLLER)
-						estimatedTime = 1 + 0.7 * _currentMessage.ids.count() + 2;
+					{
+						quint8 id = _currentMessage.ids.first();
+						sendServoRequestStatusMessage(id);
+						if (_autoReadingLoop)
+							requestServoStatus(id);
+					}
+					else
+					{
+						sendServoMultiRequestStatusMessage(_currentMessage.ids);
+						if (_autoReadingLoop)
+							requestServoStatus(_currentMessage.ids);
+					}
 
-					sendServoMultiSynchronizeMessage(_currentMessage.ids);
-					QTimer::singleShot(3*estimatedTime, this, SLOT(sendNextMessage()));
+					break;
 				}
-				else
+				case CommMessage::Synchronization:
 				{
-					sendServoSynchronizeMessage(_currentMessage.ids.first());
-					QTimer::singleShot(2, this, SLOT(sendNextMessage())); //Estimated time to send an instruction
+					if (_currentMessage.ids.count() > 1)
+					{
+						double estimatedTime = 0;
+						if (_controllerMode == NO_CONTROLLER)
+							estimatedTime = 1 + 0.7 * _currentMessage.ids.count() + 2;
+
+						sendServoMultiSynchronizeMessage(_currentMessage.ids);
+						QTimer::singleShot(3*estimatedTime, this, SLOT(sendNextMessage()));
+					}
+					else
+					{
+						sendServoSynchronizeMessage(_currentMessage.ids.first());
+						QTimer::singleShot(2, this, SLOT(sendNextMessage())); //Estimated time to send an instruction
+					}
+					break;
 				}
-				break;
-			}
-			case CommMessage::None:
-				break;
+				case CommMessage::None:
+					break;
 			}
 		}
 		else
@@ -679,10 +679,14 @@ void AX12CommManager::requestTimeout()
 
 void AX12CommManager::handleSerialError(QSerialPort::SerialPortError error)
 {
-	if (error == QSerialPort::ResourceError)
+	switch(error)
 	{
-		_protocol->close();
+		case QSerialPort::ResourceError:
+			_protocol->close();
+			break;
+		case QSerialPort::NoError:
+			break;
+		default:
+			logger() << "Warning: Serial Error: " << _protocol->getIODevice()->errorString() << Tools::endl;
 	}
-
-	logger() << "Warning: Serial Error: " << _protocol->getIODevice()->errorString() << Tools::endl;
 }

@@ -493,17 +493,21 @@ void NServer::strategyFinished()
 
 void NServer::handleSerialError(QSerialPort::SerialPortError error)
 {
-	if (error == QSerialPort::ResourceError)
+	switch(error)
 	{
-		closeRobotConnection();
-	}
-	else
-	{
-		QByteArray errorMessage("Robot Serial Error: ");
-		errorMessage.append( _robotInterface->getProtocol()->getIODevice()->errorString().toLatin1());
+		case QSerialPort::ResourceError:
+			closeRobotConnection();
+			break;
+		case QSerialPort::NoError:
+			break;
+		default:
+		{
+			QByteArray errorMessage("Robot Serial Error: ");
+			errorMessage.append( _robotInterface->getProtocol()->getIODevice()->errorString().toLatin1());
 
-		qDebug(errorMessage);
-		sendGlobalAnnoucement(errorMessage);
+			qDebug(errorMessage);
+			sendGlobalAnnoucement(errorMessage);
+		}
 	}
 }
 

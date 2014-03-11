@@ -134,6 +134,7 @@ void CommGui::messageReceived(quint8 instruction, const Comm::Data& data, quint8
 bool CommGui::openPort(const QString& portname, const QString& baudrate, ProtocolType protocol)
 {
 	QSerialPort* port = new QSerialPort(portname);
+	_port = port;
 	connect(port, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handleSerialError(QSerialPort::SerialPortError)));
 
 	switch(protocol)
@@ -196,6 +197,8 @@ bool CommGui::closePort()
         delete _protocol;
         _protocol = 0;
 
+		if (_port)
+			_port->disconnect();
         delete _port;
         _port = 0;
 
@@ -411,10 +414,15 @@ void CommGui::on_cbSendContinuously_stateChanged(int state)
 
 void CommGui::handleSerialError(QSerialPort::SerialPortError error)
 {
-	if (error == QSerialPort::ResourceError)
+	switch(error)
 	{
-		_protocol->close();
+		case QSerialPort::ResourceError:
+			logger() << "Serial Connection lost" << Tools::endl;
+			closeConnection();
+			break;
+		case QSerialPort::NoError:
+			break;
+		default:
+			logger() << "Serial Error: " << _protocol->getIODevice()->errorString() << Tools::endl;
 	}
-
-	logger() << "Serial Error: " << _protocol->getIODevice()->errorString() << Tools::endl;
 }

@@ -124,10 +124,14 @@ bool UM6::gyrosCalibrated()
 
 void UM6::handleSerialError(QSerialPort::SerialPortError error)
 {
-	if (error == QSerialPort::ResourceError)
+	switch(error)
 	{
-		_protocol->close();
+		case QSerialPort::ResourceError:
+			_protocol->close();
+			break;
+		case QSerialPort::NoError:
+			break;
+		default:
+			logger() << "Warning: Serial Error: " << _protocol->getIODevice()->errorString() << Tools::endl;
 	}
-
-	logger() << "Warning: Serial Error: " << _protocol->getIODevice()->errorString() << Tools::endl;
 }

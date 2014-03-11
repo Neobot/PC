@@ -49,12 +49,16 @@ CommTools::~CommTools()
 
 void CommTools::handleSerialError(QSerialPort::SerialPortError error)
 {
-	if (error == QSerialPort::ResourceError)
+	switch(error)
 	{
-		_port->close();
+		case QSerialPort::ResourceError:
+			_port->close();
+			break;
+		case QSerialPort::NoError:
+			break;
+		default:
+			*_logger << "Serial Error: " << _port->errorString() << Tools::endl;
 	}
-
-	*_logger << "Serial Error: " << _port->errorString() << Tools::endl;
 }
 
 
