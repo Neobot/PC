@@ -8,14 +8,14 @@ CONFIG -= app_bundle
 TEMPLATE = app
 
 QT += widgets
+QT += serialport
 
 DEPENDENCY_LIBS +=  NeobotStrategy \
                     NeobotSimulation \
                     NeobotComm \
                     NeobotTools
 
-EXTERNAL_LIBS +=    qextserialport \
-                    Micropather
+EXTERNAL_LIBS +=    Micropather
 
 include( ../../BuildConfiguration.pri)
 
@@ -24,7 +24,6 @@ INCLUDEPATH += $${LIBS_HEADER_DIR}/GraphicStrategy
 INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/Simulation
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport/src
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/Micropather
 
 SOURCES += main.cpp \

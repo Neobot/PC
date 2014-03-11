@@ -3,6 +3,7 @@
 # -------------------------------------------------
 
 QT += widgets
+QT += serialport
 
 TARGET = AX12Playground
 CONFIG += console
@@ -12,13 +13,10 @@ TEMPLATE = app
 DEPENDENCY_LIBS +=  NeobotComm \
                     NeobotTools
 
-EXTERNAL_LIBS +=    qextserialport
-
 include( ../../BuildConfiguration.pri )
 
 INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport/src
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/RoBoIO/Include
 
 unix:DEFINES = _TTY_POSIX_

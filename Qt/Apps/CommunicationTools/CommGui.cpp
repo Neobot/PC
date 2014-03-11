@@ -1,14 +1,12 @@
 #include "CommGui.h"
 #include "CommTools.h"
-#include "CommUtil.h"
 #include "Instructions.h"
 #include "CommException.h"
 
 #include <QFile>
 #include <QtDebug>
 #include <QMessageBox>
-
-#include <qextserialenumerator.h>
+#include <QSerialPortInfo>
 
 #define AUTO_SEND_INTERVAL 1
 
@@ -25,9 +23,9 @@ CommGui::CommGui(QWidget *parent) :
     _timerSend = new QTimer(this);
     connect(_timerSend, SIGNAL(timeout()), this, SLOT(timerTick()));
 
-	QList<QextPortInfo> ports = QextSerialEnumerator::getPorts();
-	foreach(const QextPortInfo& port, ports)
-		ui.cbPort->insertItem(0, port.portName);
+	QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+	foreach(const QSerialPortInfo& port, ports)
+		ui.cbPort->insertItem(0, port.portName());
 
 	ui.cbPort->setCurrentIndex(0);
 
@@ -135,21 +133,22 @@ void CommGui::messageReceived(quint8 instruction, const Comm::Data& data, quint8
 
 bool CommGui::openPort(const QString& portname, const QString& baudrate, ProtocolType protocol)
 {
-    QScopedPointer<QextSerialPort> port(CommUtil::getQextSerialPortDevice(portname, baudrate));
+	QSerialPort* port = new QSerialPort(portname);
+	connect(port, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handleSerialError(QSerialPort::SerialPortError)));
 
 	switch(protocol)
 	{
 		case Robot:
-			_protocol = new RobotProtocol(port.data(), _logger, true);
+			_protocol = new RobotProtocol(port, _logger, true);
 			break;
 		case AX12:
-			_protocol = new ProtocolAX12(port.data(), _logger, true);
+			_protocol = new ProtocolAX12(port, _logger, true);
 			break;
 		case UM6:
-			_protocol = new ProtocolUM6(port.data(), _logger, true);
+			_protocol = new ProtocolUM6(port, _logger, true);
 			break;
 		case Raw:
-			_protocol = new ProtocolRaw(port.data(), _logger, true);
+			_protocol = new ProtocolRaw(port, _logger, true);
 			break;
 		default:
 			_protocol = 0;
@@ -165,6 +164,12 @@ bool CommGui::openPort(const QString& portname, const QString& baudrate, Protoco
     if (_protocol->open())
     {
         logger() << "[" << QTime::currentTime().toString("hh:mm:ss") << "] Port '"  << portname << "' successfully opened" << Tools::endl;
+
+		port->setBaudRate(baudrate.toInt());
+		port->setFlowControl(QSerialPort::NoFlowControl);
+		port->setParity(QSerialPort::NoParity);
+		port->setDataBits(QSerialPort::Data8);
+		port->setStopBits(QSerialPort::OneStop);
     }
     else
     {
@@ -180,8 +185,7 @@ bool CommGui::openPort(const QString& portname, const QString& baudrate, Protoco
     }
 
 	_openedProtocolType = protocol;
-	_port = port.take();
-    ((QextSerialPort*)_port)->setBaudRate(CommUtil::getQextSerialPortBaudrate(baudrate));
+
 	return _port;
 }
 
@@ -211,7 +215,7 @@ bool CommGui::closePort()
 
 void CommGui::setGuiState(bool connectionOpened)
 {
-    ui.btnConnect->setText("Open");
+	ui.btnConnect->setText(connectionOpened ? "Close" : "Open");
     ui.cbPort->setEnabled(!connectionOpened);
     ui.cbBaudRate->setEnabled(!connectionOpened);
     ui.cbProtocol->setEnabled(!connectionOpened);
@@ -402,4 +406,15 @@ void CommGui::on_cbSendContinuously_stateChanged(int state)
         ui.btnSend->setCheckable(false);
         _timerSend->stop();
     }
+}
+
+
+void CommGui::handleSerialError(QSerialPort::SerialPortError error)
+{
+	if (error == QSerialPort::ResourceError)
+	{
+		_protocol->close();
+	}
+
+	logger() << "Serial Error: " << _protocol->getIODevice()->errorString() << Tools::endl;
 }

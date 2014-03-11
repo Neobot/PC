@@ -11,11 +11,11 @@ AX12Playground::AX12Playground(QWidget *parent) :
 	_logger = new StdoutLogger();
 	_logger->setBase(16);
 
-    _commManager = new Comm::AX12CommManager("/dev/ttyS3", BAUD115200, Comm::AX12CommManager::USB2AX_CONTROLLER, _logger);
+	_commManager = new Comm::AX12CommManager("/dev/ttyS3", QSerialPort::Baud115200, Comm::AX12CommManager::USB2AX_CONTROLLER, _logger);
 	_commManager->open();
 
 
-	_um6 = new Comm::UM6("/dev/ttyS2", BAUD115200, _logger);
+	_um6 = new Comm::UM6("/dev/ttyS2", QSerialPort::Baud115200, _logger);
 	_um6->open();
 	_um6->calibrateGyros();
 

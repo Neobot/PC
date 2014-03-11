@@ -6,9 +6,10 @@ TARGET = NeobotComm
 TEMPLATE = lib
 CONFIG += staticlib
 
+QT += serialport
+
 include( ../../BuildConfiguration.pri)
 
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport/src
 INCLUDEPATH += ../ToolsLib
 
 unix:DEFINES = _TTY_POSIX_

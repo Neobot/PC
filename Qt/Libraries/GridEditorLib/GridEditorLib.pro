@@ -12,7 +12,6 @@ QT += widgets
 
 include( ../../BuildConfiguration.pri)
 
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport
 INCLUDEPATH += ../ToolsLib
 
 win32 {

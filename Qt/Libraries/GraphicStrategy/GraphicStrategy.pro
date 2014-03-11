@@ -7,13 +7,13 @@ TEMPLATE = lib
 CONFIG += staticlib
 
 QT += widgets
+QT += serialport
 
 include( ../../BuildConfiguration.pri)
 
 INCLUDEPATH += ../CommLib
 INCLUDEPATH += ../ToolsLib
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/Micropather
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport/src
 
 win32 {
     INCLUDEPATH += ./strategies

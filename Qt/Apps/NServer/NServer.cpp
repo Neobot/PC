@@ -264,10 +264,8 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
 		Comm::AbstractProtocol* p = 0;
 		if (!simulation)
 		{
-			QextSerialPort* port = new QextSerialPort(robotPort,  QextSerialPort::EventDriven);
-
-
-			connect(port, SIGNAL(dsrChanged(bool)), this, SLOT(serialPortStatusChanged(bool)));
+			QSerialPort* port = new QSerialPort(robotPort);
+			connect(port, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handleSerialError(QSerialPort::SerialPortError)));
 
 			Comm::RobotProtocol* protocol = new Comm::RobotProtocol(port);
 			p = protocol;
@@ -280,11 +278,11 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
 				return false;
 			}
 
-            port->setBaudRate(BAUD115200);
-            port->setFlowControl(FLOW_OFF);
-            port->setParity(PAR_NONE);
-            port->setDataBits(DATA_8);
-            port->setStopBits(STOP_1);
+			port->setBaudRate(QSerialPort::Baud115200);
+			port->setFlowControl(QSerialPort::NoFlowControl);
+			port->setParity(QSerialPort::NoParity);
+			port->setDataBits(QSerialPort::Data8);
+			port->setStopBits(QSerialPort::OneStop);
 		}
 		else
 		{
@@ -298,7 +296,7 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
         if (_settings.value(USE_AX12_CONTROLLER_KEY).toBool())
             ax12ControllerMode = Comm::AX12CommManager::USB2AX_CONTROLLER;
 
-        _ax12Manager = new Comm::AX12CommManager(ax12Port, BAUD115200, ax12ControllerMode, &logger());
+		_ax12Manager = new Comm::AX12CommManager(ax12Port, QSerialPort::Baud115200, ax12ControllerMode, &logger());
 		if (!_ax12Manager->open())
 		{
 			message = "The AX-12 are not available...";
@@ -307,7 +305,7 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
         {
 			_ax12Manager->setRequestTimeout(200);
 			_ax12Manager->setReadingLoopMode(Comm::AX12CommManager::AUTO_MODE);
-            _ax12Manager->setTimerReadingLoopInterval(200);
+			_ax12Manager->setTimerReadingLoopInterval(200);
 
 			_ax12MovementRunner = new Comm::Ax12MovementRunner(_ax12Manager, &_ax12Movements);
             connect(_ax12MovementRunner, SIGNAL(movementFinished(bool,QString,QString)), this, SLOT(ax12MovementFinished()));
@@ -492,22 +490,36 @@ void NServer::strategyFinished()
 	}
 }
 
-void NServer::serialPortStatusChanged(bool status)
+
+void NServer::handleSerialError(QSerialPort::SerialPortError error)
 {
-	if (!status)
+	if (error == QSerialPort::ResourceError)
 	{
-		cleanRobotConnection();
-		_robotConnected = false;
-
-		for(QMap<unsigned int, NetworkCommInterface*>::iterator it = _connections.begin(); it != _connections.end(); ++it)
-		{
-			NetworkCommInterface* networkConnection = *it;
-			networkConnection->setRobotInterface(0);
-		}
-
-		sendGlobalAnnoucement("The connection to the robot has been lost!");
-		qDebug("The connection to the robot has been lost");
+		closeRobotConnection();
 	}
+	else
+	{
+		QByteArray errorMessage("Robot Serial Error: ");
+		errorMessage.append( _robotInterface->getProtocol()->getIODevice()->errorString().toLatin1());
+
+		qDebug(errorMessage);
+		sendGlobalAnnoucement(errorMessage);
+	}
+}
+
+void NServer::closeRobotConnection()
+{
+	cleanRobotConnection();
+	_robotConnected = false;
+
+	for(QMap<unsigned int, NetworkCommInterface*>::iterator it = _connections.begin(); it != _connections.end(); ++it)
+	{
+		NetworkCommInterface* networkConnection = *it;
+		networkConnection->setRobotInterface(0);
+	}
+
+	sendGlobalAnnoucement("The connection to the robot has been lost!");
+	qDebug("The connection to the robot has been lost");
 }
 
 void NServer::updateRobotConnection()

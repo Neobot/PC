@@ -7,7 +7,7 @@
 #include "vmath.h"
 #include "AbstractLogger.h"
 
-#include <qextserialport.h>
+#include <QSerialPort>
 #include <QBuffer>
 #include <QScopedPointer>
 #include <QDateTime>
@@ -84,12 +84,7 @@ int NeobotStrategyLauncher::exec(const NeobotMainOptions& options, const QCoreAp
 	{
 		if (!options.simulation)
 		{
-			QextSerialPort* port1 = new QextSerialPort(options.portname.c_str(),  QextSerialPort::EventDriven);
-			port1->setBaudRate(BAUD115200);
-			port1->setFlowControl(FLOW_OFF);
-			port1->setParity(PAR_NONE);
-			port1->setDataBits(DATA_8);
-			port1->setStopBits(STOP_1);
+			QSerialPort* port1 = new QSerialPort(options.portname.c_str());
 
 			_standardProtocol = new Comm::RobotProtocol(port1, _logger, true);
 			_standardProtocol->setDebugMode(testDebugLevel(options.debugLevel, NeobotMainOptions::ProtocolErrorsDebug),
@@ -99,6 +94,12 @@ int NeobotStrategyLauncher::exec(const NeobotMainOptions& options, const QCoreAp
 			_protocol = _standardProtocol;
 			if (!_protocol->open())
 				return 2;
+
+			port1->setBaudRate(QSerialPort::Baud115200);
+			port1->setFlowControl(QSerialPort::NoFlowControl);
+			port1->setParity(QSerialPort::NoParity);
+			port1->setDataBits(QSerialPort::Data8);
+			port1->setStopBits(QSerialPort::OneStop);
 		}
 		else
 		{
@@ -109,7 +110,7 @@ int NeobotStrategyLauncher::exec(const NeobotMainOptions& options, const QCoreAp
 			_protocol = _simulationProtocol;
 		}
 
-        Comm::AX12CommManager ax12Manager(options.ax12Portname.c_str(), BAUD115200, Comm::AX12CommManager::USB2AX_CONTROLLER, _logger);
+		Comm::AX12CommManager ax12Manager(options.ax12Portname.c_str(), QSerialPort::Baud115200, Comm::AX12CommManager::USB2AX_CONTROLLER, _logger);
 		ax12Manager.open();
 
 		Comm::RobotCommInterface robot(_protocol, &ax12Manager, _logger);

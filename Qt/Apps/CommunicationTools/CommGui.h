@@ -7,8 +7,10 @@
 #include "ProtocolAX12.h"
 #include "ProtocolUM6.h"
 #include "ProtocolRaw.h"
+
 #include <QIODevice>
 #include <QTimer>
+#include <QSerialPort>
 
 class CommGui : public QDialog, Tools::LoggerInterface
 {
@@ -61,7 +63,8 @@ private slots:
     void on_rbOutputHex_toggled(bool checked);
     void on_rbOutputASCII_toggled(bool checked);
     void on_cbSendContinuously_stateChanged(int state);
-    void timerTick();
+	void timerTick();
+	void handleSerialError(QSerialPort::SerialPortError error);
 };
 
 #endif // COMMGUI_H

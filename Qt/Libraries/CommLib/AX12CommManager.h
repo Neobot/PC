@@ -3,7 +3,8 @@
 
 #include <QTimer>
 #include <QHash>
-#include <qextserialport.h>
+#include <QSerialPort>
+
 #include "AbstractLogger.h"
 #include "ProtocolAX12.h"
 
@@ -71,7 +72,7 @@ namespace Comm
         };
 
         AX12CommManager(ControllerMode mode = USB2AX_CONTROLLER);
-        AX12CommManager(const QString& portname, BaudRateType baudrate, ControllerMode mode, Tools::AbstractLogger* logger);
+		AX12CommManager(const QString& portname, qint32 baudrate, ControllerMode mode, Tools::AbstractLogger* logger);
 		~AX12CommManager();
 
 		bool open();
@@ -117,7 +118,7 @@ namespace Comm
 		Comm::ProtocolAX12* _protocol;
 		QHash<quint8, AX12> _servos;
         QHash<quint8, int> _loopDemandCount;
-        BaudRateType _baudrate;
+		qint32 _baudrate;
 
 		QTimer* _readTimer;
 		bool _autoReadingLoop;
@@ -160,13 +161,14 @@ namespace Comm
 		void sendServoRequestStatusMessage(quint8 id);
         void sendServoMultiRequestStatusMessage(const QList<quint8>& ids);
 
-        void readReceivedData(quint8 id, Data &data);
+		void readReceivedData(quint8 id, Data &data);
 
 	private slots:
-		void messageReceived(quint8 instruction, const Comm::Data&, quint8 id);
+		void messageReceived(quint8 instruction, const Comm::Data&, quint8 id);   
 		void sendNextMessage();
 		void requestTimeout();
         void requestAllServoStatusForReadingLoop();
+		void handleSerialError(QSerialPort::SerialPortError error);
 	};
 }
 

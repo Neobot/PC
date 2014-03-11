@@ -2,6 +2,8 @@
 # Project created by QtCreator 2010-02-14T13:23:38
 # -------------------------------------------------
 QT += testlib
+QT += serialport
+
 TARGET = NeobotTests
 CONFIG += console
 CONFIG -= app_bundle
@@ -12,8 +14,7 @@ DEPENDENCY_LIBS +=  NeobotStrategy \
                     NeobotComm \
                     NeobotTools
 
-EXTERNAL_LIBS +=    qextserialport \
-                    Micropather
+EXTERNAL_LIBS +=    Micropather
 
 include( ../../BuildConfiguration.pri)
 
@@ -21,7 +22,6 @@ INCLUDEPATH += $${LIBS_HEADER_DIR}/GraphicStrategy
 INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/Micropather
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport/src
 
 SOURCES += main.cpp \
     DataTests.cpp \

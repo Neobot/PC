@@ -1,10 +1,9 @@
 #include "AX12Utilities.h"
 #include "ui_AX12Utilities.h"
-#include "CommUtil.h"
 
 #include "AX12CommManager.h"
 
-#include <qextserialenumerator.h>
+#include <QSerialPortInfo>
 
 using namespace Comm;
 
@@ -17,9 +16,9 @@ AX12Utilities::AX12Utilities(QWidget *parent) :
 	_logger = new Tools::PlainTextEditLogger(ui->plainTextEdit);
 	setLogger(_logger);
 
-	QList<QextPortInfo> ports = QextSerialEnumerator::getPorts();
-	foreach(const QextPortInfo& port, ports)
-		ui->cbPort->insertItem(0, port.portName);
+	QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+	foreach(const QSerialPortInfo& port, ports)
+		ui->cbPort->insertItem(0, port.portName());
 
 	ui->cbPort->setCurrentIndex(0);
 
@@ -37,7 +36,7 @@ bool AX12Utilities::openConnection(const QString& baudrate)
 	{
 		ui->gbScan->setEnabled(false);
 
-        _manager = new AX12CommManager(ui->cbPort->currentText(), CommUtil::getQextSerialPortBaudrate(baudrate), AX12CommManager::USB2AX_CONTROLLER, _logger);
+		_manager = new AX12CommManager(ui->cbPort->currentText(), baudrate.toInt(), AX12CommManager::USB2AX_CONTROLLER, _logger);
 		return _manager->open();
 	}
 	else
@@ -77,7 +76,7 @@ void AX12Utilities::scanNextBaudrate()
 			logger() << "Error: Cannot open the connection" << Tools::endl;
 
         connect(_manager, SIGNAL(servosStatusUpdated(quint8)), this, SLOT(scanServosStatusUpdated(quint8)));
-        connect(_manager, SIGNAL(requestTimeoutReceived(quint8)), this, SLOT(scanRequestTimeoutRecei(quint8)));
+		connect(_manager, SIGNAL(requestTimeoutReceived(quint8)), this, SLOT(scanRequestTimeoutRecei(quint8)));
         connect(_manager, SIGNAL(allMessagesSent()), this, SLOT(allIdReceived()));
 
 		if (ui->rbAnyID->isChecked() || ui->rbAnyAny->isChecked())

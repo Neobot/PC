@@ -6,6 +6,7 @@
 #include <QSignalMapper>
 #include <QTcpServer>
 #include <QSettings>
+#include <QSerialPort>
 
 #include "AbstractLogger.h"
 #include "NetworkCommInterface.h"
@@ -97,7 +98,9 @@ private slots:
 
 	void strategyFinished();
 
-	void serialPortStatusChanged(bool status);
+	void closeRobotConnection();
+	void handleSerialError(QSerialPort::SerialPortError error);
+
 	void startPing();
 	void autoStart();
 

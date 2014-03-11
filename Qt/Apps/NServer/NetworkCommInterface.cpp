@@ -4,7 +4,7 @@
 
 #include "Strategies/StrategyEnumerator.h"
 
-#include <qextserialenumerator.h>
+#include <QSerialPortInfo>
 
 using namespace Comm;
 
@@ -99,10 +99,10 @@ void NetworkCommInterface::sendAvailableSerialPorts()
 {
 	Data data;
 
-	QList<QextPortInfo> ports = QextSerialEnumerator::getPorts();
-	foreach(const QextPortInfo& port, ports)
+	QList<QSerialPortInfo> ports = QSerialPortInfo::availablePorts();
+	foreach(const QSerialPortInfo& port, ports)
 	{
-		QByteArray portName = port.portName.toLatin1();
+		QByteArray portName = port.portName().toLatin1();
 		data.add(portName);
 	}
 
@@ -115,7 +115,7 @@ void NetworkCommInterface::sendAx12Positions(const QList<quint8> ids, const QLis
 	Data data;
 	data.add((quint8)nb);
 	for(int i = 0; i < nb; ++i)
-    {
+	{
 		data.add(ids.value(i));
 		data.add(positions.value(i));
 	}
@@ -173,8 +173,8 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 		case MOVE_AX12:
 		{
 			quint8 nb;
-            float maxSpeed;
-            d.take(maxSpeed);
+			float maxSpeed;
+			d.take(maxSpeed);
 			d.take(nb);
 
 			QList<Comm::Ax12Info> infos;

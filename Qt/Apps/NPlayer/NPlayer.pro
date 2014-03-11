@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui widgets
+QT       += core gui widgets serialport
 
 TARGET = NPlayer
 TEMPLATE = app
@@ -19,8 +19,7 @@ DEPENDENCY_LIBS +=  NeobotStrategy \
                     NeobotWidgetTools \
                     NeobotTools
 
-EXTERNAL_LIBS +=    qextserialport \
-                    Micropather
+EXTERNAL_LIBS +=    Micropather
 
 include( ../../BuildConfiguration.pri)
 
@@ -30,7 +29,6 @@ INCLUDEPATH += $${LIBS_HEADER_DIR}/Simulation
 INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/WidgetToolsLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport/src
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/Micropather
 
 SOURCES += main.cpp\

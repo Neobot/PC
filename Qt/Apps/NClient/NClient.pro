@@ -4,9 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network widgets printsupport
-
-greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
+QT       += core gui network widgets printsupport serialport
 
 TARGET = "NClient"
 CONFIG += console
@@ -22,8 +20,7 @@ DEPENDENCY_LIBS +=  NeobotGridEditor \
                     NeobotWidgetTools \
                     NeobotTools
 
-EXTERNAL_LIBS +=    qextserialport \
-                    QCustomPlot \
+EXTERNAL_LIBS +=    QCustomPlot \
                     QtSolutions_PropertyBrowser
 
 include( ../../BuildConfiguration.pri)
@@ -32,7 +29,6 @@ INCLUDEPATH += $${LIBS_HEADER_DIR}/GridEditorLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/WidgetToolsLib
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport/src
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/QCustomPlot
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qtpropertybrowser/src
 

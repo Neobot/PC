@@ -7,19 +7,17 @@ macx:CONFIG -= app_bundle
 TEMPLATE = app
 
 QT += widgets
+QT += serialport
 
 DEPENDENCY_LIBS +=  NeobotComm \
                     NeobotWidgetTools \
                     NeobotTools
-
-EXTERNAL_LIBS +=    qextserialport
 
 include( ../../BuildConfiguration.pri )
 
 INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/WidgetToolsLib
-INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qextserialport/src
 
 macx:LIBS += -framework IOKit -framework CoreFoundation
 win32:LIBS += -lsetupapi -ladvapi32 -luser32
@@ -31,7 +29,6 @@ DEFINES += B1000000
 
 HEADERS += CommTools.h \
     CommGui.h \
-    CommUtil.h \
     UtilitySelector.h \
     AX12Utilities.h
 FORMS += CommGui.ui \
@@ -40,6 +37,5 @@ FORMS += CommGui.ui \
 SOURCES += main.cpp \
     CommTools.cpp \
     CommGui.cpp \
-    CommUtil.cpp \
     UtilitySelector.cpp \
     AX12Utilities.cpp

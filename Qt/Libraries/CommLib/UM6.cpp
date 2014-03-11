@@ -2,20 +2,11 @@
 
 using namespace Comm;
 
-UM6::UM6()
+UM6::UM6(const QString &portname, qint32 baudrate, Tools::AbstractLogger *logger) :
+	Tools::LoggerInterface(logger), _baudrate(baudrate), _gyrosCalibrated(false)
 {
-	_protocol = 0;
-}
-
-UM6::UM6(const QString &portname, BaudRateType baudrate, Tools::AbstractLogger *logger) :
-	Tools::LoggerInterface(logger), _gyrosCalibrated(false)
-{
-	QextSerialPort* port = new QextSerialPort(portname,  QextSerialPort::EventDriven);
-	port->setBaudRate(baudrate);
-	port->setFlowControl(FLOW_OFF);
-	port->setParity(PAR_NONE);
-	port->setDataBits(DATA_8);
-	port->setStopBits(STOP_1);
+	QSerialPort* port = new QSerialPort(portname);
+	connect(port, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handleSerialError(QSerialPort::SerialPortError)));
 
 	_protocol = new ProtocolUM6(port, logger, true);
 	_protocol->beQuiet(true);
@@ -25,17 +16,39 @@ UM6::UM6(const QString &portname, BaudRateType baudrate, Tools::AbstractLogger *
 		_registers[i] = 0;
 }
 
+UM6::~UM6()
+{
+	if (_protocol)
+	{
+		_protocol->close();
+		delete _protocol->getIODevice();
+	}
+
+	delete _protocol;
+}
+
 bool UM6::open()
 {
 	bool ok = _protocol->open();
 
-	if (!ok)
-	logger() << "Warning: UM6 port cannot be opened." << Tools::endl;
-
-
-	if (!connect(_protocol, SIGNAL(message(quint8, const Comm::Data&)), this, SLOT(messageReceived(quint8, const Comm::Data&))))
+	if (ok)
 	{
-		logger() << "The connection to the slot messageReceived() failed !" << Tools::endl;
+		QSerialPort* port = static_cast<QSerialPort*>(_protocol->getIODevice());
+
+		port->setBaudRate(_baudrate);
+		port->setFlowControl(QSerialPort::NoFlowControl);
+		port->setParity(QSerialPort::NoParity);
+		port->setDataBits(QSerialPort::Data8);
+		port->setStopBits(QSerialPort::OneStop);
+
+		if (!connect(_protocol, SIGNAL(message(quint8, const Comm::Data&)), this, SLOT(messageReceived(quint8, const Comm::Data&))))
+		{
+			logger() << "The connection to the slot messageReceived() failed !" << Tools::endl;
+		}
+	}
+	else
+	{
+		logger() << "Warning: UM6 port cannot be opened." << Tools::endl;
 	}
 
 	return ok;
@@ -107,4 +120,14 @@ float UM6::getPsi()
 bool UM6::gyrosCalibrated()
 {
 	return _gyrosCalibrated;
+}
+
+void UM6::handleSerialError(QSerialPort::SerialPortError error)
+{
+	if (error == QSerialPort::ResourceError)
+	{
+		_protocol->close();
+	}
+
+	logger() << "Warning: Serial Error: " << _protocol->getIODevice()->errorString() << Tools::endl;
 }

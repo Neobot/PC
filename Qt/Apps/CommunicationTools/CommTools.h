@@ -7,6 +7,8 @@
 #include <QTime>
 #include <QList>
 #include <QDataStream>
+#include <QSerialPort>
+
 #include "Data.h"
 #include "AbstractLogger.h"
 
@@ -30,7 +32,7 @@ public:
 
 private:
     Mode _mode;
-    QIODevice* _port;
+	QSerialPort* _port;
     QDataStream* _out;
     Tools::AbstractLogger* _logger; //For info messages
     bool _quiet;
@@ -53,6 +55,8 @@ private:
 public slots:
     void read();
 
+private slots:
+	void handleSerialError(QSerialPort::SerialPortError error);
 };
 
 #endif // COMMTOOLS_H
