@@ -71,7 +71,7 @@ namespace Comm
             USB2AX_CONTROLLER
         };
 
-        AX12CommManager(ControllerMode mode = USB2AX_CONTROLLER);
+		AX12CommManager();
 		AX12CommManager(const QString& portname, qint32 baudrate, ControllerMode mode, Tools::AbstractLogger* logger);
 		~AX12CommManager();
 
@@ -124,6 +124,7 @@ namespace Comm
 		bool _autoReadingLoop;
 		QTimer* _requestTimeoutTimer;
 		ReadingLoopMode _readingLoopMode;
+		int _noControllerloopedRequestSent;
 		float _maxSpeed;
 		
 		struct CommMessage
@@ -132,6 +133,7 @@ namespace Comm
 			{
 				None,
 				StatusRequest,
+				LoopedStatusRequest,
 				Synchronization
 			};
 			

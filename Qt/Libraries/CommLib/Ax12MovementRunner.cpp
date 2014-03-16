@@ -13,7 +13,7 @@ Ax12MovementRunner::Ax12MovementRunner(Comm::AX12CommManager *comm, Tools::Ax12M
 	_stopAngleCurve << Point(0, 3) << Point(10, 3) << Point(50, 5) << Point(114, 10);
 
 	_timer = new QTimer(this);
-	_timer->setInterval(1000);
+	_timer->setInterval(10000);
 	_timer->setSingleShot(true);
 	connect(_timer, SIGNAL(timeout()), this, SLOT(timeout()));
 }
@@ -135,7 +135,7 @@ void Ax12MovementRunner::checkStatus()
 		if (done)
         {
             ++_currentPositionIndex;
-            if (_lastPositionIndex >= 0 && _lastPositionIndex >= _currentPositionIndex)
+			if (_lastPositionIndex >= 0 && _currentPositionIndex >= _lastPositionIndex)
                 movementEnd(true);
             else
                 goToNextPosition();

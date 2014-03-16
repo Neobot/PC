@@ -114,13 +114,13 @@ void AX12::notifyCommandSent()
 
 //--------------------------------------------------------
 
-AX12CommManager::AX12CommManager(ControllerMode mode)
-	: _controllerMode(mode), _protocol(0), _readingLoopMode(AUTO_MODE), _isBusy(false)
+AX12CommManager::AX12CommManager()
+	: _controllerMode(USB2AX_CONTROLLER), _protocol(0), _readingLoopMode(AUTO_MODE), _noControllerloopedRequestSent(0), _isBusy(false)
 {
 }
 
 AX12CommManager::AX12CommManager(const QString &portname, qint32 baudrate, ControllerMode mode, Tools::AbstractLogger *logger) :
-	Tools::LoggerInterface(logger), _controllerMode(mode), _autoReadingLoop(false), _readingLoopMode(AUTO_MODE), _isBusy(false)
+	Tools::LoggerInterface(logger), _controllerMode(mode), _autoReadingLoop(false), _readingLoopMode(AUTO_MODE), _noControllerloopedRequestSent(0), _isBusy(false)
 {
 	QSerialPort* port = new QSerialPort(portname);
 	connect(port, SIGNAL(error(QSerialPort::SerialPortError)), this, SLOT(handleSerialError(QSerialPort::SerialPortError)));
@@ -512,15 +512,22 @@ void AX12CommManager::sendServoMultiRequestStatusMessage(const QList<quint8> &id
 
 void AX12CommManager::requestServoStatus(quint8 id, bool loop)
 {
+	if (!contains(id))
+		_servos.insert(id, AX12());
+
 	if (loop)
+	{
 		_loopDemandCount[id]++;
 
-	CommMessage msg(id, CommMessage::StatusRequest);
-	_messagePendingList << msg;
-	askSendNextRequestMessage();
-
-	if (loop && !isReadingLoopStarted())
-		askStartReadingLoop();
+		if (!isReadingLoopStarted())
+			askStartReadingLoop();
+	}
+	else
+	{
+		CommMessage msg(id, CommMessage::StatusRequest);
+		_messagePendingList << msg;
+		askSendNextRequestMessage();
+	}
 }
 
 void AX12CommManager::requestServoStatus(const QList<quint8> &ids, bool loop)
@@ -528,19 +535,31 @@ void AX12CommManager::requestServoStatus(const QList<quint8> &ids, bool loop)
 	if (loop)
 	{
 		foreach(quint8 id, ids)
+		{
+			if (!contains(id))
+				_servos.insert(id, AX12());
 			_loopDemandCount[id]++;
+		}
+
+		if (!isReadingLoopStarted())
+			askStartReadingLoop();
 	}
-
-	CommMessage msg(ids, CommMessage::StatusRequest);
-	_messagePendingList << msg;
-	askSendNextRequestMessage();
-
-	if (loop && !isReadingLoopStarted())
-		askStartReadingLoop();
+	else
+	{
+		CommMessage msg(ids, CommMessage::StatusRequest);
+		_messagePendingList << msg;
+		askSendNextRequestMessage();
+	}
 }
 
 void AX12CommManager::requestAllServoStatusForReadingLoop()
 {
+	if (_noControllerloopedRequestSent > 0 && _controllerMode == NO_CONTROLLER)
+	{
+		logger() << "Loop timer is too fast, a cycle has been skipped." << Tools::endl;
+		return;
+	}
+
 	QList<quint8> ids;
 	for(QHash<quint8, int>::const_iterator it = _loopDemandCount.constBegin(); it != _loopDemandCount.constEnd(); ++it)
 	{
@@ -548,11 +567,27 @@ void AX12CommManager::requestAllServoStatusForReadingLoop()
 		int nb = *it;
 
 		if (nb > 0)
+		{
+			if (_controllerMode == NO_CONTROLLER)
+			{
+				CommMessage msg(id, CommMessage::LoopedStatusRequest);
+				_messagePendingList << msg;
+			}
+
 			ids << id;
+		}
 	}
 
-	CommMessage msg(ids, CommMessage::StatusRequest);
-	_messagePendingList << msg;
+	if (_controllerMode == USB2AX_CONTROLLER)
+	{
+		CommMessage msg(ids, CommMessage::LoopedStatusRequest);
+		_messagePendingList << msg;
+	}
+	else
+	{
+		_noControllerloopedRequestSent = ids.count();
+	}
+
 	askSendNextRequestMessage();
 }
 
@@ -602,26 +637,33 @@ void AX12CommManager::sendNextMessage()
 {
 	if (!_messagePendingList.isEmpty())
 	{
+		bool isLoopMessage = false;
 		_isBusy = true;
 		_currentMessage = _messagePendingList.takeFirst();
 		if (!_currentMessage.ids.isEmpty())
 		{
 			switch(_currentMessage.type)
 			{
+				case CommMessage::LoopedStatusRequest:
+					isLoopMessage = true; //fall through
 				case CommMessage::StatusRequest:
 				{
 					if (_controllerMode == NO_CONTROLLER)
 					{
 						quint8 id = _currentMessage.ids.first();
 						sendServoRequestStatusMessage(id);
-						if (_autoReadingLoop)
-							requestServoStatus(id);
+						if (isLoopMessage)
+						{
+							--_noControllerloopedRequestSent;
+							if (_autoReadingLoop && _noControllerloopedRequestSent <= 0)
+								requestAllServoStatusForReadingLoop();
+						}
 					}
 					else
 					{
 						sendServoMultiRequestStatusMessage(_currentMessage.ids);
-						if (_autoReadingLoop)
-							requestServoStatus(_currentMessage.ids);
+						if (isLoopMessage && _autoReadingLoop)
+							requestAllServoStatusForReadingLoop();
 					}
 
 					break;
