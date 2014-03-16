@@ -174,9 +174,7 @@ void NetworkClientCommInterface::lockAx12(const QMap<int, bool> &lockedServoInfo
 	for(QMap<int, bool>::const_iterator it = lockedServoInfo.constBegin(); it != lockedServoInfo.constEnd(); ++it)
 	{
 		d.add((quint8)it.key());
-
-		quint8 lockInfo = it.value() ? 1 : 0;
-		d.add(lockInfo);
+		d.add(it.value());
 	}
 
 	getProtocol()->sendMessage(LOCK_AX12, d);

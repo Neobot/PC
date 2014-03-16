@@ -206,7 +206,8 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 			QMap<quint8, bool> lockInfo;
 			for(int i = 0; i < nb; ++i)
 			{
-				quint8 id, locked;
+				quint8 id;
+				bool locked = false;
 				d.take(id).take(locked);
 				lockInfo[id] = (locked != 0);
 			}
