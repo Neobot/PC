@@ -13,14 +13,14 @@ Ax12MovementRunner::Ax12MovementRunner(Comm::AX12CommManager *comm, Tools::Ax12M
 	_stopAngleCurve << Point(0, 3) << Point(10, 3) << Point(50, 5) << Point(114, 10);
 
 	_timer = new QTimer(this);
-	_timer->setInterval(10000);
+	_timer->setInterval(3000);
 	_timer->setSingleShot(true);
 	connect(_timer, SIGNAL(timeout()), this, SLOT(timeout()));
 }
 
 bool Ax12MovementRunner::startMovement(const QString &group, const QString &mvt, float speedLimit, int lastPositionIndex)
 {
-	if (_isRunning || !_comm->isOpened() || !_comm->isReadingLoopStarted())
+	if (_isRunning || !_comm->isOpened())
 		return false;
 
 	_positions = _manager->getDetailedMovement(group, mvt);

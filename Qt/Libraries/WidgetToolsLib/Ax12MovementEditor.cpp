@@ -186,8 +186,13 @@ void Ax12MovementEditor::groupSelected(int index)
 	ui->lblMovementTab->setText(QString(_currentGroup));
 
 	ui->movementsTapWidget->clear();
-	foreach(const QString& group, _manager.getMovementNames(_currentGroup))
+	QStringList groups = _manager.getMovementNames(_currentGroup);
+	foreach(const QString& group, groups)
+	{
+		ui->movementsTapWidget->blockSignals(true);
 		ui->movementsTapWidget->addItem(group);
+		ui->movementsTapWidget->blockSignals(false);
+	}
 
 	QList<int> ids = _manager.getGroupIds(_currentGroup);
 
