@@ -296,7 +296,7 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
         if (_settings.value(USE_AX12_CONTROLLER_KEY).toBool())
             ax12ControllerMode = Comm::AX12CommManager::USB2AX_CONTROLLER;
 
-		_ax12Manager = new Comm::AX12CommManager(ax12Port, QSerialPort::Baud115200, ax12ControllerMode, &logger());
+		_ax12Manager = new Comm::AX12CommManager(ax12Port, 1000000, ax12ControllerMode, &logger());
 		if (!_ax12Manager->open())
 		{
 			message = "The AX-12 are not available...";

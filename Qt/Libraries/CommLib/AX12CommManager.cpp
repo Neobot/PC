@@ -677,7 +677,7 @@ void AX12CommManager::sendNextMessage()
 							estimatedTime = 1 + 0.7 * _currentMessage.ids.count() + 2;
 
 						sendServoMultiSynchronizeMessage(_currentMessage.ids);
-						QTimer::singleShot(3*estimatedTime, this, SLOT(sendNextMessage()));
+						QTimer::singleShot(1*estimatedTime, this, SLOT(sendNextMessage()));
 					}
 					else
 					{
