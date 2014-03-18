@@ -12,11 +12,20 @@
 
 WaitAction::WaitAction(int ms, QObject *parent) : AbstractAction(parent), _ms(ms)
 {
+	_timer = new QTimer(parent);
+	_timer->setSingleShot(true);
+	connect(_timer, SIGNAL(timeout()), this, SLOT(succeed()));
 }
 
 void WaitAction::execute()
 {
-	QTimer::singleShot(_ms, this, SLOT(succeed()));
+	_timer->start(_ms);
+}
+
+void WaitAction::stop()
+{
+	_timer->stop();
+	failed();
 }
 
 QString WaitAction::getActionName() const
@@ -189,30 +198,18 @@ QString AX12Action::getActionName() const
 
 //AX-12 movement-----------------------------------------------------------------------
 
-AX12MovementAction::AX12MovementAction(const QString& group, const QString& movement, float speedLimit, bool blocking, Comm::RobotCommInterface* robot, Tools::Ax12MovementManager* movementManager, QObject *parent)
-	: AbstractAction(parent), _group(group), _mvt(movement), _speedLimit(speedLimit), _blocking(blocking), _robot(robot), _movementManager(movementManager)
+AX12MovementAction::AX12MovementAction(const QString& group, const QString& movement, float speedLimit, Comm::RobotCommInterface* robot, Tools::Ax12MovementManager* movementManager, QObject *parent)
+	: AbstractAction(parent), _group(group), _mvt(movement), _speedLimit(speedLimit), _robot(robot), _movementManager(movementManager)
 {
 	_runner = new Comm::Ax12MovementRunner(_robot->getAx12Manager(), _movementManager, this);
 }
 
 void AX12MovementAction::execute()
 {
-	bool connectionOk = true;
-	if (_blocking)
-		connectionOk = connect(_runner, SIGNAL(movementFinished(bool, QString, QString)), this, SIGNAL(finished(bool)));
-	else
-		connectionOk = connect(_runner, SIGNAL(movementFinished(bool, QString, QString)), this, SLOT(asynchroneEnd()));
-		
-	if (!connectionOk)
-	{
-		failed();
-		return;
-	}
-
+	connect(_runner, SIGNAL(movementFinished(bool, QString, QString)), this, SIGNAL(finished(bool)));
 	bool ok = _runner->startMovement(_group, _mvt, _speedLimit);
-
-	if (!ok || !_blocking)
-		succeed();
+	if (!ok)
+		failed();
 }
 
 void AX12MovementAction::end()
@@ -220,14 +217,14 @@ void AX12MovementAction::end()
 	disconnect();
 }
 
-QString AX12MovementAction::getActionName() const
+void AX12MovementAction::stop()
 {
-	return QString(_blocking ? "Blocking" : "").append("AX-12 movement: ").append(_group).append("/").append(_mvt);
+	_runner->stop();
 }
 
-void AX12MovementAction::asynchroneEnd()
+QString AX12MovementAction::getActionName() const
 {
-	end();
+	return QString("AX-12 movement: ").append(_group).append("/").append(_mvt);
 }
 
 //Wait until sharp-----------------------------------------------------------------------
@@ -256,12 +253,16 @@ void WaitUntilSensorAction::end()
 {
     if (_timeout)
         _timeout->stop();
+
     disconnect();
 }
 
 void WaitUntilSensorAction::stop()
 {
-    end();
+	if (_timeout)
+		_timeout->stop();
+
+	failed();
 }
 
 QString WaitUntilSensorAction::getActionName() const

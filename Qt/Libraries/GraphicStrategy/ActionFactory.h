@@ -5,7 +5,8 @@ class StrategyManager;
 class TrajectoryFinder;
 class StrategyMap;
 
-#include "StandardActions.h"
+#include "Actions/StandardActions.h"
+#include "Actions/ContainerActions.h"
 
 namespace Comm {class RobotCommInterface;}
 namespace Tools {class Ax12MovementManager;}
@@ -17,6 +18,8 @@ public:
 	void setMaxMovementSpeed(int maxSpeed);
 
 	ActionGroup* actionList(const QList<AbstractAction*>& actions = QList<AbstractAction*>()) const;
+	AsynchroneActionGroup* asynchroneActionList(const QList<AbstractAction*>& actions = QList<AbstractAction*>(), AsynchroneActionGroup::StopCondition stopCondition = AsynchroneActionGroup::OneActionFinished) const;
+
 	OrientationSwitchCaseAction* orientationSwitchCaseAction() const;
 
     AbstractAction* waitAction(int ms) const;
@@ -41,7 +44,6 @@ public:
     AbstractAction* ax12Action(quint8 id1, float angle1, quint8 id2, float angle2, float speed) const;
 	
 	AbstractAction* ax12Movement(const QString& group, const QString& movement, float speedLimit = 110.f) const;
-	AbstractAction* asynchroneAx12Movement(const QString& group, const QString& movement, float speedLimit = 110.f) const;
 
     AbstractAction* waitForSharpToActivate(int otherSharpId, int timeoutInMs) const;
     AbstractAction* waitForSharpToActivateWithCustomValue(int otherSharpId, double threshold, int timeoutInMs) const;

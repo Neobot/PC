@@ -505,7 +505,7 @@ void NServer::handleSerialError(QSerialPort::SerialPortError error)
 			QByteArray errorMessage("Robot Serial Error: ");
 			errorMessage.append( _robotInterface->getProtocol()->getIODevice()->errorString().toLatin1());
 
-			qDebug(errorMessage);
+			qDebug() << errorMessage;
 			sendGlobalAnnoucement(errorMessage);
 		}
 	}

@@ -27,8 +27,10 @@ SOURCES += TrajectoryFinder.cpp \
     NMicropather.cpp \
     Pather.cpp \
     StrategyManager.cpp \
-    AbstractAction.cpp \
     ActionFactory.cpp \
+    Actions/AbstractAction.cpp \
+    Actions/StandardActions.cpp \
+    Actions/ContainerActions.cpp \
     StrategyMap.cpp \
     Strategies/TestStrategy.cpp \
     Strategies/StrategyEnumerator.cpp \
@@ -42,9 +44,9 @@ SOURCES += TrajectoryFinder.cpp \
     Strategies/HappyBirthdayCommands.cpp \
     AIEngine.cpp \
     Strategies/HappyBirthdayStrategy.cpp \
-    StandardActions.cpp \
     Sensor.cpp \
     ColorSensor.cpp
+
 HEADERS += TrajectoryFinder.h \
     Sharp.h \
     StrategyInterface.h \
@@ -52,8 +54,10 @@ HEADERS += TrajectoryFinder.h \
     NMicropather.h \
     Pather.h \
     StrategyManager.h \
-    AbstractAction.h \
     ActionFactory.h \
+    Actions/AbstractAction.h \
+    Actions/StandardActions.h \
+    Actions/ContainerActions.h \
     StrategyMap.h \
     Strategies/TestStrategy.h \
     Strategies/StrategyEnumerator.h \
@@ -65,10 +69,10 @@ HEADERS += TrajectoryFinder.h \
     AbstractAICommand.h \
     Strategies/HappyBirthdayCommands.h \
     AIEngine.h \
-    Strategies/HappyBirthdayStrategy.h \
-    StandardActions.h \
+    Strategies/HappyBirthdayStrategy.h \ 
     Sensor.h \
     ColorSensor.h
+
 FORMS += StrategyDialog.ui
 
 

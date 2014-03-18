@@ -24,8 +24,11 @@ void TestStrategy::mainStrategy(QList<AbstractAction *> &actions)
 {
     LoggerInterface::logger() << "TEST STRATEGY.......GO !" << Tools::endl;
 
-	actions << _manager->getActionFactory()->asynchroneAx12Movement("BrasGauche", "GoToInit")
-			<< _manager->getActionFactory()->ax12Movement("BrasDroit", "GoToInit");
+	QList<AbstractAction *> armActions;
+	armActions	<< _manager->getActionFactory()->ax12Movement("BrasGauche", "GoToInit")
+				<< _manager->getActionFactory()->ax12Movement("BrasDroit", "GoToInit");
+
+	actions << _manager->getActionFactory()->asynchroneActionList(armActions, AsynchroneActionGroup::AllActionFinished);
 
 	foreach(const QPointF& p, _points)
 	{

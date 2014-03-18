@@ -33,9 +33,12 @@ public:
 	WaitAction(int ms, QObject* parent = 0);
 
 	void execute();
+	void stop();
+
 	QString getActionName() const;
 private:
 	int _ms;
+	QTimer* _timer;
 };
 
 
@@ -49,6 +52,7 @@ public:
 	void execute();
 	void end();
 	void stop();
+
 	QString getActionName() const;
 
 private:
@@ -69,6 +73,7 @@ public:
 	void execute();
 	void end();
 	void stop();
+
 	QString getActionName() const;
 
 private:
@@ -87,6 +92,7 @@ public:
 	void execute();
 	void end();
 	void stop();
+
 	QString getActionName() const;
 
 private:
@@ -132,24 +138,22 @@ class AX12MovementAction : public AbstractAction
 {
 	Q_OBJECT
 public:
-	AX12MovementAction(const QString& group, const QString& movement, float speedLimit, bool blocking, Comm::RobotCommInterface* robot, Tools::Ax12MovementManager* movementManager, QObject* parent = 0);
+	AX12MovementAction(const QString& group, const QString& movement, float speedLimit, Comm::RobotCommInterface* robot, Tools::Ax12MovementManager* movementManager, QObject* parent = 0);
 
 	void execute();
 	void end();
+	void stop();
+
 	QString getActionName() const;
 
 private:
 	QString _group;
 	QString _mvt;
 	float _speedLimit;
-	bool _blocking;
 
 	Comm::RobotCommInterface*	_robot;
 	Tools::Ax12MovementManager* _movementManager;
 	Comm::Ax12MovementRunner* _runner;
-
-private slots:
-	void asynchroneEnd();
 };
 
 class WaitUntilSensorAction : public AbstractAction

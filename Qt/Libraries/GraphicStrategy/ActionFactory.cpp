@@ -109,6 +109,11 @@ ActionGroup * ActionFactory::actionList(const QList<AbstractAction *> &actions) 
 	return new ActionGroup(actions);
 }
 
+AsynchroneActionGroup *ActionFactory::asynchroneActionList(const QList<AbstractAction *> &actions, AsynchroneActionGroup::StopCondition stopCondition) const
+{
+	return new AsynchroneActionGroup(actions, stopCondition);
+}
+
 OrientationSwitchCaseAction *ActionFactory::orientationSwitchCaseAction() const
 {
 	return new OrientationSwitchCaseAction(_manager);
@@ -140,12 +145,7 @@ AbstractAction *ActionFactory::ax12Action(quint8 id1, float angle1, quint8 id2, 
 
 AbstractAction* ActionFactory::ax12Movement(const QString& group, const QString& movement, float speedLimit) const
 {
-	return new AX12MovementAction(group, movement, speedLimit, true, _robot, _ax12MovementsManager);
-}
-
-AbstractAction* ActionFactory::asynchroneAx12Movement(const QString& group, const QString& movement, float speedLimit) const
-{
-    return new AX12MovementAction(group, movement, speedLimit, false, _robot, _ax12MovementsManager);
+	return new AX12MovementAction(group, movement, speedLimit, _robot, _ax12MovementsManager);
 }
 
 AbstractAction *ActionFactory::waitForSharpToActivate(int otherSharpId, int timeoutInMs) const
