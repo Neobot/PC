@@ -31,6 +31,7 @@ SOURCES += TrajectoryFinder.cpp \
     Actions/AbstractAction.cpp \
     Actions/StandardActions.cpp \
     Actions/ContainerActions.cpp \
+    Actions/ConditionalActions.cpp \
     StrategyMap.cpp \
     Strategies/TestStrategy.cpp \
     Strategies/StrategyEnumerator.cpp \
@@ -58,6 +59,7 @@ HEADERS += TrajectoryFinder.h \
     Actions/AbstractAction.h \
     Actions/StandardActions.h \
     Actions/ContainerActions.h \
+    Actions/ConditionalActions.h \
     StrategyMap.h \
     Strategies/TestStrategy.h \
     Strategies/StrategyEnumerator.h \

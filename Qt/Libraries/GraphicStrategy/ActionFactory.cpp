@@ -119,6 +119,11 @@ OrientationSwitchCaseAction *ActionFactory::orientationSwitchCaseAction() const
 	return new OrientationSwitchCaseAction(_manager);
 }
 
+PositionSwitchCaseAction *ActionFactory::positionSwitchCaseAction() const
+{
+	return new PositionSwitchCaseAction(_manager);
+}
+
 AbstractAction *ActionFactory::ax12Action(quint8 id, float angle, float speed) const
 {
     QList<quint8> idList;

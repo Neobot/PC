@@ -7,6 +7,7 @@ class StrategyMap;
 
 #include "Actions/StandardActions.h"
 #include "Actions/ContainerActions.h"
+#include "Actions/ConditionalActions.h"
 
 namespace Comm {class RobotCommInterface;}
 namespace Tools {class Ax12MovementManager;}
@@ -21,6 +22,7 @@ public:
 	AsynchroneActionGroup* asynchroneActionList(const QList<AbstractAction*>& actions = QList<AbstractAction*>(), AsynchroneActionGroup::StopCondition stopCondition = AsynchroneActionGroup::OneActionFinished) const;
 
 	OrientationSwitchCaseAction* orientationSwitchCaseAction() const;
+	PositionSwitchCaseAction* positionSwitchCaseAction() const;
 
     AbstractAction* waitAction(int ms) const;
 
