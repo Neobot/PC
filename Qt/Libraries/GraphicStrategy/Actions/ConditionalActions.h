@@ -4,24 +4,34 @@
 #include "AbstractAction.h"
 #include <QRectF>
 
+class Sensor;
+
 /**
- * @brief Action which trigger a sub-action if the orientation meet a range condition.
+ * @brief Abstract action which trigger a sub-action if the a value meet a range condition.
+ * The switch case action takes the ownership of the sub-actions and is in charge of their destruction.
  */
-class OrientationSwitchCaseAction : public AbstractAction
+class SingleValueSwitchCaseAction : public AbstractAction
 {
 	Q_OBJECT
 public:
-	OrientationSwitchCaseAction(StrategyManager* manager, QObject* parent = 0);
-	~OrientationSwitchCaseAction();
+	SingleValueSwitchCaseAction(QObject* parent = 0);
+	virtual ~SingleValueSwitchCaseAction();
 
 	/**
 	 * @brief addCase Adds a switch case action.
-	 * @param min Minimum angle in radian between -pi and pi
-	 * @param max Maximum angle in radian between -pi and pi
-	 * @param associatedAction Action which should be triggered if the robot orientation is between \p min and \p max.
+	 * @param min Minimum value
+	 * @param max Maximum value
+	 * @param associatedAction Action which should be triggered if the value is between \p min and \p max.
 	 * @note If two cases have a common range, the one first which have been added first is triggered.
 	 */
 	void addCase(double min, double max, AbstractAction* associatedAction);
+
+	/**
+	 * @brief addCase Adds a switch case action.
+	 * @param value A value
+	 * @param associatedAction Action which should be triggered if the value is equals to \p value.
+	 */
+	void addCase(double value, AbstractAction* associatedAction);
 
 	/**
 	 * @brief Sets the action which should be executed if no case has been triggered.
@@ -31,7 +41,10 @@ public:
 	void execute();
 	void stop();
 	void end();
-	QString getActionName() const;
+
+
+protected:
+	virtual double getSwitchValue() const = 0;
 
 private:
 	struct Case
@@ -42,11 +55,52 @@ private:
 	};
 
 	QList<Case> _cases;
-	StrategyManager* _manager;
 	AbstractAction* _currentAction;
 	AbstractAction* _defaultAction;
 };
 
+/**
+ * @brief Switch between actions depending on robot orientation.
+ * @note Orientation is between -pi and pi
+ */
+class OrientationSwitchCaseAction : public SingleValueSwitchCaseAction
+{
+public:
+	OrientationSwitchCaseAction(StrategyManager* manager, QObject* parent = 0);
+	~OrientationSwitchCaseAction();
+
+	QString getActionName() const;
+
+protected:
+	virtual double getSwitchValue() const;
+
+private:
+	StrategyManager* _manager;
+};
+
+/**
+ * @brief Switch between actions depending on the value of a sensor
+ * @note Orientation is between -pi and pi
+ */
+class SensorSwitchCaseAction : public SingleValueSwitchCaseAction
+{
+public:
+	SensorSwitchCaseAction(const Sensor* sensor, QObject* parent = 0);
+	~SensorSwitchCaseAction();
+
+	QString getActionName() const;
+
+protected:
+	virtual double getSwitchValue() const;
+
+private:
+	const Sensor* _sensor;
+};
+
+/**
+ * @brief Action which trigger a sub-action if the position of the robot is in an specific area.
+ * The switch case action takes the ownership of the sub-actions and is in charge of their destruction.
+ */
 class PositionSwitchCaseAction : public AbstractAction
 {
 	Q_OBJECT

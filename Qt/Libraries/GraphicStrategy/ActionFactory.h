@@ -22,6 +22,8 @@ public:
 	AsynchroneActionGroup* asynchroneActionList(const QList<AbstractAction*>& actions = QList<AbstractAction*>(), AsynchroneActionGroup::StopCondition stopCondition = AsynchroneActionGroup::OneActionFinished) const;
 
 	OrientationSwitchCaseAction* orientationSwitchCaseAction() const;
+	SensorSwitchCaseAction* colorSensorSwitchCaseAction(int colorSensorId) const;
+	SensorSwitchCaseAction* sharpSwitchCaseAction(int sharpId) const;
 	PositionSwitchCaseAction* positionSwitchCaseAction() const;
 
     AbstractAction* waitAction(int ms) const;

@@ -119,6 +119,16 @@ OrientationSwitchCaseAction *ActionFactory::orientationSwitchCaseAction() const
 	return new OrientationSwitchCaseAction(_manager);
 }
 
+SensorSwitchCaseAction *ActionFactory::colorSensorSwitchCaseAction(int colorSensorId) const
+{
+	return new SensorSwitchCaseAction(_manager->getColorSensor(colorSensorId));
+}
+
+SensorSwitchCaseAction *ActionFactory::sharpSwitchCaseAction(int sharpId) const
+{
+	return new SensorSwitchCaseAction(_manager->getOtherSharp(sharpId));
+}
+
 PositionSwitchCaseAction *ActionFactory::positionSwitchCaseAction() const
 {
 	return new PositionSwitchCaseAction(_manager);

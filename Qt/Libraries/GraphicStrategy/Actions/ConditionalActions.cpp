@@ -3,16 +3,20 @@
 #include "StrategyMap.h"
 #include "ToolsLib.h"
 
-OrientationSwitchCaseAction::OrientationSwitchCaseAction(StrategyManager *manager, QObject *parent)
-	: AbstractAction(parent), _manager(manager), _currentAction(nullptr), _defaultAction(nullptr)
+SingleValueSwitchCaseAction::SingleValueSwitchCaseAction(QObject *parent)
+	: AbstractAction(parent), _currentAction(nullptr), _defaultAction(nullptr)
 {
 }
 
-OrientationSwitchCaseAction::~OrientationSwitchCaseAction()
+SingleValueSwitchCaseAction::~SingleValueSwitchCaseAction()
 {
+	foreach(const Case& c, _cases)
+	{
+		delete c.action;
+	}
 }
 
-void OrientationSwitchCaseAction::addCase(double min, double max, AbstractAction *associatedAction)
+void SingleValueSwitchCaseAction::addCase(double min, double max, AbstractAction *associatedAction)
 {
 	Case c;
 	c.min = min;
@@ -23,20 +27,24 @@ void OrientationSwitchCaseAction::addCase(double min, double max, AbstractAction
 	associatedAction->setParent(this);
 }
 
-void OrientationSwitchCaseAction::setDefaultAction(AbstractAction *defaultAction)
+void SingleValueSwitchCaseAction::addCase(double value, AbstractAction *associatedAction)
+{
+	addCase(value, value, associatedAction);
+}
+
+void SingleValueSwitchCaseAction::setDefaultAction(AbstractAction *defaultAction)
 {
 	_defaultAction = defaultAction;
 }
 
-void OrientationSwitchCaseAction::execute()
+void SingleValueSwitchCaseAction::execute()
 {
-	double robotOrientation = _manager->getMap()->getRobotPosition().getTheta();
-	robotOrientation = Tools::angleInMinusPiPlusPi(robotOrientation);
+	double value = getSwitchValue();
 
 	_currentAction = nullptr;
 	foreach(const Case& c, _cases)
 	{
-		if (c.min <= robotOrientation && robotOrientation <= c.max)
+		if (c.min <= value && value <= c.max)
 		{
 			_currentAction = c.action;
 			if (_currentAction)
@@ -65,13 +73,13 @@ void OrientationSwitchCaseAction::execute()
 	}
 }
 
-void OrientationSwitchCaseAction::stop()
+void SingleValueSwitchCaseAction::stop()
 {
 	if (_currentAction)
 		_currentAction->stop();
 }
 
-void OrientationSwitchCaseAction::end()
+void SingleValueSwitchCaseAction::end()
 {
 	if (_currentAction)
 	{
@@ -80,12 +88,53 @@ void OrientationSwitchCaseAction::end()
 	}
 }
 
+//----------------------------------------------------------------------------------------------------------------------------------
+
+OrientationSwitchCaseAction::OrientationSwitchCaseAction(StrategyManager *manager, QObject *parent)
+	: SingleValueSwitchCaseAction(parent), _manager(manager)
+{
+}
+
+OrientationSwitchCaseAction::~OrientationSwitchCaseAction()
+{
+}
+
 QString OrientationSwitchCaseAction::getActionName() const
 {
 	return QString("Orientation switch case action");
 }
 
-//--------------------------
+double OrientationSwitchCaseAction::getSwitchValue() const
+{
+	double robotOrientation = _manager->getMap()->getRobotPosition().getTheta();
+	robotOrientation = Tools::angleInMinusPiPlusPi(robotOrientation);
+
+	return robotOrientation;
+}
+
+//----------------------------------------------------------------------------------------------------------------------------------
+
+SensorSwitchCaseAction::SensorSwitchCaseAction(const Sensor *sensor, QObject *parent)
+	: SingleValueSwitchCaseAction(parent), _sensor(sensor)
+{
+
+}
+
+SensorSwitchCaseAction::~SensorSwitchCaseAction()
+{
+}
+
+QString SensorSwitchCaseAction::getActionName() const
+{
+	return QString("Sensor switch case action");
+}
+
+double SensorSwitchCaseAction::getSwitchValue() const
+{
+	return _sensor->getValue();
+}
+
+//----------------------------------------------------------------------------------------------------------------------------------
 
 PositionSwitchCaseAction::PositionSwitchCaseAction(StrategyManager *manager, QObject *parent)
 	: AbstractAction(parent), _manager(manager), _currentAction(nullptr), _defaultAction(nullptr)
@@ -94,6 +143,10 @@ PositionSwitchCaseAction::PositionSwitchCaseAction(StrategyManager *manager, QOb
 
 PositionSwitchCaseAction::~PositionSwitchCaseAction()
 {
+	foreach(const Case& c, _cases)
+	{
+		delete c.action;
+	}
 }
 
 void PositionSwitchCaseAction::addCase(const QRectF& zone, AbstractAction *associatedAction)
