@@ -244,7 +244,7 @@ WaitUntilSensorAction::WaitUntilSensorAction(const Sensor *sensor, Sensor::Senso
 
 void WaitUntilSensorAction::execute()
 {
-    connect(_manager, SIGNAL(otherSensorsReceived()), this, SLOT(testSharp()));
+	connect(_manager, SIGNAL(sensorValuesReceived(Sensor::SensorFamily)), this, SLOT(testSensor(Sensor::SensorFamily)));
     if (_timeout)
         _timeout->start();
 }
