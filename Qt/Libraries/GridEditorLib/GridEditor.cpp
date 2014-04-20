@@ -112,7 +112,7 @@ void GridEditor::initActions(bool singleEditionMode)
 
 	ui->menuEdit->addSeparator();
 	ui->menuEdit->addAction("Select All", this, SLOT(selectAll()), QKeySequence::SelectAll);
-	_removeSelectionAction = ui->menuEdit->addAction("Remove selection", this, SLOT(removeSelection()), QKeySequence::Delete);
+	_removeSelectionAction = ui->menuEdit->addAction("Remove selection", this, SLOT(removeSelection()), QKeySequence(Qt::CTRL + Qt::Key_D));
     _removeSelectionAction->setEnabled(false);
 
 	if (!singleEditionMode)
