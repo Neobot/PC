@@ -85,6 +85,10 @@ public:
 
     const Sensor *getSensor(int index, Sensor::SensorFamily family) const;
 
+	double getParameter(int index) const;
+	QString getParameterName(int index) const;
+	void setParameter(int index, double value);
+
     StrategyMap* getMap() const;
     ActionFactory* getActionFactory() const;
     Tools::NGrid* getGrid() const;
@@ -112,6 +116,8 @@ private:
     QMap<int, ColorSensor*>   _colorSensors;
 	QList<bool>			_microswitchStates;
     GameState           _currentState;
+	QList<float>		_parameters;
+	QStringList			_parameterNames;
 
     //Objects used to perform calculation on a future state of the game
     Pather*		_futurePather;
@@ -155,6 +161,8 @@ private:
     bool restart();
     void quit();
 	void log(const QByteArray& text);
+	void parameters(const QList<float>& values);
+	void parameterNames(const QStringList& names);
 
     void updateFutureMap(const GameState& state);
 

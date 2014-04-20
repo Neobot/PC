@@ -278,3 +278,20 @@ void WaitUntilSensorAction::testSensor(Sensor::SensorFamily family)
             succeed();
     }
 }
+
+//Set parameter-----------------------------------------------------------------------
+
+SetParameterAction::SetParameterAction(int parameterId, double value, StrategyManager *manager, QObject *parent)
+	: AbstractAction(parent), _parameterId(parameterId), _value(value), _manager(manager)
+{
+}
+
+void SetParameterAction::execute()
+{
+	_manager->setParameter(_parameterId, _value);
+}
+
+QString SetParameterAction::getActionName() const
+{
+	return QString("Set %1 to '%2'").arg(_manager->getParameterName(_parameterId)).arg(_value);
+}

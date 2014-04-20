@@ -409,6 +409,16 @@ void StrategyManager::log(const QByteArray &text)
 	logger() << "The robot say \"" << text << "\"" << Tools::endl;
 }
 
+void StrategyManager::parameters(const QList<float> &values)
+{
+	_parameters = values;
+}
+
+void StrategyManager::parameterNames(const QStringList &names)
+{
+	_parameterNames = names;
+}
+
 void StrategyManager::setAutoQuit(bool value)
 {
 	_autoQuit = value;
@@ -618,7 +628,26 @@ const Sensor *StrategyManager::getSensor(int index, Sensor::SensorFamily family)
         case Sensor::ColorSensorFamily:     return getColorSensor(index);
     }
 
-    return nullptr;
+	return nullptr;
+}
+
+double StrategyManager::getParameter(int index) const
+{
+	return _parameters.value(index, 0);
+}
+
+QString StrategyManager::getParameterName(int index) const
+{
+	return _parameterNames.value(index, "Unknown parameter");
+}
+
+void StrategyManager::setParameter(int index, double value)
+{
+	if (index >= 0 && index < _parameters.count())
+	{
+		_parameters[index] = value;
+		_robot->setParameters(_parameters);
+	}
 }
 
 ActionFactory * StrategyManager::getActionFactory() const

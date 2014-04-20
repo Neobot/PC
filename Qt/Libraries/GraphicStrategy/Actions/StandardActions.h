@@ -181,5 +181,20 @@ private slots:
     void testSensor(Sensor::SensorFamily family);
 };
 
+class SetParameterAction : public AbstractAction
+{
+	Q_OBJECT
+public:
+	SetParameterAction(int parameterId, double value, StrategyManager* manager, QObject* parent = 0);
+
+	void execute();
+	QString getActionName() const;
+
+private:
+	int _parameterId;
+	double _value;
+
+	StrategyManager* _manager;
+};
 
 #endif // STANDARDACTIONS_H
