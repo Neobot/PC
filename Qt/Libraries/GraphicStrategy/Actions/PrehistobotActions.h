@@ -5,12 +5,16 @@
 #include "Sensor.h"
 #include "NGrid.h"
 
+#include <QTimer>
+
 class ColorSensor;
 class TrajectoryFinder;
+
 namespace Tools
 {
 	class Ax12MovementManager;
 }
+
 namespace Comm
 {
 	class RobotCommInterface;
@@ -25,10 +29,15 @@ class PrehistobotScanAndTurnOverFiresAction : public AbstractAction
 {
 	Q_OBJECT
 public:
-	PrehistobotScanAndTurnOverFiresAction(Tools::NGridNode* destination, int speed, int ourColor, int opponentColor, const ColorSensor* leftSensor, const ColorSensor* rightSensor,
+	/**
+	 * @brief Construct the action
+	 * \p destination can be null, in that case, the robot won't move.
+	 * \p timeout can be <= 0, on that case no timeout is applied.
+	 */
+	PrehistobotScanAndTurnOverFiresAction(Tools::NGridNode* destination, int speed, int timeoutMs, int ourColor, int opponentColor, const ColorSensor* leftSensor, const ColorSensor* rightSensor,
 										  AbstractAction* startAction,
-										  AbstractAction* leftTurnOverAction, AbstractAction* rightTurnOverAction,
-										  AbstractAction* leftMoveAction, AbstractAction* rightMoveAction,
+										  AbstractAction* leftOpponentColorAction, AbstractAction* rightOpponentColorAction,
+										  AbstractAction* leftOurColorAction, AbstractAction* rightOurColorAction,
 										  AbstractAction* endAction,
 										  StrategyManager* manager, TrajectoryFinder* finder, QObject* parent = 0);
 
@@ -47,6 +56,7 @@ private:
 	bool _destinationReached;
 	Tools::NGridNode* _destination;
 	int _speed;
+	QTimer* _timeout;
 
 	int _ourColor;
 	int _opponentColor;
@@ -56,11 +66,11 @@ private:
 
 	AbstractAction* _startAction;
 
-	AbstractAction* _leftTurnOverFireAction;
-	AbstractAction* _rightTurnOverFireAction;
+	AbstractAction* _leftOpponentColorAction;
+	AbstractAction* _rightOpponentColorAction;
 
-	AbstractAction* _leftMoveFireAction;
-	AbstractAction* _rightMoveFireAction;
+	AbstractAction* _leftOurColorAction;
+	AbstractAction* _rightOurColorAction;
 
 	AbstractAction* _endAction;
 
@@ -79,7 +89,6 @@ private:
 
 	void checkColor(ArmState &armState, int sensorColor, AbstractAction* turnOverFireAction, AbstractAction* moveFireAction);
 	void armActionFinsihed(ArmState &armState, bool result);
-	void goToDestination();
 
 	void executeArmSubAction(AbstractAction* action, ArmState &armState);
 	void executeSubAction(AbstractAction* action);
@@ -95,6 +104,7 @@ private slots:
 	void rightArmActionFisnihed(bool result);
 	void endActionFinished(bool result);
 	void destinationReached();
+	void timeout();
 
 };
 

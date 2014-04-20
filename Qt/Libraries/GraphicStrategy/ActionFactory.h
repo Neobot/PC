@@ -55,10 +55,10 @@ public:
     AbstractAction* waitForSharpToDesactivate(int otherSharpId, int timeoutInMs) const;
     AbstractAction* waitForSharpToDesactivateWithCustomValue(int otherSharpId, double threshold, int timeoutInMs) const;
 
-	PrehistobotScanAndTurnOverFiresAction* turnOverFiresAction(Tools::NGridNode* destination, int speed, int ourColor, int opponentColor, int leftColorSensorId, int rightColorSensorId,
+	PrehistobotScanAndTurnOverFiresAction* turnOverFiresAction(Tools::NGridNode* destination, int speed, int timeoutMs, int ourColor, int opponentColor, int leftColorSensorId, int rightColorSensorId,
 															   AbstractAction* startAction,
-															   AbstractAction* leftTurnOverAction, AbstractAction* rightTurnOverAction,
-															   AbstractAction* leftMoveAction, AbstractAction* rightMoveAction,
+															   AbstractAction* leftOpponentColorAction, AbstractAction* rightOpponentColorAction,
+															   AbstractAction* leftOurColorAction, AbstractAction* rightOurColorAction,
 															   AbstractAction* endAction);
 
 private:

@@ -3,17 +3,24 @@
 #include "TrajectoryFinder.h"
 #include "Ax12MovementRunner.h"
 
-PrehistobotScanAndTurnOverFiresAction::PrehistobotScanAndTurnOverFiresAction(Tools::NGridNode* destination, int speed, int ourColor, int opponentColor, const ColorSensor *leftSensor, const ColorSensor *rightSensor,
+PrehistobotScanAndTurnOverFiresAction::PrehistobotScanAndTurnOverFiresAction(Tools::NGridNode* destination, int speed, int timeoutMs, int ourColor, int opponentColor, const ColorSensor *leftSensor, const ColorSensor *rightSensor,
 																		  AbstractAction* startAction,
-																		  AbstractAction* leftTurnOverAction, AbstractAction* rightTurnOverAction,
-																		  AbstractAction* leftMoveAction, AbstractAction* rightMoveAction, AbstractAction *endAction,
+																		  AbstractAction* leftOpponentColorAction, AbstractAction* rightOpponentColorAction,
+																		  AbstractAction* leftOurColorAction, AbstractAction* rightOurColorAction, AbstractAction *endAction,
 																		  StrategyManager* manager, TrajectoryFinder* finder, QObject* parent)
  : AbstractAction(parent), _manager(manager), _finder(finder),
-   _destinationReached(false), _destination(destination), _speed(speed), _ourColor(ourColor), _opponentColor(opponentColor), _leftSensor(leftSensor), _rightSensor(rightSensor),
-   _startAction(startAction), _leftTurnOverFireAction(leftTurnOverAction), _rightTurnOverFireAction(rightTurnOverAction),
-   _leftMoveFireAction(leftMoveAction), _rightMoveFireAction(rightMoveAction), _endAction(endAction),
+   _destinationReached(false), _destination(destination), _speed(speed), _timeout(0), _ourColor(ourColor), _opponentColor(opponentColor), _leftSensor(leftSensor), _rightSensor(rightSensor),
+   _startAction(startAction), _leftOpponentColorAction(leftOpponentColorAction), _rightOpponentColorAction(rightOpponentColorAction),
+   _leftOurColorAction(leftOurColorAction), _rightOurColorAction(rightOurColorAction), _endAction(endAction),
    _leftArmState(Unknown), _rightArmState(Unknown), _stopped(false)
 {
+	if (timeoutMs > 0)
+	{
+		_timeout = new QTimer(this);
+		_timeout->setInterval(timeoutMs);
+		_timeout->setSingleShot(true);
+		connect(_timeout, SIGNAL(timeout()), this, SLOT(timeout()));
+	}
 }
 
 
@@ -27,10 +34,10 @@ void PrehistobotScanAndTurnOverFiresAction::execute()
 	connect(_manager, SIGNAL(sensorValuesReceived(Sensor::SensorFamily)), this, SLOT(testColor(Sensor::SensorFamily)));
 	connect(_finder, SIGNAL(objectiveReached()), this, SLOT(destinationReached()));
 
-	connect(_leftTurnOverFireAction, SIGNAL(finished(bool)), this, SLOT(leftArmActionFinished(bool)));
-	connect(_leftMoveFireAction, SIGNAL(finished(bool)), this, SLOT(leftArmActionFinished(bool)));
-	connect(_rightTurnOverFireAction, SIGNAL(finished(bool)), this, SLOT(rightArmActionFinished(bool)));
-	connect(_rightMoveFireAction, SIGNAL(finished(bool)), this, SLOT(rightArmActionFinished(bool)));
+	connect(_leftOpponentColorAction, SIGNAL(finished(bool)), this, SLOT(leftArmActionFinished(bool)));
+	connect(_leftOurColorAction, SIGNAL(finished(bool)), this, SLOT(leftArmActionFinished(bool)));
+	connect(_rightOpponentColorAction, SIGNAL(finished(bool)), this, SLOT(rightArmActionFinished(bool)));
+	connect(_rightOurColorAction, SIGNAL(finished(bool)), this, SLOT(rightArmActionFinished(bool)));
 
 	if (_startAction)
 		executeSubAction(_startAction);
@@ -61,8 +68,8 @@ void PrehistobotScanAndTurnOverFiresAction::testColor(Sensor::SensorFamily famil
 {
 	if (family == Sensor::ColorSensorFamily)
 	{
-		checkColor(_leftArmState, _leftSensor->getValue(), _leftTurnOverFireAction, _leftMoveFireAction);
-		checkColor(_rightArmState, _rightSensor->getValue(), _rightTurnOverFireAction, _rightMoveFireAction);
+		checkColor(_leftArmState, _leftSensor->getValue(), _leftOpponentColorAction, _leftOurColorAction);
+		checkColor(_rightArmState, _rightSensor->getValue(), _rightOpponentColorAction, _rightOurColorAction);
 	}
 }
 
@@ -104,7 +111,14 @@ void PrehistobotScanAndTurnOverFiresAction::startActionFinished(bool result)
 	AbstractAction *action = qobject_cast<AbstractAction*>(sender());
 	endSubAction(action);
 
-	goToDestination();
+	_destinationReached = false;
+	if (_destination)
+		_finder->findTrajectory(_destination, _speed, Tools::Forward);
+
+	if (_timeout)
+		_timeout->start();
+
+
 	_leftArmState = Scanning;
 	_rightArmState = Scanning;
 }
@@ -119,6 +133,18 @@ void PrehistobotScanAndTurnOverFiresAction::endActionFinished(bool result)
 
 void PrehistobotScanAndTurnOverFiresAction::destinationReached()
 {
+	_destinationReached = true;
+	if (_timeout)
+		_timeout->stop();
+
+	checkEnding();
+}
+
+void PrehistobotScanAndTurnOverFiresAction::timeout()
+{
+	if (!_destinationReached && _destination)
+		_finder->stop();
+
 	_destinationReached = true;
 	checkEnding();
 }
@@ -135,12 +161,6 @@ void PrehistobotScanAndTurnOverFiresAction::armActionFinsihed(ArmState& armState
 			Q_ASSERT(false);
 			break;
 	}
-}
-
-void PrehistobotScanAndTurnOverFiresAction::goToDestination()
-{
-	_finder->findTrajectory(_destination, _speed, Tools::Forward);
-	_destinationReached = false;
 }
 
 void PrehistobotScanAndTurnOverFiresAction::executeArmSubAction(AbstractAction *action, ArmState& armState)

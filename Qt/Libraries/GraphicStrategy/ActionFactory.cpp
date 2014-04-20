@@ -187,14 +187,14 @@ AbstractAction *ActionFactory::waitForSharpToDesactivateWithCustomValue(int othe
 	return new WaitUntilSensorAction(sharp, Sensor::OtherSharpSensorFamily, timeoutInMs, threshold, Sensor::GreaterThan, _manager);
 }
 
-PrehistobotScanAndTurnOverFiresAction *ActionFactory::turnOverFiresAction(Tools::NGridNode *destination, int speed, int ourColor, int opponentColor, int leftColorSensorId, int rightColorSensorId,
-																		  AbstractAction *startAction, AbstractAction *leftTurnOverAction, AbstractAction *rightTurnOverAction,
-																		  AbstractAction *leftMoveAction, AbstractAction *rightMoveAction, AbstractAction *endAction)
+PrehistobotScanAndTurnOverFiresAction *ActionFactory::turnOverFiresAction(Tools::NGridNode *destination, int speed, int timeoutMs, int ourColor, int opponentColor, int leftColorSensorId, int rightColorSensorId,
+																		  AbstractAction *startAction, AbstractAction *leftOpponentColorAction, AbstractAction *rightOpponentColorAction,
+																		  AbstractAction *leftOurColorAction, AbstractAction *rightOurColorAction, AbstractAction *endAction)
 {
 	const ColorSensor* leftSensor = _manager->getColorSensor(leftColorSensorId);
 	const ColorSensor* rightSensor = _manager->getColorSensor(rightColorSensorId);
 
-	return new PrehistobotScanAndTurnOverFiresAction(destination, speed, ourColor, opponentColor, leftSensor, rightSensor, startAction,
-													 leftTurnOverAction, rightTurnOverAction, leftMoveAction, rightMoveAction, endAction,
+	return new PrehistobotScanAndTurnOverFiresAction(destination, speed, timeoutMs, ourColor, opponentColor, leftSensor, rightSensor, startAction,
+													 leftOpponentColorAction, rightOpponentColorAction, leftOurColorAction, rightOurColorAction, endAction,
 													 _manager, _finder);
 }
