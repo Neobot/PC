@@ -71,7 +71,7 @@ private:
 
 	void addAx12(int id, float speed, float torque);
 
-	void setAx12Positions(const QList<int> ids, const QList<float> &positions);
+	void setAx12Positions(const QList<int> ids, const QList<float> &positions, const QList<float>& loads);
 	void setAx12MovementsFile(const QByteArray &data);
 
 	QMap<int, float> getAllPositions() const;

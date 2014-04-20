@@ -25,7 +25,7 @@ public:
 
 	void sendAvailableSerialPorts();
 
-	void sendAx12Positions(const QList<quint8> ids, const QList<float>& positions);
+	void sendAx12Positions(const QList<quint8> ids, const QList<float>& positions, const QList<float>& loads);
 	void sendAx12Movements(const QByteArray& data);
 
 	void sendNoticeOfReceipt(quint8 instruction, bool result);

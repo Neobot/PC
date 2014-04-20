@@ -219,17 +219,19 @@ void NetworkClientCommInterface::read(quint8 instruction, const Comm::Data &data
 			d.take(nbAx12);
 
 			QList<float> positions;
+			QList<float> loads;
 			QList<int> ids;
 			for(int i = 0; i < nbAx12; ++i)
 			{
 				quint8 id;
-				float pos;
-				d.take(id).take(pos);
+				float pos, load;
+				d.take(id).take(pos).take(load);
 				positions << pos;
+				loads << load;
 				ids << id;
 			}
 
-			_listener->setAx12Positions(ids, positions);
+			_listener->setAx12Positions(ids, positions, loads);
 			break;
 		}
 		case AX12_MVT_FILE:

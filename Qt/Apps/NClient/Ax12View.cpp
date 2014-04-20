@@ -197,7 +197,7 @@ void Ax12View::addAx12(int id, float speed, float torque)
 	_connection->getComm()->askAx12Positions(ids);
 }
 
-void Ax12View::setAx12Positions(const QList<int> ids, const QList<float> &positions)
+void Ax12View::setAx12Positions(const QList<int> ids, const QList<float> &positions, const QList<float> &loads)
 {
 	for(int i = 0; i < ids.count(); ++i)
 	{

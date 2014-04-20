@@ -65,6 +65,7 @@ void ServerAX12RequestManager::setRequest(const QList<quint8> &ids, bool recursi
 void ServerAX12RequestManager::sendPositions()
 {
     QList<float> positions;
+	QList<float> loads;
     QList<quint8> sentIds;
 
     foreach(quint8 id, _requestedAX12Ids)
@@ -80,10 +81,11 @@ void ServerAX12RequestManager::sendPositions()
             _timeoutServo[id] = isTimeout;
             sentIds << id;
             positions << _ax12Manager->getServoPosition(id);
+			loads << _ax12Manager->getServoLoad(id);
         }
     }
 
-    _interface->sendAx12Positions(sentIds, positions);
+	_interface->sendAx12Positions(sentIds, positions, loads);
 }
 
 void ServerAX12RequestManager::allServoUpdated()

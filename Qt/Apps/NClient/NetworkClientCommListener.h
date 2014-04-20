@@ -21,7 +21,7 @@ public:
 
 	virtual void setSerialPorts(const QStringList& ports) {Q_UNUSED(ports);}
 
-	virtual void setAx12Positions(const QList<int> ids, const QList<float>& positions)  {Q_UNUSED(ids); Q_UNUSED(positions);}
+	virtual void setAx12Positions(const QList<int> ids, const QList<float>& positions, const QList<float>& loads)  {Q_UNUSED(ids); Q_UNUSED(positions); Q_UNUSED(loads);}
 	virtual void setAx12MovementsFile(const QByteArray& data) {Q_UNUSED(data);}
 };
 

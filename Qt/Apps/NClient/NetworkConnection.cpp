@@ -134,10 +134,10 @@ void NetworkConnection::setSerialPorts(const QStringList &ports)
 		responder->setSerialPorts(ports);
 }
 
-void NetworkConnection::setAx12Positions(const QList<int> ids, const QList<float> &positions)
+void NetworkConnection::setAx12Positions(const QList<int> ids, const QList<float> &positions, const QList<float> &loads)
 {
 	foreach(NetworkClientCommListener* responder, _networkResponders)
-		responder->setAx12Positions(ids, positions);
+		responder->setAx12Positions(ids, positions, loads);
 }
 
 void NetworkConnection::setAx12MovementsFile(const QByteArray& data)

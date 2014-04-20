@@ -109,7 +109,7 @@ void NetworkCommInterface::sendAvailableSerialPorts()
 	getProtocol(0)->sendMessage(SERIAL_PORTS, data);
 }
 
-void NetworkCommInterface::sendAx12Positions(const QList<quint8> ids, const QList<float> &positions)
+void NetworkCommInterface::sendAx12Positions(const QList<quint8> ids, const QList<float> &positions, const QList<float> &loads)
 {
 	int nb = qMin(ids.count(), positions.count());
 	Data data;
@@ -118,6 +118,7 @@ void NetworkCommInterface::sendAx12Positions(const QList<quint8> ids, const QLis
 	{
 		data.add(ids.value(i));
 		data.add(positions.value(i));
+		data.add(loads.value(i));
 	}
 
 	getProtocol(0)->sendMessage(AX12_POSITIONS, data);

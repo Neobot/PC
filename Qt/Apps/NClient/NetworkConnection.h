@@ -63,7 +63,7 @@ private:
 	void setStrategyFiles(int strategyNum, const QStringList& filenames);
 	void setStrategyFileData(int strategyNum, const QString& filename, const QByteArray& data);
 	void setSerialPorts(const QStringList& ports);
-	void setAx12Positions(const QList<int> ids, const QList<float>& positions);
+	void setAx12Positions(const QList<int> ids, const QList<float>& positions, const QList<float>& loads);
 	void setAx12MovementsFile(const QByteArray& data);
 	void strategyStatusUpdated(int strategyNum, bool isRunning);
 	void autoStrategyInfo(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror);
