@@ -6,7 +6,6 @@
 
 using namespace Tools;
 
-const char SEPARATOR = ';';
 const QString VERSION = "1.0";
 
 NSettings::NSettings() : _hasChanges(false)

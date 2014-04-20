@@ -40,12 +40,11 @@ SOURCES += TrajectoryFinder.cpp \
     StrategyInterface.cpp \
     Strategies/DefaultStrategy.cpp \
     Strategies/DefaultAIStrategy.cpp \
-    #Strategies/TreasureIslandStrategy.cpp \
+    Strategies/PrehistobotStrategy.cpp \
+    Strategies/PrehistobotCommands.cpp \
     GameState.cpp \
     AbstractAICommand.cpp \
-    Strategies/HappyBirthdayCommands.cpp \
     AIEngine.cpp \
-    Strategies/HappyBirthdayStrategy.cpp \
     Sensor.cpp \
     ColorSensor.cpp
 
@@ -68,12 +67,11 @@ HEADERS += TrajectoryFinder.h \
     Strategies/Ax12TestStrategy.h \
     Strategies/DefaultStrategy.h \
     Strategies/DefaultAIStrategy.h \
-    #Strategies/TreasureIslandStrategy.h \
+    Strategies/PrehistobotStrategy.h \
+    Strategies/PrehistobotCommands.h \
     GameState.h \
     AbstractAICommand.h \
-    Strategies/HappyBirthdayCommands.h \
     AIEngine.h \
-    Strategies/HappyBirthdayStrategy.h \ 
     Sensor.h \
     ColorSensor.h
 

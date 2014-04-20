@@ -22,7 +22,12 @@ const QString &AbstractAICommand::getDescription()
 
 void AbstractAICommand::setDescription(const QString &description)
 {
-    _description = description;
+	_description = description;
+}
+
+double AbstractAICommand::calculateActionTime(double estimatedDistance, double estimatedAverageSpeed, double fixedTime)
+{
+	return estimatedDistance / estimatedAverageSpeed + fixedTime;
 }
 
 //---------------------------------------------------------------------------------------------------
@@ -49,6 +54,8 @@ void WaitCommand::updateToFinalState(GameState &state) const
 
 AbstractAction *WaitCommand::getAction(const GameState &state) const
 {
+	Q_UNUSED(state);
+
     QList<AbstractAction*> actionList;
     actionList  << _manager->getActionFactory()->waitAction(_duration * 1000);
 

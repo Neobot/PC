@@ -25,7 +25,7 @@ class PrehistobotScanAndTurnOverFiresAction : public AbstractAction
 {
 	Q_OBJECT
 public:
-	PrehistobotScanAndTurnOverFiresAction(Tools::NGridNode* destination, int speed, int ourColor, int opponentColor, ColorSensor* leftSensor, ColorSensor* rightSensor,
+	PrehistobotScanAndTurnOverFiresAction(Tools::NGridNode* destination, int speed, int ourColor, int opponentColor, const ColorSensor* leftSensor, const ColorSensor* rightSensor,
 										  AbstractAction* startAction,
 										  AbstractAction* leftTurnOverAction, AbstractAction* rightTurnOverAction,
 										  AbstractAction* leftMoveAction, AbstractAction* rightMoveAction,
@@ -51,8 +51,8 @@ private:
 	int _ourColor;
 	int _opponentColor;
 
-	ColorSensor* _leftSensor;
-	ColorSensor* _rightSensor;
+	const ColorSensor* _leftSensor;
+	const ColorSensor* _rightSensor;
 
 	AbstractAction* _startAction;
 
@@ -89,8 +89,6 @@ private:
 
 private slots:
 	void testColor(Sensor::SensorFamily family);
-	void leftArmMovementFinished(bool result, const QString& group, const QString& movement);
-	void rightArmMovementFinished(bool result, const QString& group, const QString& movement);
 
 	void startActionFinished(bool result);
 	void leftArmActionFinished(bool result);

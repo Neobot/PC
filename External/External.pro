@@ -1,7 +1,6 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
-SUBDIRS = 	qextserialport \
-                Micropather \
+SUBDIRS = 	Micropather \
                 QCustomPlot \
                 qtpropertybrowser

@@ -184,5 +184,17 @@ AbstractAction *ActionFactory::waitForSharpToDesactivate(int otherSharpId, int t
 AbstractAction *ActionFactory::waitForSharpToDesactivateWithCustomValue(int otherSharpId, double threshold, int timeoutInMs) const
 {
     const Sharp* sharp = _manager->getOtherSharp(otherSharpId);
-    return new WaitUntilSensorAction(sharp, Sensor::OtherSharpSensorFamily, timeoutInMs, threshold, Sensor::GreaterThan, _manager);
+	return new WaitUntilSensorAction(sharp, Sensor::OtherSharpSensorFamily, timeoutInMs, threshold, Sensor::GreaterThan, _manager);
+}
+
+PrehistobotScanAndTurnOverFiresAction *ActionFactory::turnOverFiresAction(Tools::NGridNode *destination, int speed, int ourColor, int opponentColor, int leftColorSensorId, int rightColorSensorId,
+																		  AbstractAction *startAction, AbstractAction *leftTurnOverAction, AbstractAction *rightTurnOverAction,
+																		  AbstractAction *leftMoveAction, AbstractAction *rightMoveAction, AbstractAction *endAction)
+{
+	const ColorSensor* leftSensor = _manager->getColorSensor(leftColorSensorId);
+	const ColorSensor* rightSensor = _manager->getColorSensor(rightColorSensorId);
+
+	return new PrehistobotScanAndTurnOverFiresAction(destination, speed, ourColor, opponentColor, leftSensor, rightSensor, startAction,
+													 leftTurnOverAction, rightTurnOverAction, leftMoveAction, rightMoveAction, endAction,
+													 _manager, _finder);
 }

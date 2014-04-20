@@ -8,6 +8,7 @@ class StrategyMap;
 #include "Actions/StandardActions.h"
 #include "Actions/ContainerActions.h"
 #include "Actions/ConditionalActions.h"
+#include "Actions/PrehistobotActions.h"
 
 namespace Comm {class RobotCommInterface;}
 namespace Tools {class Ax12MovementManager;}
@@ -53,6 +54,12 @@ public:
     AbstractAction* waitForSharpToActivateWithCustomValue(int otherSharpId, double threshold, int timeoutInMs) const;
     AbstractAction* waitForSharpToDesactivate(int otherSharpId, int timeoutInMs) const;
     AbstractAction* waitForSharpToDesactivateWithCustomValue(int otherSharpId, double threshold, int timeoutInMs) const;
+
+	PrehistobotScanAndTurnOverFiresAction* turnOverFiresAction(Tools::NGridNode* destination, int speed, int ourColor, int opponentColor, int leftColorSensorId, int rightColorSensorId,
+															   AbstractAction* startAction,
+															   AbstractAction* leftTurnOverAction, AbstractAction* rightTurnOverAction,
+															   AbstractAction* leftMoveAction, AbstractAction* rightMoveAction,
+															   AbstractAction* endAction);
 
 private:
     StrategyManager*	_manager;

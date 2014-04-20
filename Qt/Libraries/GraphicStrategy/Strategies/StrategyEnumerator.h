@@ -8,7 +8,7 @@ class StrategyEnumerator
 public:
 	enum Strategy
 	{
-		StratHappyBirthday,
+		StratPrehistobot,
 		StratTestStrategy,
 		StratTestAx12,
 		StratCount

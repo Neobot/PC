@@ -242,7 +242,8 @@ void MultiBarWidget::setValues(const QList<double> &values)
 	foreach(QCPBars* b, _bars)
 	{
 		b->clearData();
-		b->addData(i + 1, values.value(i++));
+		b->addData(i + 1, values.value(i));
+		i++;
 	}
 
 	if (_autoResize)

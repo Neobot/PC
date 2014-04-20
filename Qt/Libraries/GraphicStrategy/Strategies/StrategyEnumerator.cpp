@@ -1,6 +1,6 @@
 #include "StrategyEnumerator.h"
 #include "Strategies/TestStrategy.h"
-#include "Strategies/HappyBirthdayStrategy.h"
+#include "Strategies/PrehistobotStrategy.h"
 #include "Strategies/Ax12TestStrategy.h"
 #include "ToolsLib.h"
 
@@ -35,8 +35,8 @@ StrategyInterface * StrategyEnumerator::start(StrategyEnumerator::Strategy strat
 	{
 		case StratTestStrategy:
 			return new TestStrategy(d, logger);
-		case StratHappyBirthday:
-			return new HappyBirthdayStrategy(d, logger);
+		case StratPrehistobot:
+			return new PrehistobotStrategy(d, logger);
 		case StratTestAx12:
 			return new Ax12TestStrategy(d, logger);
 		default:
@@ -50,8 +50,8 @@ QString StrategyEnumerator::getStrategyName(StrategyEnumerator::Strategy strateg
 	{
 		case StratTestStrategy:
 			return "Test";
-		case StratHappyBirthday:
-			return "Happy Birthday AI";
+		case StratPrehistobot:
+			return "Prehistobot AI";
 		case StratTestAx12:
 			return "AX-12 Movements Test";
 		default:

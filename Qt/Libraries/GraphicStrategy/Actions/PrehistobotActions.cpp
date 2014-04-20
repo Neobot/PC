@@ -3,7 +3,7 @@
 #include "TrajectoryFinder.h"
 #include "Ax12MovementRunner.h"
 
-PrehistobotScanAndTurnOverFiresAction::PrehistobotScanAndTurnOverFiresAction(Tools::NGridNode* destination, int speed, int ourColor, int opponentColor, ColorSensor* leftSensor, ColorSensor* rightSensor,
+PrehistobotScanAndTurnOverFiresAction::PrehistobotScanAndTurnOverFiresAction(Tools::NGridNode* destination, int speed, int ourColor, int opponentColor, const ColorSensor *leftSensor, const ColorSensor *rightSensor,
 																		  AbstractAction* startAction,
 																		  AbstractAction* leftTurnOverAction, AbstractAction* rightTurnOverAction,
 																		  AbstractAction* leftMoveAction, AbstractAction* rightMoveAction, AbstractAction *endAction,

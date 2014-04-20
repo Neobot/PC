@@ -31,6 +31,8 @@ protected:
     StrategyManager* _manager;
     QString _description;
 
+	double calculateActionTime(double estimatedDistance, double estimatedAverageSpeed, double fixedTime);
+
 private:
     int _count;
 };
