@@ -52,8 +52,8 @@ namespace Tools
 		QString getUniqueGroupeName(const QString& name) const;
 		QString getUniqueMovementName(const QString& groupName, const QString& name) const;
 
-		void addPosition(const QList<float> &positions, float maxSpeed, float torque);
-		int insertPosition(const QList<float> &positions, float maxSpeed, float torque, int position);
+		void addPosition(const QList<float> &positions, float maxSpeed, float torque, float loadLimit);
+		int insertPosition(const QList<float> &positions, float maxSpeed, float torque, float loadLimit, int position);
 
 	private slots:
 		void groupSelected(int index);

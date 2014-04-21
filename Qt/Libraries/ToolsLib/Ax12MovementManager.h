@@ -16,10 +16,11 @@ namespace Tools
 		
 		struct MovementInfo
 		{
-			MovementInfo() : torque(100), maxSpeed(60) {}
+			MovementInfo() : torque(100), maxSpeed(60), loadLimit(0) {}
 			
 			float torque;
 			float maxSpeed;
+			float loadLimit;
 		};
 
 		struct Ax12SingleGroupPosition
@@ -47,6 +48,7 @@ namespace Tools
 		void addEmptyMovement(const QString& groupName, const QString& movementName);
 		void setMovementTorque(const QString& groupName, const QString& movementName, int positionIndex, float torque);
 		void setMovementMaxSpeed(const QString &groupName, const QString &movementName, int positionIndex, float speed);
+		void setMovementLoadLimit(const QString& groupName, const QString& movementName, int positionIndex, float load);
 		void setMovementPosition(const QString& groupName, const QString& movementName, int positionIndex, int ax12Index, float position);
 		void addPositionToMovement(const QString& groupName, const QString& movementName, const Ax12SingleGroupPosition& movement);
 		void insertPositionToMovement(const QString& groupName, const QString& movementName, const Ax12SingleGroupPosition& movement, int position);

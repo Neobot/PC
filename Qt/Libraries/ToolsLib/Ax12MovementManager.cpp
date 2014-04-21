@@ -59,6 +59,11 @@ void Ax12MovementManager::setMovementMaxSpeed(const QString &groupName, const QS
 	_movements[groupName][movementName][positionIndex].info.maxSpeed = speed;
 }
 
+void Ax12MovementManager::setMovementLoadLimit(const QString &groupName, const QString &movementName, int positionIndex, float load)
+{
+	_movements[groupName][movementName][positionIndex].info.loadLimit = load;
+}
+
 void Ax12MovementManager::setMovementPosition(const QString &groupName, const QString &movementName, int positionIndex, int ax12Index, float position)
 {
 	Ax12SingleGroupPosition& pos = _movements[groupName][movementName][positionIndex];
@@ -196,7 +201,8 @@ bool Ax12MovementManager::writeToStream(QTextStream &out)
 					out << p << AX12_FILE_SEPARATOR;
 				}
 				out << singleMove.info.torque << AX12_FILE_SEPARATOR
-					<< singleMove.info.maxSpeed << '\n';
+					<< singleMove.info.maxSpeed << AX12_FILE_SEPARATOR
+					<< singleMove.info.loadLimit <<  '\n';
 			}
 		}
 	}
@@ -249,7 +255,7 @@ bool Ax12MovementManager::readFromStream(QTextStream &in)
 			if (tokens.count() >= 3)
 			{
 				Ax12SingleGroupPosition singleMovement;
-				for(int i = 1; i < tokens.count() - 2; ++i)
+				for(int i = 1; i < tokens.count() - 3; ++i)
 				{
 					QString t = tokens.value(i);
 					if (!t.isEmpty())
@@ -259,8 +265,9 @@ bool Ax12MovementManager::readFromStream(QTextStream &in)
 					}
 				}
 
-				singleMovement.info.torque = tokens.value(tokens.count() - 2).toFloat();
-				singleMovement.info.maxSpeed = tokens.last().toFloat();
+				singleMovement.info.torque = tokens.value(tokens.count() - 3).toFloat();
+				singleMovement.info.maxSpeed = tokens.value(tokens.count() - 2).toFloat();
+				singleMovement.info.loadLimit = tokens.last().toFloat();
 
 				addPositionToMovement(currentGroup, currentMovementName, singleMovement);
 			}

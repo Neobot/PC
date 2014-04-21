@@ -32,6 +32,7 @@ namespace Comm
 		Tools::Ax12MovementManager* _manager;
 		AX12StatusListener* _listener;
 		QTimer* _timer;
+		QTimer* _loadTimer;
 
 		QList<Tools::Ax12MovementManager::DetailedPosition> _positions;
 		QList<quint8> _ids;
@@ -44,6 +45,8 @@ namespace Comm
 		
 		float _stopAngle;
 		Tools::Curve _stopAngleCurve;
+		float _currentLoadLimit;
+		bool _canCheckLoad;
 		
 		void movementEnd(bool status);
 
@@ -51,6 +54,7 @@ namespace Comm
 		void checkStatus();
 		void goToNextPosition();
 		void timeout();
+		void loadTimeout();
 	};
 }
 

@@ -1,11 +1,13 @@
 #include "Ax12MovementRunner.h"
 #include "AX12StatusListener.h"
 
+#include <QtDebug>
+
 using namespace Comm;
 using namespace Tools;
 
 Ax12MovementRunner::Ax12MovementRunner(Comm::AX12CommManager *comm, Tools::Ax12MovementManager *manager, QObject* parent)
-	: QObject(parent), _isRunning(false), _comm(comm), _manager(manager)
+	: QObject(parent), _isRunning(false), _comm(comm), _manager(manager), _canCheckLoad(false)
 {
 	_listener = new AX12StatusListener(_comm, this);
 	connect(_listener, SIGNAL(allServoUpdated()), this, SLOT(checkStatus()));
@@ -16,6 +18,12 @@ Ax12MovementRunner::Ax12MovementRunner(Comm::AX12CommManager *comm, Tools::Ax12M
 	_timer->setInterval(3000);
 	_timer->setSingleShot(true);
 	connect(_timer, SIGNAL(timeout()), this, SLOT(timeout()));
+
+	//Load timer is used prevent servo load checking at the begininng of a movement
+	_loadTimer = new QTimer(this);
+	_loadTimer->setInterval(500);
+	_loadTimer->setSingleShot(true);
+	connect(_loadTimer, SIGNAL(timeout()), this, SLOT(loadTimeout()));
 }
 
 bool Ax12MovementRunner::startMovement(const QString &group, const QString &mvt, float speedLimit, int lastPositionIndex)
@@ -72,11 +80,14 @@ void Ax12MovementRunner::goToNextPosition()
 	if (!_positions.isEmpty())
 	{
 		_timer->stop();
+		_loadTimer->stop();
 		Ax12MovementManager::DetailedPosition pos = _positions.takeFirst();
 
 		float speed = qMin(pos.second.maxSpeed, _speedLimit);
 		float torque = pos.second.torque;
 		_stopAngle = _stopAngleCurve.yValue(speed);
+		_currentLoadLimit = qBound(0.f, pos.second.loadLimit, 100.f);
+
 		Q_ASSERT(_stopAngle > 0);
 
 		_asservedIds.clear();
@@ -92,6 +103,10 @@ void Ax12MovementRunner::goToNextPosition()
 		_comm->calculateSmoothServosSpeed(_ids, speed);
 		_comm->synchronize(_ids);
 		_timer->start();
+
+		if (pos.second.loadLimit > 0)
+			_loadTimer->start();
+		_canCheckLoad = false;
 	}
 	else
 	{
@@ -105,6 +120,11 @@ void Ax12MovementRunner::timeout()
 	movementEnd(false);
 }
 
+void Ax12MovementRunner::loadTimeout()
+{
+	_canCheckLoad = true;
+}
+
 void Ax12MovementRunner::movementEnd(bool status)
 {
 	_listener->stopListening();
@@ -112,6 +132,7 @@ void Ax12MovementRunner::movementEnd(bool status)
 	_isRunning = false;
 	_asservedIds.clear();
 	_timer->stop();
+	_loadTimer->stop();
 	emit movementFinished(status, _currentGroup, _currentMvt);
 }
 
@@ -129,6 +150,13 @@ void Ax12MovementRunner::checkStatus()
 				done = done && ax12.getAngleDifference() < _stopAngle;
 
 				error = error || (ax12.getSpeed() == 0 && !done);
+
+				if (!done && ax12.getSpeed() > 0 && _currentLoadLimit > 0 && _canCheckLoad && ax12.getLoad() >= _currentLoadLimit)
+				{
+					//qDebug() << "LOAD REACHED: s=" <<  ax12.getSpeed() << " l=" << ax12.getLoad() << " p=" << ax12.getPosition();
+					done = true;
+					break;
+				}
 			}
 		}	
 		

@@ -71,7 +71,7 @@ bool Ax12MovementEditor::addRecord(const QMap<int, float> &ax12Positions, float 
 	foreach(int id, ids)
 		positionsForExistingIds << ax12Positions.value(id, -1);
 
-	int pos = insertPosition(positionsForExistingIds, maxSpeed, torque, ui->movementTree->currentRow());
+	int pos = insertPosition(positionsForExistingIds, maxSpeed, torque, 0.0, ui->movementTree->currentRow());
 
 
 	Ax12MovementManager::Ax12SingleGroupPosition p;
@@ -95,7 +95,7 @@ void Ax12MovementEditor::refreshMovementTableIds()
 
 	ui->movementTree->clear();
     ui->movementTree->horizontalHeader()->setSectionResizeMode(QHeaderView::ResizeToContents);
-	ui->movementTree->setColumnCount(ids.count() + 2);
+	ui->movementTree->setColumnCount(ids.count() + 3);
 	for(int i = 0; i < ids.count(); ++i)
 	{
 		delete ui->movementTree->itemDelegateForColumn(i);
@@ -103,15 +103,20 @@ void Ax12MovementEditor::refreshMovementTableIds()
 	}
 
 	delete ui->movementTree->itemDelegateForColumn(ui->movementTree->columnCount() - 1);
-	ui->movementTree->setItemDelegateForColumn(ui->movementTree->columnCount() - 1, new DoubleSpinBoxDelegate(0, 100, this));
+	ui->movementTree->setItemDelegateForColumn(ui->movementTree->columnCount() - 2, new DoubleSpinBoxDelegate(0, 100, this));
 
 	delete ui->movementTree->itemDelegateForColumn(ui->movementTree->columnCount() - 2);
+	ui->movementTree->setItemDelegateForColumn(ui->movementTree->columnCount() - 1, new DoubleSpinBoxDelegate(0, 100, this));
+
+	delete ui->movementTree->itemDelegateForColumn(ui->movementTree->columnCount() - 3);
 	ui->movementTree->setItemDelegateForColumn(ui->movementTree->columnCount() - 2, new DoubleSpinBoxDelegate(0, 114, this));
+
+
 
 	QStringList headers;
 	for(int i = 0; i < ids.count(); ++i)
 		headers << QString::number(ids.value(i));
-	headers << "Max Speed" << "Torque";
+	headers << "Max Speed" << "Torque" << "Load Limit";
 	ui->movementTree->setHorizontalHeaderLabels(headers);
 
 	if (ui->movementsTapWidget->getCurrentIndex() > 0)
@@ -148,28 +153,31 @@ QString Ax12MovementEditor::getUniqueMovementName(const QString &groupName, cons
 	return result;
 }
 
-void Ax12MovementEditor::addPosition(const QList<float> &positions, float maxSpeed, float torque)
+void Ax12MovementEditor::addPosition(const QList<float> &positions, float maxSpeed, float torque, float loadLimit)
 {
-	insertPosition(positions, maxSpeed, torque, ui->movementTree->rowCount() - 1);
+	insertPosition(positions, maxSpeed, torque, loadLimit, ui->movementTree->rowCount() - 1);
 }
 
-int Ax12MovementEditor::insertPosition(const QList<float> &positions, float maxSpeed, float torque, int position)
+int Ax12MovementEditor::insertPosition(const QList<float> &positions, float maxSpeed, float torque, float loadLimit, int position)
 {
 	ui->movementTree->blockSignals(true);
 	int row = position;
 	ui->movementTree->insertRow(row);
 
-	for(int i = 0; i < ui->movementTree->columnCount() - 2; ++i)
+	for(int i = 0; i < ui->movementTree->columnCount() - 3; ++i)
 	{
 		QTableWidgetItem* item = new QTableWidgetItem(QString::number(positions.value(i, -1.)));
 		ui->movementTree->setItem(row, i, item);
 	}
 
 	QTableWidgetItem* speedItem = new QTableWidgetItem(QString::number(maxSpeed));
-	ui->movementTree->setItem(row, ui->movementTree->columnCount() - 2, speedItem);
+	ui->movementTree->setItem(row, ui->movementTree->columnCount() - 3, speedItem);
 
 	QTableWidgetItem* torqueItem = new QTableWidgetItem(QString::number(torque));
-	ui->movementTree->setItem(row, ui->movementTree->columnCount() - 1, torqueItem);
+	ui->movementTree->setItem(row, ui->movementTree->columnCount() - 2, torqueItem);
+
+	QTableWidgetItem* loadItem = new QTableWidgetItem(QString::number(loadLimit));
+	ui->movementTree->setItem(row, ui->movementTree->columnCount() - 1, loadItem);
 
 	ui->movementTree->blockSignals(false);
 
@@ -231,7 +239,7 @@ void Ax12MovementEditor::movementSelected(int index)
 
 	Ax12MovementManager::Ax12SingleMovement mvt = _manager.getMovement(_currentGroup, _currentMovement);
 	foreach(const Ax12MovementManager::Ax12SingleGroupPosition& p, mvt)
-		addPosition(p.positions, p.info.maxSpeed, p.info.torque);
+		addPosition(p.positions, p.info.maxSpeed, p.info.torque, p.info.loadLimit);
 
 	ui->stackedWidget->slideInIndex(Positions);
 }
@@ -406,8 +414,9 @@ void Ax12MovementEditor::positionAdded(int row, int column)
 {
 	Q_UNUSED(row);
 	ui->movementTree->blockSignals(true);
-	int torqueIndex = ui->movementTree->columnCount() - 1;
-	int speedIndex = ui->movementTree->columnCount() - 2;
+	int loadIndex = ui->movementTree->columnCount() - 1;
+	int torqueIndex = ui->movementTree->columnCount() - 2;
+	int speedIndex = ui->movementTree->columnCount() - 3;
 
 	if (row == ui->movementTree->rowCount() - 1)
 	{
@@ -433,6 +442,17 @@ void Ax12MovementEditor::positionAdded(int row, int column)
 				positions << item->text().toFloat();
 			}
 		}
+
+		QTableWidgetItem* loadItem = ui->movementTree->item(row, loadIndex);
+		if (!loadItem)
+		{
+			loadItem = new QTableWidgetItem;
+			ui->movementTree->setItem(row, loadIndex, loadItem);
+		}
+		if (column != loadIndex)
+			loadItem->setText(QString::number(p.info.loadLimit));
+		else
+			p.info.loadLimit = loadItem->text().toFloat();
 
 		QTableWidgetItem* torqueItem = ui->movementTree->item(row, torqueIndex);
 		if (!torqueItem)
@@ -470,8 +490,10 @@ void Ax12MovementEditor::positionAdded(int row, int column)
 			_manager.setMovementPosition(_currentGroup, _currentMovement, row, column, value);
 		else if (column == torqueIndex - 1)
 			_manager.setMovementMaxSpeed(_currentGroup, _currentMovement, row, value);
-		else
+		else if (column == torqueIndex)
 			_manager.setMovementTorque(_currentGroup, _currentMovement, row, value);
+		else
+			_manager.setMovementLoadLimit(_currentGroup, _currentMovement, row, value);
 	}
     ui->movementTree->blockSignals(false);
 }

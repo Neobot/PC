@@ -360,9 +360,15 @@ void AX12CommManager::readReceivedData(quint8 id, Comm::Data& data)
 		speed -= 1024;
 	currentSpeed = (float)speed * 114. / 1023.;
 
+	if (currentSpeed > 114.)
+		currentSpeed = -1; //invalid speed
+
 	if (load > 1023)
 		load -= 1024;
 	currentLoad = (float)load * 100. / 2047.;
+
+	if (currentLoad > 100.)
+		currentLoad = -1; //invalid load
 
 	_servos[id].setState(currentPos, currentSpeed, currentLoad);
 }
