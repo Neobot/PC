@@ -105,14 +105,14 @@ private:
 class ActuatorAction : public AbstractAction
 {
 public:
-    ActuatorAction(Comm::ServoId servoId, Comm::ServoPosition position, int estimatedDuration, Comm::RobotCommInterface* robot, QObject* parent = 0);
+	ActuatorAction(Comm::RobotAction action, int parameter, int estimatedDurationMs, Comm::RobotCommInterface* robot, QObject* parent = 0);
 
 	void execute();
 	QString getActionName() const;
 
 private:
-	Comm::ServoId	_id;
-	Comm::ServoPosition _position;
+	Comm::RobotAction _action;
+	int _parameter;
 	int _duration;
 	Comm::RobotCommInterface*	_robot;
 };

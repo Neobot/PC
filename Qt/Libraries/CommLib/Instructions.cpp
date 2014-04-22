@@ -15,8 +15,7 @@ QList<quint8> Instruction::robotToPcInstructions()
 QList<quint8> Instruction::pcToRobotInstructions()
 {
 	QList<quint8> result;
-	result << DEST_ADD << DEST_REPLACE << FLUSH << SET_POS << SERVO_ANGLE
-		   << SERVO_POS << GET_SENSOR << SET_PARAMETERS << ASK_PARAMETERS << ACTIONS;
+	result << DEST_ADD << DEST_REPLACE << FLUSH << SET_POS << GET_SENSOR << SET_PARAMETERS << ASK_PARAMETERS << ACTIONS;
 	return result;
 }
 

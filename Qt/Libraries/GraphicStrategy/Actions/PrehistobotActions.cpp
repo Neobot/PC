@@ -3,7 +3,7 @@
 #include "TrajectoryFinder.h"
 #include "Ax12MovementRunner.h"
 
-PrehistobotScanAndTurnOverFiresAction::PrehistobotScanAndTurnOverFiresAction(Tools::NGridNode* destination, int speed, int timeoutMs, int ourColor, int opponentColor, const ColorSensor *leftSensor, const ColorSensor *rightSensor,
+ColorScanAction::ColorScanAction(Tools::NGridNode* destination, int speed, int timeoutMs, int ourColor, int opponentColor, const ColorSensor *leftSensor, const ColorSensor *rightSensor,
 																		  AbstractAction* startAction,
 																		  AbstractAction* leftOpponentColorAction, AbstractAction* rightOpponentColorAction,
 																		  AbstractAction* leftOurColorAction, AbstractAction* rightOurColorAction, AbstractAction *endAction,
@@ -24,12 +24,12 @@ PrehistobotScanAndTurnOverFiresAction::PrehistobotScanAndTurnOverFiresAction(Too
 }
 
 
-PrehistobotScanAndTurnOverFiresAction::~PrehistobotScanAndTurnOverFiresAction()
+ColorScanAction::~ColorScanAction()
 {
 }
 
 
-void PrehistobotScanAndTurnOverFiresAction::execute()
+void ColorScanAction::execute()
 {
 	connect(_manager, SIGNAL(sensorValuesReceived(Sensor::SensorFamily)), this, SLOT(testColor(Sensor::SensorFamily)));
 	connect(_finder, SIGNAL(objectiveReached()), this, SLOT(destinationReached()));
@@ -46,25 +46,25 @@ void PrehistobotScanAndTurnOverFiresAction::execute()
 }
 
 
-void PrehistobotScanAndTurnOverFiresAction::stop()
+void ColorScanAction::stop()
 {
 	_stopped = true;
 	foreach(AbstractAction* subAction, _runningActions)
 		subAction->stop();
 }
 
-void PrehistobotScanAndTurnOverFiresAction::end()
+void ColorScanAction::end()
 {
 	disconnect(_manager, SIGNAL(sensorValuesReceived(Sensor::SensorFamily)), this, SLOT(testColor(Sensor::SensorFamily)));
 	disconnect(_finder, SIGNAL(objectiveReached()), this, SLOT(destinationReached()));
 }
 
-QString PrehistobotScanAndTurnOverFiresAction::getActionName() const
+QString ColorScanAction::getActionName() const
 {
 	return "Scan and turn over fires";
 }
 
-void PrehistobotScanAndTurnOverFiresAction::testColor(Sensor::SensorFamily family)
+void ColorScanAction::testColor(Sensor::SensorFamily family)
 {
 	if (family == Sensor::ColorSensorFamily)
 	{
@@ -73,7 +73,7 @@ void PrehistobotScanAndTurnOverFiresAction::testColor(Sensor::SensorFamily famil
 	}
 }
 
-void PrehistobotScanAndTurnOverFiresAction::checkColor(ArmState& armState, int sensorColor, AbstractAction* turnOverFireAction, AbstractAction* moveFireAction)
+void ColorScanAction::checkColor(ArmState& armState, int sensorColor, AbstractAction* turnOverFireAction, AbstractAction* moveFireAction)
 {
 	if (armState == Scanning)
 	{
@@ -90,7 +90,7 @@ void PrehistobotScanAndTurnOverFiresAction::checkColor(ArmState& armState, int s
 	}
 }
 
-void PrehistobotScanAndTurnOverFiresAction::leftArmActionFinished(bool result)
+void ColorScanAction::leftArmActionFinished(bool result)
 {
 	AbstractAction *action = qobject_cast<AbstractAction*>(sender());
 	endSubAction(action);
@@ -98,7 +98,7 @@ void PrehistobotScanAndTurnOverFiresAction::leftArmActionFinished(bool result)
 	armActionFinsihed(_leftArmState, result);
 }
 
-void PrehistobotScanAndTurnOverFiresAction::rightArmActionFisnihed(bool result)
+void ColorScanAction::rightArmActionFisnihed(bool result)
 {
 	AbstractAction *action = qobject_cast<AbstractAction*>(sender());
 	endSubAction(action);
@@ -106,7 +106,7 @@ void PrehistobotScanAndTurnOverFiresAction::rightArmActionFisnihed(bool result)
 	armActionFinsihed(_rightArmState, result);
 }
 
-void PrehistobotScanAndTurnOverFiresAction::startActionFinished(bool result)
+void ColorScanAction::startActionFinished(bool result)
 {
 	AbstractAction *action = qobject_cast<AbstractAction*>(sender());
 	endSubAction(action);
@@ -123,7 +123,7 @@ void PrehistobotScanAndTurnOverFiresAction::startActionFinished(bool result)
 	_rightArmState = Scanning;
 }
 
-void PrehistobotScanAndTurnOverFiresAction::endActionFinished(bool result)
+void ColorScanAction::endActionFinished(bool result)
 {
 	AbstractAction *action = qobject_cast<AbstractAction*>(sender());
 	endSubAction(action);
@@ -131,7 +131,7 @@ void PrehistobotScanAndTurnOverFiresAction::endActionFinished(bool result)
 	succeed();
 }
 
-void PrehistobotScanAndTurnOverFiresAction::destinationReached()
+void ColorScanAction::destinationReached()
 {
 	_destinationReached = true;
 	if (_timeout)
@@ -140,7 +140,7 @@ void PrehistobotScanAndTurnOverFiresAction::destinationReached()
 	checkEnding();
 }
 
-void PrehistobotScanAndTurnOverFiresAction::timeout()
+void ColorScanAction::timeout()
 {
 	if (!_destinationReached && _destination)
 		_finder->stop();
@@ -149,7 +149,7 @@ void PrehistobotScanAndTurnOverFiresAction::timeout()
 	checkEnding();
 }
 
-void PrehistobotScanAndTurnOverFiresAction::armActionFinsihed(ArmState& armState, bool result)
+void ColorScanAction::armActionFinsihed(ArmState& armState, bool result)
 {
 	switch(armState)
 	{
@@ -163,7 +163,7 @@ void PrehistobotScanAndTurnOverFiresAction::armActionFinsihed(ArmState& armState
 	}
 }
 
-void PrehistobotScanAndTurnOverFiresAction::executeArmSubAction(AbstractAction *action, ArmState& armState)
+void ColorScanAction::executeArmSubAction(AbstractAction *action, ArmState& armState)
 {
 	if (action)
 	{
@@ -175,13 +175,13 @@ void PrehistobotScanAndTurnOverFiresAction::executeArmSubAction(AbstractAction *
 	}
 }
 
-void PrehistobotScanAndTurnOverFiresAction::executeSubAction(AbstractAction *action)
+void ColorScanAction::executeSubAction(AbstractAction *action)
 {
 	action->execute();
 	_runningActions << action;
 }
 
-void PrehistobotScanAndTurnOverFiresAction::endSubAction(AbstractAction *action)
+void ColorScanAction::endSubAction(AbstractAction *action)
 {
 	if (action)
 	{
@@ -193,7 +193,7 @@ void PrehistobotScanAndTurnOverFiresAction::endSubAction(AbstractAction *action)
 	}
 }
 
-void PrehistobotScanAndTurnOverFiresAction::checkEnding()
+void ColorScanAction::checkEnding()
 {
 	if (_destinationReached && _leftArmState == Scanning && _rightArmState == Scanning)
 	{

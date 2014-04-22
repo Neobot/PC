@@ -54,11 +54,7 @@ namespace Comm
 		void setParameters(const QList<float> &values);
 		void askParameters();
 		void sendNoticeOfReceipt(quint8 instruction, bool result);
-		void moveServo(quint8 servo, quint8 position);
-
-        void askAvoidingSensors(bool recursive);
-        void askOtherSensors(bool recursive);
-        void askColorSensors(bool recursive);
+		void executeAction(quint8 actionId, quint8 parameter);
 
 	protected slots:
 		void read(quint8 instruction, const Comm::Data& data);

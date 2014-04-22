@@ -150,20 +150,20 @@ QString RelativeMoveAction::getActionName() const
 
 //actuator--------------------------------------------------------------------------------
 
-ActuatorAction::ActuatorAction(Comm::ServoId servoId, Comm::ServoPosition position, int estimatedDuration, Comm::RobotCommInterface* robot, QObject *parent)
-    : AbstractAction(parent), _id(servoId), _position(position), _duration(estimatedDuration), _robot(robot)
+ActuatorAction::ActuatorAction(Comm::RobotAction action, int parameter, int estimatedDurationMs, Comm::RobotCommInterface* robot, QObject *parent)
+	: AbstractAction(parent), _action(action), _parameter(parameter), _duration(estimatedDurationMs), _robot(robot)
 {
 }
 
 void ActuatorAction::execute()
 {
-	_robot->moveServo(_id, _position);
+	_robot->executeAction(_action, _parameter);
 	QTimer::singleShot(_duration, this, SLOT(succeed()));
 }
 
 QString ActuatorAction::getActionName() const
 {
-	return QString("Move servo ").append(QString::number(_id).append(" in position ").append(_position));
+	return QString("Execute action ").append(QString::number(_action));
 }
 
 //AX-12--------------------------------------------------------------------------------

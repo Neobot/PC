@@ -21,15 +21,10 @@ namespace Comm
     const quint8 DEST_REPLACE = 2;
     const quint8 FLUSH = 3;
     const quint8 SET_POS = 10;
-    const quint8 SERVO_ANGLE = 20;
-    const quint8 SERVO_POS = 21;
     const quint8 GET_SENSOR = 30;
 	const quint8 SET_PARAMETERS = 50;
 	const quint8 ASK_PARAMETERS = 51;
     const quint8 ACTIONS = 60;
-    const quint8 ASK_AVOIDING_SENSORS = 70;
-    const quint8 ASK_OTHER_SENSORS = 71;
-    const quint8 ASK_COLOR_SENSORS = 72;
 
     //microC -> PC
     const quint8 COORD = 100;
@@ -54,20 +49,40 @@ namespace Comm
     const quint8 PING = 254;
     const quint8 AR = 255;
 
-	enum ServoPosition
+	enum RobotAction
 	{
 		NO_ACTION = -1,
-		POSITION_OPENED = 0,
-		POSITION_TAKE_GLASS = 1,
-		POSITION_MAINTAINED = 2,
-		POSITION_CLOSED = 3
+		ACTION_START_PUMP = 1,
+		ACTION_STOP_PUMP = 2,
+		ACTION_ENABLE_COLOR_SENSOR = 10,
+		ACTION_DISABLE_COLOR_SENSOR = 11
+	};
+
+	enum RobotEvent
+	{
+		NO_EVENT = -1
+		//...
+	};
+
+	enum ColorSensorId
+	{
+		BothColorSensor = 0,
+		LeftColorSensor = 1,
+		RightColorSensor = 2
+	};
+
+	enum PumpId
+	{
+		BothPump = 0,
+		LeftPump = 1,
+		RightPump = 2
 	};
 
 	enum ServoId
 	{
-		LEFT = 0,
-		RIGHT = 1,
-		BOTH = 2
+		BothServo = 0,
+		LeftServo = 1,
+		RightServo = 2
 	};
 
 

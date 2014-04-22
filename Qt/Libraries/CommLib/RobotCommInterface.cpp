@@ -119,33 +119,12 @@ void RobotCommInterface::sendNoticeOfReceipt(quint8 instruction, bool result)
 	getProtocol(0)->sendMessage(AR, data);
 }
 
-void RobotCommInterface::moveServo(quint8 servo, quint8 position)
+void RobotCommInterface::executeAction(quint8 actionId, quint8 parameter)
 {
 	Data data;
-	data.add(servo);
-	data.add(position);
+	data.add(actionId);
+	data.add(parameter);
     getProtocol(0)->sendMessage(ACTIONS, data);
-}
-
-void RobotCommInterface::askAvoidingSensors(bool recursive)
-{
-    Data data;
-    data.add(recursive);
-    getProtocol(0)->sendMessage(ASK_AVOIDING_SENSORS, data);
-}
-
-void RobotCommInterface::askOtherSensors(bool recursive)
-{
-    Data data;
-    data.add(recursive);
-    getProtocol(0)->sendMessage(ASK_OTHER_SENSORS, data);
-}
-
-void RobotCommInterface::askColorSensors(bool recursive)
-{
-    Data data;
-    data.add(recursive);
-    getProtocol(0)->sendMessage(ASK_COLOR_SENSORS, data);
 }
 
 void RobotCommInterface::read(quint8 instruction, const Data& data)

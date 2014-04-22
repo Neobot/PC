@@ -43,7 +43,7 @@ public:
     AbstractAction* manualTurnToAction(const Tools::RPoint& point, int speed, bool clockwize = false) const;
     AbstractAction* manualAbsoluteTurnMoveAction(double radian, int speed) const;
 
-	AbstractAction* actuatorAction(Comm::ServoId servoId, Comm::ServoPosition position, int estimatedDuration) const;
+	AbstractAction* actuatorAction(Comm::RobotAction action, int parameter, int estimatedDurationMs) const;
 
     AbstractAction* ax12Action(quint8 id, float angle, float speed) const;
     AbstractAction* ax12Action(quint8 id1, float angle1, quint8 id2, float angle2, float speed) const;
@@ -55,11 +55,15 @@ public:
     AbstractAction* waitForSharpToDesactivate(int otherSharpId, int timeoutInMs) const;
     AbstractAction* waitForSharpToDesactivateWithCustomValue(int otherSharpId, double threshold, int timeoutInMs) const;
 
-	PrehistobotScanAndTurnOverFiresAction* turnOverFiresAction(Tools::NGridNode* destination, int speed, int timeoutMs, int ourColor, int opponentColor, int leftColorSensorId, int rightColorSensorId,
+	ColorScanAction* colorScanAction(Tools::NGridNode* destination, int speed, int timeoutMs, int ourColor, int opponentColor, int leftColorSensorId, int rightColorSensorId,
 															   AbstractAction* startAction,
 															   AbstractAction* leftOpponentColorAction, AbstractAction* rightOpponentColorAction,
 															   AbstractAction* leftOurColorAction, AbstractAction* rightOurColorAction,
 															   AbstractAction* endAction);
+	AbstractAction* startPumpAction(Comm::PumpId id) const;
+	AbstractAction* stopPumpAction(Comm::PumpId id) const;
+	AbstractAction* enableColorSensorAction(Comm::ColorSensorId id) const;
+	AbstractAction* disableColorSensorAction(Comm::ColorSensorId id) const;
 
 private:
     StrategyManager*	_manager;

@@ -22,10 +22,9 @@ namespace Comm
 }
 
 /**
- * @brief A group of synchrone actions.
- * Subactions are launched order they have been added. The group takes their ownership and is in charge of their destruction.
+ * @brief Action which scan two color sensors and execute sub-action when predefined colors are found.
  */
-class PrehistobotScanAndTurnOverFiresAction : public AbstractAction
+class ColorScanAction : public AbstractAction
 {
 	Q_OBJECT
 public:
@@ -34,14 +33,14 @@ public:
 	 * \p destination can be null, in that case, the robot won't move.
 	 * \p timeout can be <= 0, on that case no timeout is applied.
 	 */
-	PrehistobotScanAndTurnOverFiresAction(Tools::NGridNode* destination, int speed, int timeoutMs, int ourColor, int opponentColor, const ColorSensor* leftSensor, const ColorSensor* rightSensor,
+	ColorScanAction(Tools::NGridNode* destination, int speed, int timeoutMs, int ourColor, int opponentColor, const ColorSensor* leftSensor, const ColorSensor* rightSensor,
 										  AbstractAction* startAction,
 										  AbstractAction* leftOpponentColorAction, AbstractAction* rightOpponentColorAction,
 										  AbstractAction* leftOurColorAction, AbstractAction* rightOurColorAction,
 										  AbstractAction* endAction,
 										  StrategyManager* manager, TrajectoryFinder* finder, QObject* parent = 0);
 
-	~PrehistobotScanAndTurnOverFiresAction();
+	~ColorScanAction();
 
 	void execute();
 	void stop();
