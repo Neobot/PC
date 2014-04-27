@@ -1,13 +1,13 @@
 #include "PrehistobotCommands.h"
 #include "StrategyManager.h"
-#include "DefaultStrategy.h"
+#include "PrehistobotStrategy.h"
 #include "vmath.h"
 
 #include <QVariant>
 #include <QtDebug>
 
-PBFrescoCommand::PBFrescoCommand(const QString &frescoAlias, double estimatedTime, StrategyManager *manager)
-	: AbstractAICommand(manager), _frescoAlias(frescoAlias), _estimatedTime(estimatedTime)
+PBFrescoCommand::PBFrescoCommand(const QString &frescoAlias, double estimatedTimeInSeconds, StrategyManager *manager)
+	: AbstractAICommand(manager), _frescoAlias(frescoAlias), _estimatedTime(estimatedTimeInSeconds)
 {
 	setDescription("Attach painting " + _frescoAlias);
 }
@@ -51,264 +51,140 @@ AbstractAction *PBFrescoCommand::getAction(const GameState &state) const
 	return _manager->getActionFactory()->actionList(actionList);
 }
 
-//////------------------------------------------------------------------------------------------
+////------------------------------------------------------------------------------------------
 
-//HBTakeGlassCommand::HBTakeGlassCommand(int glassNum, const QString& glassNodeAlias, const QString& glassAreaAlias, Arm arm, int estimatedPointsPerGlass,
-//									   double estimatedTimePerGlass, int leftContainerMaxContent, int rightContainerMaxContent, HBAreaLocker *areaLocker, StrategyManager *manager)
-//	: AbstractAICommand(manager), _nodeAlias(glassNodeAlias), _areaAlias(glassAreaAlias), _areaLocker(areaLocker),
-//	  _estimatedPointsPerGlass(estimatedPointsPerGlass), _estimatedTimePerGlass(estimatedTimePerGlass),
-//	  _leftContainerMaxContent(leftContainerMaxContent), _rightContainerMaxContent(rightContainerMaxContent)
-//{
-//	_glassId = QString::number(glassNum);
-	
-//	_doLeft = arm == Left || arm == Both;
-//	_doRight = arm == Right || arm == Both;
-	
-//	QString armString;
-//	switch(arm)
-//	{
-//		case Left: armString = "the left arm"; break;
-//		case Right: armString = "the right arm"; break;
-//		case Both: armString = "both arms"; break;
-//	}
-//	setDescription(QString("Takes the glass ").append(_glassId).append(" at position ")
-//				   .append(_nodeAlias).append(" with ").append(armString));
-//}
+PBFruitPickupCommand::PBFruitPickupCommand(const QString& fruitAliasA, double angleA, RobotSide sideA, const QString& fruitAliasB, double angleB, RobotSide sideB, double distance, double estimatedTimeInSeconds, StrategyManager *manager)
+	: AbstractAICommand(manager), _fruitAliasA(fruitAliasA), _angleA(angleA), _sideA(sideA), _fruitAliasB(fruitAliasB), _angleB(angleB), _sideB(sideB), _distance(distance), _estimatedTime(estimatedTimeInSeconds)
+{
+	setDescription("Fruit pickup at " + _fruitAliasA + " or " + _fruitAliasB);
+}
 
-//double HBTakeGlassCommand::evaluate(GameState &state)
-//{
-//	if (state._content.value(_glassId).toBool())
-//		return -1.0;
-		
-//	if (_doLeft && state._content.value(ROBOT_CONTAINER_LEFT).toInt() >= _leftContainerMaxContent)
-//		return -1.0;
-		
-//	if (_doRight && state._content.value(ROBOT_CONTAINER_RIGHT).toInt() >= _rightContainerMaxContent)
-//		return -1.0;
+double PBFruitPickupCommand::evaluate(GameState &state)
+{
+	if (state._content.value(_fruitAliasA).toBool() || state._content.value(_fruitAliasB).toBool() )
+		return -1.0;
 
-//	_manager->getGrid();
-//	double d = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_nodeAlias));
-//	if (d <= 0)
-//		return -1.0;
+	double da = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_fruitAliasA));
+	double db = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_fruitAliasB));
+	double d = da <= db ? da : db;
 
-//	double duration = d / AVERAGE_SPEED + _estimatedTimePerGlass;
-//	if (state._remainingTime <= duration)
-//		return -1.0;
+	if (d <= 0)
+		return -1.0;
 
-//	state._remainingTime -= duration;
-	
-//	double points = _estimatedPointsPerGlass;
-//	double cost = points / duration;
-	
-//	return cost;
-//}
+	double duration = calculateActionTime(d, AVERAGE_SPEED, _estimatedTime);
+	if (state._remainingTime <= duration)
+		return -1.0;
 
-//void HBTakeGlassCommand::updateToFinalState(GameState &state) const
-//{
-//	//Update the state
-//	state._content[_glassId] = true;
-//	if (_doLeft)
-//	{
-//		int contentLeft = state._content[ROBOT_CONTAINER_LEFT].toInt();
-//		state._content[ROBOT_CONTAINER_LEFT] = contentLeft + 1;
-//	}
-	
-//	if (_doRight)
-//	{
-//		int contentRight = state._content[ROBOT_CONTAINER_RIGHT].toInt();
-//		state._content[ROBOT_CONTAINER_RIGHT] = contentRight + 1;
-//	}
-	
-//	state._robotposition = _manager->getGrid()->getNode(_nodeAlias);
-//}
+	state._remainingTime -= duration;
 
-//AbstractAction *HBTakeGlassCommand::getAction(const GameState& state) const
-//{
-//	QList<AbstractAction*> actionList;
-//    actionList  << _manager->getActionFactory()->moveAction(_manager->getGrid()->getNode(_nodeAlias), 100)
-//				<< _manager->getActionFactory()->manualForwardMoveAction(100, 30)
-//				<< _manager->getActionFactory()->waitAction(500);
-				
-//	if (_doLeft)
-//	{
-//		//actionList  << _manager->getActionFactory()->ax12Movement(LEFT_ARM_GROUP, ...) //
-//	}
-	
-//	if (_doRight)
-//	{
-//		//actionList  << _manager->getActionFactory()->ax12Movement(RIGHT_ARM_GROUP, ...) //
-//	}
-	
-//	return _manager->getActionFactory()->actionList(actionList);
-//}
+	double cost = 3.0 / 2.0 / duration;
+	return cost;
+}
 
-//void HBTakeGlassCommand::end()
-//{
-//	_areaLocker->unlockArea(_areaAlias);
-//}
+void PBFruitPickupCommand::updateToFinalState(GameState &state) const
+{
+	//Update the state
+	double da = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_fruitAliasA));
+	double db = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_fruitAliasB));
+
+	QString selectedAlias;
+	double selectedAngle;
+	RobotSide selectedSide;
+
+	getOptions(da, db, selectedAlias, selectedAngle, selectedSide);
+
+	state._content[_fruitAliasA] = true;
+	state._content[_fruitAliasB] = true;
+	int nbPickupDone = state._content.value(NB_FRUIT_PICKUP).toInt();
+	state._content[NB_FRUIT_PICKUP] = nbPickupDone + 1;
+	state._robotposition = _manager->getGrid()->getNode(selectedAlias);
+}
+
+AbstractAction *PBFruitPickupCommand::getAction(const GameState &state) const
+{
+	Q_UNUSED(state);
+
+	QList<AbstractAction*> actionList;
+
+	double da = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_fruitAliasA));
+	double db = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_fruitAliasB));
+
+	QString selectedAlias;
+	double selectedAngle;
+	RobotSide selectedSide;
+
+	getOptions(da, db, selectedAlias, selectedAngle, selectedSide);
+	actionList  << _manager->getActionFactory()->moveAction(_manager->getGrid()->getNode(selectedAlias), 100)
+				<< _manager->getActionFactory()->manualTurnMoveAction(selectedAngle, 100)
+				<< _manager->getActionFactory()->manualForwardMoveAction(_distance, 100)
+				   //...
+					;
+
+	return _manager->getActionFactory()->actionList(actionList);
+}
+
+void PBFruitPickupCommand::getOptions(double distanceToA, double distanceToB, QString &alias, double &angle, RobotSide &side) const
+{
+	bool useOptionA = distanceToA <= distanceToB;
+
+	if (useOptionA)
+	{
+		alias = _fruitAliasA;
+		angle = _angleA;
+		side = _sideA;
+	}
+	else
+	{
+		alias = _fruitAliasB;
+		angle = _angleB;
+		side = _sideB;
+	}
+}
 
 ////------------------------------------------------------------------------------------------
 
-//HBReleaseCommand::HBReleaseCommand(const QString& areaAlias, StrategyManager *manager)
-//   : AbstractAICommand(manager), _areaAlias(areaAlias)
-//{
-//   setDescription("Release towers");
-//   _manager->getGrid()->getArea(_areaAlias)->setCostToGoInside(3);
-//   _manager->getGrid()->getArea(_areaAlias)->setInternalCost(10);
-//}
+PBFruitDropCommand::PBFruitDropCommand(const QString &dropAreaAlias, double estimatedTimeInSeconds, StrategyManager *manager)
+	: AbstractAICommand(manager), _dropAreaAlias(dropAreaAlias), _estimatedTime(estimatedTimeInSeconds)
+{
+	setDescription("Drop fruits at" + _dropAreaAlias);
+}
 
-//double HBReleaseCommand::evaluate(GameState &state)
-//{
-//   int robotContentLeft = state._content.value(ROBOT_CONTAINER_LEFT).toInt();
-//   int robotContentRight = state._content.value(ROBOT_CONTAINER_RIGHT).toInt();
-//   if ((robotContentLeft <= 0 && robotContentRight <= 0 )|| state._content.value(_areaAlias).toInt())
-//       return -1.0;
+double PBFruitDropCommand::evaluate(GameState &state)
+{
+	double nbPickupDone = state._content.value(NB_FRUIT_PICKUP).toInt();
+	if (nbPickupDone > 0)
+		return -1.0;
 
-//   double d = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getArea(_areaAlias)->getCentralNode());
-//   if (d <= 0)
-//       return -1.0;
+	double d = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_dropAreaAlias));
+	if (d <= 0)
+		return -1.0;
 
-//   double duration = d / AVERAGE_SPEED + 2.0;
-//   if (state._remainingTime <= duration)
-//       return -1.0;
+	double duration = calculateActionTime(d, AVERAGE_SPEED, _estimatedTime);
+	if (state._remainingTime <= duration)
+		return -1.0;
 
-//   state._remainingTime -= duration;
-   
-//   int points = calculatePoint(robotContentLeft) + calculatePoint(robotContentRight);
+	state._remainingTime -= duration;
 
-//   double cost = points / duration;
+	double cost = 3.0 * nbPickupDone / duration;
+	return cost;
+}
 
-//   return cost;
-//}
+void PBFruitDropCommand::updateToFinalState(GameState &state) const
+{
+	state._content[NB_FRUIT_PICKUP] = 0;
+	state._robotposition = _manager->getGrid()->getArea(_dropAreaAlias)->getCentralNode();
+}
 
-//int HBReleaseCommand::calculatePoint(int nbGlassTower) const
-//{
-//	int result = 0;
-//	for(int i = 0; i < nbGlassTower; ++i)
-//		result += (i + 1) * 4;
-		
-//	return result;
-//}
+AbstractAction *PBFruitDropCommand::getAction(const GameState &state) const
+{
+	Q_UNUSED(state);
 
-//void HBReleaseCommand::updateToFinalState(GameState &state) const
-//{
-//   //Update the state
-//   state._content[ROBOT_CONTAINER_LEFT] = 0;
-//   state._content[ROBOT_CONTAINER_RIGHT] = 0;
-//   state._robotposition = _manager->getGrid()->getArea(_areaAlias)->getCentralNode();
-//}
+	QList<AbstractAction*> actionList;
 
-//AbstractAction *HBReleaseCommand::getAction(const GameState &state) const
-//{
-//   QList<AbstractAction*> actionList;
-//   actionList  << _manager->getActionFactory()->moveAction(_manager->getGrid()->getArea(_areaAlias), 100)
-//		<< _manager->getActionFactory()->waitAction(4000)  //drop
-//        << _manager->getActionFactory()->manualBackwardMoveAction(100, 100);
-//		   ;
+	actionList  << _manager->getActionFactory()->moveAction(_manager->getGrid()->getArea(_dropAreaAlias), 100)
+				<< _manager->getActionFactory()->manualTurnMoveAction(-Tools::pi, 100)
+				   //...
+				;
 
-//   return _manager->getActionFactory()->actionList(actionList);
-//}
-
-////------------------------------------------------------------------------------------------
-
-//void HBAreaLocker::lockArea(const QString &area, int costToGoInside, int costToGoOutside, int internalCost)
-//{
-//	AreaLockingValues values;
-//	values.costToGoInside = costToGoInside;
-//	values.costToGoOutside = costToGoOutside;
-//	values.internalCost = internalCost;
-
-//	_lockedAreas[area] = values;
-//	_areaList << area;
-
-//	setAreaValues(area);
-//}
-
-//void HBAreaLocker::setAreaValues(const QString &area)
-//{
-//	Tools::NGridArea* a = _grid->getArea(area);
-//	if (a && _lockedAreas.contains(area))
-//	{
-//		const AreaLockingValues& values = _lockedAreas[area];
-//		a->setCostToGoInside(values.costToGoInside);
-//		a->setCostToGoOutside(values.costToGoOutside);
-//		a->setInternalCost(values.internalCost);
-//	}
-//}
-
-//void HBAreaLocker::unlockArea(const QString &area)
-//{
-//	Tools::NGridArea* a = _grid->getArea(area);
-//	if (a && _lockedAreas.contains(area))
-//	{
-//		a->setCostToGoInside(1);
-//		a->setCostToGoOutside(1);
-//		a->setInternalCost(1);
-
-//		_lockedAreas.remove(area);
-//		_areaList.removeAll(area);
-
-//		foreach(const QString& area, _areaList)
-//			setAreaValues(area);
-//	}
-//}
-
-////------------------------------------------------------------------------------------------
-
-//HBBlowCandleCommand::HBBlowCandleCommand(const QString& candleAlias, double estimatedTimePerCandle, int maxNumberOfGlassesPerContainer, StrategyManager *manager)
-//	: AbstractAICommand(manager), _candleAlias(candleAlias), _estimatedTimePerCandle(estimatedTimePerCandle), _maxNumberOfGlassesPerContainer(maxNumberOfGlassesPerContainer)
-//{
-//	setDescription("Opens " + _candleAlias);
-//}
-
-//double HBBlowCandleCommand::evaluate(GameState &state)
-//{
-//	if (state._content.value(_candleAlias).toBool())
-//		return -1.0;
-
-//	_manager->getGrid();
-//	double d = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_candleAlias));
-//	if (d <= 0)
-//		return -1.0;
-
-//	if (state._content.value(ROBOT_CONTAINER_LEFT).toInt() > _maxNumberOfGlassesPerContainer || state._content.value(ROBOT_CONTAINER_RIGHT).toInt() > _maxNumberOfGlassesPerContainer)
-//		return -1.0;
-
-//	double duration = d / AVERAGE_SPEED + _estimatedTimePerCandle;
-//	if (state._remainingTime <= duration)
-//		return -1.0;
-
-//	state._remainingTime -= duration;
-
-//	double cost = 4.0/duration;
-//	return cost;
-//}
-
-//void HBBlowCandleCommand::updateToFinalState(GameState &state) const
-//{
-//	//Update the state
-//	state._content[_candleAlias] = true;
-//	state._robotposition = _manager->getGrid()->getNode(_candleAlias);
-//}
-
-//AbstractAction *HBBlowCandleCommand::getAction(const GameState& state) const
-//{
-//	QList<AbstractAction*> actionList;
-
-//	OrientationSwitchCaseAction* armSwitchAction = _manager->getActionFactory()->orientationSwitchCaseAction();
-////	armSwitchAction->addCase(0, Tools::pi, _manager->getActionFactory()->ax12Movement(RIGHT_ARM_GROUP, ""));
-////	armSwitchAction->addCase(-Tools::pi, 0, _manager->getActionFactory()->ax12Movement(RIGHT_ARM_GROUP, ""));
-////	armSwitchAction->addCase(0, Tools::pi, _manager->getActionFactory()->waitAction(1000));
-////	armSwitchAction->addCase(-Tools::pi, 0, _manager->getActionFactory()->waitAction(5000));
-//	//armSwitchAction->addCase(0, Tools::pi, _manager->getActionFactory()->ax12Movement("Test", "Mvt4"));
-//	//armSwitchAction->addCase(-Tools::pi, 0, _manager->getActionFactory()->asynchroneAx12Movement("Test", "Mvt4"));
-
-//	actionList  << _manager->getActionFactory()->moveAction(_manager->getGrid()->getNode(_candleAlias), 100)
-//				<< _manager->getActionFactory()->waitAction(1500);
-//				//<< armSwitchAction;
-
-//	return _manager->getActionFactory()->actionList(actionList);
-//}
-
-
-
+	return _manager->getActionFactory()->actionList(actionList);
+}

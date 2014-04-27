@@ -9,7 +9,19 @@
 
 #define START_NODE "Start"
 #define FRESCO_NODE "Fresco"
-//#define GLASS1_AREA "Glass1Area"
+
+#define FRUIT_1A_NODE "Fruit1A"
+#define FRUIT_1B_NODE "Fruit1B"
+#define FRUIT_2A_NODE "Fruit2A"
+#define FRUIT_2B_NODE "Fruit2B"
+#define FRUIT_3A_NODE "Fruit3A"
+#define FRUIT_3B_NODE "Fruit3B"
+#define FRUIT_4A_NODE "Fruit4A"
+#define FRUIT_4B_NODE "Fruit4B"
+
+#define FRUIT_DROP_AREA "FruitDrop"
+
+#define NB_FRUIT_PICKUP "NbFruitPickup"
 
 #define AVERAGE_SPEED 200.0 //mm/s
 
@@ -18,10 +30,16 @@ namespace Tools
 	class NGrid;
 }
 
+enum RobotSide
+{
+	LeftSide,
+	RightSide
+};
+
 class PBFrescoCommand : public AbstractAICommand
 {
 public:
-	PBFrescoCommand(const QString& frescoAlias, double estimatedTime, StrategyManager* manager);
+	PBFrescoCommand(const QString& frescoAlias, double estimatedTimeInSeconds, StrategyManager* manager);
 
 	double evaluate(GameState &state);
 	void updateToFinalState(GameState &state) const;
@@ -29,95 +47,47 @@ public:
 	AbstractAction* getAction(const GameState& state) const;
 private:
 	QString _frescoAlias;
-	double _estimatedTime;
+	double _estimatedTime; //seconds
 };
 
-//class HBAreaLocker
-//{
-//public:
-//	HBAreaLocker(Tools::NGrid* grid) : _grid(grid) {}
-//	void lockArea(const QString& area, int costToGoInside, int costToGoOutside, int internalCost);
-//	void unlockArea(const QString& area);
+class PBFruitPickupCommand : public AbstractAICommand
+{
+public:
+	PBFruitPickupCommand(const QString& fruitAliasA, double angleA, RobotSide sideA,
+						 const QString& fruitAliasB, double angleB,  RobotSide sideB,
+						 double distance, double estimatedTimeInSeconds, StrategyManager* manager);
 
-//private:
-//	struct AreaLockingValues
-//	{
-//		int costToGoInside;
-//		int costToGoOutside;
-//		int internalCost;
-//	};
+	double evaluate(GameState &state);
+	void updateToFinalState(GameState &state) const;
 
-//	Tools::NGrid* _grid;
-//	QHash<QString, AreaLockingValues> _lockedAreas;
-//	QStringList _areaList;
+	AbstractAction* getAction(const GameState& state) const;
+private:
+	QString _fruitAliasA;
+	double _angleA;
+	RobotSide _sideA;
 
-//	void setAreaValues(const QString& area);
-//};
+	QString _fruitAliasB;
+	double _angleB;
+	RobotSide _sideB;
 
-//class HBTakeGlassCommand : public AbstractAICommand
-//{
-//public:
-//	enum Arm
-//	{
-//		Right,
-//		Left,
-//		Both
-//	};
-	
-//	HBTakeGlassCommand(int glassNum, const QString& glassNodeAlias, const QString& glassAreaAlias, Arm arm,
-//					   int estimatedPointsPerGlass, double estimatedTimePerGlass,
-//					   int leftContainerMaxContent, int rightContainerMaxContent,
-//					   HBAreaLocker* areaLocker, StrategyManager* manager);
+	double _distance;
+	double _estimatedTime; //seconds
 
-//	double evaluate(GameState &state);
-//	void updateToFinalState(GameState &state) const;
+	void getOptions(double distanceToA, double distanceToB, QString& alias, double& angle, RobotSide& side) const;
+};
 
-//	AbstractAction* getAction(const GameState& state) const;
-//	void end();
-	
-//private:
-//	QString _glassId;
-//	QString _nodeAlias;
-//	QString _areaAlias;
-//	bool _doLeft;
-//	bool _doRight;
-//	HBAreaLocker* _areaLocker;
+class PBFruitDropCommand : public AbstractAICommand
+{
+public:
+	PBFruitDropCommand(const QString& dropAreaAlias, double estimatedTimeInSeconds, StrategyManager* manager);
 
-//	int _estimatedPointsPerGlass;
-//	double _estimatedTimePerGlass;
+	double evaluate(GameState &state);
+	void updateToFinalState(GameState &state) const;
 
-//	int _leftContainerMaxContent;
-//	int _rightContainerMaxContent;
-//};
-
-//class HBReleaseCommand : public AbstractAICommand
-//{
-//public:
-//   HBReleaseCommand(const QString& areaAlias, StrategyManager* manager);
-
-//   double evaluate(GameState &state);
-//   void updateToFinalState(GameState &state) const;
-
-//   AbstractAction* getAction(const GameState& state) const;
-//private:
-//   QString _areaAlias;
-//   int calculatePoint(int nbGlassTower) const;
-//};
-
-//class HBBlowCandleCommand : public AbstractAICommand
-//{
-//public:
-//	HBBlowCandleCommand(const QString& candleAlias, double estimatedTimePerCandle, int maxNumberOfGlassesPerContainer, StrategyManager* manager);
-
-//	double evaluate(GameState &state);
-//	void updateToFinalState(GameState &state) const;
-
-//	AbstractAction* getAction(const GameState& state) const;
-//private:
-//	QString _candleAlias;
-//	double _estimatedTimePerCandle;
-//	int _maxNumberOfGlassesPerContainer;
-//};
-
+	AbstractAction* getAction(const GameState& state) const;
+private:
+	QString _dropAreaAlias;
+	double _estimatedTime; //seconds
+};
 
 #endif // PREHISTOBOTCOMMANDS_H

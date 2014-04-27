@@ -2,7 +2,8 @@
 #define NGRIDAREA_H
 
 #include <QRectF>
-#include <QList>
+#include <QStringList>
+#include <QHash>
 
 namespace Tools
 {
@@ -42,6 +43,32 @@ namespace Tools
         void update();
 
     };
+
+
+	class AreaLocker
+	{
+	public:
+		AreaLocker(Tools::NGrid* grid) : _grid(grid) {}
+		void lockArea(const QString& area, int costToGoInside, int costToGoOutside, int internalCost);
+		void unlockArea(const QString& area);
+
+	private:
+		struct AreaLockingValues
+		{
+			int costToGoInside;
+			int costToGoOutside;
+			int internalCost;
+			int oldCostToGoInside;
+			int oldCostToGoOutside;
+			int oldInternalCost;
+		};
+
+		Tools::NGrid* _grid;
+		QHash<QString, AreaLockingValues> _lockedAreas;
+		QStringList _areaList;
+
+		void setAreaValues(const QString& area);
+	};
 }
 
 #endif // NGRIDAREA_H

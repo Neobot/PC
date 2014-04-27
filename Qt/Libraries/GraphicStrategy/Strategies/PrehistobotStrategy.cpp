@@ -55,6 +55,16 @@ void PrehistobotStrategy::writeDefaultParametersToFile(NSettings &settings)
 void PrehistobotStrategy::initGameState(GameState &state) const
 {
 	state._content[FRESCO_NODE] = false;
+
+	state._content[NB_FRUIT_PICKUP] = 0;
+	state._content[FRUIT_1A_NODE] = false;
+	state._content[FRUIT_1B_NODE] = false;
+	state._content[FRUIT_2A_NODE] = false;
+	state._content[FRUIT_2B_NODE] = false;
+	state._content[FRUIT_3A_NODE] = false;
+	state._content[FRUIT_3B_NODE] = false;
+	state._content[FRUIT_4A_NODE] = false;
+	state._content[FRUIT_4B_NODE] = false;
 }
 
 void PrehistobotStrategy::createActions()
@@ -65,6 +75,12 @@ void PrehistobotStrategy::createActions()
 	addCommand(new WaitCommand(1, _manager));
 
 	addCommand(new PBFrescoCommand(FRESCO_NODE, 6, _manager));
+
+	addCommand(new PBFruitPickupCommand(FRUIT_1A_NODE, 0, RightSide, FRUIT_1B_NODE, Tools::pi, LeftSide, 400, 2, _manager));
+	addCommand(new PBFruitPickupCommand(FRUIT_2A_NODE, Tools::pi/2.0, RightSide, FRUIT_2B_NODE, -Tools::pi/2.0, LeftSide, 400, 2, _manager));
+	addCommand(new PBFruitPickupCommand(FRUIT_3A_NODE, Tools::pi/2.0, RightSide, FRUIT_3B_NODE, -Tools::pi/2.0, LeftSide, 400, 2, _manager));
+	addCommand(new PBFruitPickupCommand(FRUIT_4A_NODE, Tools::pi, RightSide, FRUIT_4B_NODE, 0, LeftSide, 400, 2, _manager));
+	addCommand(new PBFruitDropCommand(FRUIT_DROP_AREA, 2.0, _manager));
 }
 
 void PrehistobotStrategy::defaultObstaclePositions(QList<DataObject *> &objects) const
@@ -83,7 +99,17 @@ bool PrehistobotStrategy::checkGrid(const NGrid *grid) const
 	bool result = true;
 
 	result = grid->getNode(FRESCO_NODE) && result;
-	//result = grid->getArea(CONSTRUCTION_AREA) && result;
+
+	result = grid->getNode(FRUIT_1A_NODE) && result;
+	result = grid->getNode(FRUIT_1B_NODE) && result;
+	result = grid->getNode(FRUIT_2A_NODE) && result;
+	result = grid->getNode(FRUIT_2B_NODE) && result;
+	result = grid->getNode(FRUIT_3A_NODE) && result;
+	result = grid->getNode(FRUIT_3B_NODE) && result;
+	result = grid->getNode(FRUIT_4A_NODE) && result;
+	result = grid->getNode(FRUIT_4B_NODE) && result;
+
+	result = grid->getArea(FRUIT_DROP_AREA) && result;
 
 	return result;
 }

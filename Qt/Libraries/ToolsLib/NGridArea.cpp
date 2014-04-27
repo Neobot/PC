@@ -127,3 +127,59 @@ NGridNode *NGridArea::getCentralNode() const
 {
     return getNearestNode(_rect.center());
 }
+
+//-------------------------------------------------------
+
+void AreaLocker::lockArea(const QString &area, int costToGoInside, int costToGoOutside, int internalCost)
+{
+	AreaLockingValues values;
+	values.costToGoInside = costToGoInside;
+	values.costToGoOutside = costToGoOutside;
+	values.internalCost = internalCost;
+
+	_lockedAreas[area] = values;
+	_areaList << area;
+
+	setAreaValues(area);
+}
+
+void AreaLocker::setAreaValues(const QString &area)
+{
+	Tools::NGridArea* a = _grid->getArea(area);
+	if (a && _lockedAreas.contains(area))
+	{
+		const AreaLockingValues& values = _lockedAreas[area];
+		if (values.costToGoInside >= 0)
+			a->setCostToGoInside(values.costToGoInside);
+
+		if (values.costToGoInside >= 0)
+			a->setCostToGoOutside(values.costToGoOutside);
+
+		if (values.internalCost >= 0)
+			a->setInternalCost(values.internalCost);
+	}
+}
+
+void AreaLocker::unlockArea(const QString &area)
+{
+	Tools::NGridArea* a = _grid->getArea(area);
+	if (a && _lockedAreas.contains(area))
+	{
+		const AreaLockingValues& values = _lockedAreas[area];
+
+		if (values.costToGoInside >= 0)
+			a->setCostToGoInside(1);
+
+		if (values.costToGoInside >= 0)
+			a->setCostToGoOutside(1);
+
+		if (values.internalCost >= 0)
+			a->setInternalCost(1);
+
+		_lockedAreas.remove(area);
+		_areaList.removeAll(area);
+
+		foreach(const QString& area, _areaList)
+			setAreaValues(area);
+	}
+}
