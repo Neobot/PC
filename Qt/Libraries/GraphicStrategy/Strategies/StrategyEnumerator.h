@@ -26,6 +26,8 @@ public:
 	void setStrategyFileData(Strategy strategy, const QString &filename, const QByteArray &data) const;
 	void resetStrategyFile(Strategy strategy, const QString &filename);
 
+	QString getDataDirectory() const;
+
 private:
 	QDir _strategiesDirectory;
 

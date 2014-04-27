@@ -76,10 +76,10 @@ void PrehistobotStrategy::createActions()
 
 	addCommand(new PBFrescoCommand(FRESCO_NODE, 6, _manager));
 
-	addCommand(new PBFruitPickupCommand(FRUIT_1A_NODE, 0, RightSide, FRUIT_1B_NODE, Tools::pi, LeftSide, 400, 2, _manager));
-	addCommand(new PBFruitPickupCommand(FRUIT_2A_NODE, Tools::pi/2.0, RightSide, FRUIT_2B_NODE, -Tools::pi/2.0, LeftSide, 400, 2, _manager));
-	addCommand(new PBFruitPickupCommand(FRUIT_3A_NODE, Tools::pi/2.0, RightSide, FRUIT_3B_NODE, -Tools::pi/2.0, LeftSide, 400, 2, _manager));
-	addCommand(new PBFruitPickupCommand(FRUIT_4A_NODE, Tools::pi, RightSide, FRUIT_4B_NODE, 0, LeftSide, 400, 2, _manager));
+	addCommand(new PBFruitPickupCommand(FRUIT_1A_NODE, 0, RightSide, FRUIT_1B_NODE, autoMirror(Tools::pi), LeftSide, 400, 2, _manager));
+	addCommand(new PBFruitPickupCommand(FRUIT_2A_NODE, autoMirror(Tools::pi/2.0), RightSide, FRUIT_2B_NODE, autoMirror(-Tools::pi/2.0), LeftSide, 400, 2, _manager));
+	addCommand(new PBFruitPickupCommand(FRUIT_3A_NODE, autoMirror(Tools::pi/2.0), RightSide, FRUIT_3B_NODE, autoMirror(-Tools::pi/2.0), LeftSide, 400, 2, _manager));
+	addCommand(new PBFruitPickupCommand(FRUIT_4A_NODE, autoMirror(Tools::pi), RightSide, FRUIT_4B_NODE, 0, LeftSide, 400, 2, _manager));
 	addCommand(new PBFruitDropCommand(FRUIT_DROP_AREA, 2.0, _manager));
 }
 

@@ -77,7 +77,7 @@ double PBFruitPickupCommand::evaluate(GameState &state)
 
 	state._remainingTime -= duration;
 
-	double cost = 3.0 / 2.0 / duration;
+	double cost = 3.0 / duration;
 	return cost;
 }
 
@@ -151,11 +151,11 @@ PBFruitDropCommand::PBFruitDropCommand(const QString &dropAreaAlias, double esti
 
 double PBFruitDropCommand::evaluate(GameState &state)
 {
-	double nbPickupDone = state._content.value(NB_FRUIT_PICKUP).toInt();
-	if (nbPickupDone > 0)
+	int nbPickupDone = state._content.value(NB_FRUIT_PICKUP).toInt();
+	if (nbPickupDone <= 0)
 		return -1.0;
 
-	double d = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_dropAreaAlias));
+	double d = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getArea(_dropAreaAlias)->getCentralNode());
 	if (d <= 0)
 		return -1.0;
 
@@ -165,7 +165,7 @@ double PBFruitDropCommand::evaluate(GameState &state)
 
 	state._remainingTime -= duration;
 
-	double cost = 3.0 * nbPickupDone / duration;
+	double cost = 3.0 * (double)nbPickupDone / duration;
 	return cost;
 }
 

@@ -85,6 +85,7 @@ public:
 	Tools::RPoint getStartPosition() const;
 	
     Tools::RPoint autoMirror(const Tools::RPoint& point) const;
+	double autoMirror(double angle) const;
 
 protected:
     StrategyManager* _manager;

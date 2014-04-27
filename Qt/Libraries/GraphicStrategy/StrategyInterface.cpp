@@ -87,6 +87,11 @@ Tools::RPoint StrategyInterface::autoMirror(const Tools::RPoint& point) const
 	return Tools::autoMirror(point, _mirrored, manager()->getMap()->getTableRect().height());
 }
 
+double StrategyInterface::autoMirror(double angle) const
+{
+	return _mirrored ? -angle : angle;
+}
+
 void StrategyInterface::readParametersFromFile(Tools::NSettings &settings)
 {
 	settings.beginGroup("Strategy");

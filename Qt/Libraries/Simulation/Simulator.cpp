@@ -399,9 +399,9 @@ void Simulator::prepareNextMovement()
 			case TOURNE_RADIAN:
 			{
 				// convert the movement to an absolute movement by calculating destination coordinates
-				double angle = _destination.getDestination().getTheta() - _map->getRobotPosition().getTheta();
-				RPoint destinationCoord(_map->getRobotPosition().getX() - cos(angle),
-										_map->getRobotPosition().getY() - sin(angle),
+				double angle = _destination.getDestination().getTheta();
+				RPoint destinationCoord(_map->getRobotPosition().getX() + cos(angle),
+										_map->getRobotPosition().getY() + sin(angle),
 										_map->getRobotPosition().getTheta());
 
                 _subMovements.enqueue(RSubMovement(destinationCoord, MOVEMENT_ROTATE_FORWARD, _destination.getSpeed()));
@@ -475,7 +475,7 @@ void Simulator::start()
 
 	if (_isAtBeginning)
 	{
-		_simRobot->go(_color == Red);
+		_simRobot->go(_color == Yellow); //mirrored simu = yellow
 		_simRobot->sendLog("I'm alive, alive!");
 
 		_isAtBeginning = false;

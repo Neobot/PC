@@ -57,6 +57,7 @@ bool NServer::start()
 	if (!_tcpServer->listen(QHostAddress::Any, 15042))
 	{
 		logger() << "Starting failed...." << Tools::endl;
+		qApp->exit(1);
 		return false;
 	}
 
@@ -87,6 +88,8 @@ bool NServer::start()
 		f.open(QIODevice::WriteOnly);
 	}
 	_ax12Movements.readFromFile(ax12MovementFile);
+
+	logger() << "Loading strategy files from \"" << _strategiesEnumerator.getDataDirectory() << "\".\n";
 
 	QTimer::singleShot(20 * 1000, this, SLOT(autoStart()));
 

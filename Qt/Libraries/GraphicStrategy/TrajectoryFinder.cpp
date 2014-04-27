@@ -340,7 +340,7 @@ void TrajectoryFinder::isArrivedAtIntermediatePoint(const Tools::RPoint& pos)
 		return;
 	}
 
-	if (_isRelative || !_isArrived)//!isArrived(pos))
+	if (!_isArrived)//!isArrived(pos))
 		return;
 
 	_isArrived = false;

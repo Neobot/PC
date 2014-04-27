@@ -136,6 +136,11 @@ void StrategyEnumerator::resetStrategyFile(StrategyEnumerator::Strategy strategy
 	}
 }
 
+QString StrategyEnumerator::getDataDirectory() const
+{
+	return _strategiesDirectory.absolutePath();
+}
+
 bool StrategyEnumerator::getStrategyDirectory(StrategyEnumerator::Strategy strategy, QDir& strategyDirectory) const
 {
 	QString name =  getStrategyName(strategy);
