@@ -312,6 +312,38 @@ void StrategyManager::colorSensors(const QList<QColor> &values)
     emit sensorValuesReceived(Sensor::ColorSensorFamily);
 }
 
+void StrategyManager::event(RobotEvent event)
+{
+	switch(event)
+	{
+		case EVENT_IS_ARRIVED: isArrived(); break;
+		case EVENT_IS_BLOCKED: isBlocked(); break;
+	}
+}
+
+void StrategyManager::sensorEvent(SensorType type, int sensorId, int value)
+{
+	QMap<int, Sensor*>* family = nullptr;
+	switch(type)
+	{
+		case SharpSensor: 			family = &_scannerSharps; break;
+		case MicroswitchSensor:  	family = &_microswitchs; break;
+		case ColorSensor:  			family = &_colorSensors; break;
+	}
+	
+	if (family)
+	{
+		Sensor* sensor = family->value(sensorId, nullptr);
+		if (!sensor)
+		{
+			sensor = new Sensor(type);
+			family->insert(sensorId, sensor);
+		}
+		
+		sensor->setState(value);
+	}
+}
+
 void StrategyManager::avoidingSensors(const QList<quint8> &values)
 {
 	if (!_initDone)
@@ -594,14 +626,19 @@ const Sharp *StrategyManager::getAvoidingSharp(int index) const
     return _sharps.value(index, nullptr);
 }
 
-const Sharp *StrategyManager::getOtherSharp(int index) const
+const Sensor *StrategyManager::getOtherSharp(int index) const
 {
     return _scannerSharps.value(index, nullptr);
 }
 
-const ColorSensor *StrategyManager::getColorSensor(int index) const
+const Sensor *StrategyManager::getColorSensor(int index) const
 {
     return _colorSensors.value(index, nullptr);
+}
+
+const Sensor* StrategyManager::getMicroswitch(int index) const
+{
+	return _microswitchs.value(index, nullptr);
 }
 
 const QMap<int, Sharp *> &StrategyManager::getAvoidingSharps() const
@@ -609,23 +646,28 @@ const QMap<int, Sharp *> &StrategyManager::getAvoidingSharps() const
 	return _sharps;
 }
 
-const QMap<int, Sharp *> &StrategyManager::getOtherSharps() const
+const QMap<int, Sensor *> &StrategyManager::getOtherSharps() const
 {
     return _scannerSharps;
 }
 
-const QMap<int, ColorSensor *> &StrategyManager::getColorSensors() const
+const QMap<int, Sensor *> &StrategyManager::getColorSensors() const
 {
     return _colorSensors;
 }
 
-const Sensor *StrategyManager::getSensor(int index, Sensor::SensorFamily family) const
+const QMap<int, Sensor *> &StrategyManager::getMicroswitchs() const
 {
-    switch(family)
+	return _microswitchs;
+}
+
+const Sensor *StrategyManager::getSensor(int index, SensorType type) const
+{
+    switch(type)
     {
-        case Sensor::AvoidingSharpSensorFamily:   return getAvoidingSharp(index);
-        case Sensor::OtherSharpSensorFamily:      return getOtherSharp(index);
-        case Sensor::ColorSensorFamily:     return getColorSensor(index);
+        case Comm::SharpSensor:   		return getOtherSharps(index);
+        case Comm::MicroswitchSensor:   return getMicroswitchs(index);
+        case Comm::ColorSensor:     	return getColorSensor(index);
     }
 
 	return nullptr;

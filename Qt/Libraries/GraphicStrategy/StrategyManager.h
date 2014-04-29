@@ -76,14 +76,17 @@ public:
     bool isRecording();
 
     const Sharp* getAvoidingSharp(int index) const;
-    const Sharp* getOtherSharp(int index) const;
-    const ColorSensor* getColorSensor(int index) const;
+	const QMap<int, Sharp*>& getAvoidingSharps() const;
+	
+    const Sensor* getOtherSharp(int index) const;
+    const Sensor* getColorSensor(int index) const;
+	const Sensor* getMicroswitch(int index) const;
+    
+    const QMap<int, Sensor*>& getOtherSharps() const;
+    const QMap<int, Sensor *> &getColorSensors() const;
+	const QMap<int, Sensor *> &getMicroswitchs() const;
 
-    const QMap<int, Sharp*>& getAvoidingSharps() const;
-    const QMap<int, Sharp*>& getOtherSharps() const;
-    const QMap<int, ColorSensor *> &getColorSensors() const;
-
-    const Sensor *getSensor(int index, Sensor::SensorFamily family) const;
+    const Sensor *getSensor(int index, SensorType type) const;
 
 	double getParameter(int index) const;
 	QString getParameterName(int index) const;
@@ -112,9 +115,9 @@ private:
     Tools::NGrid*       _grid;
 	Tools::Ax12MovementManager* _ax12MovementManager;
     QMap<int, Sharp*>   _sharps;
-    QMap<int, Sharp*>   _scannerSharps;
-    QMap<int, ColorSensor*>   _colorSensors;
-	QList<bool>			_microswitchStates;
+    QMap<int, Sensor*>   _scannerSharps;
+    QMap<int, Sensor*>   _colorSensors;
+	QMap<int, Sensor*>   _microswitchs;
     GameState           _currentState;
 	QList<float>		_parameters;
 	QStringList			_parameterNames;
@@ -147,13 +150,8 @@ private:
 
     //Listener
 	void coordinates(qint16 x, qint16 y, double theta, quint8 forward);
-    void isArrived();
-    void isBlocked();
     void opponentPosition(qint16 x, qint16 y);
 	void avoidingSensors(const QList<quint8> &values);
-	void microswitchs(const QList<quint8>& values);
-	void otherSensors(const QList<quint8>& values);
-    void colorSensors(const QList<QColor> &values);
     bool initDone();
     bool go(bool mirrored);
     bool pingReceived();
@@ -163,6 +161,12 @@ private:
 	void log(const QByteArray& text);
 	void parameters(const QList<float>& values);
 	void parameterNames(const QStringList& names);
+	void event(RobotEvent event);
+	void sensorEvent(SensorType type, int sensorId, int value);
+	
+	//Others
+	void isArrived();
+    void isBlocked();
 
     void updateFutureMap(const GameState& state);
 

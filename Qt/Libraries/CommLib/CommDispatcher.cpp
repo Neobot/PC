@@ -49,33 +49,6 @@ void Comm::CommDispatcher::avoidingSensors(const QList<quint8> &values)
 		_main->avoidingSensors(values);
 }
 
-void Comm::CommDispatcher::microswitchs(const QList<quint8>& values)
-{
-	foreach(CommListener* responder, _responders)
-		responder->microswitchs(values);
-
-	if (_main)
-		_main->microswitchs(values);
-}
-
-void Comm::CommDispatcher::otherSensors(const QList<quint8> &values)
-{
-	foreach(CommListener* responder, _responders)
-		responder->otherSensors(values);
-
-	if (_main)
-        _main->otherSensors(values);
-}
-
-void CommDispatcher::colorSensors(const QList<QColor> &values)
-{
-    foreach(CommListener* responder, _responders)
-        responder->colorSensors(values);
-
-    if (_main)
-        _main->colorSensors(values);
-}
-
 bool Comm::CommDispatcher::initDone()
 {
 	foreach(CommListener* responder, _responders)
@@ -147,24 +120,6 @@ void Comm::CommDispatcher::quit()
 		_main->quit();
 }
 
-void Comm::CommDispatcher::isArrived()
-{
-	foreach(CommListener* responder, _responders)
-		responder->isArrived();
-
-	if (_main)
-		_main->isArrived();
-}
-
-void Comm::CommDispatcher::isBlocked()
-{
-	foreach(CommListener* responder, _responders)
-		responder->isBlocked();
-
-	if (_main)
-		_main->isBlocked();
-}
-
 void Comm::CommDispatcher::log(const QByteArray &text)
 {
 	foreach(CommListener* responder, _responders)
@@ -190,4 +145,22 @@ void CommDispatcher::parameterNames(const QStringList &names)
 
 	if (_main)
 		_main->parameterNames(names);
+}
+
+void CommDispatcher::event(RobotEvent event)
+{
+	foreach(CommListener* responder, _responders)
+		responder->event(event);
+
+	if (_main)
+		_main->event(event);
+}
+
+void CommDispatcher::sensorEvent(SensorType type, int sensorId, int value)
+{
+	foreach(CommListener* responder, _responders)
+		responder->sensorEvent(type, sensorId, value);
+
+	if (_main)
+		_main->sensorEvent(type, sensorId, value);
 }

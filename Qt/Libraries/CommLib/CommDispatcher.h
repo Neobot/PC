@@ -19,9 +19,6 @@ namespace Comm
 		virtual void coordinates(qint16 x, qint16 y, double theta, quint8 forward);
 		virtual void objective(qint16 x, qint16 y, double theta);
 		virtual void avoidingSensors(const QList<quint8>& values);
-		virtual void microswitchs(const QList<quint8>& values);
-		virtual void otherSensors(const QList<quint8>& values);
-        virtual void colorSensors(const QList<QColor>& values);
 		virtual bool initDone();
 		virtual bool go(bool mirrored);
 		virtual bool pingReceived();
@@ -29,11 +26,11 @@ namespace Comm
 		virtual void opponentPosition(qint16 x, qint16 y);
 		virtual bool restart();
 		virtual void quit();
-		virtual void isArrived();
-		virtual void isBlocked();
 		virtual void log(const QByteArray& text);
 		virtual void parameters(const QList<float> &values);
 		virtual void parameterNames(const QStringList& names);
+		virtual void event(RobotEvent event);
+		virtual void sensorEvent(SensorType type, int sensorId, int value);
 
 	private:
 		CommListener* _main;

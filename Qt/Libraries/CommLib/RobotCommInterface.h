@@ -49,12 +49,20 @@ namespace Comm
 		void setDestination(Tools::RMovement pos);
 		void flush();
 		void replaceDestination(QList<Tools::RMovement> positions);
+		
 		void moveAX12(quint8 id, float angle, float speed);
-		void getSensor(quint8 id);
+		
 		void setParameters(const QList<float> &values);
 		void askParameters();
-		void sendNoticeOfReceipt(quint8 instruction, bool result);
+		
 		void executeAction(quint8 actionId, quint8 parameter);
+		
+		void enableSensor(SensorType type, quint8 sensorId); //sensorId starts at 0
+		void enableAllSensors(SensorType type);
+		void disableSensor(SensorType type, quint8 sensorId); //sensorId starts at 0
+		void disableAllSensors(SensorType type);
+		
+		void sendNoticeOfReceipt(quint8 instruction, bool result);
 
 	protected slots:
 		void read(quint8 instruction, const Comm::Data& data);

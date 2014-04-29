@@ -5,17 +5,17 @@ using namespace Comm;
 QList<quint8> Instruction::robotToPcInstructions()
 {
 	QList<quint8> result;
-	result << COORD << OPPONENT << IS_ARRIVED << IS_BLOCKED << OBJECTIVE
-		   << AVOIDING_SENSORS << MICROSWITCHS << OTHER_SENSORS << INIT_DONE
-		   << GO << RESTART << QUIT << LOG << PARAMETERS;
+	result << COORD << OPPONENT << OBJECTIVE << AVOIDING_SENSORS << MICROSWITCHS 
+		   << OTHER_SENSORS << INIT_DONE << GO << RESTART << QUIT << LOG 
+		   << PARAMETERS << PARAMETER_NAMES << EVENT << SENSOR_EVENT;
 	return result;
-
 }
 
 QList<quint8> Instruction::pcToRobotInstructions()
 {
 	QList<quint8> result;
-	result << DEST_ADD << DEST_REPLACE << FLUSH << SET_POS << GET_SENSOR << SET_PARAMETERS << ASK_PARAMETERS << ACTIONS;
+	result << DEST_ADD << DEST_REPLACE << FLUSH << SET_POS << ENABLE_SENSOR << DISABLE_SENSOR 
+		   << SET_PARAMETERS << ASK_PARAMETERS << ACTIONS;
 	return result;
 }
 

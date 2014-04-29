@@ -21,7 +21,8 @@ namespace Comm
     const quint8 DEST_REPLACE = 2;
     const quint8 FLUSH = 3;
     const quint8 SET_POS = 10;
-    const quint8 GET_SENSOR = 30;
+	const quint8 ENABLE_SENSOR = 20;
+	const quint8 DISABLE_SENSOR = 21;
 	const quint8 SET_PARAMETERS = 50;
 	const quint8 ASK_PARAMETERS = 51;
     const quint8 ACTIONS = 60;
@@ -29,14 +30,8 @@ namespace Comm
     //microC -> PC
     const quint8 COORD = 100;
     const quint8 OPPONENT = 101;
-    const quint8 IS_ARRIVED = 102;
-    const quint8 IS_BLOCKED = 103;
 	const quint8 OBJECTIVE = 104;
     const quint8 AVOIDING_SENSORS = 110;
-    const quint8 MICROSWITCHS = 111;
-    const quint8 OTHER_SENSORS = 112;
-    const quint8 COLOR_SENSORS = 113;
-
     const quint8 INIT_DONE = 120;
     const quint8 GO = 121;
     const quint8 RESTART = 122;
@@ -44,6 +39,9 @@ namespace Comm
 	const quint8 LOG = 124;
 	const quint8 PARAMETERS = 125;
 	const quint8 PARAMETER_NAMES = 126;
+	
+	const quint8 EVENT = 130;
+	const quint8 SENSOR_EVENT = 131;
 
     //global
     const quint8 PING = 254;
@@ -53,15 +51,21 @@ namespace Comm
 	{
 		NO_ACTION = -1,
 		ACTION_START_PUMP = 1,
-		ACTION_STOP_PUMP = 2,
-		ACTION_ENABLE_COLOR_SENSOR = 10,
-		ACTION_DISABLE_COLOR_SENSOR = 11
+		ACTION_STOP_PUMP = 2
 	};
 
 	enum RobotEvent
 	{
 		NO_EVENT = -1
-		//...
+		EVENT_IS_ARRIVED = 1,
+		EVENT_IS_BLOCKED = 2
+	};
+	
+	enum SensorType
+	{
+		SharpSensor = 0,
+		MicroswitchSensor = 1,
+		ColorSensor = 2
 	};
 
 	enum ColorSensorId

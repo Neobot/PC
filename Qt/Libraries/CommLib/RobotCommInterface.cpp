@@ -89,13 +89,6 @@ void RobotCommInterface::moveAX12(quint8 id, float angle, float speed)
 	_ax12->setGoal(id, angle, speed, true);
 }
 
-void RobotCommInterface::getSensor(quint8 id)
-{
-	Data data;
-	data.add(id);
-	getProtocol(0)->sendMessage(GET_SENSOR, data);
-}
-
 void RobotCommInterface::setParameters(const QList<float> &values)
 {
 	Data data;
@@ -127,6 +120,42 @@ void RobotCommInterface::executeAction(quint8 actionId, quint8 parameter)
     getProtocol(0)->sendMessage(ACTIONS, data);
 }
 
+void RobotCommInterface::enableSensor(SensorType type, quint8 sensorId)
+{
+	sensorId += 1;
+	
+	Data data;
+	data.add((quint8)type);
+	data.add(sensorId);
+    getProtocol(0)->sendMessage(ENABLE_SENSOR, data);
+}
+
+void RobotCommInterface::enableAllSensors(SensorType type)
+{
+	Data data;
+	data.add((quint8)type);
+	data.add(0);
+    getProtocol(0)->sendMessage(ENABLE_SENSOR, data);
+}
+
+void RobotCommInterface::disableSensor(SensorType type, quint8 sensorId)
+{
+	sensorId += 1;
+	
+	Data data;
+	data.add((quint8)type);
+	data.add(sensorId);
+    getProtocol(0)->sendMessage(DISABLE_SENSOR, data);
+}
+
+void RobotCommInterface::disableAllSensors(SensorType type)
+{
+	Data data;
+	data.add((quint8)type);
+	data.add(0);
+    getProtocol(0)->sendMessage(DISABLE_SENSOR, data);
+}
+
 void RobotCommInterface::read(quint8 instruction, const Data& data)
 {
 	if (_listener)
@@ -149,16 +178,6 @@ void RobotCommInterface::read(quint8 instruction, const Data& data)
 				_listener->opponentPosition(x, y);
 				break;
 			}
-			case IS_ARRIVED:
-			{
-				_listener->isArrived();
-				break;
-			}
-			case IS_BLOCKED:
-			{
-				_listener->isBlocked();
-				break;
-			}
 			case AVOIDING_SENSORS:
 			{
 				quint8 value;
@@ -172,51 +191,18 @@ void RobotCommInterface::read(quint8 instruction, const Data& data)
                 _listener->avoidingSensors(values);
 				break;
 			}
-			case OTHER_SENSORS:
+			case SENSOR_EVENT:
 			{
-				quint8 value;
-				QList<quint8> values;
-				while(!d.isEmpty())
-				{
-					d.take(value);
-					values << value;
-				}
-				_listener->otherSensors(values);
+				qint8 type, id, value;
+				d.take(type).take(type).take(value);
+				//todo
 				break;
 			}
-            case COLOR_SENSORS:
-            {
-                quint8 value;
-                QList<quint8> values;
-                while(!d.isEmpty())
-                {
-                    d.take(value);
-                    values << value;
-                }
-
-                QList<QColor> colors;
-                for(QList<quint8>::const_iterator it = values.constBegin() + 2; it < values.constEnd(); it += 3)
-                {
-                    int red = *(it - 2);
-                    int green = *(it - 1);
-                    int blue = *it;
-
-                    colors << QColor(red, green, blue);
-                }
-
-                _listener->colorSensors(colors);
-                break;
-            }
-			case MICROSWITCHS:
+			case EVENT:
 			{
-				quint8 value;
-				QList<quint8> values;
-				while(!d.isEmpty())
-				{
-					d.take(value);
-					values << value;
-				}
-				_listener->microswitchs(values);
+				qint8 type;
+				d.take(type)
+				//todo
 				break;
 			}
 			case INIT_DONE:

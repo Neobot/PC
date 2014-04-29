@@ -14,7 +14,7 @@ Sharp::Sharp(const QVector2D& position, const QVector2D& direction, double heigh
 }
 
 Sharp::Sharp(const Sharp& other)
-    : Sensor(other), _position(other._position), _direction(other._direction), _height(other._height),
+    : _position(other._position), _direction(other._direction), _height(other._height),
       _calibrationCurve(other._calibrationCurve), _distance(other._distance), _threshold(other._threshold)
 {
 }

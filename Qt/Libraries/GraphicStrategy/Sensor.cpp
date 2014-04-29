@@ -1,6 +1,6 @@
 #include "Sensor.h"
 
-Sensor::Sensor()
+Sensor::Sensor(SensorType type) : _type(type)
 {
 }
 
@@ -8,27 +8,11 @@ Sensor::~Sensor()
 {
 }
 
-bool Sensor::testThreshold(double threshold, int operations) const
+int Sensor::getState() const
 {
-    double value = getValue();
-
-    if ((operations & GreaterThan) == GreaterThan)
-    {
-        if (value > threshold)
-            return true;
-    }
-
-    if ((operations & LesserThan) == LesserThan)
-    {
-        if (value < threshold)
-            return true;
-    }
-
-    if ((operations & EqualTo) == EqualTo)
-    {
-        if (value == threshold)
-            return true;
-    }
-
-    return false;
+	return _state;
+}
+void Sensor::setState(int state)
+{
+	_state = state;
 }
