@@ -121,12 +121,17 @@ OrientationSwitchCaseAction *ActionFactory::orientationSwitchCaseAction() const
 
 SensorSwitchCaseAction *ActionFactory::colorSensorSwitchCaseAction(int colorSensorId) const
 {
-	return new SensorSwitchCaseAction(_manager->getColorSensor(colorSensorId));
+	return new SensorSwitchCaseAction(colorSensorId, ColorSensor, _manager);
 }
 
 SensorSwitchCaseAction *ActionFactory::sharpSwitchCaseAction(int sharpId) const
 {
-	return new SensorSwitchCaseAction(_manager->getOtherSharp(sharpId));
+	return new SensorSwitchCaseAction(sharpId, SharpSensor, _manager);
+}
+
+SensorSwitchCaseAction* ActionFactory::microswitchSwitchCaseAction(int microswicthId) const
+{
+	return new SensorSwitchCaseAction(microswicthId, MicroswitchSensor, _manager);
 }
 
 PositionSwitchCaseAction *ActionFactory::positionSwitchCaseAction() const
@@ -165,26 +170,27 @@ AbstractAction* ActionFactory::ax12Movement(const QString& group, const QString&
 
 AbstractAction *ActionFactory::waitForSharpToActivate(int otherSharpId, int timeoutInMs) const
 {
-    const Sharp* sharp = _manager->getOtherSharp(otherSharpId);
-    return new WaitUntilSensorAction(sharp, Sensor::OtherSharpSensorFamily, timeoutInMs, sharp->getActivationThreshold(), Sensor::LesserThan, _manager);
-}
-
-AbstractAction *ActionFactory::waitForSharpToActivateWithCustomValue(int otherSharpId, double threshold, int timeoutInMs) const
-{
-    const Sharp* sharp = _manager->getOtherSharp(otherSharpId);
-    return new WaitUntilSensorAction(sharp, Sensor::OtherSharpSensorFamily, timeoutInMs, threshold, Sensor::LesserThan, _manager);
+    return new WaitUntilSensorAction(otherSharpId, SharpSensor, timeoutInMs, {SharpObjectDetected}, _manager);
 }
 
 AbstractAction *ActionFactory::waitForSharpToDesactivate(int otherSharpId, int timeoutInMs) const
 {
-    const Sharp* sharp = _manager->getOtherSharp(otherSharpId);
-    return new WaitUntilSensorAction(sharp, Sensor::OtherSharpSensorFamily, timeoutInMs, sharp->getActivationThreshold(), Sensor::GreaterThan, _manager);
+    return new WaitUntilSensorAction(otherSharpId, SharpSensor, timeoutInMs, {SharpNothingDetected}, _manager);
 }
 
-AbstractAction *ActionFactory::waitForSharpToDesactivateWithCustomValue(int otherSharpId, double threshold, int timeoutInMs) const
+AbstractAction* ActionFactory::waitForColor(int colorSensorId, ColorState color, int timeoutInMs) const
 {
-    const Sharp* sharp = _manager->getOtherSharp(otherSharpId);
-	return new WaitUntilSensorAction(sharp, Sensor::OtherSharpSensorFamily, timeoutInMs, threshold, Sensor::GreaterThan, _manager);
+	return new WaitUntilSensorAction(colorSensorId, ColorSensor, timeoutInMs, {color}, _manager);
+}
+	
+AbstractAction* ActionFactory::waitForMicroswitchToActivate(int microswitchId, int timeoutInMs) const
+{
+	return new WaitUntilSensorAction(microswitchId, MicroswitchSensor, timeoutInMs, {MicroswicthOn}, _manager);
+}
+
+AbstractAction* ActionFactory::waitForMicroswitchToDesactivate(int microswitchId, int timeoutInMs) const
+{
+	return new WaitUntilSensorAction(microswitchId, MicroswitchSensor, timeoutInMs, {MicroswicthOff}, _manager);
 }
 
 ColorScanAction *ActionFactory::colorScanAction(Tools::NGridNode *destination, int speed, int timeoutMs, int ourColor, int opponentColor, int leftColorSensorId, int rightColorSensorId,

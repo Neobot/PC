@@ -185,7 +185,7 @@ signals:
     void actionDone(bool result);
 	void strategyFinished();
 
-    void sensorValuesReceived(Sensor::SensorFamily family);
+    void sensorStateChanged(const Sensor* sensor);
 };
 
 #endif // ACTIONMANAGER_H

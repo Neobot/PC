@@ -341,6 +341,7 @@ void StrategyManager::sensorEvent(SensorType type, int sensorId, int value)
 		}
 		
 		sensor->setState(value);
+		emit sensorStateChanged(sensor);
 	}
 }
 

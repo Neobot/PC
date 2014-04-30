@@ -25,6 +25,7 @@ public:
 	OrientationSwitchCaseAction* orientationSwitchCaseAction() const;
 	SensorSwitchCaseAction* colorSensorSwitchCaseAction(int colorSensorId) const;
 	SensorSwitchCaseAction* sharpSwitchCaseAction(int sharpId) const;
+	SensorSwitchCaseAction* microswitchSwitchCaseAction(int microswicthId) const;
 	PositionSwitchCaseAction* positionSwitchCaseAction() const;
 
     AbstractAction* waitAction(int ms) const;
@@ -51,9 +52,12 @@ public:
 	AbstractAction* ax12Movement(const QString& group, const QString& movement, float speedLimit = 110.f) const;
 
     AbstractAction* waitForSharpToActivate(int otherSharpId, int timeoutInMs) const;
-    AbstractAction* waitForSharpToActivateWithCustomValue(int otherSharpId, double threshold, int timeoutInMs) const;
     AbstractAction* waitForSharpToDesactivate(int otherSharpId, int timeoutInMs) const;
-    AbstractAction* waitForSharpToDesactivateWithCustomValue(int otherSharpId, double threshold, int timeoutInMs) const;
+	
+	AbstractAction* waitForColor(int colorSensorId, ColorState color, int timeoutInMs) const;
+	
+	AbstractAction* waitForMicroswitchToActivate(int microswitchId, int timeoutInMs) const;
+    AbstractAction* waitForMicroswitchToDesactivate(int microswitchId, int timeoutInMs) const;
 
 	ColorScanAction* colorScanAction(Tools::NGridNode* destination, int speed, int timeoutMs, int ourColor, int opponentColor, int leftColorSensorId, int rightColorSensorId,
 															   AbstractAction* startAction,

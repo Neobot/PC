@@ -160,7 +160,7 @@ class WaitUntilSensorAction : public AbstractAction
 {
     Q_OBJECT
 public:
-    WaitUntilSensorAction(const Sensor* sensor, Sensor::SensorFamily family, int timeoutMs, double threshold, int thresholdOperations, StrategyManager* manager, QObject* parent = 0);
+    WaitUntilSensorAction(int sensorId, SensorType type, int timeoutMs, const QList<int>& states, StrategyManager* manager, QObject* parent = 0);
 
     void execute();
     void end();
@@ -168,17 +168,16 @@ public:
     QString getActionName() const;
 
 private:
-   const Sensor* _sensor;
-   Sensor::SensorFamily _family;
+   int _sensorId;
+   SensorType _sensorType;
 
-   double _threshold;
-   double _thresholdOperations;
+   QList<int> _states;
 
    StrategyManager*	_manager;
    QTimer* _timeout;
 
 private slots:
-    void testSensor(Sensor::SensorFamily family);
+    void testSensor(const Sensor* sensor);
 };
 
 class SetParameterAction : public AbstractAction

@@ -122,8 +122,6 @@ void RobotCommInterface::executeAction(quint8 actionId, quint8 parameter)
 
 void RobotCommInterface::enableSensor(SensorType type, quint8 sensorId)
 {
-	sensorId += 1;
-	
 	Data data;
 	data.add((quint8)type);
 	data.add(sensorId);
@@ -140,8 +138,6 @@ void RobotCommInterface::enableAllSensors(SensorType type)
 
 void RobotCommInterface::disableSensor(SensorType type, quint8 sensorId)
 {
-	sensorId += 1;
-	
 	Data data;
 	data.add((quint8)type);
 	data.add(sensorId);

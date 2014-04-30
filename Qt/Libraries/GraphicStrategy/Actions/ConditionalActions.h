@@ -85,7 +85,7 @@ private:
 class SensorSwitchCaseAction : public SingleValueSwitchCaseAction
 {
 public:
-	SensorSwitchCaseAction(const Sensor* sensor, QObject* parent = 0);
+	SensorSwitchCaseAction(int sensorId, SensorType type, StrategyManager* manager, QObject* parent = 0);
 	~SensorSwitchCaseAction();
 
 	QString getActionName() const;
@@ -94,7 +94,9 @@ protected:
 	virtual double getSwitchValue() const;
 
 private:
-	const Sensor* _sensor;
+	int _sensorId;
+	SensorType _type;
+	StrategyManager* _manager;
 };
 
 /**

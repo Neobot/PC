@@ -230,8 +230,8 @@ QString AX12MovementAction::getActionName() const
 //Wait until sharp-----------------------------------------------------------------------
 
 
-WaitUntilSensorAction::WaitUntilSensorAction(const Sensor *sensor, Sensor::SensorFamily family, int timeoutMs, double threshold, int thresholdOperations, StrategyManager *manager, QObject *parent)
-    : AbstractAction(parent), _sensor(sensor), _family(family), _threshold(threshold), _thresholdOperations(thresholdOperations), _manager(manager), _timeout(0)
+WaitUntilSensorAction::WaitUntilSensorAction(int sensorId, SensorType type, int timeoutMs, const QList<int>& states, StrategyManager *manager, QObject *parent)
+    : AbstractAction(parent), _sensorId(sensorId), _sensorType(type), _states(states), _manager(manager), _timeout(0)
 {
     if (timeoutMs > 0)
     {
@@ -244,7 +244,7 @@ WaitUntilSensorAction::WaitUntilSensorAction(const Sensor *sensor, Sensor::Senso
 
 void WaitUntilSensorAction::execute()
 {
-	connect(_manager, SIGNAL(sensorValuesReceived(Sensor::SensorFamily)), this, SLOT(testSensor(Sensor::SensorFamily)));
+	connect(_manager, SIGNAL(sensorStateChanged(const Sensor*)), this, SLOT(testSensor(const Sensor*)));
     if (_timeout)
         _timeout->start();
 }
@@ -270,13 +270,13 @@ QString WaitUntilSensorAction::getActionName() const
     return QString("Scanning sensor");
 }
 
-void WaitUntilSensorAction::testSensor(Sensor::SensorFamily family)
+void WaitUntilSensorAction::testSensor(const Sensor* sensor)
 {
-    if (_family == family)
-    {
-        if (_sensor->testThreshold(_threshold, _thresholdOperations))
-            succeed();
-    }
+	if (sensor->getId() == _sensorId && sensor->getType() == _sensorType)
+	{
+		if (_states.contains(_sensor->getState()))
+			succeed();
+	}
 }
 
 //Set parameter-----------------------------------------------------------------------

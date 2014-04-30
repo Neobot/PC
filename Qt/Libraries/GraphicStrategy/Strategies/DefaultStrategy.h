@@ -17,6 +17,32 @@ public:
 		REAR_LEFT_SONAR = 2,
 		REAR_RIGHT_SONAR = 1
 	};
+	
+	enum ColorSensorId
+	{
+		BothColorSensor = 0,
+		LeftColorSensor = 1,
+		RightColorSensor = 2
+	};
+
+	enum PumpId
+	{
+		BothPump = 0,
+		LeftPump = 1,
+		RightPump = 2
+	};
+
+	enum ServoId
+	{
+		BothServo = 0,
+		LeftServo = 1,
+		RightServo = 2
+	};
+	
+	enum MicroswitchId
+	{
+		AllMicroswitch = 0
+	};
 
 	DefaultStrategy(const QDir& strategyDirectory, Tools::AbstractLogger* logger = 0);
 	virtual ~DefaultStrategy() {}

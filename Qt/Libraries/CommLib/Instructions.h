@@ -68,27 +68,6 @@ namespace Comm
 		ColorSensor = 2
 	};
 
-	enum ColorSensorId
-	{
-		BothColorSensor = 0,
-		LeftColorSensor = 1,
-		RightColorSensor = 2
-	};
-
-	enum PumpId
-	{
-		BothPump = 0,
-		LeftPump = 1,
-		RightPump = 2
-	};
-
-	enum ServoId
-	{
-		BothServo = 0,
-		LeftServo = 1,
-		RightServo = 2
-	};
-
 
 	//Network commands
 	//Server -> Client

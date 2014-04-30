@@ -114,8 +114,8 @@ double OrientationSwitchCaseAction::getSwitchValue() const
 
 //----------------------------------------------------------------------------------------------------------------------------------
 
-SensorSwitchCaseAction::SensorSwitchCaseAction(const Sensor *sensor, QObject *parent)
-	: SingleValueSwitchCaseAction(parent), _sensor(sensor)
+SensorSwitchCaseAction::SensorSwitchCaseAction(int sensorId, SensorType type, StrategyManager* manager, QObject *parent)
+	: SingleValueSwitchCaseAction(parent), _sensorId(sensorId), _type(type), _manager(manager)
 {
 
 }
@@ -131,7 +131,11 @@ QString SensorSwitchCaseAction::getActionName() const
 
 double SensorSwitchCaseAction::getSwitchValue() const
 {
-	return _sensor->getValue();
+	Sensor* sensor = _manager->getSensor(_sensorId, _type);
+	if (sensor)
+		return sensor->getState();
+		
+	return 0;
 }
 
 //----------------------------------------------------------------------------------------------------------------------------------
