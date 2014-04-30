@@ -128,27 +128,11 @@ void RobotCommInterface::enableSensor(SensorType type, quint8 sensorId)
     getProtocol(0)->sendMessage(ENABLE_SENSOR, data);
 }
 
-void RobotCommInterface::enableAllSensors(SensorType type)
-{
-	Data data;
-	data.add((quint8)type);
-	data.add(0);
-    getProtocol(0)->sendMessage(ENABLE_SENSOR, data);
-}
-
 void RobotCommInterface::disableSensor(SensorType type, quint8 sensorId)
 {
 	Data data;
 	data.add((quint8)type);
 	data.add(sensorId);
-    getProtocol(0)->sendMessage(DISABLE_SENSOR, data);
-}
-
-void RobotCommInterface::disableAllSensors(SensorType type)
-{
-	Data data;
-	data.add((quint8)type);
-	data.add(0);
     getProtocol(0)->sendMessage(DISABLE_SENSOR, data);
 }
 
@@ -189,16 +173,18 @@ void RobotCommInterface::read(quint8 instruction, const Data& data)
 			}
 			case SENSOR_EVENT:
 			{
-				qint8 type, id, value;
-				d.take(type).take(type).take(value);
-				//todo
+				qint8 type, sensorId, value;
+				d.take(type).take(sensorId).take(value);
+
+				_listener->sensorEvent((SensorType)type, sensorId, value);
 				break;
 			}
 			case EVENT:
 			{
 				qint8 type;
-				d.take(type)
-				//todo
+				d.take(type);
+
+				_listener->robotEvent((RobotEvent)type);
 				break;
 			}
 			case INIT_DONE:

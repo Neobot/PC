@@ -5,7 +5,6 @@
 #include <AbstractLogger.h>
 #include "ActionFactory.h"
 #include "Sharp.h"
-#include "ColorSensor.h"
 #include "GameState.h"
 
 #include <QObject>
@@ -86,7 +85,7 @@ public:
     const QMap<int, Sensor *> &getColorSensors() const;
 	const QMap<int, Sensor *> &getMicroswitchs() const;
 
-    const Sensor *getSensor(int index, SensorType type) const;
+	const Sensor *getSensor(int index, Comm::SensorType type) const;
 
 	double getParameter(int index) const;
 	QString getParameterName(int index) const;
@@ -161,8 +160,8 @@ private:
 	void log(const QByteArray& text);
 	void parameters(const QList<float>& values);
 	void parameterNames(const QStringList& names);
-	void event(RobotEvent event);
-	void sensorEvent(SensorType type, int sensorId, int value);
+	void robotEvent(Comm::RobotEvent event);
+	void sensorEvent(Comm::SensorType type, int sensorId, int value);
 	
 	//Others
 	void isArrived();
@@ -185,7 +184,7 @@ signals:
     void actionDone(bool result);
 	void strategyFinished();
 
-    void sensorStateChanged(const Sensor* sensor);
+	void sensorStateChanged(Comm::SensorType type, int sensorId, int state);
 };
 
 #endif // ACTIONMANAGER_H

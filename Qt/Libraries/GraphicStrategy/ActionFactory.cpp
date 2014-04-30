@@ -121,17 +121,17 @@ OrientationSwitchCaseAction *ActionFactory::orientationSwitchCaseAction() const
 
 SensorSwitchCaseAction *ActionFactory::colorSensorSwitchCaseAction(int colorSensorId) const
 {
-	return new SensorSwitchCaseAction(colorSensorId, ColorSensor, _manager);
+	return new SensorSwitchCaseAction(colorSensorId, Comm::ColorSensor, _manager);
 }
 
 SensorSwitchCaseAction *ActionFactory::sharpSwitchCaseAction(int sharpId) const
 {
-	return new SensorSwitchCaseAction(sharpId, SharpSensor, _manager);
+	return new SensorSwitchCaseAction(sharpId, Comm::SharpSensor, _manager);
 }
 
 SensorSwitchCaseAction* ActionFactory::microswitchSwitchCaseAction(int microswicthId) const
 {
-	return new SensorSwitchCaseAction(microswicthId, MicroswitchSensor, _manager);
+	return new SensorSwitchCaseAction(microswicthId, Comm::MicroswitchSensor, _manager);
 }
 
 PositionSwitchCaseAction *ActionFactory::positionSwitchCaseAction() const
@@ -170,57 +170,74 @@ AbstractAction* ActionFactory::ax12Movement(const QString& group, const QString&
 
 AbstractAction *ActionFactory::waitForSharpToActivate(int otherSharpId, int timeoutInMs) const
 {
-    return new WaitUntilSensorAction(otherSharpId, SharpSensor, timeoutInMs, {SharpObjectDetected}, _manager);
+	return new WaitUntilSensorAction(otherSharpId, Comm::SharpSensor, timeoutInMs, {Sensor::SharpObjectDetected}, _manager);
 }
 
 AbstractAction *ActionFactory::waitForSharpToDesactivate(int otherSharpId, int timeoutInMs) const
 {
-    return new WaitUntilSensorAction(otherSharpId, SharpSensor, timeoutInMs, {SharpNothingDetected}, _manager);
+	return new WaitUntilSensorAction(otherSharpId, Comm::SharpSensor, timeoutInMs, {Sensor::SharpNothingDetected}, _manager);
 }
 
-AbstractAction* ActionFactory::waitForColor(int colorSensorId, ColorState color, int timeoutInMs) const
+AbstractAction* ActionFactory::waitForColor(int colorSensorId, int color, int timeoutInMs) const
 {
-	return new WaitUntilSensorAction(colorSensorId, ColorSensor, timeoutInMs, {color}, _manager);
+	return new WaitUntilSensorAction(colorSensorId, Comm::ColorSensor, timeoutInMs, {color}, _manager);
 }
 	
 AbstractAction* ActionFactory::waitForMicroswitchToActivate(int microswitchId, int timeoutInMs) const
 {
-	return new WaitUntilSensorAction(microswitchId, MicroswitchSensor, timeoutInMs, {MicroswicthOn}, _manager);
+	return new WaitUntilSensorAction(microswitchId, Comm::MicroswitchSensor, timeoutInMs, {Sensor::MicroswicthOn}, _manager);
 }
 
 AbstractAction* ActionFactory::waitForMicroswitchToDesactivate(int microswitchId, int timeoutInMs) const
 {
-	return new WaitUntilSensorAction(microswitchId, MicroswitchSensor, timeoutInMs, {MicroswicthOff}, _manager);
+	return new WaitUntilSensorAction(microswitchId, Comm::MicroswitchSensor, timeoutInMs, {Sensor::MicroswicthOff}, _manager);
 }
 
 ColorScanAction *ActionFactory::colorScanAction(Tools::NGridNode *destination, int speed, int timeoutMs, int ourColor, int opponentColor, int leftColorSensorId, int rightColorSensorId,
 																		  AbstractAction *startAction, AbstractAction *leftOpponentColorAction, AbstractAction *rightOpponentColorAction,
 																		  AbstractAction *leftOurColorAction, AbstractAction *rightOurColorAction, AbstractAction *endAction)
 {
-	const ColorSensor* leftSensor = _manager->getColorSensor(leftColorSensorId);
-	const ColorSensor* rightSensor = _manager->getColorSensor(rightColorSensorId);
-
-	return new ColorScanAction(destination, speed, timeoutMs, ourColor, opponentColor, leftSensor, rightSensor, startAction,
+	return new ColorScanAction(destination, speed, timeoutMs, ourColor, opponentColor, leftColorSensorId, rightColorSensorId, startAction,
 													 leftOpponentColorAction, rightOpponentColorAction, leftOurColorAction, rightOurColorAction, endAction,
 													 _manager, _finder);
 }
 
-AbstractAction *ActionFactory::startPumpAction(Comm::PumpId id) const
+AbstractAction *ActionFactory::startPumpAction(int id) const
 {
 	return actuatorAction(Comm::ACTION_START_PUMP, id, 3000);
 }
 
-AbstractAction *ActionFactory::stopPumpAction(Comm::PumpId id) const
+AbstractAction *ActionFactory::stopPumpAction(int id) const
 {
 	return actuatorAction(Comm::ACTION_STOP_PUMP, id, 3000);
 }
 
-AbstractAction *ActionFactory::enableColorSensorAction(Comm::ColorSensorId id) const
+AbstractAction *ActionFactory::enableColorSensorAction(int colorSensorId) const
 {
-	return actuatorAction(Comm::ACTION_ENABLE_COLOR_SENSOR, id, 0);
+	return new SetSensorEnabledAction(Comm::ColorSensor, colorSensorId, true, _robot);
 }
 
-AbstractAction *ActionFactory::disableColorSensorAction(Comm::ColorSensorId id) const
+AbstractAction *ActionFactory::disableColorSensorAction(int colorSensorId) const
 {
-	return actuatorAction(Comm::ACTION_DISABLE_COLOR_SENSOR, id, 0);
+	return new SetSensorEnabledAction(Comm::ColorSensor, colorSensorId, false, _robot);
+}
+
+AbstractAction *ActionFactory::enableSharpAction(int sharpId) const
+{
+	return new SetSensorEnabledAction(Comm::SharpSensor, sharpId, true, _robot);
+}
+
+AbstractAction *ActionFactory::disableSharpAction(int sharpId) const
+{
+	return new SetSensorEnabledAction(Comm::SharpSensor, sharpId, false, _robot);
+}
+
+AbstractAction *ActionFactory::enableMicroswitchAction(int microswitchId) const
+{
+	return new SetSensorEnabledAction(Comm::MicroswitchSensor, microswitchId, true, _robot);
+}
+
+AbstractAction *ActionFactory::disableMicroswitchAction(int microswitchId) const
+{
+	return new SetSensorEnabledAction(Comm::MicroswitchSensor, microswitchId, false, _robot);
 }

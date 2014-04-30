@@ -3,7 +3,6 @@
 #include "ToolsLib.h"
 
 #include <QtDebug>
-#include <QColor>
 
 SimRobot::SimRobot(SimProtocol* protocol, SimCommInterface* networkInterface)
     : AbstractCommInterface(0), _protocol(protocol), _interface(networkInterface)
@@ -109,42 +108,6 @@ void SimRobot::sendAvoidingSensorsValues(const QList<quint8>& sharps)
     _protocol->sendMessage2(Comm::AVOIDING_SENSORS, d);
 }
 
-void SimRobot::sendOtherSensorsValues(const QList<quint8> &sharps)
-{
-    Comm::Data d;
-
-    foreach(const quint8 v, sharps)
-        d.add(v);
-
-    _protocol->sendMessage2(Comm::OTHER_SENSORS, d);
-}
-
-void SimRobot::sendContactorsValues(quint8 contactors)
-{
-    Comm::Data d;
-    d.add(contactors);
-
-    _protocol->sendMessage2(Comm::MICROSWITCHS, d);
-}
-
-void SimRobot::sendColorSensorsvalues(const QList<QColor> &colors)
-{
-    Comm::Data d;
-
-    foreach(const QColor& c, colors)
-    {
-        quint8 r = c.red();
-        quint8 g = c.green();
-        quint8 b = c.blue();
-
-        d.add(r);
-        d.add(g);
-        d.add(b);
-    }
-
-    _protocol->sendMessage2(Comm::COLOR_SENSORS, d);
-}
-
 void SimRobot::go(bool mirrored)
 {
     Comm::Data d;
@@ -163,12 +126,28 @@ void SimRobot::sendNoticeOfReceipt(quint8 instruction, bool result)
 
 void SimRobot::sendArrived()
 {
-    _protocol->sendMessage2(Comm::IS_ARRIVED, Comm::Data());
+	sendEvent(Comm::EVENT_IS_ARRIVED);
 }
 
 void SimRobot::sendBlocked()
 {
-    _protocol->sendMessage2(Comm::IS_BLOCKED, Comm::Data());
+	sendEvent(Comm::EVENT_IS_BLOCKED);
+}
+
+void SimRobot::sendEvent(Comm::RobotEvent event)
+{
+	Comm::Data d;
+	d.add((quint8)event);
+
+	_protocol->sendMessage2(Comm::EVENT, d);
+}
+
+void SimRobot::sendSensorEvent(Comm::SensorType type, int sensorId, int value)
+{
+	Comm::Data d;
+	d.add((quint8)type).add((quint8)sensorId).add((quint8)value);
+
+	_protocol->sendMessage2(Comm::SENSOR_EVENT, d);
 }
 
 void SimRobot::restart()

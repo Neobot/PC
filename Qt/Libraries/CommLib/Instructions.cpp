@@ -5,8 +5,8 @@ using namespace Comm;
 QList<quint8> Instruction::robotToPcInstructions()
 {
 	QList<quint8> result;
-	result << COORD << OPPONENT << OBJECTIVE << AVOIDING_SENSORS << MICROSWITCHS 
-		   << OTHER_SENSORS << INIT_DONE << GO << RESTART << QUIT << LOG 
+	result << COORD << OPPONENT << OBJECTIVE << AVOIDING_SENSORS
+		   << INIT_DONE << GO << RESTART << QUIT << LOG
 		   << PARAMETERS << PARAMETER_NAMES << EVENT << SENSOR_EVENT;
 	return result;
 }

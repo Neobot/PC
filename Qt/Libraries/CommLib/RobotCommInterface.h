@@ -58,9 +58,7 @@ namespace Comm
 		void executeAction(quint8 actionId, quint8 parameter);
 		
 		void enableSensor(SensorType type, quint8 sensorId); //sensorId starts at 0
-		void enableAllSensors(SensorType type);
 		void disableSensor(SensorType type, quint8 sensorId); //sensorId starts at 0
-		void disableAllSensors(SensorType type);
 		
 		void sendNoticeOfReceipt(quint8 instruction, bool result);
 

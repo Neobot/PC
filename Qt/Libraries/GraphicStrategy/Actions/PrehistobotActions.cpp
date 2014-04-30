@@ -3,13 +3,13 @@
 #include "TrajectoryFinder.h"
 #include "Ax12MovementRunner.h"
 
-ColorScanAction::ColorScanAction(Tools::NGridNode* destination, int speed, int timeoutMs, int ourColor, int opponentColor, const ColorSensor *leftSensor, const ColorSensor *rightSensor,
+ColorScanAction::ColorScanAction(Tools::NGridNode* destination, int speed, int timeoutMs, int ourColor, int opponentColor, int leftColorSensorId, int rightColorSensorId,
 																		  AbstractAction* startAction,
 																		  AbstractAction* leftOpponentColorAction, AbstractAction* rightOpponentColorAction,
 																		  AbstractAction* leftOurColorAction, AbstractAction* rightOurColorAction, AbstractAction *endAction,
 																		  StrategyManager* manager, TrajectoryFinder* finder, QObject* parent)
  : AbstractAction(parent), _manager(manager), _finder(finder),
-   _destinationReached(false), _destination(destination), _speed(speed), _timeout(0), _ourColor(ourColor), _opponentColor(opponentColor), _leftSensor(leftSensor), _rightSensor(rightSensor),
+   _destinationReached(false), _destination(destination), _speed(speed), _timeout(0), _ourColor(ourColor), _opponentColor(opponentColor), _leftSensorId(leftColorSensorId), _rightSensorId(rightColorSensorId),
    _startAction(startAction), _leftOpponentColorAction(leftOpponentColorAction), _rightOpponentColorAction(rightOpponentColorAction),
    _leftOurColorAction(leftOurColorAction), _rightOurColorAction(rightOurColorAction), _endAction(endAction),
    _leftArmState(Unknown), _rightArmState(Unknown), _stopped(false)
@@ -55,7 +55,7 @@ void ColorScanAction::stop()
 
 void ColorScanAction::end()
 {
-	disconnect(_manager, SIGNAL(sensorValuesReceived(Sensor::SensorFamily)), this, SLOT(testColor(Sensor::SensorFamily)));
+	disconnect(_manager, SIGNAL(sensorStateChanged(Comm::SensorType, int, int)), this, SLOT(testColor(Comm::SensorType, int, int)));
 	disconnect(_finder, SIGNAL(objectiveReached()), this, SLOT(destinationReached()));
 }
 
@@ -64,12 +64,15 @@ QString ColorScanAction::getActionName() const
 	return "Scan and turn over fires";
 }
 
-void ColorScanAction::testColor(Sensor::SensorFamily family)
+void ColorScanAction::testColor(Comm::SensorType type, int sensorId, int state)
 {
-	if (family == Sensor::ColorSensorFamily)
+	if (type == Comm::ColorSensor)
 	{
-		checkColor(_leftArmState, _leftSensor->getValue(), _leftOpponentColorAction, _leftOurColorAction);
-		checkColor(_rightArmState, _rightSensor->getValue(), _rightOpponentColorAction, _rightOurColorAction);
+		if (sensorId == _leftSensorId)
+			checkColor(_leftArmState, state, _leftOpponentColorAction, _leftOurColorAction);
+
+		if (sensorId == _rightSensorId)
+			checkColor(_rightArmState, state, _rightOpponentColorAction, _rightOurColorAction);
 	}
 }
 

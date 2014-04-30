@@ -147,13 +147,13 @@ void CommDispatcher::parameterNames(const QStringList &names)
 		_main->parameterNames(names);
 }
 
-void CommDispatcher::event(RobotEvent event)
+void CommDispatcher::robotEvent(RobotEvent event)
 {
 	foreach(CommListener* responder, _responders)
-		responder->event(event);
+		responder->robotEvent(event);
 
 	if (_main)
-		_main->event(event);
+		_main->robotEvent(event);
 }
 
 void CommDispatcher::sensorEvent(SensorType type, int sensorId, int value)

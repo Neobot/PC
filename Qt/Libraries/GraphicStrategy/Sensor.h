@@ -1,10 +1,12 @@
 #ifndef SENSOR_H
 #define SENSOR_H
 
+#include "Instructions.h"
+
 class Sensor
 {
 public:
-    Sensor(SensorType type);
+	Sensor();
     virtual ~Sensor();
 
     int getState() const;
@@ -27,7 +29,7 @@ public:
 	{
 		ColorUnknown,
 		ColorRed,
-		ColorGreen
+		ColorGreen,
 		ColorBlue,
 		ColorYellow,
 		ColorWhite,
@@ -36,7 +38,6 @@ public:
 	
 	private:
 		int _state = 0;
-		SensorType _type;
 };
 
 #endif // SENSOR_H

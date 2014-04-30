@@ -230,7 +230,7 @@ QString AX12MovementAction::getActionName() const
 //Wait until sharp-----------------------------------------------------------------------
 
 
-WaitUntilSensorAction::WaitUntilSensorAction(int sensorId, SensorType type, int timeoutMs, const QList<int>& states, StrategyManager *manager, QObject *parent)
+WaitUntilSensorAction::WaitUntilSensorAction(int sensorId, Comm::SensorType type, int timeoutMs, const QList<int>& states, StrategyManager *manager, QObject *parent)
     : AbstractAction(parent), _sensorId(sensorId), _sensorType(type), _states(states), _manager(manager), _timeout(0)
 {
     if (timeoutMs > 0)
@@ -244,7 +244,7 @@ WaitUntilSensorAction::WaitUntilSensorAction(int sensorId, SensorType type, int 
 
 void WaitUntilSensorAction::execute()
 {
-	connect(_manager, SIGNAL(sensorStateChanged(const Sensor*)), this, SLOT(testSensor(const Sensor*)));
+	connect(_manager, SIGNAL(sensorStateChanged(Comm::SensorType, int, int)), this, SLOT(testSensor(Comm::SensorType, int, int)));
     if (_timeout)
         _timeout->start();
 }
@@ -270,11 +270,11 @@ QString WaitUntilSensorAction::getActionName() const
     return QString("Scanning sensor");
 }
 
-void WaitUntilSensorAction::testSensor(const Sensor* sensor)
+void WaitUntilSensorAction::testSensor(Comm::SensorType type, int sensorId, int state)
 {
-	if (sensor->getId() == _sensorId && sensor->getType() == _sensorType)
+	if (sensorId == _sensorId && type == _sensorType)
 	{
-		if (_states.contains(_sensor->getState()))
+		if (_states.contains(state))
 			succeed();
 	}
 }
@@ -294,4 +294,26 @@ void SetParameterAction::execute()
 QString SetParameterAction::getActionName() const
 {
 	return QString("Set %1 to '%2'").arg(_manager->getParameterName(_parameterId)).arg(_value);
+}
+
+//Set sensor enabled-----------------------------------------------------------------------
+
+SetSensorEnabledAction::SetSensorEnabledAction(Comm::SensorType type, int sensorId, bool enabled, Comm::RobotCommInterface *robot, QObject *parent)
+	: AbstractAction(parent), _type(type), _id(sensorId), _enabled(enabled), _robot(robot)
+{
+
+}
+
+void SetSensorEnabledAction::execute()
+{
+	if (_enabled)
+		_robot->enableSensor(_type, _id);
+	else
+		_robot->disableSensor(_type, _id);
+	succeed();
+}
+
+QString SetSensorEnabledAction::getActionName() const
+{
+	return QString("%1 sensor of type %2 with id %3").arg(_enabled ? "Enable" : "Disable").arg(_type).arg(_id);
 }

@@ -1,6 +1,6 @@
 #include "Sensor.h"
 
-Sensor::Sensor(SensorType type) : _type(type)
+Sensor::Sensor()
 {
 }
 

@@ -152,7 +152,6 @@ bool StrategyManager::init()
 	_strategy->avoidingSharps(_sharps);
 
 	_scannerSharps.clear();
-	_strategy->detectionSharps(_scannerSharps);
 
 	_initDone = true;
 	logger() << "Init done. Start your engines..." << Tools::endl;
@@ -242,93 +241,24 @@ void StrategyManager::opponentPosition(qint16 x, qint16 y)
 	_map->moveOpponent(QPointF(x, y));
 }
 
-void StrategyManager::microswitchs(const QList<quint8> &values)
-{
-	bool changed = false;
-
-	QList<int> raisingEdge;
-	QList<int> fallingEdge;
-	for(int i = 0; i < values.count(); ++i)
-	{
-		bool current = _microswitchStates.value(i);
-		bool v = values[i] != 0;
-		if (v != current)
-		{
-			changed = true;
-			if (v)
-				raisingEdge << i;
-			else
-				fallingEdge << i;
-
-			_microswitchStates[i] = v;
-		}
-	}
-
-	if (changed)
-		_strategy->microswitchChanged(raisingEdge, fallingEdge);
-}
-
-void StrategyManager::otherSensors(const QList<quint8> &values)
-{
-	if (!_initDone)
-		return;
-
-	int index = 0;
-	for(QList<quint8>::const_iterator it = values.constBegin(); it != values.constEnd(); ++it)
-	{
-		quint8 value = *it;
-
-		Sharp* sharp = _scannerSharps.value(index);
-		if (!sharp)
-			return;
-
-		sharp->update(value);
-
-		++index;
-	}
-
-    emit sensorValuesReceived(Sensor::OtherSharpSensorFamily);
-}
-
-void StrategyManager::colorSensors(const QList<QColor> &values)
-{
-    if (!_initDone)
-        return;
-
-    int index = 0;
-    for(QList<QColor>::const_iterator it = values.constBegin(); it != values.constEnd(); ++it)
-    {
-        const QColor& value = *it;
-
-        ColorSensor* cs = _colorSensors.value(index);
-        if (!cs)
-            return;
-
-        //cs->updateValue(value);
-
-        ++index;
-    }
-
-    emit sensorValuesReceived(Sensor::ColorSensorFamily);
-}
-
-void StrategyManager::event(RobotEvent event)
+void StrategyManager::robotEvent(Comm::RobotEvent event)
 {
 	switch(event)
 	{
-		case EVENT_IS_ARRIVED: isArrived(); break;
-		case EVENT_IS_BLOCKED: isBlocked(); break;
+		case Comm::EVENT_IS_ARRIVED: isArrived(); break;
+		case Comm::EVENT_IS_BLOCKED: isBlocked(); break;
+		case Comm::NO_EVENT: break;
 	}
 }
 
-void StrategyManager::sensorEvent(SensorType type, int sensorId, int value)
+void StrategyManager::sensorEvent(Comm::SensorType type, int sensorId, int value)
 {
 	QMap<int, Sensor*>* family = nullptr;
 	switch(type)
 	{
-		case SharpSensor: 			family = &_scannerSharps; break;
-		case MicroswitchSensor:  	family = &_microswitchs; break;
-		case ColorSensor:  			family = &_colorSensors; break;
+		case Comm::SharpSensor: 			family = &_scannerSharps; break;
+		case Comm::MicroswitchSensor:		family = &_microswitchs; break;
+		case Comm::ColorSensor:  			family = &_colorSensors; break;
 	}
 	
 	if (family)
@@ -336,12 +266,12 @@ void StrategyManager::sensorEvent(SensorType type, int sensorId, int value)
 		Sensor* sensor = family->value(sensorId, nullptr);
 		if (!sensor)
 		{
-			sensor = new Sensor(type);
+			sensor = new Sensor;
 			family->insert(sensorId, sensor);
 		}
 		
 		sensor->setState(value);
-		emit sensorStateChanged(sensor);
+		emit sensorStateChanged(type, sensorId, value);
 	}
 }
 
@@ -395,8 +325,6 @@ void StrategyManager::avoidingSensors(const QList<quint8> &values)
 	}
 	else if (avoidingNecessary)
 		_strategy->obstacleDetected();
-
-    emit sensorValuesReceived(Sensor::AvoidingSharpSensorFamily);
 }
 
 bool StrategyManager::initDone()
@@ -662,12 +590,12 @@ const QMap<int, Sensor *> &StrategyManager::getMicroswitchs() const
 	return _microswitchs;
 }
 
-const Sensor *StrategyManager::getSensor(int index, SensorType type) const
+const Sensor *StrategyManager::getSensor(int index, Comm::SensorType type) const
 {
     switch(type)
     {
-        case Comm::SharpSensor:   		return getOtherSharps(index);
-        case Comm::MicroswitchSensor:   return getMicroswitchs(index);
+		case Comm::SharpSensor:   		return getOtherSharp(index);
+		case Comm::MicroswitchSensor:   return getMicroswitch(index);
         case Comm::ColorSensor:     	return getColorSensor(index);
     }
 
@@ -757,8 +685,6 @@ void StrategyManager::record()
 
 	sharps.clear();
 	for(QMap<int, Sharp*>::const_iterator it = _sharps.constBegin(); it != _sharps.constEnd(); ++it)
-		sharps << (*it)->getDistance();
-	for(QMap<int, Sharp*>::const_iterator it = _scannerSharps.constBegin(); it != _scannerSharps.constEnd(); ++it)
 		sharps << (*it)->getDistance();
 
 	*_recorder << _map->getRobotPosition().getX()

@@ -54,7 +54,7 @@ public:
     AbstractAction* waitForSharpToActivate(int otherSharpId, int timeoutInMs) const;
     AbstractAction* waitForSharpToDesactivate(int otherSharpId, int timeoutInMs) const;
 	
-	AbstractAction* waitForColor(int colorSensorId, ColorState color, int timeoutInMs) const;
+	AbstractAction* waitForColor(int colorSensorId, int color, int timeoutInMs) const;
 	
 	AbstractAction* waitForMicroswitchToActivate(int microswitchId, int timeoutInMs) const;
     AbstractAction* waitForMicroswitchToDesactivate(int microswitchId, int timeoutInMs) const;
@@ -64,10 +64,17 @@ public:
 															   AbstractAction* leftOpponentColorAction, AbstractAction* rightOpponentColorAction,
 															   AbstractAction* leftOurColorAction, AbstractAction* rightOurColorAction,
 															   AbstractAction* endAction);
-	AbstractAction* startPumpAction(Comm::PumpId id) const;
-	AbstractAction* stopPumpAction(Comm::PumpId id) const;
-	AbstractAction* enableColorSensorAction(Comm::ColorSensorId id) const;
-	AbstractAction* disableColorSensorAction(Comm::ColorSensorId id) const;
+	AbstractAction* startPumpAction(int id) const;
+	AbstractAction* stopPumpAction(int id) const;
+
+	AbstractAction* enableColorSensorAction(int colorSensorId) const;
+	AbstractAction* disableColorSensorAction(int colorSensorId) const;
+
+	AbstractAction* enableSharpAction(int sharpId) const;
+	AbstractAction* disableSharpAction(int sharpId) const;
+
+	AbstractAction* enableMicroswitchAction(int microswitchId) const;
+	AbstractAction* disableMicroswitchAction(int microswitchId) const;
 
 private:
     StrategyManager*	_manager;

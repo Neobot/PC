@@ -27,13 +27,12 @@ public:
 	void sendCoordinates(double x, double y, double theta, bool forward);
 	void sendObjective(double x, double y, double theta);
     void sendAvoidingSensorsValues(const QList<quint8> &sharps);
-    void sendOtherSensorsValues(const QList<quint8>& sharps);
-    void sendContactorsValues(quint8 contactors);
-    void sendColorSensorsvalues(const QList<QColor>& colors);
     void go(bool mirrored);
 	void sendNoticeOfReceipt(quint8 instruction, bool result);
     void sendArrived();
     void sendBlocked();
+	void sendEvent(Comm::RobotEvent event);
+	void sendSensorEvent(Comm::SensorType type, int sensorId, int value);
     void restart();
 	void sendLog(const QByteArray& log);
 	void sendParameters(const QList<float>& values, const QList<QByteArray> &names);

@@ -45,8 +45,7 @@ SOURCES += TrajectoryFinder.cpp \
     GameState.cpp \
     AbstractAICommand.cpp \
     AIEngine.cpp \
-    Sensor.cpp \
-    ColorSensor.cpp
+    Sensor.cpp
 
 HEADERS += TrajectoryFinder.h \
     Sharp.h \
@@ -72,8 +71,7 @@ HEADERS += TrajectoryFinder.h \
     GameState.h \
     AbstractAICommand.h \
     AIEngine.h \
-    Sensor.h \
-    ColorSensor.h
+    Sensor.h
 
 FORMS += StrategyDialog.ui
 

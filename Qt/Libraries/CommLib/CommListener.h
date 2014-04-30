@@ -4,6 +4,7 @@
 #include <QtGlobal>
 #include <QList>
 #include <QStringList>
+#include "Instructions.h"
 
 namespace Comm
 {
@@ -22,8 +23,8 @@ namespace Comm
 		virtual void opponentPosition(qint16 x, qint16 y) {Q_UNUSED(x); Q_UNUSED(y);}
 		virtual bool restart() {return false;}
 		virtual void quit() {}
-		virtual void event(RobotEvent event);
-		virtual void sensorEvent(SensorType type, int sensorId, int value);
+		virtual void robotEvent(RobotEvent event) {Q_UNUSED(event);}
+		virtual void sensorEvent(SensorType type, int sensorId, int value) {Q_UNUSED(type); Q_UNUSED(sensorId); Q_UNUSED(value);}
 		virtual void log(const QByteArray& text) {Q_UNUSED(text);}
 		virtual void parameters(const QList<float>& values) {Q_UNUSED(values);}
 		virtual void parameterNames(const QStringList& names) {Q_UNUSED(names);}

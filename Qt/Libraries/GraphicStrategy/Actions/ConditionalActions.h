@@ -2,6 +2,8 @@
 #define CONDITIONALACTIONS_H
 
 #include "AbstractAction.h"
+#include "Instructions.h"
+
 #include <QRectF>
 
 class Sensor;
@@ -85,7 +87,7 @@ private:
 class SensorSwitchCaseAction : public SingleValueSwitchCaseAction
 {
 public:
-	SensorSwitchCaseAction(int sensorId, SensorType type, StrategyManager* manager, QObject* parent = 0);
+	SensorSwitchCaseAction(int sensorId, Comm::SensorType type, StrategyManager* manager, QObject* parent = 0);
 	~SensorSwitchCaseAction();
 
 	QString getActionName() const;
@@ -95,7 +97,7 @@ protected:
 
 private:
 	int _sensorId;
-	SensorType _type;
+	Comm::SensorType _type;
 	StrategyManager* _manager;
 };
 

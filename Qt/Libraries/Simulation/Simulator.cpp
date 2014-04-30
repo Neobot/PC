@@ -149,7 +149,7 @@ void Simulator::simulationTimerEvent()
 		quint8 v = (quint8)(static_cast<SharpObject*>(*object))->getValue();
 		otherSharpsValues.append(v);
 	}
-	_simRobot->sendOtherSensorsValues(otherSharpsValues);
+	//_simRobot->sendOtherSensorsValues(otherSharpsValues);
 
 	_clawsSharp = (_map->getSharpInClaw()->getDistance() < 30);
 
@@ -163,7 +163,7 @@ void Simulator::simulationTimerEvent()
 		n *= 2;
 	}
 
-	_simRobot->sendContactorsValues(contactorsValues);
+	//_simRobot->sendContactorsValues(contactorsValues);
 
     //Color sensors
     QList<QColor> colorSensorValues;
@@ -173,7 +173,7 @@ void Simulator::simulationTimerEvent()
         QColor c = static_cast<ColorSensorObject*>(*object)->getColor();
         colorSensorValues.append(c);
     }
-    _simRobot->sendColorSensorsvalues(colorSensorValues);
+	//_simRobot->sendColorSensorsvalues(colorSensorValues);
 
 
 	if (!_opponentMovements.empty())

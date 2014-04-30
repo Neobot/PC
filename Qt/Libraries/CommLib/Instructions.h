@@ -39,7 +39,6 @@ namespace Comm
 	const quint8 LOG = 124;
 	const quint8 PARAMETERS = 125;
 	const quint8 PARAMETER_NAMES = 126;
-	
 	const quint8 EVENT = 130;
 	const quint8 SENSOR_EVENT = 131;
 
@@ -56,7 +55,7 @@ namespace Comm
 
 	enum RobotEvent
 	{
-		NO_EVENT = -1
+		NO_EVENT = -1,
 		EVENT_IS_ARRIVED = 1,
 		EVENT_IS_BLOCKED = 2
 	};

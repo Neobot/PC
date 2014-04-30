@@ -75,10 +75,8 @@ public:
 
     virtual void obstacleDetected() {}
     virtual void blockingDeteced() {}
-	virtual void microswitchChanged(const QList<int>& raisingEdge, const QList<int>& faillingEdge) {Q_UNUSED(raisingEdge);Q_UNUSED(faillingEdge);}
 
     virtual void avoidingSharps(QMap<int, Sharp*>& sharpList) const {Q_UNUSED(sharpList);}
-    virtual void detectionSharps(QMap<int, Sharp*>& sharpList) const {Q_UNUSED(sharpList);}
 
     virtual void defaultObstaclePositions(QList<Tools::DataObject*>& objects) const {Q_UNUSED(objects);}
 

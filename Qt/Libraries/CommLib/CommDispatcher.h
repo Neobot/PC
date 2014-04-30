@@ -29,7 +29,7 @@ namespace Comm
 		virtual void log(const QByteArray& text);
 		virtual void parameters(const QList<float> &values);
 		virtual void parameterNames(const QStringList& names);
-		virtual void event(RobotEvent event);
+		virtual void robotEvent(RobotEvent event);
 		virtual void sensorEvent(SensorType type, int sensorId, int value);
 
 	private:

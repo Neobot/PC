@@ -13,7 +13,7 @@ NeobotMainOptions::NeobotMainOptions()
     ax12Portname = "/dev/ttyUSB1";
 
     simulation = false;
-    dstar = false;
+	dstar = false;
 
     logFile = false;
     debugLevel = 17;

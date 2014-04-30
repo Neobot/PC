@@ -7,11 +7,6 @@
 #include <QtDebug>
 #include "ToolsLib.h"
 
-const int BOTTOM_LEFT_SHARP_INDEX = 9;
-const int TOP_LEFT_SHARP_INDEX = 8;
-const int BOTTOM_RIGHT_SHARP_INDEX = 7;
-const int TOP_RIGHT_SHARP_INDEX = 6;
-
 DefaultStrategy::DefaultStrategy(const QDir& strategyDirectory, Tools::AbstractLogger *logger)
 	: StrategyInterface(strategyDirectory, logger)
 {
@@ -80,16 +75,3 @@ void DefaultStrategy::avoidingSharps(QMap<int, Sharp *> &sharpList) const
 	sharpList.insert( REAR_LEFT_SONAR, SharpFactory::MaxSonar_MB1240(40, QVector2D(-40, 40), QVector2D(-1, sin(Tools::degreeToRadian(170))), 0.0) );
 	sharpList.insert( REAR_RIGHT_SONAR, SharpFactory::MaxSonar_MB1240(40, QVector2D(-40, -40), QVector2D(-1, sin(Tools::degreeToRadian(190))), 0.0) );
 }
-
-void DefaultStrategy::detectionSharps(QMap<int, Sharp*> &sharpList) const
-{
-    //left
-    sharpList.insert( BOTTOM_LEFT_SHARP_INDEX, SharpFactory::Sharp20_150(90, QVector2D(15, 170), QVector2D(0, 1), 0.0) );
-    sharpList.insert( TOP_LEFT_SHARP_INDEX, SharpFactory::Sharp20_150(90, QVector2D(63, 170), QVector2D(0, 1), 0.0) );
-
-    //right
-    sharpList.insert( BOTTOM_RIGHT_SHARP_INDEX, SharpFactory::Sharp20_150(90, QVector2D(15, -170), QVector2D(0, -1), 0.0) );
-	sharpList.insert( TOP_RIGHT_SHARP_INDEX, SharpFactory::Sharp20_150(90, QVector2D(63, -170), QVector2D(0, -1), 0.0) );
-}
-
-

@@ -33,7 +33,7 @@ public:
 	 * \p destination can be null, in that case, the robot won't move.
 	 * \p timeout can be <= 0, on that case no timeout is applied.
 	 */
-	ColorScanAction(Tools::NGridNode* destination, int speed, int timeoutMs, int ourColor, int opponentColor, const ColorSensor* leftSensor, const ColorSensor* rightSensor,
+	ColorScanAction(Tools::NGridNode* destination, int speed, int timeoutMs, int ourColor, int opponentColor, int leftColorSensorId, int rightColorSensorId,
 										  AbstractAction* startAction,
 										  AbstractAction* leftOpponentColorAction, AbstractAction* rightOpponentColorAction,
 										  AbstractAction* leftOurColorAction, AbstractAction* rightOurColorAction,
@@ -60,8 +60,8 @@ private:
 	int _ourColor;
 	int _opponentColor;
 
-	const ColorSensor* _leftSensor;
-	const ColorSensor* _rightSensor;
+	int _leftSensorId;
+	int _rightSensorId;
 
 	AbstractAction* _startAction;
 
@@ -96,7 +96,7 @@ private:
 	void checkEnding();
 
 private slots:
-	void testColor(Sensor::SensorFamily family);
+	void testColor(Comm::SensorType type, int sensorId, int state);
 
 	void startActionFinished(bool result);
 	void leftArmActionFinished(bool result);

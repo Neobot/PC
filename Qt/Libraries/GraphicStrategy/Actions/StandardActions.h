@@ -160,7 +160,7 @@ class WaitUntilSensorAction : public AbstractAction
 {
     Q_OBJECT
 public:
-    WaitUntilSensorAction(int sensorId, SensorType type, int timeoutMs, const QList<int>& states, StrategyManager* manager, QObject* parent = 0);
+	WaitUntilSensorAction(int sensorId, Comm::SensorType type, int timeoutMs, const QList<int>& states, StrategyManager* manager, QObject* parent = 0);
 
     void execute();
     void end();
@@ -169,7 +169,7 @@ public:
 
 private:
    int _sensorId;
-   SensorType _sensorType;
+   Comm::SensorType _sensorType;
 
    QList<int> _states;
 
@@ -177,7 +177,7 @@ private:
    QTimer* _timeout;
 
 private slots:
-    void testSensor(const Sensor* sensor);
+	void testSensor(Comm::SensorType type, int sensorId, int state);
 };
 
 class SetParameterAction : public AbstractAction
@@ -195,5 +195,22 @@ private:
 
 	StrategyManager* _manager;
 };
+
+class SetSensorEnabledAction : public AbstractAction
+{
+public:
+	SetSensorEnabledAction(Comm::SensorType type, int sensorId, bool enabled, Comm::RobotCommInterface* robot, QObject* parent = 0);
+
+	void execute();
+	QString getActionName() const;
+
+private:
+	Comm::SensorType _type;
+	int _id;
+	bool _enabled;
+	Comm::RobotCommInterface*	_robot;
+};
+
+
 
 #endif // STANDARDACTIONS_H
