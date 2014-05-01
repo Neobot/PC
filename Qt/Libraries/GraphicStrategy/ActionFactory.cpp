@@ -170,12 +170,12 @@ AbstractAction* ActionFactory::ax12Movement(const QString& group, const QString&
 
 AbstractAction *ActionFactory::waitForSharpToActivate(int otherSharpId, int timeoutInMs) const
 {
-	return new WaitUntilSensorAction(otherSharpId, Comm::SharpSensor, timeoutInMs, {Sensor::SharpObjectDetected}, _manager);
+	return new WaitUntilSensorAction(otherSharpId, Comm::SharpSensor, timeoutInMs, {Comm::SharpObjectDetected}, _manager);
 }
 
 AbstractAction *ActionFactory::waitForSharpToDesactivate(int otherSharpId, int timeoutInMs) const
 {
-	return new WaitUntilSensorAction(otherSharpId, Comm::SharpSensor, timeoutInMs, {Sensor::SharpNothingDetected}, _manager);
+	return new WaitUntilSensorAction(otherSharpId, Comm::SharpSensor, timeoutInMs, {Comm::SharpNothingDetected}, _manager);
 }
 
 AbstractAction* ActionFactory::waitForColor(int colorSensorId, int color, int timeoutInMs) const
@@ -185,12 +185,12 @@ AbstractAction* ActionFactory::waitForColor(int colorSensorId, int color, int ti
 	
 AbstractAction* ActionFactory::waitForMicroswitchToActivate(int microswitchId, int timeoutInMs) const
 {
-	return new WaitUntilSensorAction(microswitchId, Comm::MicroswitchSensor, timeoutInMs, {Sensor::MicroswicthOn}, _manager);
+	return new WaitUntilSensorAction(microswitchId, Comm::MicroswitchSensor, timeoutInMs, {Comm::MicroswicthOn}, _manager);
 }
 
 AbstractAction* ActionFactory::waitForMicroswitchToDesactivate(int microswitchId, int timeoutInMs) const
 {
-	return new WaitUntilSensorAction(microswitchId, Comm::MicroswitchSensor, timeoutInMs, {Sensor::MicroswicthOff}, _manager);
+	return new WaitUntilSensorAction(microswitchId, Comm::MicroswitchSensor, timeoutInMs, {Comm::MicroswicthOff}, _manager);
 }
 
 ColorScanAction *ActionFactory::colorScanAction(Tools::NGridNode *destination, int speed, int timeoutMs, int ourColor, int opponentColor, int leftColorSensorId, int rightColorSensorId,

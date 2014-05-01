@@ -14,6 +14,7 @@ namespace Tools
 
         void clear();
         void setColors(const QList<QColor>& colors);
+		void setColor(int index, const QColor& color);
 
     private:
         QHBoxLayout* _layout;

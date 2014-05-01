@@ -67,6 +67,29 @@ namespace Comm
 		ColorSensor = 2
 	};
 
+	enum SharpState
+	{
+		SharpNothingDetected,
+		SharpObjectDetected,
+		SharpObjectVeryClose,
+	};
+
+	enum MicroswicthState
+	{
+		MicroswicthOn,
+		MicroswicthOff
+	};
+
+	enum ColorState
+	{
+		ColorUnknown,
+		ColorRed,
+		ColorGreen,
+		ColorBlue,
+		ColorYellow,
+		ColorWhite,
+		ColorBlack
+	};
 
 	//Network commands
 	//Server -> Client

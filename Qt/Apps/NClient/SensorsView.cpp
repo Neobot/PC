@@ -6,7 +6,7 @@ const int PLOT_MAX_NB_VALUES = 1000;
 SensorsView::SensorsView(NetworkConnection *connection, QWidget *parent) :
 	AbstractView(connection, QImage(), parent),
 	ui(new Ui::SensorsView), _nbAvoidingCurvesInitialized(0), _timeAvoiding(PLOT_MAX_NB_VALUES - 1),
-	_nbOtherCurvesInitialized(0), _timeOther(PLOT_MAX_NB_VALUES - 1), _defaultTimeValues(PLOT_MAX_NB_VALUES), _isPaused(false)
+	_defaultTimeValues(PLOT_MAX_NB_VALUES), _isPaused(false)
 {
 	ui->setupUi(this);
 
@@ -21,19 +21,6 @@ SensorsView::SensorsView(NetworkConnection *connection, QWidget *parent) :
 	ui->avoidingSensorsBars->setAxisScale(0, 6, 0, 255);
 	ui->avoidingSensorsBars->setAxisValuesVisible(false, true);
 	ui->avoidingSensorsBars->setDefaultInteractionEnabled(false);
-
-
-	ui->otherSensorsPlot->setDataNumberLimit(PLOT_MAX_NB_VALUES);
-	ui->otherSensorsPlot->setAutoResize(false);
-	ui->otherSensorsPlot->setAxisScale(0, 1000, 0, 255);
-    //ui->otherSensorsPlot->legend->setPositionStyle(QCPLegend::psTopLeft);
-	ui->otherSensorsPlot->setAxisValuesVisible(false, true);
-	ui->otherSensorsPlot->setDefaultInteractionEnabled(false);
-
-	ui->otherSensorBars->setAutoResize(false);
-	ui->otherSensorBars->setAxisScale(0, 6, 0, 255);
-	ui->otherSensorBars->setAxisValuesVisible(false, true);
-	ui->otherSensorBars->setDefaultInteractionEnabled(false);
 
 
 	for(int i = 0; i < PLOT_MAX_NB_VALUES; ++i)
@@ -83,48 +70,23 @@ void SensorsView::avoidingSensors(const QList<quint8> &values)
 	_timeAvoiding++;
 }
 
-void SensorsView::otherSensors(const QList<quint8> &values)
+void SensorsView::sensorEvent(Comm::SensorType type, int sensorId, int value)
 {
-	if (_nbOtherCurvesInitialized < values.count())
+	switch(type)
 	{
-		int nbExistingSensors = _nbOtherCurvesInitialized;
-		_nbOtherCurvesInitialized = values.count();
-		for(int i = nbExistingSensors; i < _nbOtherCurvesInitialized; ++i)
-		{
-			QColor c = _colors.value(i);
-			QCPCurve* curve = ui->otherSensorsPlot->addCurve(QString("Sensor").append(QString::number(i)), QPen(c));
-			curve->setData(_defaultTimeValues, QVector<double>(PLOT_MAX_NB_VALUES, 0.0));
-			ui->otherSensorBars->addBar(QString("Sensor").append(QString::number(i)), QPen(Qt::black), QBrush(c));
-		}
+		case Comm::ColorSensor:
+			ui->colorWidget->setColor(sensorId, getCommColor((Comm::ColorState)value));
+			break;
+		case Comm::SharpSensor: //TODO
+		case Comm::MicroswitchSensor: //TODO
+			break;
 	}
-
-	if (_isPaused)
-		return;
-
-	QList<double> doubleValues;
-	foreach(quint8 value, values)
-	{
-		doubleValues << value;
-	}
-
-	ui->otherSensorsPlot->addValues(_timeOther, doubleValues);
-	if (isViewActive())
-		ui->otherSensorBars->setValues(doubleValues);
-
-    _timeOther++;
-}
-
-void SensorsView::colorSensors(const QList<QColor> &values)
-{
-    ui->colorWidget->setColors(values);
 }
 
 void SensorsView::clear()
 {
 	ui->avoidingSensorsBars->clear();
 	ui->avoidingSensorsPlot->clear();
-	ui->otherSensorBars->clear();
-	ui->otherSensorsPlot->clear();
 }
 
 void SensorsView::pauseButtonClicked()
@@ -133,6 +95,20 @@ void SensorsView::pauseButtonClicked()
 	ui->btnPause->setText(_isPaused ? "Resume" : "Pause");
 }
 
+QColor SensorsView::getCommColor(Comm::ColorState colorState) const
+{
+	switch(colorState)
+	{
+		case Comm::ColorGreen: return Qt::green;
+		case Comm::ColorRed: return Qt::red;
+		case Comm::ColorBlue: return Qt::blue;
+		case Comm::ColorYellow: return Qt::yellow;
+		case Comm::ColorWhite: return Qt::white;
+		case Comm::ColorBlack:
+		default:
+			return Qt::black;
+	}
+}
 
 void SensorsView::saveSettings(QSettings *settings)
 {

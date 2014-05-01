@@ -19,8 +19,6 @@ private:
 	Ui::SensorsView *ui;
 	int _nbAvoidingCurvesInitialized;
 	unsigned int _timeAvoiding;
-	int _nbOtherCurvesInitialized;
-	unsigned int _timeOther;
 
 	QVector<double> _defaultTimeValues;
 
@@ -33,12 +31,13 @@ private:
 	void loadSettings(QSettings *settings);
 
 	void avoidingSensors(const QList<quint8>& values);
-	void otherSensors(const QList<quint8> &values);
-    void colorSensors(const QList<QColor> &values);
+	void sensorEvent(Comm::SensorType type, int sensorId, int value);
 
 private slots:
 	void clear();
 	void pauseButtonClicked();
+
+	QColor getCommColor(Comm::ColorState colorState) const;
 };
 
 #endif // SENSORSVIEW_H

@@ -57,7 +57,20 @@ void ColorDisplayWidget::setColors(const QList<QColor> &colors)
         {
             removeLastColor();
         }
-    }
+	}
+}
+
+void ColorDisplayWidget::setColor(int index, const QColor &color)
+{
+	if (index >= _colorWidgets.count())
+	{
+		for(int i = _colorWidgets.count(); i <= index; ++i)
+		{
+			addColor(Qt::black);
+		}
+	}
+
+	setWidgetColor(_colorWidgets[index], color);
 }
 
 void ColorDisplayWidget::addColor(const QColor &color)

@@ -12,30 +12,6 @@ public:
     int getState() const;
 	void setState(int state);
 	
-	enum SharpState
-	{
-		SharpNothingDetected,
-		SharpObjectDetected,
-		SharpObjectVeryClose,
-	};
-	
-	enum MicroswicthState
-	{
-		MicroswicthOn,
-		MicroswicthOff
-	};
-	
-	enum ColorState
-	{
-		ColorUnknown,
-		ColorRed,
-		ColorGreen,
-		ColorBlue,
-		ColorYellow,
-		ColorWhite,
-		ColorBlack
-	};
-	
 	private:
 		int _state = 0;
 };
