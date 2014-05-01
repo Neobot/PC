@@ -62,6 +62,9 @@ void ColorDisplayWidget::setColors(const QList<QColor> &colors)
 
 void ColorDisplayWidget::setColor(int index, const QColor &color)
 {
+	if (index < 0)
+		return;
+
 	if (index >= _colorWidgets.count())
 	{
 		for(int i = _colorWidgets.count(); i <= index; ++i)

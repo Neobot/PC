@@ -93,6 +93,7 @@ private:
 	void coordinates(qint16 x, qint16 y, double theta, quint8 forward);
 	void objective(qint16 x, qint16 y, double theta);
 	void opponentPosition(qint16 x, qint16 y);
+	void robotEvent(Comm::RobotEvent event);
 	void isArrived();
 
 	void setStrategies(const QStringList &strategies);

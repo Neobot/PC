@@ -75,7 +75,7 @@ void SensorsView::sensorEvent(Comm::SensorType type, int sensorId, int value)
 	switch(type)
 	{
 		case Comm::ColorSensor:
-			ui->colorWidget->setColor(sensorId, getCommColor((Comm::ColorState)value));
+			ui->colorWidget->setColor(sensorId-1, getCommColor((Comm::ColorState)value));
 			break;
 		case Comm::SharpSensor: //TODO
 		case Comm::MicroswitchSensor: //TODO

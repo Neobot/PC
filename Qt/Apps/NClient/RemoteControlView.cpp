@@ -235,6 +235,12 @@ void RemoteControlView::opponentPosition(qint16 x, qint16 y)
 	}
 }
 
+void RemoteControlView::robotEvent(Comm::RobotEvent event)
+{
+	if (event == Comm::EVENT_IS_ARRIVED)
+		isArrived();
+}
+
 void RemoteControlView::isArrived()
 {
 	TrajectoryPointWidget* tr = _trajectoryEditors.value(_currentObjectiveIndex);
