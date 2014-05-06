@@ -152,7 +152,7 @@ void SimRobot::sendSensorEvent(Comm::SensorType type, int sensorId, int value)
 
 void SimRobot::restart()
 {
-	_protocol->sendMessage2(Comm::RESTART, Comm::Data());
+	sendEvent(Comm::EVENT_RESTART);
 }
 
 void SimRobot::sendLog(const QByteArray &log)

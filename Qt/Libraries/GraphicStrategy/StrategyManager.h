@@ -155,8 +155,6 @@ private:
     bool go(bool mirrored);
     bool pingReceived();
     void noticeOfReceipt(quint8 instruction, bool result);
-    bool restart();
-    void quit();
 	void log(const QByteArray& text);
 	void parameters(const QList<float>& values);
 	void parameterNames(const QStringList& names);
@@ -164,6 +162,8 @@ private:
 	void sensorEvent(Comm::SensorType type, int sensorId, int value);
 	
 	//Others
+	bool restart();
+	void quit();
 	void isArrived();
     void isBlocked();
 

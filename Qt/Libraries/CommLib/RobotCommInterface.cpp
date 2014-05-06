@@ -187,9 +187,6 @@ void RobotCommInterface::read(quint8 instruction, const Data& data)
 				_listener->robotEvent((RobotEvent)type);
 				break;
 			}
-			case INIT_DONE:
-				sendNoticeOfReceipt(INIT_DONE, _listener->initDone());
-				break;
 			case GO:
 				bool mirrored;
 				d.take(mirrored);
@@ -204,12 +201,6 @@ void RobotCommInterface::read(quint8 instruction, const Data& data)
 				d.take(inst).take(result);
 				noticeOfReceiptReceived(inst);
 				_listener->noticeOfReceipt(inst, result);
-				break;
-			case RESTART:
-				sendNoticeOfReceipt(RESTART, _listener->restart());
-				break;
-			case QUIT:
-				_listener->quit();
 				break;
 			case OBJECTIVE:
 			{

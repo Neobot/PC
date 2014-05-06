@@ -19,13 +19,10 @@ namespace Comm
 		virtual void coordinates(qint16 x, qint16 y, double theta, quint8 forward);
 		virtual void objective(qint16 x, qint16 y, double theta);
 		virtual void avoidingSensors(const QList<quint8>& values);
-		virtual bool initDone();
 		virtual bool go(bool mirrored);
 		virtual bool pingReceived();
 		virtual void noticeOfReceipt(quint8 instruction, bool result);
 		virtual void opponentPosition(qint16 x, qint16 y);
-		virtual bool restart();
-		virtual void quit();
 		virtual void log(const QByteArray& text);
 		virtual void parameters(const QList<float> &values);
 		virtual void parameterNames(const QStringList& names);

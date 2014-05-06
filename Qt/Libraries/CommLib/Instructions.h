@@ -32,10 +32,7 @@ namespace Comm
     const quint8 OPPONENT = 101;
 	const quint8 OBJECTIVE = 104;
     const quint8 AVOIDING_SENSORS = 110;
-    const quint8 INIT_DONE = 120;
     const quint8 GO = 121;
-    const quint8 RESTART = 122;
-    const quint8 QUIT = 123;
 	const quint8 LOG = 124;
 	const quint8 PARAMETERS = 125;
 	const quint8 PARAMETER_NAMES = 126;
@@ -57,7 +54,9 @@ namespace Comm
 	{
 		NO_EVENT = -1,
 		EVENT_IS_ARRIVED = 1,
-		EVENT_IS_BLOCKED = 2
+		EVENT_IS_BLOCKED = 2,
+		EVENT_QUIT = 3,
+		EVENT_RESTART = 4
 	};
 	
 	enum SensorType
@@ -76,8 +75,8 @@ namespace Comm
 
 	enum MicroswicthState
 	{
-		MicroswicthOn,
-		MicroswicthOff
+		MicroswicthOff,
+		MicroswicthOn
 	};
 
 	enum ColorState

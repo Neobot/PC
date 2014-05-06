@@ -247,6 +247,8 @@ void StrategyManager::robotEvent(Comm::RobotEvent event)
 	{
 		case Comm::EVENT_IS_ARRIVED: isArrived(); break;
 		case Comm::EVENT_IS_BLOCKED: isBlocked(); break;
+		case Comm::EVENT_RESTART:	 restart(); break;
+		case Comm::EVENT_QUIT:		 quit(); break;
 		case Comm::NO_EVENT: break;
 	}
 }

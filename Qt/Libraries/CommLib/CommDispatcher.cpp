@@ -49,17 +49,6 @@ void Comm::CommDispatcher::avoidingSensors(const QList<quint8> &values)
 		_main->avoidingSensors(values);
 }
 
-bool Comm::CommDispatcher::initDone()
-{
-	foreach(CommListener* responder, _responders)
-		responder->initDone();
-
-	if (_main)
-		return _main->initDone();
-
-	return true;
-}
-
 bool Comm::CommDispatcher::go(bool mirrored)
 {
 	foreach(CommListener* responder, _responders)
@@ -98,26 +87,6 @@ void Comm::CommDispatcher::opponentPosition(qint16 x, qint16 y)
 
 	if (_main)
 		_main->opponentPosition(x, y);
-}
-
-bool Comm::CommDispatcher::restart()
-{
-	foreach(CommListener* responder, _responders)
-		responder->restart();
-
-	if (_main)
-		return _main->restart();
-
-	return true;
-}
-
-void Comm::CommDispatcher::quit()
-{
-	foreach(CommListener* responder, _responders)
-		responder->quit();
-
-	if (_main)
-		_main->quit();
 }
 
 void Comm::CommDispatcher::log(const QByteArray &text)
