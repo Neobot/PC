@@ -41,33 +41,16 @@ void Ax12TestStrategy::actionDone(const AbstractAction *action, bool result, boo
 	LoggerInterface::logger() << "ACTION \"" << action->getActionName() << (result ? "\" SUCCEDED" : "\" FAILED") << Tools::endl;
 }
 
-void Ax12TestStrategy::readParametersFromFile(NSettings &settings)
+void Ax12TestStrategy::readAndDefineParameters(NSettings &settings)
 {
-	DefaultStrategy::readParametersFromFile(settings);
+	DefaultStrategy::readAndDefineParameters(settings);
 
 	settings.beginGroup("AX-12 test strategy");
 
-	double fileVersion = manageParameterVersion(settings, "ax12_test_parameters");
-	Q_UNUSED(fileVersion); //unused for now
+	_waitTimeBetweenPoints = defineSettingValue(settings, "wait_time_between_points", _waitTimeBetweenPoints, "Time in ms to wait beetween the movements.").toInt();
+	_speedLimit = defineSettingValue(settings, "speed_limit", _speedLimit, "Speed limit of the movements.").toDouble();
 
-	_waitTimeBetweenPoints = settings.value("wait_time_between_points").toInt();
-	_speedLimit = settings.value("speed_limit").toDouble();
-
-	_movements = convertVariantListToList<QString>(settings.value("movement_list").toList());
+	_movements = convertVariantListToList<QString>(defineSettingValueList(settings, "movement_list", convertListToVariantList<QString>(_movements), QVariant::String, "The list of movements: group/movement").toList());
 
 	settings.endGroup();
 }
-
-void Ax12TestStrategy::writeDefaultParametersToFile(NSettings &settings)
-{
-	DefaultStrategy::writeDefaultParametersToFile(settings);
-
-	settings.beginGroup("AX-12 test strategy");
-
-	settings.setValue("wait_time_between_points", _waitTimeBetweenPoints, "Time in ms to wait beetween the movements.");
-	settings.setValue("speed_limit", _speedLimit, "Speed limit of the movements.");
-	settings.setValueList("movement_list", convertListToVariantList<QString>(_movements), QVariant::String, "The list of movements: group/movement");
-
-	settings.endGroup();
-}
-

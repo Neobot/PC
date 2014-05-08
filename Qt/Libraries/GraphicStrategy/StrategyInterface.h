@@ -94,10 +94,10 @@ protected:
 	bool _mirrored;
 
 	virtual bool checkGrid(const Tools::NGrid* grid) const {Q_UNUSED(grid); return true;}
-	virtual void readParametersFromFile(Tools::NSettings& settings);
-	virtual void writeDefaultParametersToFile(Tools::NSettings& settings);
+	virtual void readAndDefineParameters(Tools::NSettings& settings);
 
-	double manageParameterVersion(Tools::NSettings& settings, const QString& prefix, double actualVersion = 1.0) const;
+	QVariant defineSettingValue(Tools::NSettings& settings, const QString& name, const QVariant& defaultValue, const QString& description = QString());
+	QVariant defineSettingValueList(Tools::NSettings& settings, const QString& name, const QVariantList& defaultValue, QVariant::Type contentType, const QString& description = QString());
 
 private:
 	QPointF _tmpStartPos;

@@ -26,28 +26,28 @@ void PrehistobotStrategy::defaultStrategyParameters(StrategyInterface::StrategyP
 	parameters. startRotation = Tools::pi/2;
 }
 
-void PrehistobotStrategy::readParametersFromFile(NSettings &settings)
+void PrehistobotStrategy::readAndDefineParameters(NSettings &settings)
 {
-	DefaultStrategy::readParametersFromFile(settings);
+	DefaultStrategy::readAndDefineParameters(settings);
 
 	settings.beginGroup("Prehistobot Strategy");
-	double fileVersion = manageParameterVersion(settings, "PB_strategy");
-	Q_UNUSED(fileVersion); //unused for now
-
-	_leftArmAX12Group = settings.value("left_arm_group").toString();
-	_rightArmAX12Group = settings.value("right_arm_group").toString();
-
 	settings.endGroup();
-}
 
-void PrehistobotStrategy::writeDefaultParametersToFile(NSettings &settings)
-{
-	DefaultAIStrategy::writeDefaultParametersToFile(settings);
+	settings.beginGroup("Prehistobot AX-12 Movements");
 
-	settings.beginGroup("Prehistobot Strategy");
+	_ax12MvtNames.leftArmGroup = defineSettingValue(settings, "left_arm_group", _ax12MvtNames.leftArmGroup, "Left arm AX-12 group.").toString();
+	_ax12MvtNames.rightArmGroup = defineSettingValue(settings, "right_arm_group", _ax12MvtNames.rightArmGroup, "Left arm AX-12 group.").toString();
 
-	settings.setValue("left_arm_group", _leftArmAX12Group, "Left arm AX-12 group.");
-	settings.setValue("right_arm_group", _rightArmAX12Group, "Left arm AX-12 group.");
+	_ax12MvtNames.goToRest = defineSettingValue(settings, "go_to_rest", _ax12MvtNames.goToRest, "Move the arm to the default position.").toString();
+	_ax12MvtNames.goToScan = defineSettingValue(settings, "go_to_scan", _ax12MvtNames.goToScan, "Move the arm to the scan position.").toString();
+	_ax12MvtNames.pump = defineSettingValue(settings, "pump", _ax12MvtNames.pump, "Moves a bit the arm after a scan to catch a fire.").toString();
+	_ax12MvtNames.moveFire = defineSettingValue(settings, "move_fire", _ax12MvtNames.moveFire, "Move the fire without turning it.").toString();
+	_ax12MvtNames.turnFire = defineSettingValue(settings, "turn_fire", _ax12MvtNames.turnFire, "Turn the fire.").toString();
+	_ax12MvtNames.holdFire = defineSettingValue(settings, "hold_fire", _ax12MvtNames.holdFire, "Hold the fire.").toString();
+	_ax12MvtNames.goToScanInTorche = defineSettingValue(settings, "go_to_scan_in_torche", _ax12MvtNames.goToScanInTorche, "Go to the scan position in a mobile torche.").toString();
+	_ax12MvtNames.moveOutOfTorche = defineSettingValue(settings, "move_out_of_torche", _ax12MvtNames.moveOutOfTorche, "Move the arm out of the mobile torche.").toString();
+	_ax12MvtNames.dropFire = defineSettingValue(settings, "drop_fire", _ax12MvtNames.dropFire, "Turn the fire without turning it.").toString();
+	_ax12MvtNames.dropAndTurnFire = defineSettingValue(settings, "drop_and_turn_fire", _ax12MvtNames.dropAndTurnFire, "Drop the fire while turning it.").toString();
 
 	settings.endGroup();
 }
@@ -69,8 +69,11 @@ void PrehistobotStrategy::initGameState(GameState &state) const
 
 void PrehistobotStrategy::createActions()
 {
-	//_manager->addAtion(_manager->getActionFactory()->ax12Movement(LEFT_ARM_GROUP, INIT_MOVEMENT));
-	//_manager->addAtion(_manager->getActionFactory()->ax12Movement(RIGHT_ARM_GROUP, INIT_MOVEMENT));
+	_manager->getActionFactory()->asynchroneActionList(
+		{
+			_manager->getActionFactory()->ax12Movement(_ax12MvtNames.leftArmGroup, _ax12MvtNames.goToRest),
+			_manager->getActionFactory()->ax12Movement(_ax12MvtNames.rightArmGroup, _ax12MvtNames.goToRest)
+		}, AsynchroneActionGroup::AllActionFinished);
 
 	addCommand(new WaitCommand(1, _manager));
 

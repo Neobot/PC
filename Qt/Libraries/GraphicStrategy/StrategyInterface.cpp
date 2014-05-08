@@ -52,14 +52,10 @@ void StrategyInterface::init()
 {
 	Tools::NSettings parametersSettings;
 
-	if (!_strategyDirectory.exists(PARAMETERS_FILE))
-	{
-		writeDefaultParametersToFile(parametersSettings);
-		parametersSettings.writeTo(_strategyDirectory.absoluteFilePath(PARAMETERS_FILE));
-	}
+	if (_strategyDirectory.exists(PARAMETERS_FILE))
+		parametersSettings.loadFrom(_strategyDirectory.absoluteFilePath(PARAMETERS_FILE));
 
-	parametersSettings.loadFrom(_strategyDirectory.absoluteFilePath(PARAMETERS_FILE));
-	readParametersFromFile(parametersSettings);
+	readAndDefineParameters(parametersSettings);
 
 	if (parametersSettings.hasChanges())
 		parametersSettings.writeTo(_strategyDirectory.absoluteFilePath(PARAMETERS_FILE));
@@ -92,92 +88,35 @@ double StrategyInterface::autoMirror(double angle) const
 	return _mirrored ? -angle : angle;
 }
 
-void StrategyInterface::readParametersFromFile(Tools::NSettings &settings)
+void StrategyInterface::readAndDefineParameters(Tools::NSettings &settings)
 {
 	settings.beginGroup("Strategy");
 
-	double fileVersion = manageParameterVersion(settings, "basic_parameters", 1.2);
-	Q_UNUSED(fileVersion); //unused for now
-
-	_standardParameters.loop = settings.value("loop").toBool();
-	_standardParameters.replanInterval = settings.value("replanInterval").toInt();
-	_standardParameters.stopCircleRadius = settings.value("stopCircleRadius").toDouble();
-	_standardParameters.tableSize = settings.value("tableSize").toSizeF();
-	_standardParameters.robotRadius = settings.value("robotRadius").toDouble();
-	_standardParameters.opponentRadius = settings.value("opponentRadius").toDouble();
-	_standardParameters.noticeOfReceiptTimeOut = settings.value("noticeOfReceiptTimeOut").toInt();
+	_standardParameters.loop = defineSettingValue(settings, "loop", _standardParameters.loop, "If true, the strategy will be restarted once finished.").toBool();
+	_standardParameters.replanInterval = defineSettingValue(settings, "replanInterval", _standardParameters.replanInterval, "Interval in ms before a replan if the previous one was not possible.").toInt();
+	_standardParameters.stopCircleRadius = defineSettingValue(settings, "stopCircleRadius", _standardParameters.stopCircleRadius, "Radius in mm of the circle where the robot is considered arrived at its point.").toDouble();
+	_standardParameters.tableSize = defineSettingValue(settings, "tableSize", _standardParameters.tableSize, "Size of the table in mm.").toSizeF();
+	_standardParameters.robotRadius = defineSettingValue(settings, "robotRadius", _standardParameters.robotRadius, "Maximum radius of the robot in mm.").toDouble();
+	_standardParameters.opponentRadius = defineSettingValue(settings, "opponentRadius", _standardParameters.opponentRadius, "Maximum radius of the opponent in mm.").toDouble();
+	_standardParameters.noticeOfReceiptTimeOut = defineSettingValue(settings, "noticeOfReceiptTimeOut", _standardParameters.noticeOfReceiptTimeOut, "Timeout in ms for notice of receipt in comm messages.").toInt();
 	settings.endGroup();
 
 	settings.beginGroup("Avoiding");
-	_standardParameters.enableAutoAvoiding = settings.value("enableAutoAvoiding").toBool();
-	_standardParameters.sharpObjectRadius = settings.value("sharpObjectRadius").toDouble();
-	_standardParameters.sharpDetectionOverlapRadius = settings.value("sharpDetectionOverlapRadius").toDouble();
-	_standardParameters.sharpDetectionTime = settings.value("sharpDetectionTime").toInt();
-	_standardParameters.noDetectionZones = Tools::convertVariantListToList<QRectF>(settings.value("noDetectionZones").toList());
+	_standardParameters.enableAutoAvoiding = defineSettingValue(settings, "enableAutoAvoiding", _standardParameters.enableAutoAvoiding, "If true, the automatic avoiding is enabled.").toBool();
+	_standardParameters.sharpObjectRadius = defineSettingValue(settings, "sharpObjectRadius", _standardParameters.sharpObjectRadius, "Radius in mm of an object detected by a sensor.").toDouble();
+	_standardParameters.sharpDetectionOverlapRadius = defineSettingValue(settings, "sharpDetectionOverlapRadius", _standardParameters.sharpDetectionOverlapRadius, "Radius in mm where 2 sharp object are considered overlapping.").toDouble();
+	_standardParameters.sharpDetectionTime = defineSettingValue(settings, "sharpDetectionTime", _standardParameters.sharpDetectionTime, "Time in ms where a sharp object stay on the map.").toInt();
+	_standardParameters.noDetectionZones = Tools::convertVariantListToList<QRectF>(
+				defineSettingValueList(settings, "noDetectionZones", Tools::convertListToVariantList<QRectF>(_standardParameters.noDetectionZones), QVariant::RectF, "List of area on the map where the no robot can go.").toList());
 	settings.endGroup();
 
 	settings.beginGroup("Pather");
-	_standardParameters.start = settings.value("start").toPointF();
-	_standardParameters.startRotation = settings.value("startRotation").toDouble();
-
-	_standardParameters.diagonalSmoothingMaxDistance = settings.value("diagonalSmoothingMaxDistance").toInt();
-	_standardParameters.lostReplanInterval = settings.value("lostReplanInterval").toDouble();
-	if (fileVersion == 1.1)
-		settings.setValue("turnThenMoveMinAngle", Tools::radianToDegree(_standardParameters.turnThenMoveMinAngle), "Minimum angle to the next point where the turn and move is allowed");
-	_standardParameters.turnThenMoveMinAngle = Tools::degreeToRadian(settings.value("turnThenMoveMinAngle").toDouble());
+	_standardParameters.start = defineSettingValue(settings, "start", _standardParameters.start, "Start point of the robot.").toPointF();
+	_standardParameters.startRotation = defineSettingValue(settings, "startRotation", _standardParameters.startRotation, "Start rotation of the robot.").toDouble();
+	_standardParameters.diagonalSmoothingMaxDistance = defineSettingValue(settings, "diagonalSmoothingMaxDistance", _standardParameters.diagonalSmoothingMaxDistance, "Maximum distance for the diagonal smoothing to apply.").toInt();
+	_standardParameters.lostReplanInterval = defineSettingValue(settings, "lostReplanInterval", _standardParameters.lostReplanInterval, "Time in ms which define the maximum time allowed to the robot to accomplish his trajectory.").toDouble();
+	_standardParameters.turnThenMoveMinAngle = Tools::degreeToRadian(defineSettingValue(settings, "turnThenMoveMinAngle", Tools::radianToDegree(_standardParameters.turnThenMoveMinAngle), "Minimum angle to the next point where the turn and move is allowed in degrees.").toDouble());
 	settings.endGroup();
-}
-
-void StrategyInterface::writeDefaultParametersToFile(Tools::NSettings &settings)
-{
-	StrategyInterface::StrategyParameters defaultParameters;
-	defaultStrategyParameters(defaultParameters);
-
-	settings.beginGroup("Strategy");
-	settings.setValue("loop", defaultParameters.loop, "If true, the strategy will be restarted once finished.");
-	settings.setValue("replanInterval", defaultParameters.replanInterval, "Interval in ms before a replan if the previous one was not possible.");
-	settings.setValue("stopCircleRadius", defaultParameters.stopCircleRadius, "Radius in mm of the circle where the robot is considered arrived at its point.");
-	settings.setValue("tableSize", defaultParameters.tableSize, "Size of the table in mm.");
-	settings.setValue("robotRadius", defaultParameters.robotRadius, "Maximum radius of the robot in mm.");
-	settings.setValue("opponentRadius", defaultParameters.opponentRadius, "Maximum radius of the opponent in mm.");
-	settings.setValue("noticeOfReceiptTimeOut", defaultParameters.noticeOfReceiptTimeOut, "Timeout in ms for notice of receipt in comm messages.");
-	settings.endGroup();
-
-	settings.beginGroup("Avoiding");
-	settings.setValue("enableAutoAvoiding", defaultParameters.enableAutoAvoiding, "If true, the automatic avoiding is enabled.");
-	settings.setValue("sharpObjectRadius", defaultParameters.sharpObjectRadius, "Radius in mm of an object detected by a sensor.");
-	settings.setValue("sharpDetectionOverlapRadius", defaultParameters.sharpDetectionOverlapRadius, "Radius in mm where 2 sharp object are considered overlapping.");
-	settings.setValue("sharpDetectionTime", defaultParameters.sharpDetectionTime, "Time in ms where a sharp object stay on the map.");
-	settings.setValueList("noDetectionZones", Tools::convertListToVariantList<QRectF>(defaultParameters.noDetectionZones), QVariant::RectF, "List of area on the map where the no robot can go.");
-	settings.endGroup();
-
-	settings.beginGroup("Pather");
-	settings.setValue("start", defaultParameters.start, "Start point of the robot.");
-	settings.setValue("startRotation", defaultParameters.startRotation, "Start rotation of the robot.");
-	settings.setValue("diagonalSmoothingMaxDistance", defaultParameters.diagonalSmoothingMaxDistance, "Maximum distance for the diagonal smoothing to apply.");
-	settings.setValue("lostReplanInterval", defaultParameters.lostReplanInterval, "Time in ms which define the maximum time allowed to the robot to accomplish his trajectory.");
-	settings.setValue("turnThenMoveMinAngle", Tools::radianToDegree(defaultParameters.turnThenMoveMinAngle), "Minimum angle to the next point where the turn and move is allowed in degrees.");
-	settings.endGroup();
-}
-
-double StrategyInterface::manageParameterVersion(Tools::NSettings &settings, const QString &prefix, double actualVersion) const
-{
-	QString key(prefix);
-	key += "_version";
-
-	QString currentGroup = settings.getCurrentGroup();
-	settings.beginGroup("Versions");
-
-	double version = settings.value(key, actualVersion).toDouble();
-
-	if (!settings.contains(key) || settings.value(key) != actualVersion)
-		settings.setValue(key, actualVersion, "version number", true);
-
-	settings.endGroup();
-
-	settings.beginGroup(currentGroup);
-
-	return version;
 }
 
 void StrategyInterface::writeDefaultGrid(const QString& filePath)
@@ -185,6 +124,34 @@ void StrategyInterface::writeDefaultGrid(const QString& filePath)
 	Tools::NGrid defaultGrid;
 	defaultGrid.makeStandardGrid(QPointF(250,250), 50, 50, QSizeF(1500, 2500), Tools::NGrid::HeightConnections);
 	defaultGrid.writeToFile(filePath);
+}
+
+QVariant StrategyInterface::defineSettingValue(Tools::NSettings &settings, const QString &name, const QVariant &defaultValue, const QString &description)
+{
+	if (settings.contains(name))
+	{
+		settings.updateDescription(name, description);
+		return settings.value(name);
+	}
+	else
+	{
+		settings.setValue(name, defaultValue, description);
+		return defaultValue;
+	}
+}
+
+QVariant StrategyInterface::defineSettingValueList(Tools::NSettings &settings, const QString &name, const QVariantList &defaultValue, QVariant::Type contentType, const QString &description)
+{
+	if (settings.contains(name))
+	{
+		settings.updateDescription(name, description);
+		return settings.value(name);
+	}
+	else
+	{
+		settings.setValueList(name, defaultValue, contentType, description);
+		return defaultValue;
+	}
 }
 
 const StrategyInterface::StrategyParameters &StrategyInterface::getParameters() const

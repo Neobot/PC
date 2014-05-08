@@ -11,8 +11,7 @@ public:
     void mainStrategy(QList<AbstractAction*>& actions);
 	void actionDone(const AbstractAction *action, bool result, bool isLast);
 
-	virtual void readParametersFromFile(Tools::NSettings &settings);
-	virtual void writeDefaultParametersToFile(Tools::NSettings& settings);
+	virtual void readAndDefineParameters(Tools::NSettings &settings);
 
 private:
 	QStringList _movements;

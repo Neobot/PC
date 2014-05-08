@@ -44,35 +44,17 @@ void TestStrategy::actionDone(const AbstractAction *action, bool result, bool is
 	LoggerInterface::logger() << "ACTION \"" << action->getActionName() << (result ? "\" SUCCEDED" : "\" FAILED") << Tools::endl;
 }
 
-void TestStrategy::readParametersFromFile(NSettings &settings)
+void TestStrategy::readAndDefineParameters(NSettings &settings)
 {
-	DefaultStrategy::readParametersFromFile(settings);
+	DefaultStrategy::readAndDefineParameters(settings);
 
 	settings.beginGroup("Default Strategy");
 
-	double fileVersion = manageParameterVersion(settings, "default_strategy_parameters");
-	Q_UNUSED(fileVersion); //unused for now
+	_waitTimeBetweenPoints = defineSettingValue(settings, "wait_time_between_points", _waitTimeBetweenPoints, "Time in ms to wait beetween the points of the trajectory.").toInt();
+	_forceForward = defineSettingValue(settings, "forceForward", _forceForward, "If true, the robot will always go forward.").toBool();
+	_forceBackward = defineSettingValue(settings, "forceBackward", _forceBackward, "If true, the robot will always go backward except if forceForward is true.").toBool();
 
-	_waitTimeBetweenPoints = settings.value("wait_time_between_points").toInt();
-	_forceForward = settings.value("forceForward").toBool();
-	_forceBackward = settings.value("forceBackward").toBool();
-
-	_points = convertVariantListToList<QPointF>(settings.value("trajectory").toList());
+	_points = convertVariantListToList<QPointF>(defineSettingValueList(settings, "trajectory", Tools::convertListToVariantList<QPointF>(_points), QVariant::PointF, "The list of points which define the trajectory of the robot.").toList());
 
 	settings.endGroup();
 }
-
-void TestStrategy::writeDefaultParametersToFile(NSettings &settings)
-{
-	DefaultStrategy::writeDefaultParametersToFile(settings);
-
-	settings.beginGroup("Default Strategy");
-
-	settings.setValue("wait_time_between_points", _waitTimeBetweenPoints, "Time in ms to wait beetween the points of the trajectory.");
-	settings.setValue("forceForward", _forceForward, "If true, the robot will always go forward.");
-	settings.setValue("forceBackward", _forceBackward, "If true, the robot will always go backward except if forceForward is true.");
-	settings.setValueList("trajectory", Tools::convertListToVariantList<QPointF>(_points), QVariant::PointF, "The list of points which define the trajectory of the robot.");
-
-	settings.endGroup();
-}
-

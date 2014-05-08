@@ -34,8 +34,11 @@ namespace Tools
 		void setValueList(const QString& name, const QVariantList& value, QVariant::Type contentType, const QString& description = QString(), bool readOnly = false);
 		QVariant value(const QString& name, const QVariant& defaultValue = QVariant()) const;
 		QString description(const QString& name) const;
+		void updateDescription(const QString& name, const QString& description);
 		bool contains(const QString& name) const;
 		bool isReadOnly(const QString& name) const;
+
+		void setDeprecated(const QString& name);
 
 		void clear();
 

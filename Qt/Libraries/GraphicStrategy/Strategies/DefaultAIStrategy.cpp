@@ -69,23 +69,12 @@ void DefaultAIStrategy::addNextAction(bool lastActionResult)
 	}
 }
 
-void DefaultAIStrategy::readParametersFromFile(Tools::NSettings &settings)
+void DefaultAIStrategy::readAndDefineParameters(Tools::NSettings &settings)
 {
-	DefaultStrategy::readParametersFromFile(settings);
+	DefaultStrategy::readAndDefineParameters(settings);
 
 	settings.beginGroup("AI parameters");
-	double fileVersion = manageParameterVersion(settings, "AI_parameters");
-	Q_UNUSED(fileVersion); //unused for now
 
-	_nbRun = settings.value("number_of_AI_run").toInt();
-	settings.endGroup();
-}
-
-void DefaultAIStrategy::writeDefaultParametersToFile(Tools::NSettings &settings)
-{
-	DefaultStrategy::writeDefaultParametersToFile(settings);
-
-	settings.beginGroup("AI parameters");
-	settings.setValue("number_of_AI_run", _nbRun, "Number of run performed by the AI to determie the best action. Higher means more optimal results but more time consumming.");
+	_nbRun = defineSettingValue(settings, "number_of_AI_run", _nbRun, "Number of run performed by the AI to determie the best action. Higher means more optimal results but more time consumming.").toInt();
 	settings.endGroup();
 }

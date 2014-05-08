@@ -188,6 +188,19 @@ QString NSettings::description(const QString &name) const
 	return _values[_currentGroup].value(name).description;
 }
 
+void NSettings::updateDescription(const QString &name, const QString &description)
+{
+	if (contains(name))
+	{
+		QString oldDescription = _values[_currentGroup][name].description;
+		if (oldDescription != description)
+		{
+			_values[_currentGroup][name].description = description;
+			_hasChanges = true;
+		}
+	}
+}
+
 bool NSettings::contains(const QString &name) const
 {
 	return _values[_currentGroup].contains(name);
@@ -196,6 +209,19 @@ bool NSettings::contains(const QString &name) const
 bool NSettings::isReadOnly(const QString &name) const
 {
 	return _values[_currentGroup].value(name).readOnly;
+}
+
+void NSettings::setDeprecated(const QString &name)
+{
+	if (contains(name))
+	{
+		Parameter& p = _values[_currentGroup][name];
+		p.readOnly = true;
+		p.value = "DEPRECATED";
+		p.description = "DEPRECATED";
+
+		_hasChanges = true;
+	}
 }
 
 void NSettings::clear()

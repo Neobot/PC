@@ -9,12 +9,28 @@ class PrehistobotStrategy : public QObject, public DefaultAIStrategy
 	Q_OBJECT
 
 public:
+	struct AX12MovementNames
+	{
+		QString leftArmGroup;
+		QString rightArmGroup;
+
+		QString goToRest;
+		QString goToScan;
+		QString pump;
+		QString moveFire;
+		QString turnFire;
+		QString holdFire;
+		QString goToScanInTorche;
+		QString moveOutOfTorche;
+
+		QString dropFire;
+		QString dropAndTurnFire;
+	};
+
 	PrehistobotStrategy(const QDir &strategyDirectory, Tools::AbstractLogger *logger);
 
 	virtual void defaultStrategyParameters(StrategyParameters& parameters) const;
-
-	virtual void readParametersFromFile(Tools::NSettings &settings);
-	virtual void writeDefaultParametersToFile(Tools::NSettings& settings);
+	virtual void readAndDefineParameters(Tools::NSettings &settings);
 
 	void initGameState(GameState& state) const;
 	void createActions();
@@ -27,8 +43,7 @@ private:
 	bool checkGrid(const Tools::NGrid *grid) const;
 
 	//parameters
-	QString _leftArmAX12Group;
-	QString _rightArmAX12Group;
+	AX12MovementNames _ax12MvtNames;
 };
 
 #endif // PREHISTOBOTSTRATEGY_H

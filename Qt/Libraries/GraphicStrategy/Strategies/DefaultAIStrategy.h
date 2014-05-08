@@ -17,8 +17,7 @@ public:
 	virtual void initGameState(GameState& state) const = 0;
 	virtual void createActions() = 0;
 
-	virtual void readParametersFromFile(Tools::NSettings &settings);
-	virtual void writeDefaultParametersToFile(Tools::NSettings& settings);
+	virtual void readAndDefineParameters(Tools::NSettings &settings);
 
 	void mainStrategy(QList<AbstractAction*>& actions);
 	void actionDone(const AbstractAction *action, bool result, bool isLast);
