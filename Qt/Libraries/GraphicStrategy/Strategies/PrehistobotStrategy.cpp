@@ -11,9 +11,18 @@
 using namespace Tools;
 
 PrehistobotStrategy::PrehistobotStrategy(const QDir& strategyDirectory, Tools::AbstractLogger *logger)
-	: DefaultAIStrategy(AIEngine::CostMaximizing, strategyDirectory, logger)
+	: DefaultAIStrategy(AIEngine::CostMaximizing, strategyDirectory, logger), _pbActionFactory(nullptr)
 {
 	LoggerInterface::logger() << "---PREHISTOBOT STRATEGY---" << Tools::endl;
+}
+
+bool PrehistobotStrategy::load(StrategyManager *manager, bool mirror)
+{
+	bool ok = DefaultAIStrategy::load(manager, mirror);
+
+	_pbActionFactory = new PBActionFactory(manager->getActionFactory(), _ax12MvtNames, mirror);
+
+	return ok;
 }
 
 void PrehistobotStrategy::defaultStrategyParameters(StrategyInterface::StrategyParameters &parameters) const
@@ -44,7 +53,7 @@ void PrehistobotStrategy::readAndDefineParameters(NSettings &settings)
 	_ax12MvtNames.moveFire = defineSettingValue(settings, "move_fire", _ax12MvtNames.moveFire, "Move the fire without turning it.").toString();
 	_ax12MvtNames.turnFire = defineSettingValue(settings, "turn_fire", _ax12MvtNames.turnFire, "Turn the fire.").toString();
 	_ax12MvtNames.holdFire = defineSettingValue(settings, "hold_fire", _ax12MvtNames.holdFire, "Hold the fire.").toString();
-	_ax12MvtNames.goToScanInTorche = defineSettingValue(settings, "go_to_scan_in_torche", _ax12MvtNames.goToScanInTorche, "Go to the scan position in a mobile torche.").toString();
+	_ax12MvtNames.scanInTorche = defineSettingValue(settings, "go_to_scan_in_torche", _ax12MvtNames.scanInTorche, "Go to the scan position in a mobile torche.").toString();
 	_ax12MvtNames.moveOutOfTorche = defineSettingValue(settings, "move_out_of_torche", _ax12MvtNames.moveOutOfTorche, "Move the arm out of the mobile torche.").toString();
 	_ax12MvtNames.dropFire = defineSettingValue(settings, "drop_fire", _ax12MvtNames.dropFire, "Turn the fire without turning it.").toString();
 	_ax12MvtNames.dropAndTurnFire = defineSettingValue(settings, "drop_and_turn_fire", _ax12MvtNames.dropAndTurnFire, "Drop the fire while turning it.").toString();
@@ -115,4 +124,151 @@ bool PrehistobotStrategy::checkGrid(const NGrid *grid) const
 	result = grid->getArea(FRUIT_DROP_AREA) && result;
 
 	return result;
+}
+
+//----------------------------------------------------PBActionFactory----------------------------------------------------
+
+AbstractAction *PBActionFactory::scanAndTurnFires(NGridNode *destination, int speed, int timeout) const
+{
+	AbstractAction* startAction = _factory->asynchroneActionList({
+														_factory->enableColorSensorAction(DefaultStrategy::BothColorSensor),
+														_factory->ax12Movement(_mvt.leftArmGroup, _mvt.goToScan),
+														_factory->ax12Movement(_mvt.rightArmGroup, _mvt.goToScan)}, AsynchroneActionGroup::AllActionFinished);
+
+	AbstractAction* endAction = _factory->asynchroneActionList({
+														_factory->disableColorSensorAction(DefaultStrategy::BothColorSensor),
+														_factory->ax12Movement(_mvt.leftArmGroup, _mvt.goToRest),
+														_factory->ax12Movement(_mvt.rightArmGroup, _mvt.goToRest)}, AsynchroneActionGroup::AllActionFinished);
+
+	return defaultColorScanAction(_reversed, destination, speed, timeout,
+								startAction,
+								hanfleFireAction(true, false, _mvt.goToScan), hanfleFireAction(false, false, _mvt.goToScan),
+								hanfleFireAction(true, true, _mvt.goToScan), hanfleFireAction(false, true, _mvt.goToScan),
+								endAction);
+
+}
+
+AbstractAction *PBActionFactory::scanAndHoldFires(NGridNode *destination, int speed, int timeout) const
+{
+	AbstractAction* startAction = _factory->asynchroneActionList({
+														_factory->enableColorSensorAction(DefaultStrategy::BothColorSensor),
+														_factory->ax12Movement(_mvt.leftArmGroup, _mvt.goToScan),
+														_factory->ax12Movement(_mvt.rightArmGroup, _mvt.goToScan)}, AsynchroneActionGroup::AllActionFinished);
+
+	AbstractAction* endAction = _factory->asynchroneActionList({
+														_factory->disableColorSensorAction(DefaultStrategy::BothColorSensor),
+														_factory->ax12Movement(_mvt.leftArmGroup, _mvt.goToRest),
+														_factory->ax12Movement(_mvt.rightArmGroup, _mvt.goToRest)}, AsynchroneActionGroup::AllActionFinished);
+
+	return defaultColorScanAction(false, destination, speed, timeout,
+								startAction,
+								holdFireAction(true), holdFireAction(false),
+								holdFireAction(true), holdFireAction(false),
+								  endAction);
+}
+
+AbstractAction *PBActionFactory::dropHeldFires(DefaultStrategy::PumpId pumpId)
+{
+	int ourColor = getOurColor(_reversed);
+	int oppColor = getOpponentColor(_reversed);
+
+	QList<AbstractAction*> actions = {_factory->enableColorSensorAction(DefaultStrategy::BothColorSensor),
+									  _factory->waitAction(1000)}; //wait to gather updated color info
+
+	if (pumpId == DefaultStrategy::LeftPump || pumpId == DefaultStrategy::BothPump)
+	{
+		SensorSwitchCaseAction* leftAction = _factory->colorSensorSwitchCaseAction(DefaultStrategy::LeftColorSensor);
+		leftAction->addCase(ourColor, dropFireAction(true, true));
+		leftAction->addCase(oppColor, dropFireAction(true, false));
+
+		actions << leftAction;
+	}
+
+	if (pumpId == DefaultStrategy::RightPump || pumpId == DefaultStrategy::BothPump)
+	{
+		SensorSwitchCaseAction* rightAction = _factory->colorSensorSwitchCaseAction(DefaultStrategy::LeftColorSensor);
+		rightAction->addCase(ourColor, dropFireAction(false, true));
+		rightAction->addCase(oppColor, dropFireAction(false, false));
+
+		actions << rightAction;
+	}
+
+	return _factory->asynchroneActionList(actions, AsynchroneActionGroup::AllActionFinished);
+}
+
+AbstractAction *PBActionFactory::takeAndHoldFireInTorche(DefaultStrategy::PumpId pumpId)
+{
+	bool left = pumpId == DefaultStrategy::LeftPump;
+	QString group = left ? _mvt.leftArmGroup : _mvt.rightArmGroup;
+
+	return _factory->actionList({
+									_factory->ax12Movement(group, _mvt.scanInTorche),
+									_factory->ax12Movement(group, _mvt.pump),
+									_factory->startPumpAction(pumpId),
+									_factory->waitAction(1000),
+									_factory->ax12Movement(group, _mvt.moveOutOfTorche)});
+}
+
+ActionGroup *PBActionFactory::hanfleFireAction(bool left, bool ourColor, const QString& finalMvt) const
+{
+	QString group = left ? _mvt.leftArmGroup : _mvt.rightArmGroup;
+	int pumpId = left ? DefaultStrategy::LeftPump : DefaultStrategy::RightPump;
+	QString movement = ourColor ? _mvt.moveFire : _mvt.turnFire;
+
+	return _factory->actionList({
+					_factory->ax12Movement(group, _mvt.pump),
+					_factory->startPumpAction(pumpId),
+					_factory->waitAction(1000),
+					_factory->ax12Movement(group, movement),
+					_factory->stopPumpAction(pumpId),
+					_factory->waitAction(1000),
+					_factory->ax12Movement(group, finalMvt)});
+}
+
+ActionGroup *PBActionFactory::holdFireAction(bool left) const
+{
+	QString group = left ? _mvt.leftArmGroup : _mvt.rightArmGroup;
+	int pumpId = left ? DefaultStrategy::LeftPump : DefaultStrategy::RightPump;
+	int sensorId = left ? DefaultStrategy::LeftColorSensor : DefaultStrategy::RightColorSensor;
+
+	return _factory->actionList({
+					_factory->disableColorSensorAction(sensorId),
+					_factory->ax12Movement(group, _mvt.pump),
+					_factory->startPumpAction(pumpId),
+					_factory->waitAction(1000),
+					_factory->ax12Movement(group, _mvt.holdFire)});
+}
+
+ActionGroup *PBActionFactory::dropFireAction(bool left, bool ourColor) const
+{
+	QString group = left ? _mvt.leftArmGroup : _mvt.rightArmGroup;
+	QString movement = ourColor ? _mvt.dropFire : _mvt.dropAndTurnFire;
+
+	return _factory->actionList({_factory->ax12Movement(group, movement),
+								 _factory->stopPumpAction(DefaultStrategy::LeftPump),
+								 _factory->waitAction(1000)});
+}
+
+AbstractAction *PBActionFactory::defaultColorScanAction(bool reversed, NGridNode *destination, int speed, int timeoutMs, AbstractAction *startAction, AbstractAction *leftOpponentColorAction,
+														AbstractAction *rightOpponentColorAction, AbstractAction *leftOurColorAction, AbstractAction *rightOurColorAction,
+														AbstractAction *endAction) const
+{
+	return _factory->colorScanAction(destination, speed, timeoutMs,
+								getOurColor(reversed),
+								getOpponentColor(reversed),
+								DefaultStrategy::LeftColorSensor, DefaultStrategy::RightColorSensor,
+								startAction,
+								leftOpponentColorAction, rightOpponentColorAction,
+								leftOurColorAction, rightOurColorAction,
+									 endAction);
+}
+
+int PBActionFactory::getOurColor(bool reversed) const
+{
+	return reversed ? Comm::ColorYellow : Comm::ColorRed;
+}
+
+int PBActionFactory::getOpponentColor(bool reversed) const
+{
+	return reversed ? Comm::ColorRed : Comm::ColorYellow;
 }
