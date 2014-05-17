@@ -7,6 +7,8 @@
 #include"DataObject.h"
 #include <vmath.h>
 #include <cmath>
+#include "ToolsLib.h"
+#include <QPointF>
 
 using namespace Tools;
 
@@ -14,6 +16,8 @@ PrehistobotStrategy::PrehistobotStrategy(const QDir& strategyDirectory, Tools::A
 	: DefaultAIStrategy(AIEngine::CostMaximizing, strategyDirectory, logger), _pbActionFactory(nullptr)
 {
 	LoggerInterface::logger() << "---PREHISTOBOT STRATEGY---" << Tools::endl;
+
+	_searchFiresPoints << QPointF(650,450) << QPointF(1600,450) << QPointF(1600,2550) << QPointF(650,2550);
 }
 
 bool PrehistobotStrategy::load(StrategyManager *manager, bool mirror)
@@ -40,6 +44,8 @@ void PrehistobotStrategy::readAndDefineParameters(NSettings &settings)
 	DefaultStrategy::readAndDefineParameters(settings);
 
 	settings.beginGroup("Prehistobot Strategy");
+	_searchFiresPoints = convertVariantListToList<QPointF>(defineSettingValueList(settings, "search_points", Tools::convertListToVariantList<QPointF>(_searchFiresPoints),
+							QVariant::PointF, "A trajectory to search fires on the table at the end of the match.").toList());
 	settings.endGroup();
 
 	settings.beginGroup("Prehistobot AX-12 Movements");
@@ -93,6 +99,8 @@ void PrehistobotStrategy::createActions()
 	addCommand(new PBFruitPickupCommand(FRUIT_3A_NODE, autoMirror(Tools::pi/2.0), RightSide, FRUIT_3B_NODE, autoMirror(-Tools::pi/2.0), LeftSide, 400, 2, _manager));
 	addCommand(new PBFruitPickupCommand(FRUIT_4A_NODE, autoMirror(Tools::pi), RightSide, FRUIT_4B_NODE, 0, LeftSide, 400, 2, _manager));
 	addCommand(new PBFruitDropCommand(FRUIT_DROP_AREA, 2.0, _manager));
+
+	addCommand(new PBSearchFiresCommand(autoMirrorList(_searchFiresPoints), _pbActionFactory, _manager));
 }
 
 void PrehistobotStrategy::defaultObstaclePositions(QList<DataObject *> &objects) const
@@ -124,6 +132,18 @@ bool PrehistobotStrategy::checkGrid(const NGrid *grid) const
 	result = grid->getArea(FRUIT_DROP_AREA) && result;
 
 	return result;
+}
+
+QList<QPointF> PrehistobotStrategy::autoMirrorList(const QList<QPointF> &points)
+{
+	QList<QPointF> results;
+	for(QList<QPointF>::const_iterator it = points.constBegin(); it != points.constEnd(); ++it)
+	{
+		const QPointF& p = *it;
+		results << autoMirror(Tools::RPoint(p)).toQPointF();
+	}
+
+	return results;
 }
 
 //----------------------------------------------------PBActionFactory----------------------------------------------------

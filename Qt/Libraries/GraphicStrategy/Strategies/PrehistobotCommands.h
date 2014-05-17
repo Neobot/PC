@@ -5,6 +5,7 @@
 #include "Curve.h"
 
 #include <QStringList>
+#include <QPointF>
 
 
 #define START_NODE "Start"
@@ -24,6 +25,8 @@
 #define NB_FRUIT_PICKUP "NbFruitPickup"
 
 #define AVERAGE_SPEED 200.0 //mm/s
+
+class PBActionFactory;
 
 namespace Tools
 {
@@ -88,6 +91,22 @@ public:
 private:
 	QString _dropAreaAlias;
 	double _estimatedTime; //seconds
+};
+
+class PBSearchFiresCommand : public AbstractAICommand
+{
+public:
+	PBSearchFiresCommand(const QList<QPointF> points, PBActionFactory* pbFactory, StrategyManager* manager);
+
+	double evaluate(GameState &state);
+	void updateToFinalState(GameState &state) const;
+
+	AbstractAction* getAction(const GameState& state) const;
+private:
+	QList<QPointF> _points;
+	PBActionFactory* _pbFactory;
+
+	QList<QPointF> getSortedPointList(const GameState &state) const;
 };
 
 #endif // PREHISTOBOTCOMMANDS_H

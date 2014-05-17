@@ -15,6 +15,9 @@ public:
 	explicit SensorsView(NetworkConnection *connection, QWidget *parent = 0);
 	~SensorsView();
 	
+public slots:
+	void connectionStatusChanged(NetworkConnection::ConnectionStatus status);
+
 private:
 	Ui::SensorsView *ui;
 	int _nbAvoidingCurvesInitialized;

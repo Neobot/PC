@@ -2,6 +2,7 @@
 #define PREHISTOBOTSTRATEGY_H
 
 #include <QObject>
+#include <QPointF>
 #include "DefaultAIStrategy.h"
 #include "ActionFactory.h"
 
@@ -14,20 +15,20 @@ class PrehistobotStrategy : public QObject, public DefaultAIStrategy
 public:
 	struct AX12MovementNames
 	{
-		QString leftArmGroup;
-		QString rightArmGroup;
+		QString leftArmGroup = "leftArmGroup";
+		QString rightArmGroup = "rightArmGroup";
 
-		QString goToRest;
-		QString goToScan;
-		QString pump;
-		QString moveFire;
-		QString turnFire;
-		QString holdFire;
-		QString scanInTorche;
-		QString moveOutOfTorche;
+		QString goToRest = "goToRest";
+		QString goToScan = "goToScan";
+		QString pump = "pump";
+		QString moveFire = "moveFire";
+		QString turnFire = "turnFire";
+		QString holdFire = "holdFire";
+		QString scanInTorche = "scanInTorche";
+		QString moveOutOfTorche = "moveOutOfTorche";
 
-		QString dropFire;
-		QString dropAndTurnFire;
+		QString dropFire = "dropFire";
+		QString dropAndTurnFire = "dropAndTurnFire";
 	};
 
 	PrehistobotStrategy(const QDir &strategyDirectory, Tools::AbstractLogger *logger);
@@ -49,7 +50,10 @@ private:
 
 	//parameters
 	AX12MovementNames _ax12MvtNames;
+	QList<QPointF> _searchFiresPoints;
 	PBActionFactory* _pbActionFactory;
+
+	QList<QPointF> autoMirrorList(const QList<QPointF> &points);
 };
 
 class PBActionFactory

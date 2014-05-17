@@ -188,3 +188,72 @@ AbstractAction *PBFruitDropCommand::getAction(const GameState &state) const
 
 	return _manager->getActionFactory()->actionList(actionList);
 }
+
+////------------------------------------------------------------------------------------------
+
+PBSearchFiresCommand::PBSearchFiresCommand(const QList<QPointF> points, PBActionFactory *pbFactory, StrategyManager *manager)
+	: AbstractAICommand(manager), _points(points), _pbFactory(pbFactory)
+{
+	setDescription("Search for fires");
+}
+
+double PBSearchFiresCommand::evaluate(GameState &state)
+{
+	Q_UNUSED(state);
+	return 1/90.0; //smallest value possible
+}
+
+void PBSearchFiresCommand::updateToFinalState(GameState &state) const
+{
+	Q_UNUSED(state);
+}
+
+AbstractAction *PBSearchFiresCommand::getAction(const GameState &state) const
+{
+	QList<AbstractAction*> actions;
+	QList<QPointF> list = getSortedPointList(state);
+	if (!list.isEmpty())
+	{
+
+		foreach(const QPointF& p, list)
+		{
+			actions << _pbFactory->scanAndTurnFires(_manager->getGrid()->getNearestNode(p));
+		}
+	}
+
+	return _manager->getActionFactory()->actionList(actions);
+}
+
+QList<QPointF> PBSearchFiresCommand::getSortedPointList(const GameState &state) const
+{
+	QPointF robotPos = state._robotposition->getPosition();
+
+	QList<QPointF> result;
+	if (!_points.isEmpty())
+	{
+		//get nearest point index
+		int minDist = qAbs((_points.first()-robotPos).manhattanLength());
+		int minIndex = 0;
+		int i = 1;
+
+		for(QList<QPointF>::const_iterator it = _points.begin() + 1; it != _points.end(); ++it)
+		{
+			int dist = qAbs((*it-robotPos).manhattanLength());
+			if (dist < minDist)
+			{
+				minDist = dist;
+				minIndex = i;
+			}
+			++i;
+		}
+
+
+		for(int i = minIndex; i < _points.count(); ++i)
+			result << _points[i];
+
+		for(int i = 0; i < minIndex; ++i)
+			result << _points[i];
+	}
+
+	return result;
+}

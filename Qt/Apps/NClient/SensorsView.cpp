@@ -1,5 +1,7 @@
 #include "SensorsView.h"
 #include "ui_SensorsView.h"
+#include "NetworkClientCommInterface.h"
+
 
 const int PLOT_MAX_NB_VALUES = 1000;
 
@@ -37,6 +39,16 @@ SensorsView::SensorsView(NetworkConnection *connection, QWidget *parent) :
 SensorsView::~SensorsView()
 {
 	delete ui;
+}
+
+void SensorsView::connectionStatusChanged(NetworkConnection::ConnectionStatus status)
+{
+	if (status == NetworkConnection::Controled)
+	{
+		_connection->getComm()->enableSensor(Comm::ColorSensor, 0);
+		_connection->getComm()->enableSensor(Comm::MicroswitchSensor, 0);
+		_connection->getComm()->enableSensor(Comm::SharpSensor, 0);
+	}
 }
 
 void SensorsView::avoidingSensors(const QList<quint8> &values)
