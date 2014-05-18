@@ -29,6 +29,14 @@
 #define TORCHE_5_NODE "Torche5"
 #define TORCHE_6_NODE "Torche6"
 
+#define EASYFIRE_1A_NODE "EasyFire1A"
+#define EASYFIRE_1B_NODE "EasyFire1B"
+#define EASYFIRE_2A_NODE "EasyFire2A"
+#define EASYFIRE_2B_NODE "EasyFire2B"
+#define EASYFIRE_3A_NODE "EasyFire3A"
+#define EASYFIRE_3B_NODE "EasyFire3B"
+
+
 #define AVERAGE_SPEED 200.0 //mm/s
 
 class PBActionFactory;
@@ -129,6 +137,26 @@ private:
 	bool _vertical;
 	double _estimatedTime; //seconds
 	bool _turnFire;
+};
+
+
+class PBEasyFireCommand : public AbstractAICommand
+{
+public:
+	PBEasyFireCommand(const QString& aliasA, const QString& aliasB, double availableTimeToPerformAction, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager);
+
+	double evaluate(GameState &state);
+	void updateToFinalState(GameState &state) const;
+
+	AbstractAction* getAction(const GameState& state) const;
+private:
+	PBActionFactory* _pbFactory;
+	QString _aliasA;
+	QString _aliasB;
+	double _availableTimeToPerformAction;
+	double _estimatedTime; //seconds
+
+	void getOptions(double distanceToA, double distanceToB, QString& firstAlias, QString& secondAlias) const;
 };
 
 #endif // PREHISTOBOTCOMMANDS_H

@@ -402,7 +402,7 @@ void Simulator::prepareNextMovement()
 				double angle = _destination.getDestination().getTheta();
 				RPoint destinationCoord(_map->getRobotPosition().getX() + cos(angle),
 										_map->getRobotPosition().getY() + sin(angle),
-										angle);
+										_map->getRobotPosition().getTheta() + angle);
 
                 _subMovements.enqueue(RSubMovement(destinationCoord, MOVEMENT_ROTATE_FORWARD, _destination.getSpeed()));
 			}

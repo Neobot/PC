@@ -340,3 +340,89 @@ AbstractAction *PBTakeFixedTorcheCommand::getAction(const GameState &state) cons
 
 	return _manager->getActionFactory()->actionList(actionList);
 }
+
+////------------------------------------------------------------------------------------------
+
+PBEasyFireCommand::PBEasyFireCommand(const QString& aliasA, const QString& aliasB, double availableTimeToPerformAction, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager)
+	: AbstractAICommand(manager), _pbFactory(pbFactory), _aliasA(aliasA), _aliasB(aliasB), _availableTimeToPerformAction(availableTimeToPerformAction), _estimatedTime(estimatedTimeInSeconds)
+{
+	setDescription("Easy fire: " + _aliasA + " - " + _aliasB);
+}
+
+double PBEasyFireCommand::evaluate(GameState &state)
+{
+	if (state._content.value(_aliasA).toBool())
+		return -1.0;
+
+	if (state._remainingTime < (90 - _availableTimeToPerformAction)) //only available during the first x seconds of the match
+		return -1.0;
+
+	double da = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_aliasA));
+	double db = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_aliasB));
+	double d = da <= db ? da : db;
+
+	if (d <= 0)
+		return -1.0;
+
+	double duration = calculateActionTime(d, AVERAGE_SPEED, _estimatedTime);
+	if (state._remainingTime <= duration)
+		return -1.0;
+
+	state._remainingTime -= duration;
+
+	double cost = 5.0 / duration; //high value because it's easy
+
+	return cost;
+}
+
+void PBEasyFireCommand::updateToFinalState(GameState &state) const
+{
+	//Update the state
+	double da = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_aliasA));
+	double db = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_aliasB));
+
+	QString firstAlias;
+	QString secondAlias;
+	getOptions(da, db, firstAlias, secondAlias);
+
+	state._content[_aliasA] = true;
+	state._robotposition = _manager->getGrid()->getNode(secondAlias);
+}
+
+AbstractAction *PBEasyFireCommand::getAction(const GameState &state) const
+{
+	Q_UNUSED(state);
+
+	double da = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_aliasA));
+	double db = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_aliasB));
+
+	QString firstAlias;
+	QString secondAlias;
+	getOptions(da, db, firstAlias, secondAlias);
+
+	Q_UNUSED(state);
+
+	QList<AbstractAction*> actionList;
+
+	actionList  << _manager->getActionFactory()->moveAction(_manager->getGrid()->getNode(firstAlias), 100)
+				<< _pbFactory->scanAndTurnFires(_manager->getGrid()->getNode(secondAlias))
+				;
+
+	return _manager->getActionFactory()->actionList(actionList);
+}
+
+void PBEasyFireCommand::getOptions(double distanceToA, double distanceToB, QString &firstAlias, QString &secondAlias) const
+{
+	bool useOptionA = distanceToA <= distanceToB;
+
+	if (useOptionA)
+	{
+		firstAlias = _aliasA;
+		secondAlias = _aliasB;
+	}
+	else
+	{
+		firstAlias = _aliasB;
+		secondAlias = _aliasA;
+	}
+}
