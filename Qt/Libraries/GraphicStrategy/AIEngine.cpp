@@ -3,7 +3,7 @@
 
 #include <ctime>
 
-AIEngine::AIEngine(CostGoal costGoal) : _costGoal(costGoal), _commandInProgress(0)
+AIEngine::AIEngine(CostGoal costGoal) : _costGoal(costGoal), _commandInProgress(0), _hasBeenCanceled(false)
 {
 }
 
@@ -14,7 +14,9 @@ AIEngine::~AIEngine()
 
 AbstractAICommand *AIEngine::nextAtion(int nbRun, AIEngine::Criteria criteria, GameState& currentState, bool lastActionResult)
 {
-    if (lastActionResult && _commandInProgress)
+	Q_UNUSED(lastActionResult);
+
+	if (!_hasBeenCanceled && _commandInProgress)
         _commandInProgress->updateToFinalState(currentState);
 
     if (_commandInProgress)
@@ -24,8 +26,10 @@ AbstractAICommand *AIEngine::nextAtion(int nbRun, AIEngine::Criteria criteria, G
     if (_commandInProgress)
     {
         _commandInProgress->start();
-        ++_commandInProgress->_count;
+		++_commandInProgress->_count;
     }
+
+	_hasBeenCanceled = false;
 
     return _commandInProgress;
 }
@@ -45,7 +49,13 @@ void AIEngine::clearAndDeleteCommands()
 {
     _commandInProgress = 0;
     qDeleteAll(_availableCommands);
-    _availableCommands.clear();
+	_availableCommands.clear();
+}
+
+void AIEngine::notifyCancel()
+{
+	if (_commandInProgress)
+		_hasBeenCanceled = true;
 }
 
 QList<AIEngine::CommandEvaluation> AIEngine::evaluate(const QList<AbstractAICommand *> commands, const GameState &state, int nbRun) const

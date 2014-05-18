@@ -115,7 +115,7 @@ AbstractAction *PBFruitPickupCommand::getAction(const GameState &state) const
 
 	getOptions(da, db, selectedAlias, selectedAngle, selectedSide);
 	actionList  << _manager->getActionFactory()->moveAction(_manager->getGrid()->getNode(selectedAlias), 100)
-				<< _manager->getActionFactory()->manualTurnMoveAction(selectedAngle, 100)
+				<< _manager->getActionFactory()->manualAbsoluteTurnMoveAction(selectedAngle, 100)
 				<< _manager->getActionFactory()->manualForwardMoveAction(_distance, 100)
 				   //...
 					;
@@ -182,7 +182,7 @@ AbstractAction *PBFruitDropCommand::getAction(const GameState &state) const
 	QList<AbstractAction*> actionList;
 
 	actionList  << _manager->getActionFactory()->moveAction(_manager->getGrid()->getArea(_dropAreaAlias), 100)
-				<< _manager->getActionFactory()->manualTurnMoveAction(-Tools::pi, 100)
+				<< _manager->getActionFactory()->manualAbsoluteTurnMoveAction(-Tools::pi, 100)
 				   //...
 				;
 
@@ -256,4 +256,87 @@ QList<QPointF> PBSearchFiresCommand::getSortedPointList(const GameState &state) 
 	}
 
 	return result;
+}
+
+////------------------------------------------------------------------------------------------
+
+PBTakeFixedTorcheCommand::PBTakeFixedTorcheCommand(const QString& torcheAlias, bool vertical, double estimatedTimeInSeconds, bool turnFire, PBActionFactory* pbFactory, StrategyManager* manager)
+	: AbstractAICommand(manager), _pbFactory(pbFactory), _torcheAlias(torcheAlias), _vertical(vertical), _estimatedTime(estimatedTimeInSeconds), _turnFire(turnFire)
+{
+	setDescription("Take fire in fixed torche " + _torcheAlias);
+}
+
+double PBTakeFixedTorcheCommand::evaluate(GameState &state)
+{
+	if (state._content.value(_torcheAlias).toBool())
+		return -1.0;
+
+	double d = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_torcheAlias));
+	if (d <= 0)
+		return -1.0;
+
+	double duration = calculateActionTime(d, AVERAGE_SPEED, _estimatedTime);
+	if (state._remainingTime <= duration)
+		return -1.0;
+
+	state._remainingTime -= duration;
+
+	double cost = 1.0 / duration;
+	return cost;
+}
+
+void PBTakeFixedTorcheCommand::updateToFinalState(GameState &state) const
+{
+	//Update the state
+	state._content[_torcheAlias] = true;
+	state._robotposition = _manager->getGrid()->getNode(_torcheAlias);
+}
+
+AbstractAction *PBTakeFixedTorcheCommand::getAction(const GameState &state) const
+{
+	Q_UNUSED(state);
+
+	QList<AbstractAction*> actionList;
+
+	Tools::NGridNode* node = _manager->getGrid()->getNode(_torcheAlias);
+	bool isOnLeftSide = node->getPosition().x() < 1500;
+
+	OrientationSwitchCaseAction* switchAction = _manager->getActionFactory()->orientationSwitchCaseAction();
+
+	if (_vertical)
+	{
+		ActionGroup* upDirectionActions = _manager->getActionFactory()->actionList({
+						_manager->getActionFactory()->manualAbsoluteTurnMoveAction(-Tools::pi, 100),
+						_pbFactory->takeAndHoldFireInFixedTorche(isOnLeftSide ? DefaultStrategy::LeftPump : DefaultStrategy::RightPump)
+					});
+
+		ActionGroup* downDirectionActions = _manager->getActionFactory()->actionList({
+						 _manager->getActionFactory()->manualAbsoluteTurnMoveAction(0, 100),
+					 _pbFactory->takeAndHoldFireInFixedTorche(isOnLeftSide ? DefaultStrategy::RightPump : DefaultStrategy::LeftPump)
+					});
+
+		switchAction->addCase(-Tools::pi/2.0, Tools::pi/2.0, downDirectionActions);
+		switchAction->setDefaultAction(upDirectionActions);
+	}
+	else
+	{
+		ActionGroup* rightDirectionsActions = _manager->getActionFactory()->actionList({
+						_manager->getActionFactory()->manualAbsoluteTurnMoveAction(Tools::pi/2.0, 100),
+						_pbFactory->takeAndHoldFireInFixedTorche(DefaultStrategy::RightPump)
+					});
+
+		ActionGroup* leftDirectionsActions = _manager->getActionFactory()->actionList({
+						 _manager->getActionFactory()->manualAbsoluteTurnMoveAction(-Tools::pi/2.0, 100),
+					 _pbFactory->takeAndHoldFireInFixedTorche(DefaultStrategy::LeftPump)
+					});
+
+		switchAction->addCase(0, Tools::pi, rightDirectionsActions);
+		switchAction->setDefaultAction(leftDirectionsActions);
+	}
+
+	actionList  << _manager->getActionFactory()->moveAction(node, 100)
+				<< switchAction
+				;
+
+	return _manager->getActionFactory()->actionList(actionList);
 }

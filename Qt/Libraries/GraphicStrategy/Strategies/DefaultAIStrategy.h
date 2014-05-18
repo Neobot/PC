@@ -11,7 +11,7 @@
 class DefaultAIStrategy : public DefaultStrategy, public AIEngine
 {
 public:
-	DefaultAIStrategy(AIEngine::CostGoal costGoal, const QDir& strategyDirectory, Tools::AbstractLogger* logger = 0);
+	DefaultAIStrategy(AIEngine::CostGoal costGoal, const QDir& strategyDirectory, int defaultNbRun = 2, Tools::AbstractLogger* logger = 0);
 	virtual ~DefaultAIStrategy() {}
 
 	virtual void initGameState(GameState& state) const = 0;

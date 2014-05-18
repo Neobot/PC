@@ -12,7 +12,7 @@ SimulationMap::SimulationMap() : Tools::DataMap(QSizeF(2000, 3000), 350/2, Robot
     configureRobotSensors();
 
     //cake
-    addObject(new CircleObject(400.0, QPointF(0, 1500), 0.0, ZRange(0.0, 250)), TableObstacleGroup);
+	//addObject(new CircleObject(400.0, QPointF(0, 1500), 0.0, ZRange(0.0, 250)), TableObstacleGroup);
     //addObject(new CircleObject(480.0, QPointF(0, 1500), 0.0, ZRange(0.0, 150)), TableObstacleGroup);
 }
 

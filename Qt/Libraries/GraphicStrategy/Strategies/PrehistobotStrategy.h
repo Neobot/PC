@@ -24,8 +24,10 @@ public:
 		QString moveFire = "moveFire";
 		QString turnFire = "turnFire";
 		QString holdFire = "holdFire";
-		QString scanInTorche = "scanInTorche";
-		QString moveOutOfTorche = "moveOutOfTorche";
+		QString scanInMobileTorche = "scanInMobileTorche";
+		QString moveOutOfMobileTorche = "moveOutOfMobileTorche";
+		QString scanInFixedTorche = "scanInFixedTorche";
+		QString moveOutOfFixedTorche = "moveOutOfFixedTorche";
 
 		QString dropFire = "dropFire";
 		QString dropAndTurnFire = "dropAndTurnFire";
@@ -64,7 +66,8 @@ public:
 	AbstractAction* scanAndTurnFires(Tools::NGridNode* destination, int speed = 100, int timeout = -1) const;
 	AbstractAction* scanAndHoldFires(Tools::NGridNode* destination, int speed = 100, int timeout = -1) const;
 	AbstractAction* dropHeldFires(DefaultStrategy::PumpId pumpId);
-	AbstractAction* takeAndHoldFireInTorche(DefaultStrategy::PumpId pumpId);
+	AbstractAction* takeAndHoldFireInMobileTorche(DefaultStrategy::PumpId pumpId);
+	AbstractAction* takeAndHoldFireInFixedTorche(DefaultStrategy::PumpId pumpId);
 
 private:
 	ActionFactory* _factory;

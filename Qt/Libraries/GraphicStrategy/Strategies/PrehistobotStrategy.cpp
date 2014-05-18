@@ -13,7 +13,7 @@
 using namespace Tools;
 
 PrehistobotStrategy::PrehistobotStrategy(const QDir& strategyDirectory, Tools::AbstractLogger *logger)
-	: DefaultAIStrategy(AIEngine::CostMaximizing, strategyDirectory, logger), _pbActionFactory(nullptr)
+	: DefaultAIStrategy(AIEngine::CostMaximizing, strategyDirectory, 2, logger), _pbActionFactory(nullptr)
 {
 	LoggerInterface::logger() << "---PREHISTOBOT STRATEGY---" << Tools::endl;
 
@@ -39,10 +39,14 @@ void PrehistobotStrategy::readAndDefineParameters(NSettings &settings)
 							QVariant::PointF, "A trajectory to search fires on the table at the end of the match.").toList());
 	settings.endGroup();
 
-	settings.beginGroup("Prehistobot AX-12 Movements");
+	settings.beginGroup("Prehistobot AX-12 Groups");
 
 	_ax12MvtNames.leftArmGroup = defineSettingValue(settings, "left_arm_group", _ax12MvtNames.leftArmGroup, "Left arm AX-12 group.").toString();
 	_ax12MvtNames.rightArmGroup = defineSettingValue(settings, "right_arm_group", _ax12MvtNames.rightArmGroup, "Left arm AX-12 group.").toString();
+
+	settings.endGroup();
+
+	settings.beginGroup("Prehistobot AX-12 Movements");
 
 	_ax12MvtNames.goToRest = defineSettingValue(settings, "go_to_rest", _ax12MvtNames.goToRest, "Move the arm to the default position.").toString();
 	_ax12MvtNames.goToScan = defineSettingValue(settings, "go_to_scan", _ax12MvtNames.goToScan, "Move the arm to the scan position.").toString();
@@ -50,10 +54,12 @@ void PrehistobotStrategy::readAndDefineParameters(NSettings &settings)
 	_ax12MvtNames.moveFire = defineSettingValue(settings, "move_fire", _ax12MvtNames.moveFire, "Move the fire without turning it.").toString();
 	_ax12MvtNames.turnFire = defineSettingValue(settings, "turn_fire", _ax12MvtNames.turnFire, "Turn the fire.").toString();
 	_ax12MvtNames.holdFire = defineSettingValue(settings, "hold_fire", _ax12MvtNames.holdFire, "Hold the fire.").toString();
-	_ax12MvtNames.scanInTorche = defineSettingValue(settings, "go_to_scan_in_torche", _ax12MvtNames.scanInTorche, "Go to the scan position in a mobile torche.").toString();
-	_ax12MvtNames.moveOutOfTorche = defineSettingValue(settings, "move_out_of_torche", _ax12MvtNames.moveOutOfTorche, "Move the arm out of the mobile torche.").toString();
+	_ax12MvtNames.scanInMobileTorche = defineSettingValue(settings, "go_to_scan_in_mobile_torche", _ax12MvtNames.scanInMobileTorche, "Go to the scan position in a mobile torche.").toString();
+	_ax12MvtNames.moveOutOfMobileTorche = defineSettingValue(settings, "move_out_of_mobile_torche", _ax12MvtNames.moveOutOfMobileTorche, "Move the arm out of the mobile torche.").toString();
 	_ax12MvtNames.dropFire = defineSettingValue(settings, "drop_fire", _ax12MvtNames.dropFire, "Turn the fire without turning it.").toString();
 	_ax12MvtNames.dropAndTurnFire = defineSettingValue(settings, "drop_and_turn_fire", _ax12MvtNames.dropAndTurnFire, "Drop the fire while turning it.").toString();
+	_ax12MvtNames.scanInFixedTorche = defineSettingValue(settings, "go_to_scan_in_fixed_torche", _ax12MvtNames.scanInFixedTorche, "Go to the scan position in a fixed torche.").toString();
+	_ax12MvtNames.moveOutOfFixedTorche = defineSettingValue(settings, "move_out_of_fixed_torche", _ax12MvtNames.moveOutOfFixedTorche, "Move the arm out of the fixed torche.").toString();
 
 	settings.endGroup();
 }
@@ -84,19 +90,31 @@ void PrehistobotStrategy::initGameState(GameState &state) const
 	state._content[FRUIT_3B_NODE] = false;
 	state._content[FRUIT_4A_NODE] = false;
 	state._content[FRUIT_4B_NODE] = false;
+
+	state._content[TORCHE_1_NODE] = false;
+	state._content[TORCHE_2_NODE] = false;
+	state._content[TORCHE_3_NODE] = false;
+	state._content[TORCHE_4_NODE] = false;
+	state._content[TORCHE_5_NODE] = false;
+	state._content[TORCHE_6_NODE] = false;
 }
 
 void PrehistobotStrategy::createActions()
 {
 	addCommand(new WaitCommand(1, _manager));
 
-	//addCommand(new PBFrescoCommand(FRESCO_NODE, 6, _manager));
+	addCommand(new PBFrescoCommand(FRESCO_NODE, 6, _manager));
 
 	addCommand(new PBFruitPickupCommand(FRUIT_1A_NODE, 0, RightSide, FRUIT_1B_NODE, autoMirror(Tools::pi), LeftSide, 400, 2, _manager));
-	//addCommand(new PBFruitPickupCommand(FRUIT_2A_NODE, autoMirror(Tools::pi/2.0), RightSide, FRUIT_2B_NODE, autoMirror(-Tools::pi/2.0), LeftSide, 400, 2, _manager));
-	//addCommand(new PBFruitPickupCommand(FRUIT_3A_NODE, autoMirror(Tools::pi/2.0), RightSide, FRUIT_3B_NODE, autoMirror(-Tools::pi/2.0), LeftSide, 400, 2, _manager));
-	//addCommand(new PBFruitPickupCommand(FRUIT_4A_NODE, autoMirror(Tools::pi), RightSide, FRUIT_4B_NODE, 0, LeftSide, 400, 2, _manager));
-	//addCommand(new PBFruitDropCommand(FRUIT_DROP_AREA, 2.0, _manager));
+	addCommand(new PBFruitPickupCommand(FRUIT_2A_NODE, autoMirror(Tools::pi/2.0), RightSide, FRUIT_2B_NODE, autoMirror(-Tools::pi/2.0), LeftSide, 400, 2, _manager));
+	addCommand(new PBFruitPickupCommand(FRUIT_3A_NODE, autoMirror(Tools::pi/2.0), RightSide, FRUIT_3B_NODE, autoMirror(-Tools::pi/2.0), LeftSide, 400, 2, _manager));
+	addCommand(new PBFruitPickupCommand(FRUIT_4A_NODE, autoMirror(Tools::pi), RightSide, FRUIT_4B_NODE, 0, LeftSide, 400, 2, _manager));
+	addCommand(new PBFruitDropCommand(FRUIT_DROP_AREA, 2.0, _manager));
+
+	addCommand(new PBTakeFixedTorcheCommand(TORCHE_3_NODE, true, 3, true, _pbActionFactory, _manager));
+	addCommand(new PBTakeFixedTorcheCommand(TORCHE_4_NODE, false, 3, false, _pbActionFactory, _manager));
+	addCommand(new PBTakeFixedTorcheCommand(TORCHE_5_NODE, false, 3, true, _pbActionFactory, _manager));
+	addCommand(new PBTakeFixedTorcheCommand(TORCHE_6_NODE, true, 3, false, _pbActionFactory, _manager));
 
 	addCommand(new PBSearchFiresCommand(autoMirrorList(_searchFiresPoints), _pbActionFactory, _manager));
 }
@@ -128,6 +146,13 @@ bool PrehistobotStrategy::checkGrid(const NGrid *grid) const
 	result = grid->getNode(FRUIT_4B_NODE) && result;
 
 	result = grid->getArea(FRUIT_DROP_AREA) && result;
+
+	result = grid->getNode(TORCHE_1_NODE) && result;
+	result = grid->getNode(TORCHE_2_NODE) && result;
+	result = grid->getNode(TORCHE_3_NODE) && result;
+	result = grid->getNode(TORCHE_4_NODE) && result;
+	result = grid->getNode(TORCHE_5_NODE) && result;
+	result = grid->getNode(TORCHE_6_NODE) && result;
 
 	return result;
 }
@@ -214,17 +239,30 @@ AbstractAction *PBActionFactory::dropHeldFires(DefaultStrategy::PumpId pumpId)
 	return _factory->asynchroneActionList(actions, AsynchroneActionGroup::AllActionFinished);
 }
 
-AbstractAction *PBActionFactory::takeAndHoldFireInTorche(DefaultStrategy::PumpId pumpId)
+AbstractAction *PBActionFactory::takeAndHoldFireInMobileTorche(DefaultStrategy::PumpId pumpId)
 {
 	bool left = pumpId == DefaultStrategy::LeftPump;
 	QString group = left ? _mvt.leftArmGroup : _mvt.rightArmGroup;
 
 	return _factory->actionList({
-									_factory->ax12Movement(group, _mvt.scanInTorche),
+									_factory->ax12Movement(group, _mvt.scanInMobileTorche),
 									_factory->ax12Movement(group, _mvt.pump),
 									_factory->startPumpAction(pumpId),
 									_factory->waitAction(1000),
-									_factory->ax12Movement(group, _mvt.moveOutOfTorche)});
+									_factory->ax12Movement(group, _mvt.moveOutOfMobileTorche)});
+}
+
+AbstractAction *PBActionFactory::takeAndHoldFireInFixedTorche(DefaultStrategy::PumpId pumpId)
+{
+	bool left = pumpId == DefaultStrategy::LeftPump;
+	QString group = left ? _mvt.leftArmGroup : _mvt.rightArmGroup;
+
+	return _factory->actionList({
+									_factory->ax12Movement(group, _mvt.scanInFixedTorche),
+									_factory->ax12Movement(group, _mvt.pump),
+									_factory->startPumpAction(pumpId),
+									_factory->waitAction(1000),
+									_factory->ax12Movement(group, _mvt.moveOutOfFixedTorche)});
 }
 
 ActionGroup *PBActionFactory::hanfleFireAction(bool left, bool ourColor, const QString& finalMvt) const

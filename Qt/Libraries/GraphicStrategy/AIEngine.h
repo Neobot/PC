@@ -31,10 +31,13 @@ public:
     void addCommand(AbstractAICommand* command);
     void clearAndDeleteCommands();
 
+	void notifyCancel();
+
 private:
     CostGoal _costGoal;
     QList<AbstractAICommand*> _availableCommands;
     AbstractAICommand* _commandInProgress;
+	bool _hasBeenCanceled;
 
     struct CommandEvaluation
     {

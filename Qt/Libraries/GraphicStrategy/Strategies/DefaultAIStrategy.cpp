@@ -11,8 +11,8 @@
 
 #include <QTime>
 
-DefaultAIStrategy::DefaultAIStrategy(AIEngine::CostGoal costGoal, const QDir &strategyDirectory, Tools::AbstractLogger *logger)
-	: DefaultStrategy(strategyDirectory, logger), AIEngine(costGoal), _nbRun(2)
+DefaultAIStrategy::DefaultAIStrategy(AIEngine::CostGoal costGoal, const QDir &strategyDirectory, int defaultNbRun, Tools::AbstractLogger *logger)
+	: DefaultStrategy(strategyDirectory, logger), AIEngine(costGoal), _nbRun(defaultNbRun)
 {
 }
 
@@ -42,6 +42,8 @@ void DefaultAIStrategy::obstacleDetected()
 	if (_manager->movementInProgress())
 	{
 		_manager->cancelCurrentAction();
+		notifyCancel();
+
 		logger() << "OBSTACLE detected: Cancelling current action." << Tools::endl;
 	}
 }
@@ -51,6 +53,8 @@ void DefaultAIStrategy::blockingDeteced()
 	if (_manager->movementInProgress())
 	{
 		_manager->cancelCurrentAction();
+		notifyCancel();
+
 		logger() << "BLOCKING detected: Cancelling current action." << Tools::endl;
 	}
 }

@@ -67,7 +67,8 @@ void SingleValueSwitchCaseAction::execute()
 		connect(_currentAction, SIGNAL(finished(bool)), this, SIGNAL(finished(bool)));
 		_currentAction->execute();
 	}
-	else
+
+	if (!_currentAction)
 	{
 		failed();
 	}

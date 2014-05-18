@@ -19,10 +19,15 @@
 #define FRUIT_3B_NODE "Fruit3B"
 #define FRUIT_4A_NODE "Fruit4A"
 #define FRUIT_4B_NODE "Fruit4B"
-
 #define FRUIT_DROP_AREA "FruitDrop"
-
 #define NB_FRUIT_PICKUP "NbFruitPickup"
+
+#define TORCHE_1_NODE "Torche1"
+#define TORCHE_2_NODE "Torche2"
+#define TORCHE_3_NODE "Torche3"
+#define TORCHE_4_NODE "Torche4"
+#define TORCHE_5_NODE "Torche5"
+#define TORCHE_6_NODE "Torche6"
 
 #define AVERAGE_SPEED 200.0 //mm/s
 
@@ -107,6 +112,23 @@ private:
 	PBActionFactory* _pbFactory;
 
 	QList<QPointF> getSortedPointList(const GameState &state) const;
+};
+
+class PBTakeFixedTorcheCommand : public AbstractAICommand
+{
+public:
+	PBTakeFixedTorcheCommand(const QString& torcheAlias, bool vertical, double estimatedTimeInSeconds, bool turnFire, PBActionFactory* pbFactory, StrategyManager* manager);
+
+	double evaluate(GameState &state);
+	void updateToFinalState(GameState &state) const;
+
+	AbstractAction* getAction(const GameState& state) const;
+private:
+	PBActionFactory* _pbFactory;
+	QString _torcheAlias;
+	bool _vertical;
+	double _estimatedTime; //seconds
+	bool _turnFire;
 };
 
 #endif // PREHISTOBOTCOMMANDS_H
