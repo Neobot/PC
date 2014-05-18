@@ -31,8 +31,12 @@ ColorScanAction::~ColorScanAction()
 
 void ColorScanAction::execute()
 {
-	connect(_manager, SIGNAL(sensorValuesReceived(Sensor::SensorFamily)), this, SLOT(testColor(Sensor::SensorFamily)));
+	connect(_manager, SIGNAL(sensorStateChanged(Comm::SensorType, int, int)), this, SLOT(testColor(Comm::SensorType, int, int)));
 	connect(_finder, SIGNAL(objectiveReached()), this, SLOT(destinationReached()));
+	connect(_finder, SIGNAL(objectiveCanceled()), this, SLOT(destinationReached()));
+
+	connect(_startAction, SIGNAL(finished(bool)), this, SLOT(startActionFinished(bool)));
+	connect(_endAction, SIGNAL(finished(bool)), this, SLOT(endActionFinished(bool)));
 
 	connect(_leftOpponentColorAction, SIGNAL(finished(bool)), this, SLOT(leftArmActionFinished(bool)));
 	connect(_leftOurColorAction, SIGNAL(finished(bool)), this, SLOT(leftArmActionFinished(bool)));
@@ -49,14 +53,24 @@ void ColorScanAction::execute()
 void ColorScanAction::stop()
 {
 	_stopped = true;
+
 	foreach(AbstractAction* subAction, _runningActions)
 		subAction->stop();
+
+	if (_destination)
+		_finder->cancel();
+	else if (_timeout)
+	{
+		_timeout->stop();
+		timeout();
+	}
 }
 
 void ColorScanAction::end()
 {
 	disconnect(_manager, SIGNAL(sensorStateChanged(Comm::SensorType, int, int)), this, SLOT(testColor(Comm::SensorType, int, int)));
 	disconnect(_finder, SIGNAL(objectiveReached()), this, SLOT(destinationReached()));
+	disconnect(_finder, SIGNAL(objectiveCanceled()), this, SLOT(destinationReached()));
 }
 
 QString ColorScanAction::getActionName() const
@@ -101,7 +115,7 @@ void ColorScanAction::leftArmActionFinished(bool result)
 	armActionFinsihed(_leftArmState, result);
 }
 
-void ColorScanAction::rightArmActionFisnihed(bool result)
+void ColorScanAction::rightArmActionFinished(bool result)
 {
 	AbstractAction *action = qobject_cast<AbstractAction*>(sender());
 	endSubAction(action);
@@ -180,8 +194,8 @@ void ColorScanAction::executeArmSubAction(AbstractAction *action, ArmState& armS
 
 void ColorScanAction::executeSubAction(AbstractAction *action)
 {
-	action->execute();
 	_runningActions << action;
+	action->execute();
 }
 
 void ColorScanAction::endSubAction(AbstractAction *action)
@@ -190,9 +204,6 @@ void ColorScanAction::endSubAction(AbstractAction *action)
 	{
 		_runningActions.removeAll(action);
 		action->end();
-
-		if (_stopped && _runningActions.isEmpty())
-			failed();
 	}
 }
 
@@ -200,9 +211,14 @@ void ColorScanAction::checkEnding()
 {
 	if (_destinationReached && _leftArmState == Scanning && _rightArmState == Scanning)
 	{
-		if (_endAction)
-			executeSubAction(_endAction);
+		if (_stopped)
+			failed();
 		else
-			succeed();
+		{
+			if (_endAction)
+				executeSubAction(_endAction);
+			else
+				succeed();
+		}
 	}
 }

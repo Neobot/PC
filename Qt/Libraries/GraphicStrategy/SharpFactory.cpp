@@ -72,7 +72,7 @@ Sharp* SharpFactory::MaxSonar_MB1240(double t1, const QVector2D& position, const
 {
 	Curve calibration;
 		calibration << Point(0, 0)
-			<< Point(100, 255);
+			<< Point(1000, 255);
 
 	Sharp* s = new Sharp(position, direction, height, calibration, t1);
 

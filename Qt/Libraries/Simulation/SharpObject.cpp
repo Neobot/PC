@@ -102,7 +102,7 @@ Sharp20_150::Sharp20_150(const QPointF& relativePosition, double relativeRotatio
 //------------------------------------------------------------------------
 
 MaxSonar_MB1240::MaxSonar_MB1240(const QPointF& relativePosition, double relativeRotation, double height)
-        : SharpObject(2000.0, relativePosition, relativeRotation, ZRange(height-150, height+150))
+		: SharpObject(2000.0, relativePosition, relativeRotation, ZRange(height-150, height+150))
 {
 	_calibrationCurve << Point(0, 0)
 					  << Point(255, 1000);

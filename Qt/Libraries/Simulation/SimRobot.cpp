@@ -86,7 +86,7 @@ void SimRobot::sendCoordinates(double x, double y, double theta, bool forward)
 {
 	theta = Tools::angleInMinusPiPlusPi(theta);
     Comm::Data d;
-    d.add((qint16)x).add((qint16)y).add((qint16)(theta * Comm::ANGLE_FACTOR)).add(forward ? 1 : 0);
+	d.add((qint16)x).add((qint16)y).add((qint16)(theta * Comm::ANGLE_FACTOR)).add(forward ? (quint8)1 : (quint8)0);
 	_protocol->sendMessage2(Comm::COORD, d);
 }
 

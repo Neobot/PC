@@ -38,12 +38,12 @@ void SimulationMap::configureRobotSensors()
 {
     //Avoiding sharps
 
-    addObject(new MaxSonar_MB1240(QPointF(40, -40), Tools::degreeToRadian(-10), 280), AvoidingSharpGroup);
+	addObject(new MaxSonar_MB1240(QPointF(40, -40), Tools::degreeToRadian(-10), 280), AvoidingSharpGroup);
 
-    addObject(new MaxSonar_MB1240(QPointF(-40, -40), Tools::degreeToRadian(-170), 280), AvoidingSharpGroup);
-    addObject(new MaxSonar_MB1240(QPointF(-40, 40), Tools::degreeToRadian(170), 280), AvoidingSharpGroup);
+	addObject(new MaxSonar_MB1240(QPointF(-40, -40), Tools::degreeToRadian(-170), 280), AvoidingSharpGroup);
+	addObject(new MaxSonar_MB1240(QPointF(-40, 40), Tools::degreeToRadian(170), 280), AvoidingSharpGroup);
 
-    addObject(new MaxSonar_MB1240(QPointF(40, 40), Tools::degreeToRadian(10), 280), AvoidingSharpGroup);
+	addObject(new MaxSonar_MB1240(QPointF(40, 40), Tools::degreeToRadian(10), 280), AvoidingSharpGroup);
 
 
     //    // front

@@ -14,6 +14,7 @@ ActionGroup::~ActionGroup()
 {
 	qDeleteAll(_list);
 	qDeleteAll(_finishedList);
+	_finishedList.clear();
 }
 
 void ActionGroup::execute()
@@ -26,11 +27,14 @@ void ActionGroup::stop()
 {
 	if (!_list.isEmpty())
 	{
-		AbstractAction* currentAction = _list.first();
+		_result = false;
+		AbstractAction* currentAction = _list.takeFirst();
 
 		//transfert the remaining actions in the finished list
-		_list.removeFirst();
 		_finishedList.append(_list);
+		_list.clear();
+
+		//Keep the current action to be able to retrieve it later
 		_list.append(currentAction);
 
 		currentAction->stop();
@@ -86,8 +90,8 @@ void AsynchroneActionGroup::execute()
 {
 	foreach(AbstractAction* action, _list)
 	{
-		action->execute();
 		connect(action, SIGNAL(finished(bool)), this, SLOT(subActionFinished(bool)));
+		action->execute();
 	}
 
 	if (!_list.isEmpty())

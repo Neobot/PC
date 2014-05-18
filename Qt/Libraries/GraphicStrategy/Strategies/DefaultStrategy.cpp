@@ -68,10 +68,10 @@ QPointF DefaultStrategy::doDetection(const Sharp *s1) const
 void DefaultStrategy::avoidingSharps(QMap<int, Sharp *> &sharpList) const
 {
     //front
-	sharpList.insert( FRONT_LEFT_SONAR, SharpFactory::MaxSonar_MB1240(40, QVector2D(40, -40), QVector2D(1, sin(Tools::degreeToRadian(10))), 0.0) );
-	sharpList.insert( FRONT_RIGHT_SONAR, SharpFactory::MaxSonar_MB1240(40, QVector2D(40, -40), QVector2D(1, sin(Tools::degreeToRadian(-10))), 0.0) );
+	sharpList.insert( FRONT_LEFT_SONAR, SharpFactory::MaxSonar_MB1240(400, QVector2D(40, -40), QVector2D(1, sin(Tools::degreeToRadian(10))), 0.0) );
+	sharpList.insert( FRONT_RIGHT_SONAR, SharpFactory::MaxSonar_MB1240(400, QVector2D(40, -40), QVector2D(1, sin(Tools::degreeToRadian(-10))), 0.0) );
 
     //rear
-	sharpList.insert( REAR_LEFT_SONAR, SharpFactory::MaxSonar_MB1240(40, QVector2D(-40, 40), QVector2D(-1, sin(Tools::degreeToRadian(170))), 0.0) );
-	sharpList.insert( REAR_RIGHT_SONAR, SharpFactory::MaxSonar_MB1240(40, QVector2D(-40, -40), QVector2D(-1, sin(Tools::degreeToRadian(190))), 0.0) );
+	sharpList.insert( REAR_LEFT_SONAR, SharpFactory::MaxSonar_MB1240(400, QVector2D(-40, 40), QVector2D(-1, sin(Tools::degreeToRadian(170))), 0.0) );
+	sharpList.insert( REAR_RIGHT_SONAR, SharpFactory::MaxSonar_MB1240(400, QVector2D(-40, -40), QVector2D(-1, sin(Tools::degreeToRadian(190))), 0.0) );
 }

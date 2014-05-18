@@ -33,11 +33,10 @@ public:
 
 	PrehistobotStrategy(const QDir &strategyDirectory, Tools::AbstractLogger *logger);
 
-	bool load(StrategyManager* manager, bool mirror);
-
 	virtual void defaultStrategyParameters(StrategyParameters& parameters) const;
 	virtual void readAndDefineParameters(Tools::NSettings &settings);
 
+	void mainStrategy(QList<AbstractAction*>& actions);
 	void initGameState(GameState& state) const;
 	void createActions();
 

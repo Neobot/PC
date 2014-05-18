@@ -50,6 +50,8 @@ bool StrategyInterface::load(StrategyManager* manager, bool mirror)
 
 void StrategyInterface::init()
 {
+	defaultStrategyParameters(_standardParameters);
+
 	Tools::NSettings parametersSettings;
 
 	if (_strategyDirectory.exists(PARAMETERS_FILE))

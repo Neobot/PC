@@ -19,7 +19,7 @@ public:
 
 	virtual void readAndDefineParameters(Tools::NSettings &settings);
 
-	void mainStrategy(QList<AbstractAction*>& actions);
+	virtual void mainStrategy(QList<AbstractAction*>& actions);
 	void actionDone(const AbstractAction *action, bool result, bool isLast);
 	void obstacleDetected();
 	void blockingDeteced();

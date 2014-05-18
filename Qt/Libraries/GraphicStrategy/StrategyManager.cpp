@@ -290,6 +290,9 @@ void StrategyManager::avoidingSensors(const QList<quint8> &values)
 	{
 		quint8 value = *it;
 
+		if (value > 0)
+			int aa = 0;
+
 		Sharp* sharp = _sharps.value(index);
 		if (!sharp)
 			break;
@@ -473,18 +476,17 @@ void StrategyManager::actionFinished(bool result)
 	action->end();
 
 	++_currentActionIndex;
+
+	if (_strategy)
+		_strategy->actionDone(action, result, isLastAction());
+
 	if (isLastAction() && _loop)
 	{
 		logger() << "Looping back at the begining..." << Tools::endl;
 		_currentActionIndex = 0;
 	}
 
-	bool isLast = isLastAction();
-
-	if (_strategy)
-		_strategy->actionDone(action, result, isLast);
-
-	if (isLast)
+	if (isLastAction())
 	{
 		logger() << "No more actions to do." << Tools::endl;
 		emit strategyFinished();

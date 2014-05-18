@@ -100,7 +100,7 @@ private slots:
 
 	void startActionFinished(bool result);
 	void leftArmActionFinished(bool result);
-	void rightArmActionFisnihed(bool result);
+	void rightArmActionFinished(bool result);
 	void endActionFinished(bool result);
 	void destinationReached();
 	void timeout();

@@ -20,15 +20,6 @@ PrehistobotStrategy::PrehistobotStrategy(const QDir& strategyDirectory, Tools::A
 	_searchFiresPoints << QPointF(650,450) << QPointF(1600,450) << QPointF(1600,2550) << QPointF(650,2550);
 }
 
-bool PrehistobotStrategy::load(StrategyManager *manager, bool mirror)
-{
-	bool ok = DefaultAIStrategy::load(manager, mirror);
-
-	_pbActionFactory = new PBActionFactory(manager->getActionFactory(), _ax12MvtNames, mirror);
-
-	return ok;
-}
-
 void PrehistobotStrategy::defaultStrategyParameters(StrategyInterface::StrategyParameters &parameters) const
 {
 	DefaultStrategy::defaultStrategyParameters(parameters);
@@ -67,6 +58,19 @@ void PrehistobotStrategy::readAndDefineParameters(NSettings &settings)
 	settings.endGroup();
 }
 
+void PrehistobotStrategy::mainStrategy(QList<AbstractAction *> &actions)
+{
+	_pbActionFactory = new PBActionFactory(_manager->getActionFactory(), _ax12MvtNames, _manager->isMirrored());
+
+	actions << _manager->getActionFactory()->asynchroneActionList(
+	{
+		_manager->getActionFactory()->ax12Movement(_ax12MvtNames.leftArmGroup, _ax12MvtNames.goToRest),
+		_manager->getActionFactory()->ax12Movement(_ax12MvtNames.rightArmGroup, _ax12MvtNames.goToRest)
+	}, AsynchroneActionGroup::AllActionFinished);
+
+	DefaultAIStrategy::mainStrategy(actions);
+}
+
 void PrehistobotStrategy::initGameState(GameState &state) const
 {
 	state._content[FRESCO_NODE] = false;
@@ -84,21 +88,15 @@ void PrehistobotStrategy::initGameState(GameState &state) const
 
 void PrehistobotStrategy::createActions()
 {
-	_manager->getActionFactory()->asynchroneActionList(
-		{
-			_manager->getActionFactory()->ax12Movement(_ax12MvtNames.leftArmGroup, _ax12MvtNames.goToRest),
-			_manager->getActionFactory()->ax12Movement(_ax12MvtNames.rightArmGroup, _ax12MvtNames.goToRest)
-		}, AsynchroneActionGroup::AllActionFinished);
-
 	addCommand(new WaitCommand(1, _manager));
 
-	addCommand(new PBFrescoCommand(FRESCO_NODE, 6, _manager));
+	//addCommand(new PBFrescoCommand(FRESCO_NODE, 6, _manager));
 
 	addCommand(new PBFruitPickupCommand(FRUIT_1A_NODE, 0, RightSide, FRUIT_1B_NODE, autoMirror(Tools::pi), LeftSide, 400, 2, _manager));
-	addCommand(new PBFruitPickupCommand(FRUIT_2A_NODE, autoMirror(Tools::pi/2.0), RightSide, FRUIT_2B_NODE, autoMirror(-Tools::pi/2.0), LeftSide, 400, 2, _manager));
-	addCommand(new PBFruitPickupCommand(FRUIT_3A_NODE, autoMirror(Tools::pi/2.0), RightSide, FRUIT_3B_NODE, autoMirror(-Tools::pi/2.0), LeftSide, 400, 2, _manager));
-	addCommand(new PBFruitPickupCommand(FRUIT_4A_NODE, autoMirror(Tools::pi), RightSide, FRUIT_4B_NODE, 0, LeftSide, 400, 2, _manager));
-	addCommand(new PBFruitDropCommand(FRUIT_DROP_AREA, 2.0, _manager));
+	//addCommand(new PBFruitPickupCommand(FRUIT_2A_NODE, autoMirror(Tools::pi/2.0), RightSide, FRUIT_2B_NODE, autoMirror(-Tools::pi/2.0), LeftSide, 400, 2, _manager));
+	//addCommand(new PBFruitPickupCommand(FRUIT_3A_NODE, autoMirror(Tools::pi/2.0), RightSide, FRUIT_3B_NODE, autoMirror(-Tools::pi/2.0), LeftSide, 400, 2, _manager));
+	//addCommand(new PBFruitPickupCommand(FRUIT_4A_NODE, autoMirror(Tools::pi), RightSide, FRUIT_4B_NODE, 0, LeftSide, 400, 2, _manager));
+	//addCommand(new PBFruitDropCommand(FRUIT_DROP_AREA, 2.0, _manager));
 
 	addCommand(new PBSearchFiresCommand(autoMirrorList(_searchFiresPoints), _pbActionFactory, _manager));
 }
