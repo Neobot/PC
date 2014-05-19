@@ -165,7 +165,12 @@ AbstractAction *ActionFactory::ax12Action(quint8 id1, float angle1, quint8 id2, 
 
 AbstractAction* ActionFactory::ax12Movement(const QString& group, const QString& movement, float speedLimit) const
 {
-	return new AX12MovementAction(group, movement, speedLimit, _robot, _ax12MovementsManager);
+	return new AX12MovementAction(group, movement, speedLimit, true, _robot, _ax12MovementsManager);
+}
+
+AbstractAction* ActionFactory::ax12AsynchroneMovement(const QString& group, const QString& movement, float speedLimit = 110.f) const
+{
+	return new AX12MovementAction(group, movement, speedLimit, false, _robot, _ax12MovementsManager);
 }
 
 AbstractAction *ActionFactory::waitForSharpToActivate(int otherSharpId, int timeoutInMs) const

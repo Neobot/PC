@@ -198,18 +198,23 @@ QString AX12Action::getActionName() const
 
 //AX-12 movement-----------------------------------------------------------------------
 
-AX12MovementAction::AX12MovementAction(const QString& group, const QString& movement, float speedLimit, Comm::RobotCommInterface* robot, Tools::Ax12MovementManager* movementManager, QObject *parent)
-	: AbstractAction(parent), _group(group), _mvt(movement), _speedLimit(speedLimit), _robot(robot), _movementManager(movementManager)
+AX12MovementAction::AX12MovementAction(const QString& group, const QString& movement, float speedLimit, bool synchrone, Comm::RobotCommInterface* robot, Tools::Ax12MovementManager* movementManager, QObject *parent)
+	: AbstractAction(parent), _group(group), _mvt(movement), _speedLimit(speedLimit), _synchrone(synchrone), _robot(robot), _movementManager(movementManager)
 {
 	_runner = new Comm::Ax12MovementRunner(_robot->getAx12Manager(), _movementManager, this);
 }
 
 void AX12MovementAction::execute()
 {
-	connect(_runner, SIGNAL(movementFinished(bool, QString, QString)), this, SIGNAL(finished(bool)));
+	if (_synchrone)
+		connect(_runner, SIGNAL(movementFinished(bool, QString, QString)), this, SIGNAL(finished(bool)));
+		
 	bool ok = _runner->startMovement(_group, _mvt, _speedLimit);
 	if (!ok)
 		failed();
+		
+	else if (!_synchrone)
+		succeed();
 }
 
 void AX12MovementAction::end()
@@ -219,7 +224,8 @@ void AX12MovementAction::end()
 
 void AX12MovementAction::stop()
 {
-	_runner->stop();
+	if (_synchrone)
+		_runner->stop();
 }
 
 QString AX12MovementAction::getActionName() const
