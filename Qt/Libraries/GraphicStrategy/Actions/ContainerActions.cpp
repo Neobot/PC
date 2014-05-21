@@ -21,6 +21,8 @@ void ActionGroup::execute()
 {
 	if (!_list.isEmpty())
 		executeNextSubAction();
+	else
+		succeed();
 }
 
 void ActionGroup::stop()
@@ -30,7 +32,7 @@ void ActionGroup::stop()
 		_result = false;
 		AbstractAction* currentAction = _list.takeFirst();
 
-		//transfert the remaining actions in the finished list
+		//transfer the remaining actions in the finished list
 		_finishedList.append(_list);
 		_list.clear();
 
@@ -88,17 +90,19 @@ AsynchroneActionGroup::~AsynchroneActionGroup()
 
 void AsynchroneActionGroup::execute()
 {
-	foreach(AbstractAction* action, _list)
-	{
-		connect(action, SIGNAL(finished(bool)), this, SLOT(subActionFinished(bool)));
-		action->execute();
-	}
-
 	if (!_list.isEmpty())
 	{
 		_firstAction = _list.first();
 		_lastAction = _list.last();
+		
+		foreach(AbstractAction* action, _list)
+		{
+			connect(action, SIGNAL(finished(bool)), this, SLOT(subActionFinished(bool)));
+			action->execute();
+		}
 	}
+	else
+		succeed();
 }
 
 void AsynchroneActionGroup::stop()

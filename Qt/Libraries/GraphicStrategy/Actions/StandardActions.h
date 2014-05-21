@@ -138,7 +138,7 @@ class AX12MovementAction : public AbstractAction
 {
 	Q_OBJECT
 public:
-	AX12MovementAction(const QString& group, const QString& movement, float speedLimit, Comm::RobotCommInterface* robot, Tools::Ax12MovementManager* movementManager, QObject* parent = 0);
+	AX12MovementAction(const QString& group, const QString& movement, float speedLimit, bool synchrone, Comm::RobotCommInterface* robot, Tools::Ax12MovementManager* movementManager, QObject* parent = 0);
 
 	void execute();
 	void end();
@@ -150,6 +150,7 @@ private:
 	QString _group;
 	QString _mvt;
 	float _speedLimit;
+	bool _synchrone;
 
 	Comm::RobotCommInterface*	_robot;
 	Tools::Ax12MovementManager* _movementManager;

@@ -50,6 +50,7 @@ public:
     AbstractAction* ax12Action(quint8 id1, float angle1, quint8 id2, float angle2, float speed) const;
 	
 	AbstractAction* ax12Movement(const QString& group, const QString& movement, float speedLimit = 110.f) const;
+	AbstractAction* ax12AsynchroneMovement(const QString& group, const QString& movement, float speedLimit = 110.f) const;
 
     AbstractAction* waitForSharpToActivate(int otherSharpId, int timeoutInMs) const;
     AbstractAction* waitForSharpToDesactivate(int otherSharpId, int timeoutInMs) const;

@@ -199,6 +199,9 @@ PBSearchFiresCommand::PBSearchFiresCommand(const QList<QPointF> points, PBAction
 
 double PBSearchFiresCommand::evaluate(GameState &state)
 {
+	if (state._content.value().toBool(LEFT_HAND_HAS_FIRE) || state._content.value().toBool(RIGHT_HAND_HAS_FIRE))
+		return -1.0; //cannot take anything
+		
 	Q_UNUSED(state);
 	return 1/90.0; //smallest value possible
 }
@@ -270,12 +273,21 @@ double PBTakeFixedTorcheCommand::evaluate(GameState &state)
 {
 	if (state._content.value(_torcheAlias).toBool())
 		return -1.0;
+		
+	if (state._content.value().toBool(LEFT_HAND_HAS_FIRE) && state._content.value().toBool(RIGHT_HAND_HAS_FIRE))
+		return -1.0; //cannot take anything
 
 	double d = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_torcheAlias));
 	if (d <= 0)
 		return -1.0;
 
+	bool optimal = true;
+	getPump(state, &optimal);
+		
 	double duration = calculateActionTime(d, AVERAGE_SPEED, _estimatedTime);
+	if (!optimal)
+		duration += 3.0; //approximative time for turning and get in the right position
+		
 	if (state._remainingTime <= duration)
 		return -1.0;
 
@@ -290,6 +302,12 @@ void PBTakeFixedTorcheCommand::updateToFinalState(GameState &state) const
 	//Update the state
 	state._content[_torcheAlias] = true;
 	state._robotposition = _manager->getGrid()->getNode(_torcheAlias);
+	
+	int pump = getPump(state);
+	if (pump == DefaultStrategy::LeftPump)
+		state._content[LEFT_HAND_HAS_FIRE] = true;
+	else if (pump == DefaultStrategy::RightPump)
+		state._content[RIGHT_HAND_HAS_FIRE] = true;
 }
 
 AbstractAction *PBTakeFixedTorcheCommand::getAction(const GameState &state) const
@@ -299,43 +317,135 @@ AbstractAction *PBTakeFixedTorcheCommand::getAction(const GameState &state) cons
 	QList<AbstractAction*> actionList;
 
 	Tools::NGridNode* node = _manager->getGrid()->getNode(_torcheAlias);
+	actionList  << _manager->getActionFactory()->moveAction(node, 100);
+	
 	bool isOnLeftSide = node->getPosition().x() < 1500;
+	int pump = getPump(state);
+	Q_ASSERT(pump >= 0);
+	if (pump >= 0)
+	{
+		if (_vertical)
+		{
+			if ((pump == DefaultStrategy::LeftPump && isOnLeftSide) || (pump == DefaultStrategy::RightPump && !isOnLeftSide))
+			{
+				actionList  << _manager->getActionFactory()->manualAbsoluteTurnMoveAction(-Tools::pi, 100);				
+			}
+			else
+			{
+				actionList  << _manager->getActionFactory()->manualAbsoluteTurnMoveAction(0, 100);
+			}
+		}
+		else
+		{
+			if (pump == DefaultStrategy::LeftPump)
+			{
+				actionList  << _manager->getActionFactory()->manualAbsoluteTurnMoveAction(-Tools::pi/2.0, 100);
+			}
+			else
+			{
+				actionList  << _manager->getActionFactory()->manualAbsoluteTurnMoveAction(Tools::pi/2.0, 100);
+			}
+		}
+		
+		if (pump == DefaultStrategy::LeftPump)
+			actionList  << _pbFactory->takeAndHoldFireInFixedTorche(DefaultStrategy::LeftPump);
+		else
+			actionList  << _pbFactory->takeAndHoldFireInFixedTorche(DefaultStrategy::RightPump);
+	}
 
-	OrientationSwitchCaseAction* switchAction = _manager->getActionFactory()->orientationSwitchCaseAction();
+	return _manager->getActionFactory()->actionList(actionList);
+}
 
+int PBTakeFixedTorcheCommand::getBestPump(const GameState &state) const
+{
+	Tools::NGridNode* node = _manager->getGrid()->getNode(_torcheAlias);
+	QPointF robotPos = state._robotposition;
+	bool isOnLeftSide = node->getPosition().x() < 1500;
+	
+	int pump = -1;
 	if (_vertical)
 	{
-		ActionGroup* upDirectionActions = _manager->getActionFactory()->actionList({
-						_manager->getActionFactory()->manualAbsoluteTurnMoveAction(-Tools::pi, 100),
-						_pbFactory->takeAndHoldFireInFixedTorche(isOnLeftSide ? DefaultStrategy::LeftPump : DefaultStrategy::RightPump)
-					});
-
-		ActionGroup* downDirectionActions = _manager->getActionFactory()->actionList({
-						 _manager->getActionFactory()->manualAbsoluteTurnMoveAction(0, 100),
-					 _pbFactory->takeAndHoldFireInFixedTorche(isOnLeftSide ? DefaultStrategy::RightPump : DefaultStrategy::LeftPump)
-					});
-
-		switchAction->addCase(-Tools::pi/2.0, Tools::pi/2.0, downDirectionActions);
-		switchAction->setDefaultAction(upDirectionActions);
+		if (isOnLeftSide)
+			pump = robot.x() < node->getPosition().x() ? DefaultStrategy::LeftPump : DefaultStrategy::RightPump;
+		else
+			pump = robot.x() < node->getPosition().x() ? DefaultStrategy::RightPump : DefaultStrategy::LeftPump;
 	}
 	else
 	{
-		ActionGroup* rightDirectionsActions = _manager->getActionFactory()->actionList({
-						_manager->getActionFactory()->manualAbsoluteTurnMoveAction(Tools::pi/2.0, 100),
-						_pbFactory->takeAndHoldFireInFixedTorche(DefaultStrategy::RightPump)
-					});
+		pump = robot.y() < node->getPosition().y() ? DefaultStrategy::RightPump : DefaultStrategy::LeftPump;
+	}	
+	
+	return pump;
+}
 
-		ActionGroup* leftDirectionsActions = _manager->getActionFactory()->actionList({
-						 _manager->getActionFactory()->manualAbsoluteTurnMoveAction(-Tools::pi/2.0, 100),
-					 _pbFactory->takeAndHoldFireInFixedTorche(DefaultStrategy::LeftPump)
-					});
+int PBTakeFixedTorcheCommand::getPump(const GameState &state, bool* isBest = 0) const
+{
+	int bestPump = getBestPump(state);
+	int pump = -1;
+	
+	if (state._content.value().toBool(LEFT_HAND_HAS_FIRE) && state._content.value().toBool(RIGHT_HAND_HAS_FIRE))
+		pump = -1; //no hand
+		
+	else if (state._content.value().toBool(LEFT_HAND_HAS_FIRE))
+		pump = DefaultStrategy::RightPump; //Only the right hand is available
+		
+	else if (state._content.value().toBool(RIGHT_HAND_HAS_FIRE))
+		pump = DefaultStrategy::LeftPump; //Only the left hand is available
+		
+	else
+		pump = bestPump; //Both hands are available, get the best one
+		
+	if (isBest)
+		*isBest = pump == bestPump;
+	
+	return pump;
+}
 
-		switchAction->addCase(0, Tools::pi, rightDirectionsActions);
-		switchAction->setDefaultAction(leftDirectionsActions);
-	}
+////------------------------------------------------------------------------------------------
+
+PBTakeMobileTorcheCommand::PBTakeMobileTorcheCommand(const QString& torcheAlias, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager)
+	: AbstractAICommand(manager), _pbFactory(pbFactory), _torcheAlias(torcheAlias), _estimatedTime(estimatedTimeInSeconds)
+{
+	setDescription("Take fires in mobile torche " + _torcheAlias);
+}
+
+double PBTakeMobileTorcheCommand::evaluate(GameState &state)
+{
+	if (state._content.value(_torcheAlias).toBool())
+		return -1.0;
+
+	double d = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_torcheAlias));
+	if (d <= 0)
+		return -1.0;
+
+	double duration = calculateActionTime(d, AVERAGE_SPEED, _estimatedTime);
+	if (state._remainingTime <= duration)
+		return -1.0;
+
+	state._remainingTime -= duration;
+
+	double cost = 3.0 / duration;
+	return cost;
+}
+
+void PBTakeMobileTorcheCommand::updateToFinalState(GameState &state) const
+{
+	//Update the state
+	state._content[_torcheAlias] = true;
+	state._robotposition = _manager->getGrid()->getNode(_torcheAlias);
+}
+
+AbstractAction *PBTakeMobileTorcheCommand::getAction(const GameState &state) const
+{
+	Q_UNUSED(state);
+
+	QList<AbstractAction*> actionList;
+
+	Tools::NGridNode* node = _manager->getGrid()->getNode(_torcheAlias);
 
 	actionList  << _manager->getActionFactory()->moveAction(node, 100)
-				<< switchAction
+				<<  _pbFactory->takeAndHoldFireInMobileTorche(DefaultStrategy::LeftPump)
+				//move and drop, TODO
 				;
 
 	return _manager->getActionFactory()->actionList(actionList);
@@ -354,6 +464,9 @@ double PBEasyFireCommand::evaluate(GameState &state)
 	if (state._content.value(_aliasA).toBool())
 		return -1.0;
 
+	if (state._content.value().toBool(LEFT_HAND_HAS_FIRE) || state._content.value().toBool(RIGHT_HAND_HAS_FIRE))
+		return -1.0; //cannot take anything
+		
 	if (state._remainingTime < (90 - _availableTimeToPerformAction)) //only available during the first x seconds of the match
 		return -1.0;
 
@@ -425,4 +538,85 @@ void PBEasyFireCommand::getOptions(double distanceToA, double distanceToB, QStri
 		firstAlias = _aliasB;
 		secondAlias = _aliasA;
 	}
+}
+
+////------------------------------------------------------------------------------------------
+
+PBDropHeldFiresCommand::PBDropHeldFiresCommand(const QString& alias, bool onHearth, int maxFiresOnThisNode, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager)
+	: AbstractAICommand(manager), _pbFactory(pbFactory), _alias(alias), _estimatedTime(estimatedTimeInSeconds), _onHearth(onHearth), _maxFiresOnThisNode(maxFiresOnThisNode)
+{
+	setDescription("Drop fires at " + _torcheAlias);
+}
+
+double PBDropHeldFiresCommand::evaluate(GameState &state)
+{
+	if (!state._content.value().toBool(LEFT_HAND_HAS_FIRE) && !state._content.value().toBool(RIGHT_HAND_HAS_FIRE))
+		return -1.0; //nothing to drop
+		
+	if (state._content.value(_alias).toInt() >= _maxFiresOnThisNode) 
+		return -1.0; //too much fires dropped at this location
+
+	double d = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_alias));
+	if (d <= 0)
+		return -1.0;
+
+	double duration = calculateActionTime(d, AVERAGE_SPEED, _estimatedTime);
+	if (state._remainingTime <= duration)
+		return -1.0;
+
+	state._remainingTime -= duration;
+
+	int nbPoints = 1.0;
+	if (_onHearth)
+		nbPoints *= 2.0;
+	
+	double cost = nbPoints / duration;
+	
+	return cost;
+}
+
+void PBDropHeldFiresCommand::updateToFinalState(GameState &state) const
+{
+	//Update the state
+	int nbFireDropped = 0;
+	if (state._content.value().toBool(LEFT_HAND_HAS_FIRE))
+	{
+		++nbFireDropped;
+		state._content[LEFT_HAND_HAS_FIRE] = false;
+	}}
+	
+	if (state._content.value().toBool(RIGHT_HAND_HAS_FIRE))
+	{
+		++nbFireDropped;
+		state._content[RIGHT_HAND_HAS_FIRE] = false;
+	}}
+	
+	state._content[_alias] = state._content[_alias].toInt() + nbFireDropped;
+	state._robotposition = _manager->getGrid()->getNode(_alias);
+}
+
+AbstractAction *PBDropHeldFiresCommand::getAction(const GameState &state) const
+{
+	Q_UNUSED(state);
+
+	QList<AbstractAction*> actionList;
+
+	Tools::NGridNode* node = _manager->getGrid()->getNode(_torcheAlias);
+	
+	actionList  << _manager->getActionFactory()->moveAction(node, 100);
+	
+	int maxNbFiresToDrop = _maxFiresOnThisNode - state._content.value(_alias).toInt();
+	if (state._content.value().toBool(LEFT_HAND_HAS_FIRE) && maxNbFiresToDrop > 0)
+	{
+		actionList  << _pbFactory->dropHeldFires(DefaultStrategy::LeftPump);
+		--maxNbFiresToDrop;
+	}
+	
+	if (state._content.value().toBool(RIGHT_HAND_HAS_FIRE) && maxNbFiresToDrop > 0)
+	{
+		actionList  << _pbFactory->dropHeldFires(DefaultStrategy::RightPump);
+		--maxNbFiresToDrop;
+	}
+
+	return _manager->getActionFactory()->asynchroneActionList(actionList, AsynchroneActionGroup::AllActionFinished);
 }

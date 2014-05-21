@@ -101,6 +101,11 @@ void PrehistobotStrategy::initGameState(GameState &state) const
 	state._content[EASYFIRE_1A_NODE] = false;
 	state._content[EASYFIRE_2A_NODE] = false;
 	state._content[EASYFIRE_3A_NODE] = false;
+	
+	state._content[LEFT_HAND_HAS_FIRE] = false;
+	state._content[RIGHT_HAND_HAS_FIRE] = false;
+	
+	state._content[HEARTH_1_NODE] = 0;
 }
 
 void PrehistobotStrategy::createActions()
@@ -119,10 +124,14 @@ void PrehistobotStrategy::createActions()
 	addCommand(new PBTakeFixedTorcheCommand(TORCHE_4_NODE, false, 3, false, _pbActionFactory, _manager));
 	addCommand(new PBTakeFixedTorcheCommand(TORCHE_5_NODE, false, 3, true, _pbActionFactory, _manager));
 	addCommand(new PBTakeFixedTorcheCommand(TORCHE_6_NODE, true, 3, false, _pbActionFactory, _manager));
+	
+	//addCommand(new PBTakeMobileTorcheCommand(TORCHE_1_NODE, 10, _pbActionFactory, _manager));
+	
+	//addCommand(new PBDropHeldFiresCommand(HEARTH_1_NODE, true, 4, _pbActionFactory, _manager));
 
-	addCommand(new PBEasyFireCommand(EASYFIRE_1A_NODE, EASYFIRE_1B_NODE, 20, 3, _pbActionFactory, _manager));
-	addCommand(new PBEasyFireCommand(EASYFIRE_2A_NODE, EASYFIRE_3B_NODE, 20, 3, _pbActionFactory, _manager));
-	addCommand(new PBEasyFireCommand(EASYFIRE_2A_NODE, EASYFIRE_3B_NODE, 20, 3, _pbActionFactory, _manager));
+	addCommand(new PBEasyFireCommand(EASYFIRE_1A_NODE, EASYFIRE_1B_NODE, 20, 1, _pbActionFactory, _manager));
+	addCommand(new PBEasyFireCommand(EASYFIRE_2A_NODE, EASYFIRE_3B_NODE, 20, 1, _pbActionFactory, _manager));
+	addCommand(new PBEasyFireCommand(EASYFIRE_2A_NODE, EASYFIRE_3B_NODE, 20, 1, _pbActionFactory, _manager));
 
 	addCommand(new PBSearchFiresCommand(autoMirrorList(_searchFiresPoints), _pbActionFactory, _manager));
 }
@@ -168,6 +177,8 @@ bool PrehistobotStrategy::checkGrid(const NGrid *grid) const
 	result = grid->getNode(EASYFIRE_2B_NODE) && result;
 	result = grid->getNode(EASYFIRE_3A_NODE) && result;
 	result = grid->getNode(EASYFIRE_3B_NODE) && result;
+	
+	result = grid->getNode(HEARTH_1_NODE) && result;
 
 	return result;
 }
