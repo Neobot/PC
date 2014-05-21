@@ -36,6 +36,10 @@
 #define EASYFIRE_3A_NODE "EasyFire3A"
 #define EASYFIRE_3B_NODE "EasyFire3B"
 
+#define HEARTH_1_NODE "Hearth1"
+
+#define LEFT_HAND_HAS_FIRE "LeftHandHasFire"
+#define RIGHT_HAND_HAS_FIRE "RightHandHasFire"
 
 #define AVERAGE_SPEED 200.0 //mm/s
 
@@ -137,8 +141,25 @@ private:
 	bool _vertical;
 	double _estimatedTime; //seconds
 	bool _turnFire;
+	
+	int getBestPump(const GameState &state) const;
+	int getPump(const GameState &state, bool* isBest = 0) const;
 };
 
+class PBTakeMobileTorcheCommand : public AbstractAICommand
+{
+public:
+	PBTakeMobileTorcheCommand(const QString& torcheAlias, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager);
+
+	double evaluate(GameState &state);
+	void updateToFinalState(GameState &state) const;
+
+	AbstractAction* getAction(const GameState& state) const;
+private:
+	PBActionFactory* _pbFactory;
+	QString _torcheAlias;
+	double _estimatedTime; //seconds
+};
 
 class PBEasyFireCommand : public AbstractAICommand
 {
@@ -158,5 +179,23 @@ private:
 
 	void getOptions(double distanceToA, double distanceToB, QString& firstAlias, QString& secondAlias) const;
 };
+
+class PBDropHeldFiresCommand : public AbstractAICommand
+{
+public:
+	PBDropHeldFiresCommand(const QString& alias, bool onHearth, int maxFiresOnThisNode, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager);
+
+	double evaluate(GameState &state);
+	void updateToFinalState(GameState &state) const;
+
+	AbstractAction* getAction(const GameState& state) const;
+private:
+	PBActionFactory* _pbFactory;
+	QString _alias;
+	double _estimatedTime; //seconds
+	bool _onHearth;
+	int _maxFiresOnThisNode;
+};
+
 
 #endif // PREHISTOBOTCOMMANDS_H
