@@ -199,7 +199,7 @@ PBSearchFiresCommand::PBSearchFiresCommand(const QList<QPointF> points, PBAction
 
 double PBSearchFiresCommand::evaluate(GameState &state)
 {
-	if (state._content.value().toBool(LEFT_HAND_HAS_FIRE) || state._content.value().toBool(RIGHT_HAND_HAS_FIRE))
+	if (state._content.value(LEFT_HAND_HAS_FIRE).toBool() || state._content.value(RIGHT_HAND_HAS_FIRE).toBool())
 		return -1.0; //cannot take anything
 		
 	Q_UNUSED(state);
@@ -274,7 +274,7 @@ double PBTakeFixedTorcheCommand::evaluate(GameState &state)
 	if (state._content.value(_torcheAlias).toBool())
 		return -1.0;
 		
-	if (state._content.value().toBool(LEFT_HAND_HAS_FIRE) && state._content.value().toBool(RIGHT_HAND_HAS_FIRE))
+	if (state._content.value(LEFT_HAND_HAS_FIRE).toBool() && state._content.value(RIGHT_HAND_HAS_FIRE).toBool())
 		return -1.0; //cannot take anything
 
 	double d = _manager->getFuturePathingDistance(state, state._robotposition, _manager->getGrid()->getNode(_torcheAlias));
@@ -359,37 +359,37 @@ AbstractAction *PBTakeFixedTorcheCommand::getAction(const GameState &state) cons
 int PBTakeFixedTorcheCommand::getBestPump(const GameState &state) const
 {
 	Tools::NGridNode* node = _manager->getGrid()->getNode(_torcheAlias);
-	QPointF robotPos = state._robotposition;
+	QPointF robotPos = state._robotposition->getPosition();
 	bool isOnLeftSide = node->getPosition().x() < 1500;
 	
 	int pump = -1;
 	if (_vertical)
 	{
 		if (isOnLeftSide)
-			pump = robot.x() < node->getPosition().x() ? DefaultStrategy::LeftPump : DefaultStrategy::RightPump;
+			pump = robotPos.x() < node->getPosition().x() ? DefaultStrategy::LeftPump : DefaultStrategy::RightPump;
 		else
-			pump = robot.x() < node->getPosition().x() ? DefaultStrategy::RightPump : DefaultStrategy::LeftPump;
+			pump = robotPos.x() < node->getPosition().x() ? DefaultStrategy::RightPump : DefaultStrategy::LeftPump;
 	}
 	else
 	{
-		pump = robot.y() < node->getPosition().y() ? DefaultStrategy::RightPump : DefaultStrategy::LeftPump;
+		pump = robotPos.y() < node->getPosition().y() ? DefaultStrategy::RightPump : DefaultStrategy::LeftPump;
 	}	
 	
 	return pump;
 }
 
-int PBTakeFixedTorcheCommand::getPump(const GameState &state, bool* isBest = 0) const
+int PBTakeFixedTorcheCommand::getPump(const GameState &state, bool* isBest) const
 {
 	int bestPump = getBestPump(state);
 	int pump = -1;
 	
-	if (state._content.value().toBool(LEFT_HAND_HAS_FIRE) && state._content.value().toBool(RIGHT_HAND_HAS_FIRE))
+	if (state._content.value(LEFT_HAND_HAS_FIRE).toBool() && state._content.value(RIGHT_HAND_HAS_FIRE).toBool())
 		pump = -1; //no hand
 		
-	else if (state._content.value().toBool(LEFT_HAND_HAS_FIRE))
+	else if (state._content.value(LEFT_HAND_HAS_FIRE).toBool())
 		pump = DefaultStrategy::RightPump; //Only the right hand is available
 		
-	else if (state._content.value().toBool(RIGHT_HAND_HAS_FIRE))
+	else if (state._content.value(RIGHT_HAND_HAS_FIRE).toBool())
 		pump = DefaultStrategy::LeftPump; //Only the left hand is available
 		
 	else
@@ -464,7 +464,7 @@ double PBEasyFireCommand::evaluate(GameState &state)
 	if (state._content.value(_aliasA).toBool())
 		return -1.0;
 
-	if (state._content.value().toBool(LEFT_HAND_HAS_FIRE) || state._content.value().toBool(RIGHT_HAND_HAS_FIRE))
+	if (state._content.value(LEFT_HAND_HAS_FIRE).toBool() || state._content.value(RIGHT_HAND_HAS_FIRE).toBool())
 		return -1.0; //cannot take anything
 		
 	if (state._remainingTime < (90 - _availableTimeToPerformAction)) //only available during the first x seconds of the match
@@ -545,12 +545,12 @@ void PBEasyFireCommand::getOptions(double distanceToA, double distanceToB, QStri
 PBDropHeldFiresCommand::PBDropHeldFiresCommand(const QString& alias, bool onHearth, int maxFiresOnThisNode, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager)
 	: AbstractAICommand(manager), _pbFactory(pbFactory), _alias(alias), _estimatedTime(estimatedTimeInSeconds), _onHearth(onHearth), _maxFiresOnThisNode(maxFiresOnThisNode)
 {
-	setDescription("Drop fires at " + _torcheAlias);
+	setDescription("Drop fires at " + _alias);
 }
 
 double PBDropHeldFiresCommand::evaluate(GameState &state)
 {
-	if (!state._content.value().toBool(LEFT_HAND_HAS_FIRE) && !state._content.value().toBool(RIGHT_HAND_HAS_FIRE))
+	if (!state._content.value(LEFT_HAND_HAS_FIRE).toBool() && !state._content.value(RIGHT_HAND_HAS_FIRE).toBool())
 		return -1.0; //nothing to drop
 		
 	if (state._content.value(_alias).toInt() >= _maxFiresOnThisNode) 
@@ -579,17 +579,17 @@ void PBDropHeldFiresCommand::updateToFinalState(GameState &state) const
 {
 	//Update the state
 	int nbFireDropped = 0;
-	if (state._content.value().toBool(LEFT_HAND_HAS_FIRE))
+	if (state._content.value(LEFT_HAND_HAS_FIRE).toBool())
 	{
 		++nbFireDropped;
 		state._content[LEFT_HAND_HAS_FIRE] = false;
-	}}
+	}
 	
-	if (state._content.value().toBool(RIGHT_HAND_HAS_FIRE))
+	if (state._content.value(RIGHT_HAND_HAS_FIRE).toBool())
 	{
 		++nbFireDropped;
 		state._content[RIGHT_HAND_HAS_FIRE] = false;
-	}}
+	}
 	
 	state._content[_alias] = state._content[_alias].toInt() + nbFireDropped;
 	state._robotposition = _manager->getGrid()->getNode(_alias);
@@ -601,18 +601,18 @@ AbstractAction *PBDropHeldFiresCommand::getAction(const GameState &state) const
 
 	QList<AbstractAction*> actionList;
 
-	Tools::NGridNode* node = _manager->getGrid()->getNode(_torcheAlias);
+	Tools::NGridNode* node = _manager->getGrid()->getNode(_alias);
 	
 	actionList  << _manager->getActionFactory()->moveAction(node, 100);
 	
 	int maxNbFiresToDrop = _maxFiresOnThisNode - state._content.value(_alias).toInt();
-	if (state._content.value().toBool(LEFT_HAND_HAS_FIRE) && maxNbFiresToDrop > 0)
+	if (state._content.value(LEFT_HAND_HAS_FIRE).toBool() && maxNbFiresToDrop > 0)
 	{
 		actionList  << _pbFactory->dropHeldFires(DefaultStrategy::LeftPump);
 		--maxNbFiresToDrop;
 	}
 	
-	if (state._content.value().toBool(RIGHT_HAND_HAS_FIRE) && maxNbFiresToDrop > 0)
+	if (state._content.value(RIGHT_HAND_HAS_FIRE).toBool() && maxNbFiresToDrop > 0)
 	{
 		actionList  << _pbFactory->dropHeldFires(DefaultStrategy::RightPump);
 		--maxNbFiresToDrop;

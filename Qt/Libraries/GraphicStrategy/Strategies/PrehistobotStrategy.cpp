@@ -106,6 +106,7 @@ void PrehistobotStrategy::initGameState(GameState &state) const
 	state._content[RIGHT_HAND_HAS_FIRE] = false;
 	
 	state._content[HEARTH_1_NODE] = 0;
+	state._content[HEARTH_2_NODE] = 0;
 }
 
 void PrehistobotStrategy::createActions()
@@ -179,6 +180,7 @@ bool PrehistobotStrategy::checkGrid(const NGrid *grid) const
 	result = grid->getNode(EASYFIRE_3B_NODE) && result;
 	
 	result = grid->getNode(HEARTH_1_NODE) && result;
+	result = grid->getNode(HEARTH_2_NODE) && result;
 
 	return result;
 }

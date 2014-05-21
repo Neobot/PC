@@ -290,9 +290,6 @@ void StrategyManager::avoidingSensors(const QList<quint8> &values)
 	{
 		quint8 value = *it;
 
-		if (value > 0)
-			int aa = 0;
-
 		Sharp* sharp = _sharps.value(index);
 		if (!sharp)
 			break;

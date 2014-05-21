@@ -168,7 +168,7 @@ AbstractAction* ActionFactory::ax12Movement(const QString& group, const QString&
 	return new AX12MovementAction(group, movement, speedLimit, true, _robot, _ax12MovementsManager);
 }
 
-AbstractAction* ActionFactory::ax12AsynchroneMovement(const QString& group, const QString& movement, float speedLimit = 110.f) const
+AbstractAction* ActionFactory::ax12AsynchroneMovement(const QString& group, const QString& movement, float speedLimit) const
 {
 	return new AX12MovementAction(group, movement, speedLimit, false, _robot, _ax12MovementsManager);
 }

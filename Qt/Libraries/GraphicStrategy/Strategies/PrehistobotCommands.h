@@ -37,6 +37,8 @@
 #define EASYFIRE_3B_NODE "EasyFire3B"
 
 #define HEARTH_1_NODE "Hearth1"
+#define HEARTH_2_NODE "Hearth2"
+
 
 #define LEFT_HAND_HAS_FIRE "LeftHandHasFire"
 #define RIGHT_HAND_HAS_FIRE "RightHandHasFire"
