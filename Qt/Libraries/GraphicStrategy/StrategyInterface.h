@@ -93,16 +93,12 @@ protected:
 	Tools::NGrid* _grid;
 	bool _mirrored;
 
+	virtual void writeDefaultGrid(const QString &filePath);
 	virtual bool checkGrid(const Tools::NGrid* grid) const {Q_UNUSED(grid); return true;}
 	virtual void readAndDefineParameters(Tools::NSettings& settings);
 
 	QVariant defineSettingValue(Tools::NSettings& settings, const QString& name, const QVariant& defaultValue, const QString& description = QString());
 	QVariant defineSettingValueList(Tools::NSettings& settings, const QString& name, const QVariantList& defaultValue, QVariant::Type contentType, const QString& description = QString());
-
-private:
-	QPointF _tmpStartPos;
-
-	void writeDefaultGrid(const QString &filePath);
 };
 
 #endif // ABSTRACTSTRATEGY_H

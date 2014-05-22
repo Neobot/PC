@@ -38,7 +38,7 @@ public:
 	virtual void defaultStrategyParameters(StrategyParameters& parameters) const;
 	virtual void readAndDefineParameters(Tools::NSettings &settings);
 
-	void mainStrategy(QList<AbstractAction*>& actions);
+	virtual void mainStrategy(QList<AbstractAction*>& actions);
 	void initGameState(GameState& state) const;
 	void createActions();
 
@@ -46,8 +46,8 @@ public:
 
 	void microswitchChanged(const QList<int> &raisingEdge, const QList<int> &faillingEdge);
 
-private:
-	bool checkGrid(const Tools::NGrid *grid) const;
+protected:
+	virtual bool checkGrid(const Tools::NGrid *grid) const;
 
 	//parameters
 	AX12MovementNames _ax12MvtNames;
@@ -56,6 +56,17 @@ private:
 
 	QList<QPointF> autoMirrorList(const QList<QPointF> &points);
 };
+
+class PrehistobotTestStrategy : public PrehistobotStrategy
+{
+	public:
+		PrehistobotTestStrategy(const QDir &strategyDirectory, Tools::AbstractLogger *logger);
+		
+		void defaultStrategyParameters(StrategyParameters& parameters) const;
+		void mainStrategy(QList<AbstractAction*>& actions);
+		void readAndDefineParameters(Tools::NSettings &settings);
+		void writeDefaultGrid(const QString& filePath);
+}
 
 class PBActionFactory
 {

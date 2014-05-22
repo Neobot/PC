@@ -37,6 +37,8 @@ StrategyInterface * StrategyEnumerator::start(StrategyEnumerator::Strategy strat
 			return new TestStrategy(d, logger);
 		case StratPrehistobot:
 			return new PrehistobotStrategy(d, logger);
+		case StratPrehistobotTEST:
+			return new PrehistobotTestStrategy(d, logger);
 		case StratTestAx12:
 			return new Ax12TestStrategy(d, logger);
 		default:
@@ -52,6 +54,8 @@ QString StrategyEnumerator::getStrategyName(StrategyEnumerator::Strategy strateg
 			return "Test";
 		case StratPrehistobot:
 			return "Prehistobot AI";
+		case StratPrehistobotTEST:
+			return "Prehistobot TEST"
 		case StratTestAx12:
 			return "AX-12 Movements Test";
 		default:

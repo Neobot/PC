@@ -73,7 +73,7 @@ void PrehistobotStrategy::mainStrategy(QList<AbstractAction *> &actions)
 		_manager->getActionFactory()->ax12Movement(_ax12MvtNames.leftArmGroup, _ax12MvtNames.goToRest),
 		_manager->getActionFactory()->ax12Movement(_ax12MvtNames.rightArmGroup, _ax12MvtNames.goToRest)
 	}, AsynchroneActionGroup::AllActionFinished);
-
+	
 	DefaultAIStrategy::mainStrategy(actions);
 }
 
@@ -195,6 +195,36 @@ QList<QPointF> PrehistobotStrategy::autoMirrorList(const QList<QPointF> &points)
 	}
 
 	return results;
+}
+
+//----------------------------------------------------PrehistobotTestStrategy----------------------------------------------------
+
+PrehistobotTestStrategy::PrehistobotTestStrategy(const QDir &strategyDirectory, Tools::AbstractLogger *logger) : PrehistobotStrategy(strategyDirectory, logger)
+{
+}
+		
+void PrehistobotTestStrategy::defaultStrategyParameters(StrategyParameters& parameters) const
+{
+	PrehistobotStrategy::defaultStrategyParameters(parameters);
+
+	parameters. start = QPointF(250, 250);
+	parameters. startRotation = Tools::pi/2;
+}
+
+void PrehistobotTestStrategy::mainStrategy(QList<AbstractAction*>& actions)
+{
+	actions << _pbFactory->scanAndTurnFires(_manager->getGrid()->getNearestNode(QPointF(200,0)));
+}
+void PrehistobotTestStrategy::readAndDefineParameters(Tools::NSettings &settings)
+{
+	PrehistobotStrategy::readAndDefineParameters(settings);
+}
+
+void PrehistobotTestStrategy::writeDefaultGrid(const QString& filePath)
+{
+	Tools::NGrid defaultGrid;
+	defaultGrid.makeStandardGrid(QPointF(0,0), 50, 50, QSizeF(2000, 3000), Tools::NGrid::HeightConnections);
+	defaultGrid.writeToFile(filePath);
 }
 
 //----------------------------------------------------PBActionFactory----------------------------------------------------

@@ -9,6 +9,7 @@ public:
 	enum Strategy
 	{
 		StratPrehistobot,
+		StratPrehistobotTEST,
 		StratTestStrategy,
 		StratTestAx12,
 		StratCount
