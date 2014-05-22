@@ -37,6 +37,15 @@ void PrehistobotStrategy::readAndDefineParameters(NSettings &settings)
 	settings.beginGroup("Prehistobot Strategy");
 	_searchFiresPoints = convertVariantListToList<QPointF>(defineSettingValueList(settings, "search_points", Tools::convertListToVariantList<QPointF>(_searchFiresPoints),
 							QVariant::PointF, "A trajectory to search fires on the table at the end of the match.").toList());
+	
+	_frescoValue = defineSettingValue(settings, "fresco_value", _frescoValue, "Nb of points for the fresco action.").toDouble();
+	_fruitPickupvalue = defineSettingValue(settings, "fruit_pickup_value", _fruitPickupvalue, "Nb of points for fruit pick-up on a tree.").toDouble();
+	_fruitDropValue = defineSettingValue(settings, "fruit_drop_value", _fruitDropValue, "Nb of points per pickup for dropping the fruits.").toDouble();
+	_fixedTorcheValue = defineSettingValue(settings, "fixed_torche_value", _fixedTorcheValue, "Nb of points for taking a fire in a fixed torch.").toDouble();
+	_mobileTorchevalue = defineSettingValue(settings, "mobile_torche_value", _mobileTorchevalue, "Nb of points for taking fires in a mobile torch.").toDouble();
+	_easyFireValue = defineSettingValue(settings, "easy_fire_value", _easyFireValue, "Nb of points for an easy fire.").toDouble();
+	_dropDireValue = defineSettingValue(settings, "dropped_off_hearth_value", _dropDireValue, "Nb of points for dropping fires somewhere not on a hearth (hearth = x2).").toDouble();
+	
 	settings.endGroup();
 
 	settings.beginGroup("Prehistobot AX-12 Groups");

@@ -6,8 +6,8 @@
 #include <QVariant>
 #include <QtDebug>
 
-PBFrescoCommand::PBFrescoCommand(const QString &frescoAlias, double estimatedTimeInSeconds, StrategyManager *manager)
-	: AbstractAICommand(manager), _frescoAlias(frescoAlias), _estimatedTime(estimatedTimeInSeconds)
+PBFrescoCommand::PBFrescoCommand(const QString &frescoAlias, double estimatedTimeInSeconds, StrategyManager *manager, double value)
+	: AbstractAICommand(manager), _frescoAlias(frescoAlias), _estimatedTime(estimatedTimeInSeconds), _value(value)
 {
 	setDescription("Attach painting " + _frescoAlias);
 }
@@ -27,7 +27,7 @@ double PBFrescoCommand::evaluate(GameState &state)
 
 	state._remainingTime -= duration;
 
-	double cost = 6.0 / duration;
+	double cost = _value / duration;
 	return cost;
 }
 
@@ -53,8 +53,8 @@ AbstractAction *PBFrescoCommand::getAction(const GameState &state) const
 
 ////------------------------------------------------------------------------------------------
 
-PBFruitPickupCommand::PBFruitPickupCommand(const QString& fruitAliasA, double angleA, RobotSide sideA, const QString& fruitAliasB, double angleB, RobotSide sideB, double distance, double estimatedTimeInSeconds, StrategyManager *manager)
-	: AbstractAICommand(manager), _fruitAliasA(fruitAliasA), _angleA(angleA), _sideA(sideA), _fruitAliasB(fruitAliasB), _angleB(angleB), _sideB(sideB), _distance(distance), _estimatedTime(estimatedTimeInSeconds)
+PBFruitPickupCommand::PBFruitPickupCommand(const QString& fruitAliasA, double angleA, RobotSide sideA, const QString& fruitAliasB, double angleB, RobotSide sideB, double distance, double estimatedTimeInSeconds, StrategyManager *manager, double value)
+	: AbstractAICommand(manager), _fruitAliasA(fruitAliasA), _angleA(angleA), _sideA(sideA), _fruitAliasB(fruitAliasB), _angleB(angleB), _sideB(sideB), _distance(distance), _estimatedTime(estimatedTimeInSeconds), _value(value)
 {
 	setDescription("Fruit pickup at " + _fruitAliasA + " or " + _fruitAliasB);
 }
@@ -77,7 +77,7 @@ double PBFruitPickupCommand::evaluate(GameState &state)
 
 	state._remainingTime -= duration;
 
-	double cost = 3.0 / duration;
+	double cost = _value / duration;
 	return cost;
 }
 
@@ -143,8 +143,8 @@ void PBFruitPickupCommand::getOptions(double distanceToA, double distanceToB, QS
 
 ////------------------------------------------------------------------------------------------
 
-PBFruitDropCommand::PBFruitDropCommand(const QString &dropAreaAlias, double estimatedTimeInSeconds, StrategyManager *manager)
-	: AbstractAICommand(manager), _dropAreaAlias(dropAreaAlias), _estimatedTime(estimatedTimeInSeconds)
+PBFruitDropCommand::PBFruitDropCommand(const QString &dropAreaAlias, double estimatedTimeInSeconds, StrategyManager *manager, double value)
+	: AbstractAICommand(manager), _dropAreaAlias(dropAreaAlias), _estimatedTime(estimatedTimeInSeconds), _value(value)
 {
 	setDescription("Drop fruits at" + _dropAreaAlias);
 }
@@ -165,7 +165,7 @@ double PBFruitDropCommand::evaluate(GameState &state)
 
 	state._remainingTime -= duration;
 
-	double cost = 3.0 * (double)nbPickupDone / duration;
+	double cost = _value * (double)nbPickupDone / duration;
 	return cost;
 }
 
@@ -263,8 +263,8 @@ QList<QPointF> PBSearchFiresCommand::getSortedPointList(const GameState &state) 
 
 ////------------------------------------------------------------------------------------------
 
-PBTakeFixedTorcheCommand::PBTakeFixedTorcheCommand(const QString& torcheAlias, bool vertical, double estimatedTimeInSeconds, bool turnFire, PBActionFactory* pbFactory, StrategyManager* manager)
-	: AbstractAICommand(manager), _pbFactory(pbFactory), _torcheAlias(torcheAlias), _vertical(vertical), _estimatedTime(estimatedTimeInSeconds), _turnFire(turnFire)
+PBTakeFixedTorcheCommand::PBTakeFixedTorcheCommand(const QString& torcheAlias, bool vertical, double estimatedTimeInSeconds, bool turnFire, PBActionFactory* pbFactory, StrategyManager* manager, double value)
+	: AbstractAICommand(manager), _pbFactory(pbFactory), _torcheAlias(torcheAlias), _vertical(vertical), _estimatedTime(estimatedTimeInSeconds), _turnFire(turnFire), _value(value)
 {
 	setDescription("Take fire in fixed torche " + _torcheAlias);
 }
@@ -293,7 +293,7 @@ double PBTakeFixedTorcheCommand::evaluate(GameState &state)
 
 	state._remainingTime -= duration;
 
-	double cost = 1.0 / duration;
+	double cost = _value / duration;
 	return cost;
 }
 
@@ -403,8 +403,8 @@ int PBTakeFixedTorcheCommand::getPump(const GameState &state, bool* isBest) cons
 
 ////------------------------------------------------------------------------------------------
 
-PBTakeMobileTorcheCommand::PBTakeMobileTorcheCommand(const QString& torcheAlias, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager)
-	: AbstractAICommand(manager), _pbFactory(pbFactory), _torcheAlias(torcheAlias), _estimatedTime(estimatedTimeInSeconds)
+PBTakeMobileTorcheCommand::PBTakeMobileTorcheCommand(const QString& torcheAlias, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager, double value)
+	: AbstractAICommand(manager), _pbFactory(pbFactory), _torcheAlias(torcheAlias), _estimatedTime(estimatedTimeInSeconds), _value(value)
 {
 	setDescription("Take fires in mobile torche " + _torcheAlias);
 }
@@ -424,7 +424,7 @@ double PBTakeMobileTorcheCommand::evaluate(GameState &state)
 
 	state._remainingTime -= duration;
 
-	double cost = 3.0 / duration;
+	double cost = _value / duration;
 	return cost;
 }
 
@@ -453,8 +453,8 @@ AbstractAction *PBTakeMobileTorcheCommand::getAction(const GameState &state) con
 
 ////------------------------------------------------------------------------------------------
 
-PBEasyFireCommand::PBEasyFireCommand(const QString& aliasA, const QString& aliasB, double availableTimeToPerformAction, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager)
-	: AbstractAICommand(manager), _pbFactory(pbFactory), _aliasA(aliasA), _aliasB(aliasB), _availableTimeToPerformAction(availableTimeToPerformAction), _estimatedTime(estimatedTimeInSeconds)
+PBEasyFireCommand::PBEasyFireCommand(const QString& aliasA, const QString& aliasB, double availableTimeToPerformAction, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager, double value)
+	: AbstractAICommand(manager), _pbFactory(pbFactory), _aliasA(aliasA), _aliasB(aliasB), _availableTimeToPerformAction(availableTimeToPerformAction), _estimatedTime(estimatedTimeInSeconds), _value(value)
 {
 	setDescription("Easy fire: " + _aliasA + " - " + _aliasB);
 }
@@ -483,7 +483,7 @@ double PBEasyFireCommand::evaluate(GameState &state)
 
 	state._remainingTime -= duration;
 
-	double cost = 5.0 / duration; //high value because it's easy
+	double cost = _value / duration; //high value because it's easy
 
 	return cost;
 }
@@ -542,8 +542,8 @@ void PBEasyFireCommand::getOptions(double distanceToA, double distanceToB, QStri
 
 ////------------------------------------------------------------------------------------------
 
-PBDropHeldFiresCommand::PBDropHeldFiresCommand(const QString& alias, bool onHearth, int maxFiresOnThisNode, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager)
-	: AbstractAICommand(manager), _pbFactory(pbFactory), _alias(alias), _estimatedTime(estimatedTimeInSeconds), _onHearth(onHearth), _maxFiresOnThisNode(maxFiresOnThisNode)
+PBDropHeldFiresCommand::PBDropHeldFiresCommand(const QString& alias, bool onHearth, int maxFiresOnThisNode, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager, double valueOffHearth)
+	: AbstractAICommand(manager), _pbFactory(pbFactory), _alias(alias), _estimatedTime(estimatedTimeInSeconds), _onHearth(onHearth), _maxFiresOnThisNode(maxFiresOnThisNode), _value(valueOffHearth)
 {
 	setDescription("Drop fires at " + _alias);
 }
@@ -566,7 +566,7 @@ double PBDropHeldFiresCommand::evaluate(GameState &state)
 
 	state._remainingTime -= duration;
 
-	int nbPoints = 1.0;
+	int nbPoints = _value;
 	if (_onHearth)
 		nbPoints *= 2.0;
 	

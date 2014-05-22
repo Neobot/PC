@@ -53,6 +53,14 @@ protected:
 	AX12MovementNames _ax12MvtNames;
 	QList<QPointF> _searchFiresPoints;
 	PBActionFactory* _pbActionFactory;
+	
+	double _frescoValue = 6.0;
+	double _fruitPickupvalue = 3.0;
+	double _fruitDropValue = 3.0;
+	double _fixedTorcheValue = 1.0;
+	double _mobileTorchevalue = 3.0;
+	double _easyFireValue = 5.0;
+	double _dropDireValue = 1.0;
 
 	QList<QPointF> autoMirrorList(const QList<QPointF> &points);
 };

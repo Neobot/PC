@@ -61,7 +61,7 @@ enum RobotSide
 class PBFrescoCommand : public AbstractAICommand
 {
 public:
-	PBFrescoCommand(const QString& frescoAlias, double estimatedTimeInSeconds, StrategyManager* manager);
+	PBFrescoCommand(const QString& frescoAlias, double estimatedTimeInSeconds, StrategyManager* manager, double value = 6.0);
 
 	double evaluate(GameState &state);
 	void updateToFinalState(GameState &state) const;
@@ -70,6 +70,7 @@ public:
 private:
 	QString _frescoAlias;
 	double _estimatedTime; //seconds
+	double _value;
 };
 
 class PBFruitPickupCommand : public AbstractAICommand
@@ -77,7 +78,7 @@ class PBFruitPickupCommand : public AbstractAICommand
 public:
 	PBFruitPickupCommand(const QString& fruitAliasA, double angleA, RobotSide sideA,
 						 const QString& fruitAliasB, double angleB,  RobotSide sideB,
-						 double distance, double estimatedTimeInSeconds, StrategyManager* manager);
+						 double distance, double estimatedTimeInSeconds, StrategyManager* manager, double value = 3.0);
 
 	double evaluate(GameState &state);
 	void updateToFinalState(GameState &state) const;
@@ -94,6 +95,7 @@ private:
 
 	double _distance;
 	double _estimatedTime; //seconds
+	double _value;
 
 	void getOptions(double distanceToA, double distanceToB, QString& alias, double& angle, RobotSide& side) const;
 };
@@ -101,7 +103,7 @@ private:
 class PBFruitDropCommand : public AbstractAICommand
 {
 public:
-	PBFruitDropCommand(const QString& dropAreaAlias, double estimatedTimeInSeconds, StrategyManager* manager);
+	PBFruitDropCommand(const QString& dropAreaAlias, double estimatedTimeInSeconds, StrategyManager* manager, double value = 3.0);
 
 	double evaluate(GameState &state);
 	void updateToFinalState(GameState &state) const;
@@ -110,6 +112,7 @@ public:
 private:
 	QString _dropAreaAlias;
 	double _estimatedTime; //seconds
+	double _value;
 };
 
 class PBSearchFiresCommand : public AbstractAICommand
@@ -131,7 +134,7 @@ private:
 class PBTakeFixedTorcheCommand : public AbstractAICommand
 {
 public:
-	PBTakeFixedTorcheCommand(const QString& torcheAlias, bool vertical, double estimatedTimeInSeconds, bool turnFire, PBActionFactory* pbFactory, StrategyManager* manager);
+	PBTakeFixedTorcheCommand(const QString& torcheAlias, bool vertical, double estimatedTimeInSeconds, bool turnFire, PBActionFactory* pbFactory, StrategyManager* manager, double value = 1.0);
 
 	double evaluate(GameState &state);
 	void updateToFinalState(GameState &state) const;
@@ -143,6 +146,7 @@ private:
 	bool _vertical;
 	double _estimatedTime; //seconds
 	bool _turnFire;
+	double _value;
 	
 	int getBestPump(const GameState &state) const;
 	int getPump(const GameState &state, bool* isBest = 0) const;
@@ -151,7 +155,7 @@ private:
 class PBTakeMobileTorcheCommand : public AbstractAICommand
 {
 public:
-	PBTakeMobileTorcheCommand(const QString& torcheAlias, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager);
+	PBTakeMobileTorcheCommand(const QString& torcheAlias, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager, double value = 3.0);
 
 	double evaluate(GameState &state);
 	void updateToFinalState(GameState &state) const;
@@ -161,12 +165,13 @@ private:
 	PBActionFactory* _pbFactory;
 	QString _torcheAlias;
 	double _estimatedTime; //seconds
+	double _value;
 };
 
 class PBEasyFireCommand : public AbstractAICommand
 {
 public:
-	PBEasyFireCommand(const QString& aliasA, const QString& aliasB, double availableTimeToPerformAction, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager);
+	PBEasyFireCommand(const QString& aliasA, const QString& aliasB, double availableTimeToPerformAction, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager, double value = 5.0);
 
 	double evaluate(GameState &state);
 	void updateToFinalState(GameState &state) const;
@@ -178,6 +183,7 @@ private:
 	QString _aliasB;
 	double _availableTimeToPerformAction;
 	double _estimatedTime; //seconds
+	double _value;
 
 	void getOptions(double distanceToA, double distanceToB, QString& firstAlias, QString& secondAlias) const;
 };
@@ -185,7 +191,7 @@ private:
 class PBDropHeldFiresCommand : public AbstractAICommand
 {
 public:
-	PBDropHeldFiresCommand(const QString& alias, bool onHearth, int maxFiresOnThisNode, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager);
+	PBDropHeldFiresCommand(const QString& alias, bool onHearth, int maxFiresOnThisNode, double estimatedTimeInSeconds, PBActionFactory* pbFactory, StrategyManager* manager, double valueOffHearth = 1.0);
 
 	double evaluate(GameState &state);
 	void updateToFinalState(GameState &state) const;
@@ -197,6 +203,7 @@ private:
 	double _estimatedTime; //seconds
 	bool _onHearth;
 	int _maxFiresOnThisNode;
+	double _value;
 };
 
 
