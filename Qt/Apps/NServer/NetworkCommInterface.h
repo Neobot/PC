@@ -21,7 +21,7 @@ public:
 	void sendStrategyFileData(quint8 strategyNum, const QString &filename, const QByteArray& fileData);
 
 	void sendStrategyStatus(quint8 strategyNum, bool isRunning);
-	void sendAutoStrategyInfo(bool enabled, quint8 strategyNum, const QByteArray &robotPort, const QByteArray &ax12Port, bool simulation, bool mirror);
+	void sendAutoStrategyInfo(bool enabled, quint8 strategyNum, const QByteArray &robotPort, const QByteArray &ax12Port, bool simulation, bool mirror, quint8 delayInSeconds);
 
 	void sendAvailableSerialPorts();
 

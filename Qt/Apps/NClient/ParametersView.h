@@ -41,15 +41,16 @@ public slots:
 
 	void setStrategies(const QStringList &strategies);
 	void setSerialPorts(const QStringList &ports);
-	void autoStrategyInfo(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror);
+	void autoStrategyInfo(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror, int delayInSeconds);
 
 private:
 	Ui::ParametersView *ui;
 	QList<ParameterWidget*> _params;
 
-	int		_currentStrategyNum;
+	int		_currentStrategyNum = -1;
 	QString _currentAutoRobotPort;
 	QString _currentAutoAx12Port;
+	int		_currentAutoStartDelay = 20;
 
 	void createParameterWidget();
 	void updateAutoStrategyWidget();

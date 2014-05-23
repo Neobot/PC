@@ -31,7 +31,7 @@ public:
 	void askStrategyStatus();
 
 	void askAutoStrategyInfo();
-	void setAutoStrategy(bool enabled, quint8 strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirroredSimulation);
+	void setAutoStrategy(bool enabled, quint8 strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirroredSimulation, quint8 startDelayInSecond);
 
 	void askSerialPorts();
 

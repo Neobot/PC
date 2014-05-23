@@ -27,8 +27,8 @@ public:
 	virtual bool stopStrategy(int& currentStrategyNum) = 0;
 	virtual void askStrategyStatus(int& currentStrategyNum, bool& isRunning) = 0;
 
-	virtual void askAutoStrategyInfo(bool &isEnabled, int &strategyNum, QString &robotPort, QString &ax12Port, bool &simulation, bool &mirror) = 0;
-	virtual void setAutoStrategy(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror) = 0;
+	virtual void askAutoStrategyInfo(bool &isEnabled, int &strategyNum, QString &robotPort, QString &ax12Port, bool &simulation, bool &mirror, int& startDelay) = 0;
+	virtual void setAutoStrategy(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror, int startDelay) = 0;
 
     virtual void askAx12Positions(NetworkCommInterface* networkInterface, const QList<quint8>& ids, bool recursive) = 0;
 	

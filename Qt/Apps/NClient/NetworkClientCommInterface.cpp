@@ -116,13 +116,15 @@ void NetworkClientCommInterface::askAutoStrategyInfo()
 	getProtocol()->sendMessage(ASK_AUTO_STRATEGY_INFO, Data());
 }
 
-void NetworkClientCommInterface::setAutoStrategy(bool enabled, quint8 strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirroredSimulation)
+void NetworkClientCommInterface::setAutoStrategy(bool enabled, quint8 strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirroredSimulation, quint8 startDelayInSecond)
 {
 	Data d;
 	d.add(strategyNum);
 	d.add(robotPort.toLatin1());
 	d.add(ax12Port.toLatin1());
 	d.add(enabled, simulation | mirroredSimulation, mirroredSimulation);
+	d.add(startDelayInSecond);
+	
 	getProtocol()->sendMessage(SET_AUTO_STRATEGY, d);
 }
 
@@ -246,9 +248,10 @@ void NetworkClientCommInterface::read(quint8 instruction, const Comm::Data &data
 			bool isEnabled = false;
 			bool simu = false;
 			bool mirror = false;
-			d.take(currentStratNum).take(robotPort).take(ax12Port).take(isEnabled, simu, mirror);
+			quint8 delay;
+			d.take(currentStratNum).take(robotPort).take(ax12Port).take(isEnabled, simu, mirror).take(delay);
 
-			_listener->autoStrategyInfo(isEnabled, currentStratNum, robotPort, ax12Port, simu, mirror);
+			_listener->autoStrategyInfo(isEnabled, currentStratNum, robotPort, ax12Port, simu, mirror, delay);
 			break;
 		}
 		case STRATEGY_STATUS:

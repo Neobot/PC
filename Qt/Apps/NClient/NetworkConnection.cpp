@@ -152,10 +152,10 @@ void NetworkConnection::strategyStatusUpdated(int strategyNum, bool isRunning)
 		responder->strategyStatusUpdated(strategyNum, isRunning);
 }
 
-void NetworkConnection::autoStrategyInfo(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror)
+void NetworkConnection::autoStrategyInfo(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror, int delayInSeconds)
 {
 	foreach(NetworkClientCommListener* responder, _networkResponders)
-		responder->autoStrategyInfo(enabled, strategyNum, robotPort, ax12Port, simulation, mirror);
+		responder->autoStrategyInfo(enabled, strategyNum, robotPort, ax12Port, simulation, mirror, delayInSeconds);
 }
 
 void NetworkConnection::socketConnected()

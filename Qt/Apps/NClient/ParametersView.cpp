@@ -40,7 +40,7 @@ double ParameterWidget::getValue() const
 
 ParametersView::ParametersView(NetworkConnection *connection, QWidget *parent) :
 	AbstractView(connection, QImage(":/toolbar/upload"), parent),
-	ui(new Ui::ParametersView), _currentStrategyNum(-1)
+	ui(new Ui::ParametersView)
 {
 	ui->setupUi(this);
 	ui->frameParamsLayout->addStretch();
@@ -112,13 +112,14 @@ void ParametersView::setSerialPorts(const QStringList &ports)
 	updateAutoStrategyWidget();
 }
 
-void ParametersView::autoStrategyInfo(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror)
+void ParametersView::autoStrategyInfo(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror, int delayInSeconds)
 {
 	ui->checkAutoStratEnabled->setChecked(enabled);
 
 	_currentStrategyNum = strategyNum;
 	_currentAutoRobotPort = robotPort;
 	_currentAutoAx12Port = ax12Port;
+	_currentAutoStartDelay = delayInSeconds;
 
 	int type;
 	if (!simulation)
@@ -190,6 +191,8 @@ void ParametersView::updateAutoStrategyWidget()
 		ax12PortIndex = ui->cbAutoAx12Port->count() - 1;
 	}
 	ui->cbAutoAx12Port->setCurrentIndex(ax12PortIndex);
+	
+	ui->spDelay->setValue(_currentAutoStartDelay);
 }
 
 void ParametersView::refreshParameters()
@@ -220,7 +223,8 @@ void ParametersView::editSendAutoStrategy()
 		bool mirrored = type == 2;
 
 		_connection->getComm()->setAutoStrategy(ui->checkAutoStratEnabled->isChecked(), ui->cbAutoStrategy->currentIndex(),
-												ui->cbAutoRobotPort->currentText(), ui->cbAutoAx12Port->currentText(), simulation, mirrored);
+												ui->cbAutoRobotPort->currentText(), ui->cbAutoAx12Port->currentText(), 
+												simulation, mirrored, ui->spDelay->value());
 
 		ui->autoStartContentWidget->setEnabled(false);
 		ui->btnEditSendAutoStart->setText("Edit");

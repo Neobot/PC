@@ -91,7 +91,8 @@ bool NServer::start()
 
 	logger() << "Loading strategy files from \"" << _strategiesEnumerator.getDataDirectory() << "\".\n";
 
-	QTimer::singleShot(20 * 1000, this, SLOT(autoStart()));
+	int delay = getAutoStrategyDelay();
+	QTimer::singleShot(delay * 1000, this, SLOT(autoStart()));
 
     return true;
 }
@@ -104,7 +105,8 @@ void NServer::startPing()
 	bool simulation = false;
 	bool mirrored = false;
 	QString robotPort, ax12Port;
-	askAutoStrategyInfo(enabled, autoStrat, robotPort, ax12Port, simulation, mirrored);
+	int delay;
+	askAutoStrategyInfo(enabled, autoStrat, robotPort, ax12Port, simulation, mirrored, delay);
 	if (enabled)
 	{
 		QByteArray message;
@@ -130,8 +132,9 @@ void NServer::autoStart()
 	bool enabled = false;
 	bool simulation = false;
 	bool mirrored = false;
+	int delay;
 	QString robotPort, ax12Port;
-	askAutoStrategyInfo(enabled, autoStrat, robotPort, ax12Port, simulation, mirrored);
+	askAutoStrategyInfo(enabled, autoStrat, robotPort, ax12Port, simulation, mirrored, delay);
 	if (enabled)
 	{
 		QByteArray message;
@@ -612,17 +615,23 @@ void NServer::askStrategyStatus(int &currentStrategyNum, bool &isRunning)
 	isRunning = _currentStrategy;
 }
 
-void NServer::askAutoStrategyInfo(bool& isEnabled, int& strategyNum, QString &robotPort, QString &ax12Port, bool& simulation, bool& mirror)
+int NServer::getAutoStrategyDelay() const
 {
-	strategyNum = _settings.value("AutoStrategyNum").toInt();
-	isEnabled = _settings.value("autoStrategyEnabled").toBool();
-	robotPort = _settings.value("robotPort").toString();
-	ax12Port = _settings.value("ax12Port").toString();
-	simulation = _settings.value("simulation").toBool();
-	mirror = _settings.value("mirror").toBool();
+	return _settings.value("delayInSeconds", 20).toInt();
 }
 
-void NServer::setAutoStrategy(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror)
+void NServer::askAutoStrategyInfo(bool& isEnabled, int& strategyNum, QString &robotPort, QString &ax12Port, bool& simulation, bool& mirror, int& startDelay)
+{
+	strategyNum = _settings.value("AutoStrategyNum", 0).toInt();
+	isEnabled = _settings.value("autoStrategyEnabled", false).toBool();
+	robotPort = _settings.value("robotPort").toString();
+	ax12Port = _settings.value("ax12Port").toString();
+	simulation = _settings.value("simulation", true).toBool();
+	mirror = _settings.value("mirror", false).toBool();
+	startDelay = getAutoStrategyDelay();
+}
+
+void NServer::setAutoStrategy(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror, int startDelay)
 {
 	_settings.setValue("AutoStrategyNum", strategyNum);
 	_settings.setValue("autoStrategyEnabled", enabled);
@@ -630,4 +639,5 @@ void NServer::setAutoStrategy(bool enabled, int strategyNum, const QString &robo
 	_settings.setValue("ax12Port", ax12Port);
 	_settings.setValue("simulation", simulation);
 	_settings.setValue("mirror", mirror);
+	_settings.setValue("delayInSeconds", startDelay);
 }

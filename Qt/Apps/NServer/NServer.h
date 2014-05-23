@@ -82,8 +82,9 @@ private:
 	bool stopStrategy(int& currentStrategyNum) ;
 	void askStrategyStatus(int &currentStrategyNum, bool &isRunning);
 
-	void askAutoStrategyInfo(bool &isEnabled, int &strategyNum, QString &robotPort, QString &ax12Port, bool &simulation, bool &mirror);
-	void setAutoStrategy(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror);
+	int getAutoStrategyDelay() const;
+	void askAutoStrategyInfo(bool &isEnabled, int &strategyNum, QString &robotPort, QString &ax12Port, bool &simulation, bool &mirror, int& startDelay);
+	void setAutoStrategy(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror, int startDelay);
 	
 	QByteArray askAx12MovementFile();
 	void setAx12MovementFile(const QByteArray& data);

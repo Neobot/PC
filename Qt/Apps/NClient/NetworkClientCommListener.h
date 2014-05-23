@@ -16,8 +16,8 @@ public:
 	virtual void setStrategyFileData(int strategyNum, const QString& filename, const QByteArray& data) {Q_UNUSED(strategyNum); Q_UNUSED(filename); Q_UNUSED(data);}
 
 	virtual void strategyStatusUpdated(int strategyNum, bool isRunning) {Q_UNUSED(strategyNum); Q_UNUSED(isRunning);}
-	virtual void autoStrategyInfo(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror) {Q_UNUSED(strategyNum); Q_UNUSED(enabled);
-						Q_UNUSED(robotPort); Q_UNUSED(ax12Port); Q_UNUSED(simulation); Q_UNUSED(mirror);}
+	virtual void autoStrategyInfo(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror, int delayInSeconds) {Q_UNUSED(strategyNum); Q_UNUSED(enabled);
+						Q_UNUSED(robotPort); Q_UNUSED(ax12Port); Q_UNUSED(simulation); Q_UNUSED(mirror); Q_UNUSED(delayInSeconds);}
 
 	virtual void setSerialPorts(const QStringList& ports) {Q_UNUSED(ports);}
 
