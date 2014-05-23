@@ -55,7 +55,7 @@ QString StrategyEnumerator::getStrategyName(StrategyEnumerator::Strategy strateg
 		case StratPrehistobot:
 			return "Prehistobot AI";
 		case StratPrehistobotTEST:
-			return "Prehistobot TEST"
+			return "Prehistobot TEST";
 		case StratTestAx12:
 			return "AX-12 Movements Test";
 		default:

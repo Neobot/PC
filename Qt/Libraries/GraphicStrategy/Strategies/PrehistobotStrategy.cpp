@@ -216,13 +216,13 @@ void PrehistobotTestStrategy::defaultStrategyParameters(StrategyParameters& para
 {
 	PrehistobotStrategy::defaultStrategyParameters(parameters);
 
-	parameters. start = QPointF(250, 250);
-	parameters. startRotation = Tools::pi/2;
+	parameters. start = QPointF(1000, 1000);
+	parameters. startRotation = 0;
 }
 
 void PrehistobotTestStrategy::mainStrategy(QList<AbstractAction*>& actions)
 {
-	actions << _pbFactory->scanAndTurnFires(_manager->getGrid()->getNearestNode(QPointF(200,0)));
+	actions << _pbActionFactory->scanAndTurnFires(_manager->getGrid()->getNearestNode(QPointF(200,0)));
 }
 void PrehistobotTestStrategy::readAndDefineParameters(Tools::NSettings &settings)
 {
