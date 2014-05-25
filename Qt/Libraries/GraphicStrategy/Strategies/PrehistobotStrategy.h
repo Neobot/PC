@@ -60,7 +60,7 @@ protected:
 	double _fixedTorcheValue = 1.0;
 	double _mobileTorchevalue = 3.0;
 	double _easyFireValue = 5.0;
-	double _dropDireValue = 1.0;
+	double _dropFireValue = 1.0;
 
 	QList<QPointF> autoMirrorList(const QList<QPointF> &points);
 };

@@ -44,7 +44,7 @@ void PrehistobotStrategy::readAndDefineParameters(NSettings &settings)
 	_fixedTorcheValue = defineSettingValue(settings, "fixed_torche_value", _fixedTorcheValue, "Nb of points for taking a fire in a fixed torch.").toDouble();
 	_mobileTorchevalue = defineSettingValue(settings, "mobile_torche_value", _mobileTorchevalue, "Nb of points for taking fires in a mobile torch.").toDouble();
 	_easyFireValue = defineSettingValue(settings, "easy_fire_value", _easyFireValue, "Nb of points for an easy fire.").toDouble();
-	_dropDireValue = defineSettingValue(settings, "dropped_off_hearth_value", _dropDireValue, "Nb of points for dropping fires somewhere not on a hearth (hearth = x2).").toDouble();
+	_dropFireValue = defineSettingValue(settings, "dropped_off_hearth_value", _dropFireValue, "Nb of points for dropping fires somewhere not on a hearth (hearth = x2).").toDouble();
 	
 	settings.endGroup();
 
@@ -122,26 +122,26 @@ void PrehistobotStrategy::createActions()
 {
 	addCommand(new WaitCommand(1, _manager));
 
-	addCommand(new PBFrescoCommand(FRESCO_NODE, 6, _manager));
+	addCommand(new PBFrescoCommand(FRESCO_NODE, 6, _manager, _frescoValue));
 
-	addCommand(new PBFruitPickupCommand(FRUIT_1A_NODE, 0, RightSide, FRUIT_1B_NODE, autoMirror(Tools::pi), LeftSide, 400, 2, _manager));
-	addCommand(new PBFruitPickupCommand(FRUIT_2A_NODE, autoMirror(Tools::pi/2.0), RightSide, FRUIT_2B_NODE, autoMirror(-Tools::pi/2.0), LeftSide, 400, 2, _manager));
-	addCommand(new PBFruitPickupCommand(FRUIT_3A_NODE, autoMirror(Tools::pi/2.0), RightSide, FRUIT_3B_NODE, autoMirror(-Tools::pi/2.0), LeftSide, 400, 2, _manager));
-	addCommand(new PBFruitPickupCommand(FRUIT_4A_NODE, autoMirror(Tools::pi), RightSide, FRUIT_4B_NODE, 0, LeftSide, 400, 2, _manager));
+	addCommand(new PBFruitPickupCommand(FRUIT_1A_NODE, 0, RightSide, FRUIT_1B_NODE, autoMirror(Tools::pi), LeftSide, 400, 2, _manager, _fruitPickupvalue));
+	addCommand(new PBFruitPickupCommand(FRUIT_2A_NODE, autoMirror(Tools::pi/2.0), RightSide, FRUIT_2B_NODE, autoMirror(-Tools::pi/2.0), LeftSide, 400, 2, _manager, _fruitPickupvalue));
+	addCommand(new PBFruitPickupCommand(FRUIT_3A_NODE, autoMirror(Tools::pi/2.0), RightSide, FRUIT_3B_NODE, autoMirror(-Tools::pi/2.0), LeftSide, 400, 2, _manager, _fruitPickupvalue));
+	addCommand(new PBFruitPickupCommand(FRUIT_4A_NODE, autoMirror(Tools::pi), RightSide, FRUIT_4B_NODE, 0, LeftSide, 400, 2, _manager, _fruitPickupvalue));
 	addCommand(new PBFruitDropCommand(FRUIT_DROP_AREA, 2.0, _manager));
 
-	addCommand(new PBTakeFixedTorcheCommand(TORCHE_3_NODE, true, 3, true, _pbActionFactory, _manager));
-	addCommand(new PBTakeFixedTorcheCommand(TORCHE_4_NODE, false, 3, false, _pbActionFactory, _manager));
-	addCommand(new PBTakeFixedTorcheCommand(TORCHE_5_NODE, false, 3, true, _pbActionFactory, _manager));
-	addCommand(new PBTakeFixedTorcheCommand(TORCHE_6_NODE, true, 3, false, _pbActionFactory, _manager));
+	addCommand(new PBTakeFixedTorcheCommand(TORCHE_3_NODE, true, 3, true, _pbActionFactory, _manager, _fixedTorcheValue));
+	addCommand(new PBTakeFixedTorcheCommand(TORCHE_4_NODE, false, 3, false, _pbActionFactory, _manager, _fixedTorcheValue));
+	addCommand(new PBTakeFixedTorcheCommand(TORCHE_5_NODE, false, 3, true, _pbActionFactory, _manager, _fixedTorcheValue));
+	addCommand(new PBTakeFixedTorcheCommand(TORCHE_6_NODE, true, 3, false, _pbActionFactory, _manager, _fixedTorcheValue));
 	
-	//addCommand(new PBTakeMobileTorcheCommand(TORCHE_1_NODE, 10, _pbActionFactory, _manager));
+	//addCommand(new PBTakeMobileTorcheCommand(TORCHE_1_NODE, 10, _pbActionFactory, _manager, _mobileTorchevalue));
 	
-	//addCommand(new PBDropHeldFiresCommand(HEARTH_1_NODE, true, 4, _pbActionFactory, _manager));
+	addCommand(new PBDropHeldFiresCommand(HEARTH_1_NODE, true, 4, 3.0, _pbActionFactory, _manager, _dropFireValue));
 
-	addCommand(new PBEasyFireCommand(EASYFIRE_1A_NODE, EASYFIRE_1B_NODE, 20, 1, _pbActionFactory, _manager));
-	addCommand(new PBEasyFireCommand(EASYFIRE_2A_NODE, EASYFIRE_3B_NODE, 20, 1, _pbActionFactory, _manager));
-	addCommand(new PBEasyFireCommand(EASYFIRE_2A_NODE, EASYFIRE_3B_NODE, 20, 1, _pbActionFactory, _manager));
+	addCommand(new PBEasyFireCommand(EASYFIRE_1A_NODE, EASYFIRE_1B_NODE, 20, 1, _pbActionFactory, _manager, _easyFireValue));
+	addCommand(new PBEasyFireCommand(EASYFIRE_2A_NODE, EASYFIRE_3B_NODE, 20, 1, _pbActionFactory, _manager, _easyFireValue));
+	addCommand(new PBEasyFireCommand(EASYFIRE_2A_NODE, EASYFIRE_3B_NODE, 20, 1, _pbActionFactory, _manager, _easyFireValue));
 
 	addCommand(new PBSearchFiresCommand(autoMirrorList(_searchFiresPoints), _pbActionFactory, _manager));
 }
