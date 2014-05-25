@@ -210,6 +210,11 @@ void NetworkClientCommInterface::runAx12Movement(const QString& group, const QSt
 	getProtocol()->sendMessage(RUN_AX12_MVT, d);
 }
 
+void NetworkClientCommInterface::resetParameters()
+{
+	getProtocol()->sendMessage(RESET_PARAMETERS, Data());
+}
+
 void NetworkClientCommInterface::read(quint8 instruction, const Comm::Data &data)
 {
 	Data d(data);

@@ -53,6 +53,7 @@ ParametersView::ParametersView(NetworkConnection *connection, QWidget *parent) :
 
 	connect(ui->btnSend, SIGNAL(clicked()), this, SLOT(sendParameters()));
 	connect(ui->btnRefresh, SIGNAL(clicked()), this, SLOT(refreshParameters()));
+	connect(ui->btnReset, SIGNAL(clicked()), this, SLOT(resetParameters()));
 
 	connect(ui->btnEditSendAutoStart, SIGNAL(clicked()), this, SLOT(editSendAutoStrategy()));
 	connect(ui->btnRefreshAutoStart, SIGNAL(clicked()), this, SLOT(refreshAutoStrategy()));
@@ -211,6 +212,11 @@ void ParametersView::sendParameters()
 	}
 
 	_connection->getComm()->setParameters(values);
+}
+
+void ParametersView::resetParameters()
+{
+	_connection->getComm()->resetParameters();
 }
 
 void ParametersView::editSendAutoStrategy()

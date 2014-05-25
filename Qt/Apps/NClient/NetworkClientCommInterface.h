@@ -46,6 +46,8 @@ public:
 	void setAx12Movements(const QByteArray& data);
     void runAx12Movement(const QString& group, const QString& movement, float speedLimit, int lastPositionIndex = -1);
 
+	void resetParameters();
+
 protected slots:
 	virtual void read(quint8 instruction, const Comm::Data& data);
 

@@ -21,7 +21,7 @@ const QString USE_AX12_CONTROLLER_KEY = "UseAX12Controller";
 const QString AX12_UPDATE_INTERVAL_KEY = "AX12Updateinterval";
 
 NServer::NServer(Tools::AbstractLogger *logger, QObject *parent) :
-	QObject(parent), Tools::LoggerInterface(logger), _settings("Neobot", "NServer"), _tcpServer(0), _nextConnectionIndex(0), _robotInterface(0),
+	QObject(parent), Tools::LoggerInterface(logger), _settings("Neobot", "NServer"), _parametersSettings("Neobot", "RobotParameters"), _tcpServer(0), _nextConnectionIndex(0), _robotInterface(0),
     _simulator(0), _strategyManager(0), _currentStrategy(0), _currentStrategyId(-1), _robotConnected(false), _ax12Manager(0), _ax12MovementRunner(0)
 {
 	_disconnectionMapper = new QSignalMapper(this);
@@ -327,6 +327,10 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
 		_strategyManager = new StrategyManager(_robotInterface, _pather, 0);
 		connect(_strategyManager, SIGNAL(strategyFinished()), this, SLOT(strategyFinished()));
 		_strategyManager->setAx12MovementManager(&_ax12Movements);
+
+		QList<float> existingParameters = getParameters();
+		if (!existingParameters.isEmpty())
+			_robotInterface->setParameters(existingParameters);
 	}
 
 	updateRobotConnection();
@@ -475,6 +479,42 @@ void NServer::runAx12Movement(const QString& group, const QString& movement, flo
 	{
         _ax12MovementRunner->startMovement(group, movement, speedLimit, lastPositionIndex);
 	}
+}
+
+void NServer::saveParameters(const QList<float> &values)
+{
+	bool simu = _simulator;
+
+	_parametersSettings.beginWriteArray(simu ? "SimuParams" : "Params", values.count());
+	int i = 0;
+	foreach(float v, values)
+	{
+		_parametersSettings.setArrayIndex(i);
+		_parametersSettings.setValue("value", v);
+		++i;
+	}
+	_parametersSettings.endArray();
+}
+
+QList<float> NServer::getParameters()
+{
+	bool simu = _simulator;
+
+	QList<float> results;
+	int size = _parametersSettings.beginReadArray(simu ? "SimuParams" : "Params");
+	for(int i = 0; i < size; ++i)
+	{
+		_parametersSettings.setArrayIndex(i);
+		results << _parametersSettings.value("value").toFloat();
+	}
+	_parametersSettings.endArray();
+
+	return results;
+}
+
+void NServer::resetParameters()
+{
+	_parametersSettings.clear();
 }
 
 void NServer::ax12MovementFinished()

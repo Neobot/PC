@@ -32,6 +32,7 @@ public:
 private:
 	QDir _dataDirectory;
 	QSettings _settings;
+	QSettings _parametersSettings;
 	QByteArray _autoStartMessage;
 
 	QTcpServer* _tcpServer;
@@ -90,6 +91,9 @@ private:
 	void setAx12MovementFile(const QByteArray& data);
     void runAx12Movement(const QString& group, const QString& movement, float speedLimit, int lastPositionIndex);
 
+	void saveParameters(const QList<float>& values);
+	QList<float> getParameters();
+	void resetParameters();
 
 private slots:
 	void newConnection();

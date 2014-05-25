@@ -58,6 +58,7 @@ private:
 private slots:
 	void refreshParameters();
 	void sendParameters();
+	void resetParameters();
 
 	void editSendAutoStrategy();
 	void refreshAutoStrategy();

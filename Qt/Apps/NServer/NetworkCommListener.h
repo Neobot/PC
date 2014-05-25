@@ -38,6 +38,10 @@ public:
 
 	virtual void moveAx12(float maxSpeed, QList<Comm::Ax12Info>& ax12s) = 0;
 	virtual void lockAx12(const QMap<quint8, bool>& servoLockInfo) = 0;
+
+	virtual void resetParameters() = 0;
+	virtual void saveParameters(const QList<float>& values) = 0;
+	virtual QList<float> getParameters() = 0;
 };
 
 #endif // NETWORKCOMMLISTENER_H

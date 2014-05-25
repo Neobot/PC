@@ -379,6 +379,31 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 			noticeOfReceiptReceived(inst);
 			_listener->noticeOfReceipt(inst, result);
 			break;
+		case SET_PARAMETERS:
+		{
+			quint8 size = 0;
+			d.take(size);
+
+			QList<float> values;
+			for(int i = 0; i < size; ++i)
+			{
+				float v = 0.0;
+				d.take(v);
+				values << v;
+			}
+
+			_listener->saveParameters(values);
+			if (_connected && _robotInterface)
+				_robotInterface->setParameters(values);
+			break;
+		}
+		case RESET_PARAMETERS:
+		{
+			_listener->resetParameters();
+			_robotInterface->askParameters();
+
+			break;
+		}
 		default:
 			if (Instruction::pcToRobotInstructions().contains(instruction) || Instruction::globalInstructions().contains(instruction))
 			{
@@ -392,6 +417,51 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 
 void NetworkCommInterface::readFromRobot(quint8 instruction, const Data &data)
 {
+	Data d(data);
 	if (_connected)
-		getProtocol()->sendMessage(instruction, data);
+	{
+		if (instruction == PARAMETERS)
+		{
+			QList<float> existingValues = _listener->getParameters();
+
+			quint8 size = 0;
+			d.take(size);
+
+			QList<float> values;
+			for(int i = 0; i < size; ++i)
+			{
+				float v = 0.0;
+				d.take(v);
+				values << v;
+			}
+
+			bool changed = false;
+			if (values.count() < existingValues.count())
+			{
+				changed = true;
+				for(int i = values.count(); i < existingValues.count(); ++i)
+					values.takeLast();
+			}
+
+			if (values.count() > existingValues.count())
+			{
+				changed = true;
+				for(int i = existingValues.count(); i < values.count(); ++i)
+					existingValues << values.value(i);
+			}
+
+			if (changed)
+				_listener->saveParameters(existingValues);
+
+			Data newData;
+			newData.add((quint8)existingValues.count());
+			foreach(float v, existingValues)
+				newData.add(v);
+
+			getProtocol()->sendMessage(instruction, newData);
+
+		}
+		else
+			getProtocol()->sendMessage(instruction, data);
+	}
 }

@@ -124,6 +124,7 @@ namespace Comm
 	const quint8 SET_AX12_MVT_FILE = 218;
 	const quint8 RUN_AX12_MVT = 219;
 	const quint8 LOCK_AX12 = 220;
+	const quint8 RESET_PARAMETERS = 221;
 
 	class Instruction
 	{
