@@ -143,6 +143,8 @@ void RemoteControlView::saveSettings(QSettings *settings)
 		settings->endArray();
 	}
 	settings->endGroup();
+
+	settings->setValue("DeplacementType", ui->cbMoveType->currentIndex());
 }
 
 void RemoteControlView::loadSettings(QSettings *settings)
@@ -195,6 +197,8 @@ void RemoteControlView::loadSettings(QSettings *settings)
 	refreshStoredTrajectoriesMenu();
 
 	settings->endGroup();
+
+	ui->cbMoveType->setCurrentIndex(settings->value("DeplacementType").toInt());
 }
 
 void RemoteControlView::coordinates(qint16 x, qint16 y, double theta, quint8 forward)
@@ -275,7 +279,7 @@ void RemoteControlView::strategyStatusUpdated(int strategyNum, bool isRunning)
 void RemoteControlView::addPoint(const QVector3D& defaultValue)
 {
 	TrajectoryPointWidget* trWidget = new TrajectoryPointWidget(defaultValue, this);
-	ui->pointsLayout->insertWidget(ui->pointsLayout->count() - 2, trWidget);
+	ui->pointsLayout->insertWidget(ui->pointsLayout->count() - 3, trWidget);
 	trWidget->setNum(_trajectoryEditors.count() + 1);
 	trWidget->disableEdition(_isMoving);
 	_trajectoryEditors << trWidget;
@@ -348,11 +352,18 @@ void RemoteControlView::stopRobot()
 void RemoteControlView::sendTrajectory()
 {
 	_isMoving = true;
+	Tools::Deplacement dep = Tools::TURN_THEN_MOVE;
+	switch(ui->cbMoveType->currentIndex())
+	{
+		case 1: dep = Tools::TURN_AND_MOVE; break;
+		case 2: dep = Tools::TURN_ONLY; break;
+		case 3: dep = Tools::MOVE_ONLY; break;
+	}
 
 	foreach(TrajectoryPointWidget* tr, _trajectoryEditors)
 	{
 		QVector3D p = tr->getPointEditor()->getPoint();
-		Tools::RMovement mvt(Tools::RPoint(p.x(), p.y(), Tools::degreeToRadian(p.z())), Tools::AUTO, Tools::TURN_THEN_MOVE, tr == _trajectoryEditors.last(), 100);
+		Tools::RMovement mvt(Tools::RPoint(p.x(), p.y(), Tools::degreeToRadian(p.z())), Tools::AUTO, dep, tr == _trajectoryEditors.last(), 100);
 		_connection->getComm()->setDestination(mvt);
 	}
 

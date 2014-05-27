@@ -110,7 +110,6 @@ private slots:
 
 	void autoStart();
 	void sendParameters();
-
 };
 
 #endif // NSERVER_H

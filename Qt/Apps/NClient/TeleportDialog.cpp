@@ -16,6 +16,7 @@ TeleportDialog::TeleportDialog(const QVector3D& defaultValue, QWidget *parent) :
 	connect(ui->btnOrigin2, SIGNAL(clicked()), this, SLOT(setOrigin2()));
 	connect(ui->btnStart1, SIGNAL(clicked()), this, SLOT(setStart1()));
 	connect(ui->btnStart2, SIGNAL(clicked()), this, SLOT(setStart2()));
+	connect(ui->btnCenter, SIGNAL(clicked()), this, SLOT(setCenter()));
 }
 
 TeleportDialog::~TeleportDialog()
@@ -55,5 +56,11 @@ void TeleportDialog::setStart1()
 void TeleportDialog::setStart2()
 {
 	_point = QVector3D(250, 2750, 270);
+	accept();
+}
+
+void TeleportDialog::setCenter()
+{
+	_point = QVector3D(1000, 1500, 0);
 	accept();
 }

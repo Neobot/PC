@@ -28,6 +28,7 @@ private slots:
 	void setOrigin2();
 	void setStart1();
 	void setStart2();
+	void setCenter();
 };
 
 #endif // TELEPORTDIALOG_H
