@@ -60,6 +60,15 @@ bool Comm::CommDispatcher::go(bool mirrored)
 	return true;
 }
 
+void CommDispatcher::initReceived()
+{
+	foreach(CommListener* responder, _responders)
+		responder->initReceived();
+
+	if (_main)
+		return _main->initReceived();
+}
+
 bool Comm::CommDispatcher::pingReceived()
 {
 	foreach(CommListener* responder, _responders)

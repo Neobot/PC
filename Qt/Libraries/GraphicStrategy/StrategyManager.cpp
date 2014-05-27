@@ -329,11 +329,6 @@ void StrategyManager::avoidingSensors(const QList<quint8> &values)
 		_strategy->obstacleDetected();
 }
 
-bool StrategyManager::initDone()
-{
-	return true;
-}
-
 bool StrategyManager::pingReceived()
 {
 	logger() << "Ping received ..." << Tools::endl;

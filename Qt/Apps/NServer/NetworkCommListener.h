@@ -11,7 +11,7 @@ class NetworkCommInterface;
 class NetworkCommListener
 {
 public:
-	virtual bool pingReceived() = 0;
+	virtual bool networkPingReceived() = 0;
 	virtual void noticeOfReceipt(quint8 instruction, bool result) = 0;
 
 	virtual bool connectToRobot(NetworkCommInterface* networkInterface, bool simulation, const QString& robotPort, const QString& ax12Port, QByteArray &message) = 0;

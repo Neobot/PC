@@ -97,35 +97,6 @@ bool NServer::start()
     return true;
 }
 
-void NServer::startPing()
-{
-	//auto start
-	int autoStrat = -1;
-	bool enabled = false;
-	bool simulation = false;
-	bool mirrored = false;
-	QString robotPort, ax12Port;
-	int delay;
-	askAutoStrategyInfo(enabled, autoStrat, robotPort, ax12Port, simulation, mirrored, delay);
-	if (enabled)
-	{
-		QByteArray message;
-		if (connectToRobot(0, simulation, robotPort, ax12Port, message))
-		{
-			_robotInterface->ping();
-			QTimer::singleShot(2*1000, this, SLOT(autoStart()));
-		}
-		else
-		{
-			_autoStartMessage = "Auto Start Failed: The connection to the robot has failed";
-		}
-	}
-
-	if (!_autoStartMessage.isEmpty())
-		logger() << _autoStartMessage;
-}
-
-
 void NServer::autoStart()
 {
 	int autoStrat = -1;
@@ -248,7 +219,7 @@ void NServer::cleanRobotConnection()
 	_ax12MovementRunner = 0;
 }
 
-bool NServer::pingReceived()
+bool NServer::networkPingReceived()
 {
 	return true;
 }
@@ -320,7 +291,7 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
         foreach(ServerAX12RequestManager* request, _ax12Requests)
             request->setAX12CommManager(_ax12Manager);
 
-		_robotInterface = new Comm::RobotCommInterface(p, _ax12Manager, 0);
+		_robotInterface = new Comm::RobotCommInterface(p, _ax12Manager, 0, this);
 		_robotInterface->disableNoticeOfReceiptChecking();
 
 		_pather = new NMicropather(0, NMicropather::Euclidean, 1000.0);
@@ -328,6 +299,7 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
 		connect(_strategyManager, SIGNAL(strategyFinished()), this, SLOT(strategyFinished()));
 		_strategyManager->setAx12MovementManager(&_ax12Movements);
 
+		_robotInterface->ping();
 		QList<float> existingParameters = getParameters();
 		if (!existingParameters.isEmpty())
 			_robotInterface->setParameters(existingParameters);
@@ -451,7 +423,35 @@ void NServer::lockAx12(const QMap<quint8, bool> &servoLockInfo)
 			_ax12Manager->releaseServo(id, false);
 	}
 
-    _ax12Manager->synchronize(ids);
+	_ax12Manager->synchronize(ids);
+}
+
+void NServer::initReceived()
+{
+	if (_robotInterface)
+	{
+		int autoStrat = -1;
+		bool enabled = false;
+		bool simulation = false;
+		bool mirrored = false;
+		int delay;
+		QString robotPort, ax12Port;
+		askAutoStrategyInfo(enabled, autoStrat, robotPort, ax12Port, simulation, mirrored, delay);
+		if (!enabled)
+			_robotInterface->ping();
+		QTimer::singleShot(100, this, SLOT(sendParameters())); //wait for the microC to start
+	}
+}
+
+void NServer::sendParameters()
+{
+	if (_robotInterface)
+	{
+		_robotInterface->ping();
+		QList<float> existingParameters = getParameters();
+		if (!existingParameters.isEmpty())
+			_robotInterface->setParameters(existingParameters);
+	}
 }
 
 QByteArray NServer::askAx12MovementFile()
@@ -642,6 +642,8 @@ bool NServer::stopStrategy(int &currentStrategyNum)
         }
 
 		result = true;
+
+		_robotInterface->setListener(this);
 	}
 
 	currentStrategyNum = _currentStrategyId;

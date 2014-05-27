@@ -32,6 +32,7 @@ namespace Comm
     const quint8 OPPONENT = 101;
 	const quint8 OBJECTIVE = 104;
     const quint8 AVOIDING_SENSORS = 110;
+	const quint8 INIT = 120;
     const quint8 GO = 121;
 	const quint8 LOG = 124;
 	const quint8 PARAMETERS = 125;

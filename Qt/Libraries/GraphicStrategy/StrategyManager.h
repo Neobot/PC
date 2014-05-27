@@ -151,7 +151,6 @@ private:
 	void coordinates(qint16 x, qint16 y, double theta, quint8 forward);
     void opponentPosition(qint16 x, qint16 y);
 	void avoidingSensors(const QList<quint8> &values);
-    bool initDone();
     bool go(bool mirrored);
     bool pingReceived();
     void noticeOfReceipt(quint8 instruction, bool result);

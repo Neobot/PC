@@ -192,6 +192,9 @@ void RobotCommInterface::read(quint8 instruction, const Data& data)
 				d.take(mirrored);
 				sendNoticeOfReceipt(GO, _listener->go(mirrored));
 				break;
+			case INIT:
+				_listener->initReceived();
+				break;
 			case PING:
 				sendNoticeOfReceipt(PING, _listener->pingReceived());
 				break;

@@ -370,7 +370,7 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 			sendAnnouncement("You are lucky that it is not working yet... I would have killed you for that!");
 			break;
 		case PING_SERVER:
-			sendNoticeOfReceipt(PING_SERVER, _listener->pingReceived());
+			sendNoticeOfReceipt(PING_SERVER, _listener->networkPingReceived());
 			break;
 		case AR:
 			quint8 inst;

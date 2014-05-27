@@ -19,7 +19,7 @@
 
 class Pather;
 
-class NServer : public QObject, public Tools::LoggerInterface, public NetworkCommListener
+class NServer : public QObject, public Tools::LoggerInterface, public NetworkCommListener, Comm::CommListener
 {
 	Q_OBJECT
 
@@ -63,7 +63,7 @@ private:
 	
 	void cleanRobotConnection();
 
-	bool pingReceived();
+	bool networkPingReceived();
 	void noticeOfReceipt(quint8 instruction, bool result);
 	bool connectToRobot(NetworkCommInterface* networkInterface, bool simulation, const QString& robotPort, const QString& ax12Port, QByteArray &message);
 	bool disconnectToRobot(NetworkCommInterface* networkInterface);
@@ -76,6 +76,8 @@ private:
     void askAx12Positions(NetworkCommInterface* networkInterface, const QList<quint8>& ids, bool recursive);
 	void moveAx12(float maxSpeed, QList<Comm::Ax12Info>& ax12s);
 	void lockAx12(const QMap<quint8, bool>& servoLockInfo);
+
+	void initReceived();
 
 	void updateRobotConnection();
 
@@ -106,8 +108,8 @@ private slots:
 	void closeRobotConnection();
 	void handleSerialError(QSerialPort::SerialPortError error);
 
-	void startPing();
 	void autoStart();
+	void sendParameters();
 
 };
 
