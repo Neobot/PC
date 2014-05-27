@@ -23,6 +23,11 @@ LogView::~LogView()
 	delete ui;
 }
 
+void LogView::initReceived()
+{
+	logMessage("Info", "MicroC reset.", Qt::darkBlue);
+}
+
 void LogView::logMessage(const QString& message)
 {
 	*_logger << message << Tools::endl;

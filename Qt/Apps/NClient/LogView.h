@@ -29,6 +29,7 @@ private:
 
 	QString formatText(const QString &text, const QColor &color);
 
+	void initReceived();
 	void serverAnnouncement(const QByteArray& message);
 	void log(const QByteArray& text);
 
