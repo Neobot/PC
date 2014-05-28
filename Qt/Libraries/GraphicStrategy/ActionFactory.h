@@ -76,6 +76,9 @@ public:
 	AbstractAction* enableMicroswitchAction(int microswitchId) const;
 	AbstractAction* disableMicroswitchAction(int microswitchId) const;
 
+	AbstractAction* morseLetterColor(int colorSensorId, int nbSignal, int duration) const;
+	AbstractAction* sosColor(int colorSensorId) const;
+
 private:
     StrategyManager*	_manager;
     TrajectoryFinder*	_finder;

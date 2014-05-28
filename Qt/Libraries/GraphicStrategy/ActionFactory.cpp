@@ -237,3 +237,30 @@ AbstractAction *ActionFactory::disableMicroswitchAction(int microswitchId) const
 {
 	return new SetSensorEnabledAction(Comm::MicroswitchSensor, microswitchId, false, _robot);
 }
+
+AbstractAction *ActionFactory::morseLetterColor(int colorSensorId, int nbSignal, int duration) const
+{
+	QList<AbstractAction*> list;
+	for(int i = 0; i < nbSignal; ++i)
+	{
+		list	<< enableColorSensorAction(colorSensorId)
+				<< waitAction(200)
+				<< disableColorSensorAction(colorSensorId);
+
+		if (i != nbSignal - 1)
+			list << waitAction(200);
+	}
+
+	return actionList(list);
+}
+
+AbstractAction *ActionFactory::sosColor(int colorSensorId) const
+{
+	return actionList({
+						  morseLetterColor(colorSensorId, 3, 200),	//S
+						  waitAction(1000),
+						  morseLetterColor(colorSensorId, 2, 600),	//O
+						  waitAction(1000),
+						  morseLetterColor(colorSensorId, 3, 200)	//S
+					  });
+}

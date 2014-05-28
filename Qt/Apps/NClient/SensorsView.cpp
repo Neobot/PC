@@ -45,6 +45,8 @@ SensorsView::~SensorsView()
 
 void SensorsView::connectionStatusChanged(NetworkConnection::ConnectionStatus status)
 {
+	ui->btnEnableSensors->setEnabled(status == NetworkConnection::Controled);
+	ui->btnDisableSensors->setEnabled(status == NetworkConnection::Controled);
 }
 
 void SensorsView::avoidingSensors(const QList<quint8> &values)
