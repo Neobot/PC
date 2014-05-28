@@ -39,6 +39,8 @@ private:
 private slots:
 	void clear();
 	void pauseButtonClicked();
+	void enableSensors();
+	void disableSensors();
 
 	QColor getCommColor(Comm::ColorState colorState) const;
 };

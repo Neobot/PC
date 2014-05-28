@@ -36,25 +36,12 @@ void SimulationMap::setConfiguration(const ChessUpConfiguration &config)
 
 void SimulationMap::configureRobotSensors()
 {
-    //Avoiding sharps
+    //Avoiding sharps	
 
-	addObject(new MaxSonar_MB1240(QPointF(40, -40), Tools::degreeToRadian(-10), 280), AvoidingSharpGroup);
-
-	addObject(new MaxSonar_MB1240(QPointF(-40, -40), Tools::degreeToRadian(-170), 280), AvoidingSharpGroup);
-	addObject(new MaxSonar_MB1240(QPointF(-40, 40), Tools::degreeToRadian(170), 280), AvoidingSharpGroup);
-
-	addObject(new MaxSonar_MB1240(QPointF(40, 40), Tools::degreeToRadian(10), 280), AvoidingSharpGroup);
-
-
-    //    // front
-    //    addObject(new Sharp10_80(QPointF(172, -125), Tools::degreeToRadian(-5), 280), AvoidingSharpGroup);
-    //    addObject(new Sharp20_150(QPointF(63, 0), 0, 280), AvoidingSharpGroup);
-    //    addObject(new Sharp10_80(QPointF(172, 125), Tools::degreeToRadian(5), 280), AvoidingSharpGroup);
-
-    //    // rear
-    //    addObject(new Sharp10_80(QPointF(-130, 138), Tools::degreeToRadian(175), 280), AvoidingSharpGroup);
-    //    addObject(new Sharp20_150(QPointF(-130, 0), Tools::degreeToRadian(180), 280), AvoidingSharpGroup);
-    //    addObject(new Sharp10_80(QPointF(-130, -138), Tools::degreeToRadian(-175), 280), AvoidingSharpGroup);
+	addObject(new MaxSonar_MB1240(QPointF(-40, 40), Tools::degreeToRadian(170), 280), AvoidingSharpGroup); //rear left
+	addObject(new MaxSonar_MB1240(QPointF(40, 40), Tools::degreeToRadian(10), 280), AvoidingSharpGroup); //front left
+	addObject(new MaxSonar_MB1240(QPointF(-40, -40), Tools::degreeToRadian(-170), 280), AvoidingSharpGroup); //rear right
+	addObject(new MaxSonar_MB1240(QPointF(40, -40), Tools::degreeToRadian(-10), 280), AvoidingSharpGroup); //front right
 
     //Detection sharps
     // right

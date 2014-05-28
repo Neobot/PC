@@ -222,7 +222,12 @@ void PrehistobotTestStrategy::defaultStrategyParameters(StrategyParameters& para
 
 void PrehistobotTestStrategy::mainStrategy(QList<AbstractAction*>& actions)
 {
-	actions << _pbActionFactory->scanAndTurnFires(_manager->getGrid()->getNearestNode(QPointF(200,0)));
+	//actions << _pbActionFactory->scanAndTurnFires(_manager->getGrid()->getNearestNode(QPointF(200,0)));
+	actions << _manager->getActionFactory()->manualAbsoluteTurnMoveAction(Tools::pi/2, 100)
+			<< _manager->getActionFactory()->waitAction(1000)
+			<< _manager->getActionFactory()->manualAbsoluteTurnMoveAction(0, 100)
+			<< _manager->getActionFactory()->waitAction(1000)
+			<< _manager->getActionFactory()->manualAbsoluteTurnMoveAction(Tools::pi, 100);
 }
 void PrehistobotTestStrategy::readAndDefineParameters(Tools::NSettings &settings)
 {

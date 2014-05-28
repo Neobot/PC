@@ -46,7 +46,7 @@ void SimRobot::read(quint8 instruction, const Comm::Data &data)
 			d.take(x).take(y).take(t).take(type).take(deplacementType).take(speed).take(isStopPoint);
 
 			double theta = t / Comm::ANGLE_FACTOR;
-            _interface->addDestination(x, y, theta, type, isStopPoint, speed);
+			_interface->addDestination(x, y, theta, type, deplacementType, isStopPoint, speed);
 			break;
 		}
 		case Comm::ACTIONS:

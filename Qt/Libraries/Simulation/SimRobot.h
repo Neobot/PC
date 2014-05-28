@@ -10,7 +10,7 @@ class SimCommInterface
 public:
     SimCommInterface();
     virtual void setPosition(qint16 x, qint16 y, double theta) = 0;
-    virtual void addDestination(qint16 x, qint16 y, double theta, quint8 type, bool isStopPoint, int speed) = 0;
+	virtual void addDestination(qint16 x, qint16 y, double theta, quint8 type, quint8 deplacementType, bool isStopPoint, int speed) = 0;
 	virtual void executeAction(int action, quint16 parameter) = 0;
     virtual void flush() = 0;
 	virtual void askParameters() = 0;

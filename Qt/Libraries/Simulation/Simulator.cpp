@@ -85,12 +85,12 @@ void Simulator::setParameters(const QList<float> &values)
 	}
 }
 
-void Simulator::addDestination(qint16 x, qint16 y, double theta, quint8 type, bool isStopPoint, int speed)
+void Simulator::addDestination(qint16 x, qint16 y, double theta, quint8 type, quint8 deplacementType, bool isStopPoint, int speed)
 {
 	if (_isBlocked)
 		_isBlocked = false;
 
-    _fifo.enqueue(RMovement(RPoint(x, y, theta), type, Tools::TURN_THEN_MOVE, isStopPoint, speed));
+	_fifo.enqueue(RMovement(RPoint(x, y, theta), type, deplacementType, isStopPoint, speed));
 }
 
 void Simulator::executeAction(int actionName, quint16 parameter)
@@ -364,7 +364,7 @@ void Simulator::prepareNextMovement()
 		int movementType = _destination.getType();
 		if (_destination.getDeplacement() == Tools::TURN_ONLY)
 		{
-			movementType = Tools::ROTATE_TO_ABSOLUTE_ANGLE;
+			movementType = Tools::TOURNE_VERS_XY;
 		}
 
 		if (movementType == AUTO)

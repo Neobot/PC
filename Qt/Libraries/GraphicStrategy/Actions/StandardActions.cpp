@@ -94,7 +94,9 @@ ManualMoveAction::ManualMoveAction(const Tools::Trajectory& trajectory, int spee
 void ManualMoveAction::execute()
 {
 	_finder->setManualTrajectory(_trajectory, _speed, _movement, _deplacementType);
-	if (!connect(_finder, SIGNAL(objectiveReached()), this, SLOT(succeed())))
+	bool ok = connect(_finder, SIGNAL(objectiveReached()), this, SLOT(succeed()));
+	ok = connect(_finder, SIGNAL(objectiveCanceled()), this, SLOT(failed())) && ok;
+	if (!ok)
 		failed();
 }
 
@@ -129,7 +131,9 @@ void RelativeMoveAction::execute()
 					   _map->getRobotPosition().getTheta());
 
 	_finder->setManualTrajectory(t, _speed, _distance > 0 ? Tools::AVANT_XY : Tools::ARRIERE_XY);
-	if (!connect(_finder, SIGNAL(objectiveReached()), this, SLOT(succeed())))
+	bool ok = connect(_finder, SIGNAL(objectiveReached()), this, SLOT(succeed()));
+	ok = connect(_finder, SIGNAL(objectiveCanceled()), this, SLOT(failed())) && ok;
+	if (!ok)
 		failed();
 }
 
@@ -159,12 +163,14 @@ void RotationAction::execute()
 {
 	Tools::Trajectory t;
 
-	t << Tools::RPoint(_map->getRobotPosition().getX() + 1.0 * cos(_angle),
-					   _map->getRobotPosition().getY() + 1.0 * sin(_angle),
+	t << Tools::RPoint(_map->getRobotPosition().getX() + 10.0 * cos(_angle),
+					   _map->getRobotPosition().getY() + 10.0 * sin(_angle),
 					   _angle);
 
 	_finder->setManualTrajectory(t, _speed, Tools::AUTO, Tools::TURN_ONLY);
-	if (!connect(_finder, SIGNAL(objectiveReached()), this, SLOT(succeed())))
+	bool ok = connect(_finder, SIGNAL(objectiveReached()), this, SLOT(succeed()));
+	ok = connect(_finder, SIGNAL(objectiveCanceled()), this, SLOT(failed())) && ok;
+	if (!ok)
 		failed();
 }
 

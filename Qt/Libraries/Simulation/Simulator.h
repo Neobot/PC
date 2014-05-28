@@ -76,7 +76,7 @@ public:
     SimulationMap* getMap() const;
 
 	void setPosition(qint16 x, qint16 y, double theta);
-	void addDestination(qint16 x, qint16 y, double theta, quint8 type, bool isStopPoint, int speed);
+	void addDestination(qint16 x, qint16 y, double theta, quint8 type, quint8 deplacementType, bool isStopPoint, int speed);
 	void executeAction(int actionName, quint16 parameter);
 	void flush();
 	void askParameters();

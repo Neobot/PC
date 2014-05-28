@@ -12,17 +12,17 @@ class DefaultStrategy : public StrategyInterface
 public:
 	enum Sensors
 	{
-		FRONT_LEFT_SONAR = 3,
-		FRONT_RIGHT_SONAR = 0,
-		REAR_LEFT_SONAR = 2,
-		REAR_RIGHT_SONAR = 1
+		REAR_LEFT_SONAR = 0,
+		FRONT_LEFT_SONAR = 1,
+		REAR_RIGHT_SONAR = 2,
+		FRONT_RIGHT_SONAR = 3
 	};
 	
 	enum ColorSensorId
 	{
 		BothColorSensor = 0,
-		LeftColorSensor = 1,
-		RightColorSensor = 2
+		RightColorSensor = 1,
+		LeftColorSensor = 2,
 	};
 
 	enum PumpId

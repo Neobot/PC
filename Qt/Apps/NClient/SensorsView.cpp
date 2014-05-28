@@ -34,6 +34,8 @@ SensorsView::SensorsView(NetworkConnection *connection, QWidget *parent) :
 
 	connect(ui->btnClear, SIGNAL(clicked()), this, SLOT(clear()));
 	connect(ui->btnPause, SIGNAL(clicked()), this, SLOT(pauseButtonClicked()));
+	connect(ui->btnEnableSensors, SIGNAL(clicked()), this, SLOT(enableSensors()));
+	connect(ui->btnDisableSensors, SIGNAL(clicked()), this, SLOT(disableSensors()));
 }
 
 SensorsView::~SensorsView()
@@ -43,12 +45,6 @@ SensorsView::~SensorsView()
 
 void SensorsView::connectionStatusChanged(NetworkConnection::ConnectionStatus status)
 {
-	if (status == NetworkConnection::Controled)
-	{
-		_connection->getComm()->enableSensor(Comm::ColorSensor, 0);
-		_connection->getComm()->enableSensor(Comm::MicroswitchSensor, 0);
-		_connection->getComm()->enableSensor(Comm::SharpSensor, 0);
-	}
 }
 
 void SensorsView::avoidingSensors(const QList<quint8> &values)
@@ -105,6 +101,26 @@ void SensorsView::pauseButtonClicked()
 {
 	_isPaused = !_isPaused;
 	ui->btnPause->setText(_isPaused ? "Resume" : "Pause");
+}
+
+void SensorsView::enableSensors()
+{
+	if (getConnection()->getConnectionStatus() == NetworkConnection::Controled)
+	{
+		_connection->getComm()->enableSensor(Comm::ColorSensor, 0);
+		_connection->getComm()->enableSensor(Comm::MicroswitchSensor, 0);
+		_connection->getComm()->enableSensor(Comm::SharpSensor, 0);
+	}
+}
+
+void SensorsView::disableSensors()
+{
+	if (getConnection()->getConnectionStatus() == NetworkConnection::Controled)
+	{
+		_connection->getComm()->disableSensor(Comm::ColorSensor, 0);
+		_connection->getComm()->disableSensor(Comm::MicroswitchSensor, 0);
+		_connection->getComm()->disableSensor(Comm::SharpSensor, 0);
+	}
 }
 
 QColor SensorsView::getCommColor(Comm::ColorState colorState) const
