@@ -362,6 +362,11 @@ void Simulator::prepareNextMovement()
 		_destination = _fifo.dequeue();
 
 		int movementType = _destination.getType();
+		if (_destination.getDeplacement() == Tools::TURN_ONLY)
+		{
+			movementType = Tools::ROTATE_TO_ABSOLUTE_ANGLE;
+		}
+
 		if (movementType == AUTO)
 		{
 			RPoint pos = _map->getRobotPosition();

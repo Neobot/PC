@@ -148,6 +148,41 @@ QString RelativeMoveAction::getActionName() const
 	return QString("Relative move of ").append(QString::number(_distance)).append("mm");
 }
 
+//--------------------------------------------------------------------------------
+
+RotationAction::RotationAction(double absoluteAngle, int speed, TrajectoryFinder* finder, StrategyMap* map, QObject* parent)
+	: AbstractAction(parent), _finder(finder), _map(map), _angle(absoluteAngle), _speed(speed)
+{
+}
+
+void RotationAction::execute()
+{
+	Tools::Trajectory t;
+
+	t << Tools::RPoint(_map->getRobotPosition().getX() + 1.0 * cos(_angle),
+					   _map->getRobotPosition().getY() + 1.0 * sin(_angle),
+					   _angle);
+
+	_finder->setManualTrajectory(t, _speed, Tools::AUTO, Tools::TURN_ONLY);
+	if (!connect(_finder, SIGNAL(objectiveReached()), this, SLOT(succeed())))
+		failed();
+}
+
+void RotationAction::end()
+{
+	disconnect();
+}
+
+void RotationAction::stop()
+{
+	_finder->cancel();
+}
+
+QString RotationAction::getActionName() const
+{
+	return QString("Rotation to ").append(QString::number(_angle)).append("rad");
+}
+
 //actuator--------------------------------------------------------------------------------
 
 ActuatorAction::ActuatorAction(Comm::RobotAction action, int parameter, int estimatedDurationMs, Comm::RobotCommInterface* robot, QObject *parent)

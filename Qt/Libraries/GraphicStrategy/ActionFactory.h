@@ -40,7 +40,6 @@ public:
     AbstractAction* manualMoveToPointAction(const Tools::RPoint& point, int speed, bool forward = true, Tools::Deplacement deplacementType = Tools::TURN_THEN_MOVE) const;
     AbstractAction* manualBackwardMoveAction(double mm, int speed) const;
     AbstractAction* manualForwardMoveAction(double mm, int speed) const;
-    AbstractAction* manualTurnMoveAction(double radian, int speed) const;
     AbstractAction* manualTurnToAction(const Tools::RPoint& point, int speed, bool clockwize = false) const;
     AbstractAction* manualAbsoluteTurnMoveAction(double radian, int speed) const;
 

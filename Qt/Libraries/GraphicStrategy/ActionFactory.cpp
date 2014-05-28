@@ -78,25 +78,16 @@ AbstractAction * ActionFactory::manualForwardMoveAction(double mm, int speed) co
     return new RelativeMoveAction(mm, getRealSpeed(speed), _finder, _map);
 }
 
-AbstractAction * ActionFactory::manualTurnMoveAction(double radian, int speed) const
-{
-    Tools::Trajectory t;
-    t << Tools::RPoint(0.0, 0.0, radian);
-    return new ManualMoveAction(t, getRealSpeed(speed), Tools::TOURNE_RADIAN, Tools::TURN_THEN_MOVE, _finder);
-}
-
 AbstractAction * ActionFactory::manualTurnToAction(const Tools::RPoint& point, int speed, bool clockwize) const
 {
     Tools::Trajectory t;
     t << Tools::RPoint(point);
-    return new ManualMoveAction(t, getRealSpeed(speed), clockwize ? Tools::TOURNE_VERS_XY : Tools::TOURNE_VERS_XY, Tools::TURN_THEN_MOVE, _finder);
+	return new ManualMoveAction(t, getRealSpeed(speed), clockwize ? Tools::AVANT_XY : Tools::ARRIERE_XY, Tools::TURN_ONLY, _finder);
 }
 
 AbstractAction * ActionFactory::manualAbsoluteTurnMoveAction(double radian, int speed) const
 {
-    Tools::Trajectory t;
-    t << Tools::RPoint(0.0, 0.0, radian);
-    return new ManualMoveAction(t, getRealSpeed(speed), Tools::ROTATE_TO_ABSOLUTE_ANGLE, Tools::TURN_THEN_MOVE, _finder);
+	return new RotationAction(radian, getRealSpeed(speed), _finder, _map);
 }
 
 AbstractAction * ActionFactory::actuatorAction(Comm::RobotAction action, int parameter, int estimatedDurationMs) const

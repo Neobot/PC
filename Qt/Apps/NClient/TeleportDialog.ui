@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>461</width>
+    <width>468</width>
     <height>173</height>
    </rect>
   </property>
@@ -165,7 +165,7 @@
        <item>
         <widget class="QToolButton" name="btnCenter">
          <property name="text">
-          <string>100, 1500, 0</string>
+          <string>1000, 1500, 0</string>
          </property>
         </widget>
        </item>

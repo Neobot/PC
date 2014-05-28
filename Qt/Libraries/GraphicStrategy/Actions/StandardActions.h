@@ -102,6 +102,24 @@ private:
 	int _speed;
 };
 
+class RotationAction : public AbstractAction
+{
+public:
+	RotationAction(double absoluteAngle, int speed, TrajectoryFinder* finder, StrategyMap* map, QObject* parent = 0);
+
+	void execute();
+	void end();
+	void stop();
+
+	QString getActionName() const;
+
+private:
+	TrajectoryFinder*	_finder;
+	StrategyMap*        _map;
+	double              _angle;
+	int _speed;
+};
+
 class ActuatorAction : public AbstractAction
 {
 public:
