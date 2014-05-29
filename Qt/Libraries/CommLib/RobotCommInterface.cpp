@@ -158,7 +158,7 @@ void RobotCommInterface::read(quint8 instruction, const Data& data)
 				_listener->opponentPosition(x, y);
 				break;
 			}
-			case AVOIDING_SENSORS:
+			case ACTIVATED_SENSORS:
 			{
 				quint8 value;
 				QList<quint8> values;
@@ -168,7 +168,7 @@ void RobotCommInterface::read(quint8 instruction, const Data& data)
 					values << value;
 				}
 
-                _listener->avoidingSensors(values);
+				_listener->activatedSensors(values);
 				break;
 			}
 			case SENSOR_EVENT:

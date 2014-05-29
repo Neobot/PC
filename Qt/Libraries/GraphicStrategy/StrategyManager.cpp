@@ -149,7 +149,7 @@ bool StrategyManager::init()
 
 	//init sharps
 	_sharps.clear();
-	_strategy->avoidingSharps(_sharps);
+	_strategy->activatedSensors(_sharps);
 
 	_scannerSharps.clear();
 
@@ -281,15 +281,15 @@ void StrategyManager::sensorEvent(Comm::SensorType type, int sensorId, int value
 	}
 }
 
-void StrategyManager::avoidingSensors(const QList<quint8> &values)
+void StrategyManager::activatedSensors(const QList<quint8> &values)
 {
 	if (!_initDone)
 		return;
 
 	//Update the sharps values and check if they are activated
-	int index = 0;
 	QMap<int, const Sharp*> activatedSharps;
 
+	int index = 0;
 	for(QList<quint8>::const_iterator it = values.constBegin(); it != values.constEnd(); ++it)
 	{
 		quint8 value = *it;
@@ -298,16 +298,15 @@ void StrategyManager::avoidingSensors(const QList<quint8> &values)
 		if (!sharp)
 			break;
 
-		sharp->update(value);
-
-		if (_trajectoryFinder->hasObjective() &&
-			sharp->isActive() &&
-			sharp->getMovementDirection() == _trajectoryFinder->getDirection())
+		if (value < 255 && _trajectoryFinder->hasObjective())
 		{
+			sharp->update(value);
 			activatedSharps[index] = sharp;
 		}
+		else
+			sharp->setDistance(3000);
 
-		index++;
+		++index;
 	}
 
 	//Get detection points for activated sharps
@@ -321,7 +320,10 @@ void StrategyManager::avoidingSensors(const QList<quint8> &values)
 		avoidingNecessary = sharpObjectAdded | avoidingNecessary;
 
 		if (sharpObjectAdded && _trajectoryFinder->avoidingIsEnabled())
-			logger() << "Object spotted in " << o << ", Robot is in " <<  _map->getRobot()->getPosition() << Tools::endl;
+		{
+			logger() << "Object spotted in " << o << ", Robot is in " <<  _map->getRobot()->getPosition()
+					 << ", Directions is " << (_trajectoryFinder->getDirection() == Tools::Forward ? "forward" : "backward") << Tools::endl;
+		}
 
 		_futureMap->addTemporarySharpObject(o);
 	}

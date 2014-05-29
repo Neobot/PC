@@ -33,7 +33,7 @@ private:
 	void saveSettings(QSettings *settings);
 	void loadSettings(QSettings *settings);
 
-	void avoidingSensors(const QList<quint8>& values);
+	void activatedSensors(const QList<quint8>& values);
 	void sensorEvent(Comm::SensorType type, int sensorId, int value);
 
 private slots:

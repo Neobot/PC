@@ -50,7 +50,7 @@ public:
 	virtual void defaultStrategyParameters(StrategyParameters& parameters) const;
 
 	virtual QList<QPointF> doDetection(const QMap<int, const Sharp*> &activatedSharps) const;
-	virtual void avoidingSharps(QMap<int, Sharp*>& sharpList) const;
+	virtual void activatedSensors(QMap<int, Sharp*>& sharpList) const;
 
 private:
 	QPointF doDetection(const Sharp* s1, const Sharp* s2) const;

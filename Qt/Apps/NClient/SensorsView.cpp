@@ -49,7 +49,7 @@ void SensorsView::connectionStatusChanged(NetworkConnection::ConnectionStatus st
 	ui->btnDisableSensors->setEnabled(status == NetworkConnection::Controled);
 }
 
-void SensorsView::avoidingSensors(const QList<quint8> &values)
+void SensorsView::activatedSensors(const QList<quint8> &values)
 {
 	if (_nbAvoidingCurvesInitialized < values.count())
 	{

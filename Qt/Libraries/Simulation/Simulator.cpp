@@ -132,14 +132,33 @@ void Simulator::simulationTimerEvent()
 	_simRobot->sendObjective(_currentObjectve.getX(), _currentObjectve.getY(), _currentObjectve.getTheta());
 
     //Avoiding sharps
-	QList<quint8> avoidingSharpsValues;
-	QList<DataObject *> avoidingSharpList = _map->getObjects(SimulationMap::AvoidingSharpGroup);
-	for (QList<DataObject *>::iterator object = avoidingSharpList.begin(); object != avoidingSharpList.end(); ++object)
+	if (!_subMovements.isEmpty())
 	{
-		quint8 v = (quint8)(static_cast<SharpObject*>(*object))->getValue();
-		avoidingSharpsValues.append(v);
+		RSubMovement currentMovement = _subMovements.first();
+		if ((_moveForward && currentMovement.getType() == MOVEMENT_MOVE_FORWARD) || (_moveForward && currentMovement.getType() == MOVEMENT_MOVE_BACKWARD))
+		{
+			bool needStop = false;
+			QList<quint8> activatedAvoidingSharps;
+			QList<DataObject *> avoidingSharpList = _map->getObjects(SimulationMap::AvoidingSharpGroup);
+			for (QList<DataObject *>::iterator object = avoidingSharpList.begin(); object != avoidingSharpList.end(); ++object)
+			{
+				double v = (static_cast<SharpObject*>(*object))->getDistance();
+				if (v < 400)
+				{
+					activatedAvoidingSharps.append((quint8)static_cast<SharpObject*>(*object)->getValue());
+					needStop = true;
+				}
+				else
+					activatedAvoidingSharps.append(255);
+			}
+
+			if (needStop)
+			{
+				_simRobot->sendActivatedSensors(activatedAvoidingSharps);
+				flush();
+			}
+		}
 	}
-	_simRobot->sendAvoidingSensorsValues(avoidingSharpsValues);
 
     //Other sharps
 	QList<quint8> otherSharpsValues;

@@ -40,13 +40,13 @@ void Comm::CommDispatcher::objective(qint16 x, qint16 y, double theta)
 		_main->objective(x, y, theta);
 }
 
-void Comm::CommDispatcher::avoidingSensors(const QList<quint8> &values)
+void Comm::CommDispatcher::activatedSensors(const QList<quint8> &values)
 {
 	foreach(CommListener* responder, _responders)
-		responder->avoidingSensors(values);
+		responder->activatedSensors(values);
 
 	if (_main)
-		_main->avoidingSensors(values);
+		_main->activatedSensors(values);
 }
 
 bool Comm::CommDispatcher::go(bool mirrored)

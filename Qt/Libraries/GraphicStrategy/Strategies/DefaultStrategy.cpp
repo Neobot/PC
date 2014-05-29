@@ -65,10 +65,10 @@ QPointF DefaultStrategy::doDetection(const Sharp *s1) const
 	return _manager->getMap()->getSharpDetectionPoint(*s1);
 }
 
-void DefaultStrategy::avoidingSharps(QMap<int, Sharp *> &sharpList) const
+void DefaultStrategy::activatedSensors(QMap<int, Sharp *> &sharpList) const
 {
     //front
-	sharpList.insert( FRONT_LEFT_SONAR, SharpFactory::MaxSonar_MB1240(400, QVector2D(40, -40), QVector2D(1, sin(Tools::degreeToRadian(10))), 0.0) );
+	sharpList.insert( FRONT_LEFT_SONAR, SharpFactory::MaxSonar_MB1240(600, QVector2D(40, -40), QVector2D(1, sin(Tools::degreeToRadian(10))), 0.0) );
 	sharpList.insert( FRONT_RIGHT_SONAR, SharpFactory::MaxSonar_MB1240(400, QVector2D(40, -40), QVector2D(1, sin(Tools::degreeToRadian(-10))), 0.0) );
 
     //rear

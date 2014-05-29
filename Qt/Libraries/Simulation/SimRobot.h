@@ -26,7 +26,7 @@ public:
 
 	void sendCoordinates(double x, double y, double theta, bool forward);
 	void sendObjective(double x, double y, double theta);
-    void sendAvoidingSensorsValues(const QList<quint8> &sharps);
+    void sendActivatedSensors(const QList<quint8> &sharps);
     void go(bool mirrored);
 	void sendNoticeOfReceipt(quint8 instruction, bool result);
     void sendArrived();

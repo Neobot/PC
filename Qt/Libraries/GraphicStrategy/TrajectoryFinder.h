@@ -73,8 +73,9 @@ public slots:
     void pause();
     void stop();
     void replanAndStart();
-    bool replanTrajectory(); //replan he path to the current objective
+	bool replanTrajectory(); //replan the path to the current objective
     void flushReplanAndStart();
+	void flushReplanAndStart(bool stopRobot);
 
 private: 
     bool _debugTrajectories;

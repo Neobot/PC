@@ -18,7 +18,7 @@ namespace Comm
 	protected:
 		virtual void coordinates(qint16 x, qint16 y, double theta, quint8 forward);
 		virtual void objective(qint16 x, qint16 y, double theta);
-		virtual void avoidingSensors(const QList<quint8>& values);
+		virtual void activatedSensors(const QList<quint8>& values);
 		virtual bool go(bool mirrored);
 		virtual void initReceived();
 		virtual bool pingReceived();

@@ -29,6 +29,9 @@ public:
     bool isActive() const;
     double getActivationThreshold() const;
 
+	void setThresholdValue();
+	void setDistance(double distance);
+
 protected:
     QVector2D _position; //position relative to the robot
     QVector2D _direction;

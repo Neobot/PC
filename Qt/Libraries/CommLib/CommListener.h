@@ -15,7 +15,7 @@ namespace Comm
 
 		virtual void coordinates(qint16 x, qint16 y, double theta, quint8 direction) {Q_UNUSED(x); Q_UNUSED(y); Q_UNUSED(theta); Q_UNUSED(direction);}
 		virtual void objective(qint16 x, qint16 y, double theta) {Q_UNUSED(x); Q_UNUSED(y); Q_UNUSED(theta);}
-		virtual void avoidingSensors(const QList<quint8>& values) {Q_UNUSED(values);}
+		virtual void activatedSensors(const QList<quint8>& values) {Q_UNUSED(values);}
 		virtual bool go(bool mirrored) {Q_UNUSED(mirrored); return false;}
 		virtual void initReceived() {}
 		virtual bool pingReceived() {return true;}

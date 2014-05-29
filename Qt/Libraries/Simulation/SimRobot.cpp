@@ -98,14 +98,14 @@ void SimRobot::sendObjective(double x, double y, double theta)
 	_protocol->sendMessage2(Comm::OBJECTIVE, d);
 }
 
-void SimRobot::sendAvoidingSensorsValues(const QList<quint8>& sharps)
+void SimRobot::sendActivatedSensors(const QList<quint8>& sharps)
 {
     Comm::Data d;
 
     foreach(const quint8 v, sharps)
         d.add(v);
 
-    _protocol->sendMessage2(Comm::AVOIDING_SENSORS, d);
+    _protocol->sendMessage2(Comm::ACTIVATED_SENSORS, d);
 }
 
 void SimRobot::go(bool mirrored)

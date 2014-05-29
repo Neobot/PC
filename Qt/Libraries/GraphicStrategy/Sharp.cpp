@@ -71,6 +71,16 @@ bool Sharp::isActive() const
 
 double Sharp::getActivationThreshold() const
 {
-    return _threshold;
+	return _threshold;
+}
+
+void Sharp::setThresholdValue()
+{
+	_distance = _threshold;
+}
+
+void Sharp::setDistance(double distance)
+{
+	_distance = distance;
 }
 

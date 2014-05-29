@@ -18,7 +18,7 @@ SharpObject::SharpObject(double range, const QPointF& relativePosition, double r
 double SharpObject::getValue()
 {
     if (_distance >= _range)
-	return 0.0;
+		return 0.0;
 
     return qMin(_calibrationCurve.yValue(_distance), 255.0);
 }

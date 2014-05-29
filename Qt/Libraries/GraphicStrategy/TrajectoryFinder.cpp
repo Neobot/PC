@@ -212,8 +212,14 @@ void TrajectoryFinder::replanAndStart()
 
 void TrajectoryFinder::flushReplanAndStart()
 {
+	flushReplanAndStart(true);
+}
+
+void TrajectoryFinder::flushReplanAndStart(bool stopRobot)
+{
 	//_previousPoint = _map->getRobotPosition(); //RPoint(-1000, -1000);
-	_robot->flush();
+	if (stopRobot)
+		_robot->flush();
 	resetPatherPosition();
 	_currentDestinations.clear();
 	replanAndStart();
@@ -479,7 +485,7 @@ void TrajectoryFinder::checkAvoiding()
 	{
 		if (!_isManual)
 		{
-			if (!_isAvoiding && _map->checkNextTrajectoryForCollision(_currentDestinations.first()))
+			if (!_isAvoiding)
 			{
 				logger() << "Auto Avoiding..." << Tools::endl;
 				_isAvoiding = true;
@@ -520,7 +526,7 @@ void TrajectoryFinder::enableAvoiding()
 {
 	if (_debugTrajectories)
 		logger() << "Avoiding......" << Tools::endl;
-	flushReplanAndStart();
+	flushReplanAndStart(false);
 	_isAvoiding = false;
 }
 

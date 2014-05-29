@@ -222,6 +222,12 @@ void PrehistobotTestStrategy::defaultStrategyParameters(StrategyParameters& para
 
 void PrehistobotTestStrategy::mainStrategy(QList<AbstractAction*>& actions)
 {
+	actions << _manager->getActionFactory()->asynchroneActionList(
+	{
+		_manager->getActionFactory()->ax12Movement(_ax12MvtNames.leftArmGroup, _ax12MvtNames.goToRest),
+		_manager->getActionFactory()->ax12Movement(_ax12MvtNames.rightArmGroup, _ax12MvtNames.goToRest)
+	}, AsynchroneActionGroup::AllActionFinished);
+
 	//actions << _pbActionFactory->scanAndTurnFires(_manager->getGrid()->getNearestNode(QPointF(200,0)));
 	actions << _manager->getActionFactory()->moveAction(QPointF(1650, 2550), 100)
 			<< _manager->getActionFactory()->moveAction(QPointF(1900, 2200), 100)

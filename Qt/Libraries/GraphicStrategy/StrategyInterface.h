@@ -76,7 +76,7 @@ public:
     virtual void obstacleDetected() {}
     virtual void blockingDeteced() {}
 
-    virtual void avoidingSharps(QMap<int, Sharp*>& sharpList) const {Q_UNUSED(sharpList);}
+	virtual void activatedSensors(QMap<int, Sharp*>& sharpList) const {Q_UNUSED(sharpList);}
 
     virtual void defaultObstaclePositions(QList<Tools::DataObject*>& objects) const {Q_UNUSED(objects);}
 
