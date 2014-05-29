@@ -22,7 +22,7 @@ const QString AX12_UPDATE_INTERVAL_KEY = "AX12Updateinterval";
 
 NServer::NServer(Tools::AbstractLogger *logger, QObject *parent) :
 	QObject(parent), Tools::LoggerInterface(logger), _settings("Neobot", "NServer"), _parametersSettings("Neobot", "RobotParameters"), _tcpServer(0), _nextConnectionIndex(0), _robotInterface(0),
-	_simulator(0), _strategyManager(0), _currentStrategy(0), _commLogger(0), _currentStrategyId(-1), _robotConnected(false), _ax12Manager(0), _ax12MovementRunner(0)
+	_simulator(0), _strategyManager(0), _currentStrategy(0), _currentStrategyId(-1), _commLogger(0), _robotConnected(false), _ax12Manager(0), _ax12MovementRunner(0)
 {
 	_disconnectionMapper = new QSignalMapper(this);
 	connect(_disconnectionMapper, SIGNAL(mapped(int)), this, SLOT(removeConnection(int)));
@@ -602,6 +602,8 @@ bool NServer::startStrategy(int strategyNum, bool mirror)
 			if (_simulator)
 				_simulator->stop();
 
+			_currentStrategy->init();
+
 			_strategyManager->setStrategy(_currentStrategy);
 			_strategyManager->connectToRobot();
 
@@ -636,6 +638,7 @@ bool NServer::stopStrategy(int &currentStrategyNum)
 
 	if (_robotConnected && _currentStrategy)
 	{
+		_strategyManager->cancelCurrentAction();
 		_strategyManager->setStrategy(0);
 		_strategyManager->disconnectFromRobot();
 		delete _currentStrategy;

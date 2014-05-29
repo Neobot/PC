@@ -25,7 +25,7 @@ StrategyEnumerator::StrategyEnumerator()
 	}
 }
 
-StrategyInterface * StrategyEnumerator::start(StrategyEnumerator::Strategy strategy, Tools::AbstractLogger* logger)
+StrategyInterface * StrategyEnumerator::start(StrategyEnumerator::Strategy strategy, Tools::AbstractLogger* logger) const
 {
 	QDir d;
 	if (!getStrategyDirectory(strategy, d))
@@ -114,7 +114,16 @@ void StrategyEnumerator::setStrategyFileData(Strategy strategy, const QString &f
 
 	QFile file(realFileName);
 	if (file.open(QIODevice::WriteOnly))
+	{
 		file.write(data);
+
+		StrategyInterface* strat = start(strategy, 0);
+		if (strat)
+		{
+			strat->init();
+			delete strat;
+		}
+	}
 }
 
 void StrategyEnumerator::resetStrategyFile(StrategyEnumerator::Strategy strategy, const QString &filename)

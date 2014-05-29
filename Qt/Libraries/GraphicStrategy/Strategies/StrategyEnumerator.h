@@ -17,7 +17,7 @@ public:
 
 	StrategyEnumerator();
 
-	StrategyInterface* start(Strategy strategy, Tools::AbstractLogger *logger = 0);
+	StrategyInterface* start(Strategy strategy, Tools::AbstractLogger *logger = 0) const;
 
 	static QString getStrategyName(Strategy strategy);
 	static QStringList getAvailableStrategies();

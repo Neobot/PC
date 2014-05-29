@@ -162,6 +162,8 @@ bool StrategyManager::init()
 bool StrategyManager::go(bool mirrored)
 {
 	setReversedStrategy(mirrored);
+	logger() << (mirrored ? "YELLOW STRATEGY" : "RED STRATEGY") << Tools::endl;
+
 	if (!init())
 		return false;
 
@@ -222,6 +224,8 @@ void StrategyManager::isArrived()
 
 void StrategyManager::isBlocked()
 {
+	return;
+
 	QVector2D dir(_trajectoryFinder->getDirection() == Tools::Forward ? 1 : -1, 0);
 	QPointF p = _map->getSharpDetectionPoint(QPointF(0,0), dir, _map->getRobot()->getRadius());
 	bool ok = _map->addTemporaryBlockingSharpObject(p);
@@ -316,8 +320,8 @@ void StrategyManager::avoidingSensors(const QList<quint8> &values)
 		bool sharpObjectAdded = _map->addTemporarySharpObject(o);
 		avoidingNecessary = sharpObjectAdded | avoidingNecessary;
 
-		if (sharpObjectAdded)
-			logger() << "Object spotted in " << o.x() << ", " << o.y() << Tools::endl;
+		if (sharpObjectAdded && _trajectoryFinder->avoidingIsEnabled())
+			logger() << "Object spotted in " << o << ", Robot is in " <<  _map->getRobot()->getPosition() << Tools::endl;
 
 		_futureMap->addTemporarySharpObject(o);
 	}
@@ -507,8 +511,9 @@ void StrategyManager::insertActionHere(AbstractAction *action)
 
 void StrategyManager::cancelCurrentAction()
 {
-	if (_currentActionIndex >= 0)
-		_actions.value(_currentActionIndex)->stop();
+	AbstractAction* currentAction = _actions.value(_currentActionIndex);
+	if (currentAction)
+		currentAction->stop();
 }
 
 void StrategyManager::next()
