@@ -228,7 +228,7 @@ void StrategyManager::isBlocked()
 	_futureMap->addTemporaryBlockingSharpObject(p);
 
 	if (!ok)
-		logger() << "Problem !!!" << Tools::endl;
+		logger() << "Blocked !!!" << Tools::endl;
 
 	_strategy->blockingDeteced();
 }
@@ -313,7 +313,12 @@ void StrategyManager::avoidingSensors(const QList<quint8> &values)
 	QList<QPointF> obstacles = _strategy->doDetection(activatedSharps);
 	foreach(const QPointF& o, obstacles)
 	{
-		avoidingNecessary = _map->addTemporarySharpObject(o) | avoidingNecessary;
+		bool sharpObjectAdded = _map->addTemporarySharpObject(o);
+		avoidingNecessary = sharpObjectAdded | avoidingNecessary;
+
+		if (sharpObjectAdded)
+			logger() << "Object spotted in " << o.x() << ", " << o.y() << Tools::endl;
+
 		_futureMap->addTemporarySharpObject(o);
 	}
 

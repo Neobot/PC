@@ -26,6 +26,7 @@ public slots:
 private:
 	Ui::LogView *ui;
 	Tools::TextEditLogger* _logger;
+	int _nbLog;
 
 	QString formatText(const QString &text, const QColor &color);
 

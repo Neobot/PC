@@ -481,6 +481,7 @@ void TrajectoryFinder::checkAvoiding()
 		{
 			if (!_isAvoiding && _map->checkNextTrajectoryForCollision(_currentDestinations.first()))
 			{
+				logger() << "Auto Avoiding..." << Tools::endl;
 				_isAvoiding = true;
 				QTimer::singleShot(300, this, SLOT(enableAvoiding()));
 			}

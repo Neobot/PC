@@ -5,7 +5,7 @@
 
 LogView::LogView(NetworkConnection *connection, QWidget *parent) :
 	AbstractView(connection, QImage(), parent),
-	ui(new Ui::LogView)
+	ui(new Ui::LogView), _nbLog(0)
 {
 	ui->setupUi(this);
 	_logger = new Tools::TextEditLogger(ui->textEdit);
@@ -35,6 +35,17 @@ void LogView::logMessage(const QString& message)
 
 void LogView::logMessage(const QString& speaker, const QString& message, const QColor& color)
 {
+	if (ui->checkAutoClear->isChecked())
+	{
+		if (_nbLog > 200)
+		{
+			_logger->clear();
+			_nbLog == 0;
+		}
+
+		++_nbLog;
+	}
+
 	*_logger << speaker << ": \"" << formatText(message, color) << "\"" << Tools::endl;
 }
 

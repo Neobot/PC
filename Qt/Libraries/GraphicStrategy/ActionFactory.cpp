@@ -244,11 +244,11 @@ AbstractAction *ActionFactory::morseLetterColor(int colorSensorId, int nbSignal,
 	for(int i = 0; i < nbSignal; ++i)
 	{
 		list	<< enableColorSensorAction(colorSensorId)
-				<< waitAction(200)
+				<< waitAction(duration)
 				<< disableColorSensorAction(colorSensorId);
 
 		if (i != nbSignal - 1)
-			list << waitAction(200);
+			list << waitAction(duration);
 	}
 
 	return actionList(list);
@@ -257,10 +257,10 @@ AbstractAction *ActionFactory::morseLetterColor(int colorSensorId, int nbSignal,
 AbstractAction *ActionFactory::sosColor(int colorSensorId) const
 {
 	return actionList({
-						  morseLetterColor(colorSensorId, 3, 200),	//S
-						  waitAction(1000),
-						  morseLetterColor(colorSensorId, 2, 600),	//O
-						  waitAction(1000),
-						  morseLetterColor(colorSensorId, 3, 200)	//S
+						  morseLetterColor(colorSensorId, 3, 1000),	//S
+						  waitAction(4000),
+						  morseLetterColor(colorSensorId, 2, 2000),	//O
+						  waitAction(4000),
+						  morseLetterColor(colorSensorId, 3, 1000)	//S
 					  });
 }
