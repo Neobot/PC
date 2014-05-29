@@ -22,7 +22,7 @@ const QString AX12_UPDATE_INTERVAL_KEY = "AX12Updateinterval";
 
 NServer::NServer(Tools::AbstractLogger *logger, QObject *parent) :
 	QObject(parent), Tools::LoggerInterface(logger), _settings("Neobot", "NServer"), _parametersSettings("Neobot", "RobotParameters"), _tcpServer(0), _nextConnectionIndex(0), _robotInterface(0),
-    _simulator(0), _strategyManager(0), _currentStrategy(0), _currentStrategyId(-1), _robotConnected(false), _ax12Manager(0), _ax12MovementRunner(0)
+	_simulator(0), _strategyManager(0), _currentStrategy(0), _commLogger(0), _currentStrategyId(-1), _robotConnected(false), _ax12Manager(0), _ax12MovementRunner(0)
 {
 	_disconnectionMapper = new QSignalMapper(this);
 	connect(_disconnectionMapper, SIGNAL(mapped(int)), this, SLOT(removeConnection(int)));
@@ -140,6 +140,11 @@ void NServer::removeConnection(int index)
     NetworkCommInterface* networkInterface = _connections.value(index, 0);
     if (networkInterface)
 	{
+		if (_commLogger->getComm() == networkInterface)
+		{
+			_commLogger->setComm(0);
+		}
+
 		_connections.remove(index);
         if (_ax12Requests.contains(networkInterface))
             delete _ax12Requests.take(networkInterface);
@@ -167,6 +172,10 @@ void NServer::newConnection()
 
     NetworkCommInterface* networkInterface = new NetworkCommInterface(protocol, _robotInterface, &logger());
     networkInterface->setListener(this);
+	if (!_commLogger)
+		_commLogger = new CommLogger(networkInterface);
+	else
+		_commLogger->setComm(networkInterface);
 	
 	while (_connections.contains(_nextConnectionIndex))
 		++_nextConnectionIndex;
@@ -294,8 +303,9 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
 		_robotInterface = new Comm::RobotCommInterface(p, _ax12Manager, 0, this);
 		_robotInterface->disableNoticeOfReceiptChecking();
 
-		_pather = new NMicropather(0, NMicropather::Euclidean, 1000.0);
-		_strategyManager = new StrategyManager(_robotInterface, _pather, 0);
+		_pather = new NMicropather(_commLogger, NMicropather::Euclidean, 1000.0);
+		_strategyManager = new StrategyManager(_robotInterface, _pather, _commLogger);
+		_strategyManager->setDebugMode(false, false, false, false);
 		connect(_strategyManager, SIGNAL(strategyFinished()), this, SLOT(strategyFinished()));
 		_strategyManager->setAx12MovementManager(&_ax12Movements);
 

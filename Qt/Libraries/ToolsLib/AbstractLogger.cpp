@@ -167,7 +167,7 @@ MultipleLogger::MultipleLogger() : _quiet(false) {}
 
 void MultipleLogger::addLogger(AbstractLogger* logger)
 {
-    _loggers.append(logger);
+	_loggers.append(logger);
 }
 
 void MultipleLogger::log(const char* text)

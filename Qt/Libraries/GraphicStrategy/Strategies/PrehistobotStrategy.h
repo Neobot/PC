@@ -74,6 +74,9 @@ class PrehistobotTestStrategy : public PrehistobotStrategy
 		void mainStrategy(QList<AbstractAction*>& actions);
 		void readAndDefineParameters(Tools::NSettings &settings);
 		void writeDefaultGrid(const QString& filePath);
+
+		void obstacleDetected();
+		void blockingDeteced();
 };
 
 class PBActionFactory

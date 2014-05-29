@@ -3,6 +3,11 @@
 
 #include "RobotCommInterface.h"
 
+namespace Tools
+{
+	class AbstractLogger;
+}
+
 class NetworkCommListener;
 
 class NetworkCommInterface : public Comm::AbstractCommInterface
@@ -41,6 +46,27 @@ private:
 private slots:
 	void read(quint8 instruction, const Comm::Data& data);
 	void readFromRobot(quint8 instruction, const Comm::Data& data);
+};
+
+class CommLogger : public Tools::AbstractLogger
+{
+public:
+	CommLogger(NetworkCommInterface* comm);
+	void log(const char* text);
+	void log(char text);
+	void noLogger(bool value) {_quiet = value;}
+
+	/**
+	 * \brief Do nothing.
+	 */
+	void clear() {}
+
+	NetworkCommInterface* getComm() const;
+	void setComm(NetworkCommInterface* comm);
+private:
+	bool _quiet;
+	NetworkCommInterface* _comm;
+	QByteArray _str;
 };
 
 #endif // NETWORKCOMMINTERFACE_H

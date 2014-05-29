@@ -89,7 +89,7 @@ double StrategyInterface::autoMirror(double angle) const
 {
 	return _mirrored ? -angle : angle;
 }
-
+#include <QDebug>
 void StrategyInterface::readAndDefineParameters(Tools::NSettings &settings)
 {
 	settings.beginGroup("Strategy");
@@ -163,7 +163,8 @@ const StrategyInterface::StrategyParameters &StrategyInterface::getParameters() 
 
 Tools::RPoint StrategyInterface::getStartPosition() const
 {
-	Tools::RPoint startPoint(_standardParameters.start, _standardParameters.startRotation);
+	double startRotRad = Tools::degreeToRadian(_standardParameters.startRotation);
+	Tools::RPoint startPoint(_standardParameters.start, startRotRad);
 	return autoMirror(startPoint);
 }
 

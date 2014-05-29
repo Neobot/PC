@@ -49,6 +49,7 @@ private:
 	Pather* _pather;
 	StrategyInterface* _currentStrategy;
 	int _currentStrategyId;
+	CommLogger* _commLogger;
 
 	bool _robotConnected;
 
@@ -111,5 +112,6 @@ private slots:
 	void autoStart();
 	void sendParameters();
 };
+
 
 #endif // NSERVER_H

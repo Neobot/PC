@@ -534,6 +534,7 @@ void TrajectoryFinder::cancel()
 	_currentDestinations.clear();
 	_hasObjective = false;
 	//_isOnSingulariy = false;
+	_lostReplanTimer.stop();
 	resetPatherPosition();
 	emit objectiveCanceled();
 }

@@ -216,18 +216,16 @@ void PrehistobotTestStrategy::defaultStrategyParameters(StrategyParameters& para
 {
 	PrehistobotStrategy::defaultStrategyParameters(parameters);
 
-	parameters. start = QPointF(1000, 1000);
+	parameters. start = QPointF(250, 250);
 	parameters. startRotation = 0;
 }
 
 void PrehistobotTestStrategy::mainStrategy(QList<AbstractAction*>& actions)
 {
 	//actions << _pbActionFactory->scanAndTurnFires(_manager->getGrid()->getNearestNode(QPointF(200,0)));
-	actions << _manager->getActionFactory()->manualAbsoluteTurnMoveAction(Tools::pi/2, 100)
-			<< _manager->getActionFactory()->waitAction(1000)
-			<< _manager->getActionFactory()->manualAbsoluteTurnMoveAction(0, 100)
-			<< _manager->getActionFactory()->waitAction(1000)
-			<< _manager->getActionFactory()->manualAbsoluteTurnMoveAction(Tools::pi, 100);
+	actions << _manager->getActionFactory()->moveAction(QPointF(1650, 2550), 100)
+			<< _manager->getActionFactory()->moveAction(QPointF(1900, 2200), 100)
+			<< _manager->getActionFactory()->moveAction(QPointF(1900, 1500), 100);
 }
 void PrehistobotTestStrategy::readAndDefineParameters(Tools::NSettings &settings)
 {
@@ -239,6 +237,16 @@ void PrehistobotTestStrategy::writeDefaultGrid(const QString& filePath)
 	Tools::NGrid defaultGrid;
 	defaultGrid.makeStandardGrid(QPointF(0,0), 50, 50, QSizeF(2000, 3000), Tools::NGrid::HeightConnections);
 	defaultGrid.writeToFile(filePath);
+}
+
+void PrehistobotTestStrategy::obstacleDetected()
+{
+
+}
+
+void PrehistobotTestStrategy::blockingDeteced()
+{
+
 }
 
 //----------------------------------------------------PBActionFactory----------------------------------------------------

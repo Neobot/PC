@@ -20,9 +20,9 @@ public:
 	virtual void readAndDefineParameters(Tools::NSettings &settings);
 
 	virtual void mainStrategy(QList<AbstractAction*>& actions);
-	void actionDone(const AbstractAction *action, bool result, bool isLast);
-	void obstacleDetected();
-	void blockingDeteced();
+	virtual void actionDone(const AbstractAction *action, bool result, bool isLast);
+	virtual void obstacleDetected();
+	virtual void blockingDeteced();
 
 protected:
 	void addNextAction(bool lastActionResult = true);

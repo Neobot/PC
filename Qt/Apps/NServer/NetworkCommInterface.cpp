@@ -1,6 +1,7 @@
 #include "NetworkCommInterface.h"
 #include "Instructions.h"
 #include "NetworkCommListener.h"
+#include "AbstractLogger.h"
 
 #include "Strategies/StrategyEnumerator.h"
 
@@ -464,4 +465,55 @@ void NetworkCommInterface::readFromRobot(quint8 instruction, const Data &data)
 		else
 			getProtocol()->sendMessage(instruction, data);
 	}
+}
+
+
+CommLogger::CommLogger(NetworkCommInterface *comm) : _comm(comm)
+{
+}
+
+void CommLogger::log(const char *text)
+{
+	if (!_comm)
+		return;
+
+	QByteArray s(text);
+	int endlIndex = s.indexOf(Tools::endl);
+	if (endlIndex >= 0)
+	{
+		if (endlIndex > 0)
+			_str += s.left(endlIndex);
+
+		_comm->sendAnnouncement(_str);
+		_str.clear();
+
+		if (endlIndex < s.count() - 1)
+			_str = s.mid(endlIndex + 1);
+	}
+	else
+		_str += s;
+}
+
+void CommLogger::log(char text)
+{
+	if (!_comm)
+		return;
+
+	if (text == Tools::endl)
+	{
+		_comm->sendAnnouncement(_str);
+		_str.clear();
+	}
+	else
+		_str += QString(text);
+}
+
+NetworkCommInterface *CommLogger::getComm() const
+{
+	return _comm;
+}
+
+void CommLogger::setComm(NetworkCommInterface *comm)
+{
+	_comm = comm;
 }
