@@ -190,6 +190,9 @@ void StrategyManager::beginStartSequence()
 	double theta = Tools::angleInZeroTwoPi(startPoint.getTheta());
 	_robot->setPosition(startPoint.getX(), startPoint.getY(), theta);
 
+	if (!params.isEmpty())
+		_robot->setParameters(params);
+
 	next();
 }
 
@@ -300,6 +303,8 @@ void StrategyManager::activatedSensors(const QList<quint8> &values)
 
 		if (value < 255 && _trajectoryFinder->hasObjective())
 		{
+			logger() << "Sensor " << index << " activated" << Tools::endl;
+
 			sharp->update(value);
 			activatedSharps[index] = sharp;
 		}

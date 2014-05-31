@@ -105,6 +105,8 @@ public:
 
     void setPause(bool value);
 
+	QList<float> params;
+
 private:    
     ActionFactory*	_actionFactory;
     StrategyInterface*	_strategy;
@@ -172,6 +174,7 @@ private:
     QTimer _matchTimer;
     int _matchTime;
     bool _isPaused;
+
 
 private slots:
     void actionFinished(bool result);

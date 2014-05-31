@@ -310,9 +310,6 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
 		_strategyManager->setAx12MovementManager(&_ax12Movements);
 
 		_robotInterface->ping();
-		QList<float> existingParameters = getParameters();
-		if (!existingParameters.isEmpty())
-			_robotInterface->setParameters(existingParameters);
 	}
 
 	updateRobotConnection();
@@ -606,6 +603,7 @@ bool NServer::startStrategy(int strategyNum, bool mirror)
 
 			_strategyManager->setStrategy(_currentStrategy);
 			_strategyManager->connectToRobot();
+			_strategyManager->params = getParameters();
 
 			if (_simulator)
 			{

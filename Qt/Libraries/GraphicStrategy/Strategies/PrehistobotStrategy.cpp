@@ -79,8 +79,8 @@ void PrehistobotStrategy::mainStrategy(QList<AbstractAction *> &actions)
 
 	actions << _manager->getActionFactory()->asynchroneActionList(
 	{
-		_manager->getActionFactory()->ax12Movement(_ax12MvtNames.leftArmGroup, _ax12MvtNames.goToRest),
-		_manager->getActionFactory()->ax12Movement(_ax12MvtNames.rightArmGroup, _ax12MvtNames.goToRest)
+		_manager->getActionFactory()->ax12Movement(_ax12MvtNames.leftArmGroup, _ax12MvtNames.goToScan),
+		_manager->getActionFactory()->ax12Movement(_ax12MvtNames.rightArmGroup, _ax12MvtNames.goToScan)
 	}, AsynchroneActionGroup::AllActionFinished);
 	
 	DefaultAIStrategy::mainStrategy(actions);
@@ -224,8 +224,8 @@ void PrehistobotTestStrategy::mainStrategy(QList<AbstractAction*>& actions)
 {
 	actions << _manager->getActionFactory()->asynchroneActionList(
 	{
-		_manager->getActionFactory()->ax12Movement(_ax12MvtNames.leftArmGroup, _ax12MvtNames.goToRest),
-		_manager->getActionFactory()->ax12Movement(_ax12MvtNames.rightArmGroup, _ax12MvtNames.goToRest)
+		_manager->getActionFactory()->ax12Movement(_ax12MvtNames.leftArmGroup, _ax12MvtNames.goToScan),
+		_manager->getActionFactory()->ax12Movement(_ax12MvtNames.rightArmGroup, _ax12MvtNames.goToScan)
 	}, AsynchroneActionGroup::AllActionFinished);
 
 	//actions << _pbActionFactory->scanAndTurnFires(_manager->getGrid()->getNearestNode(QPointF(200,0)));
@@ -266,8 +266,8 @@ AbstractAction *PBActionFactory::scanAndTurnFires(NGridNode *destination, int sp
 
 	AbstractAction* endAction = _factory->asynchroneActionList({
 														_factory->disableColorSensorAction(DefaultStrategy::BothColorSensor),
-														_factory->ax12Movement(_mvt.leftArmGroup, _mvt.goToRest),
-														_factory->ax12Movement(_mvt.rightArmGroup, _mvt.goToRest)}, AsynchroneActionGroup::AllActionFinished);
+														_factory->ax12Movement(_mvt.leftArmGroup, _mvt.goToScan),
+														_factory->ax12Movement(_mvt.rightArmGroup, _mvt.goToScan)}, AsynchroneActionGroup::AllActionFinished);
 
 	return defaultColorScanAction(_reversed, destination, speed, timeout,
 								startAction,
@@ -286,8 +286,8 @@ AbstractAction *PBActionFactory::scanAndHoldFires(NGridNode *destination, int sp
 
 	AbstractAction* endAction = _factory->asynchroneActionList({
 														_factory->disableColorSensorAction(DefaultStrategy::BothColorSensor),
-														_factory->ax12Movement(_mvt.leftArmGroup, _mvt.goToRest),
-														_factory->ax12Movement(_mvt.rightArmGroup, _mvt.goToRest)}, AsynchroneActionGroup::AllActionFinished);
+														_factory->ax12Movement(_mvt.leftArmGroup, _mvt.goToScan),
+														_factory->ax12Movement(_mvt.rightArmGroup, _mvt.goToScan)}, AsynchroneActionGroup::AllActionFinished);
 
 	return defaultColorScanAction(false, destination, speed, timeout,
 								startAction,

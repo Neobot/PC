@@ -37,11 +37,10 @@ void SimulationMap::setConfiguration(const ChessUpConfiguration &config)
 void SimulationMap::configureRobotSensors()
 {
     //Avoiding sharps	
-
-	addObject(new MaxSonar_MB1240(QPointF(-40, 40), Tools::degreeToRadian(170), 280), AvoidingSharpGroup); //rear left
 	addObject(new MaxSonar_MB1240(QPointF(40, 40), Tools::degreeToRadian(10), 280), AvoidingSharpGroup); //front left
-	addObject(new MaxSonar_MB1240(QPointF(-40, -40), Tools::degreeToRadian(-170), 280), AvoidingSharpGroup); //rear right
 	addObject(new MaxSonar_MB1240(QPointF(40, -40), Tools::degreeToRadian(-10), 280), AvoidingSharpGroup); //front right
+	addObject(new MaxSonar_MB1240(QPointF(-40, 40), Tools::degreeToRadian(170), 280), AvoidingSharpGroup); //rear left
+	addObject(new MaxSonar_MB1240(QPointF(-40, -40), Tools::degreeToRadian(-170), 280), AvoidingSharpGroup); //rear right
 
     //Detection sharps
     // right

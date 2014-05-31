@@ -354,6 +354,7 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 
 			QByteArray message;
 			_connected =  _listener->connectToRobot(this, simu, robotPort, ax12Port, message);
+
 			if (!message.isEmpty())
 				sendAnnouncement(message);
 			sendNoticeOfReceipt(CONNECT, _connected);
