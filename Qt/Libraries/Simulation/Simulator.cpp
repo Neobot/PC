@@ -212,6 +212,8 @@ void Simulator::updateRobotPosition()
 
 	double diffAngle = currentPos.diffAngle(RPoint(0,0,currentPos.angle(destination)));
 	QVector2D u(QPointF(destination.getX() - currentPos.getX(), destination.getY() - currentPos.getY()));
+	float remainingDistance = u.length();
+	_simRobot->sendGraphvalues(RemainingDistanceGraph, {remainingDistance});
 	u.normalize();
 
 	_currentObjectve = destination;
@@ -499,6 +501,7 @@ void Simulator::start()
 
 	if (_isAtBeginning)
 	{
+		_simRobot->registerGraph(RemainingDistanceGraph, Comm::CurveGraph, "Remainig distance", {"Distance (mm)"});
 		_simRobot->go(_color == Yellow); //mirrored simu = yellow
 		_simRobot->sendLog("I'm alive, alive!");
 

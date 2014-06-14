@@ -190,6 +190,42 @@ void SimRobot::sendParameters(const QList<float> &values, const QList<QByteArray
 	_protocol->sendMessage2(Comm::PARAMETER_NAMES, dNames);
 }
 
+void SimRobot::registerGraph(int id, Comm::GraphType type, const QByteArray &name, const QList<QByteArray> &paramNames)
+{
+	Comm::Data d;
+
+	d.add((quint8)id);
+	d.add((quint8)type);
+	d.add(name);
+	d.add((quint8)paramNames.count());
+	for(const QByteArray& pName : paramNames)
+		d.add(pName);
+
+	_protocol->sendMessage2(Comm::REGISTER_GRAPH, d);
+}
+
+void SimRobot::sendGraphvalues(int graphId, const QList<float> &values)
+{
+	Comm::Data d;
+
+	d.add((quint8)graphId);
+	for(float v : values)
+		d.add(v);
+
+	_protocol->sendMessage2(Comm::GRAPH_VALUES, d);
+}
+
+void SimRobot::sendGraphSinglevalue(int graphId, int paramId, float value)
+{
+	Comm::Data d;
+
+	d.add((quint8)graphId);
+	d.add((quint8)paramId);
+	d.add(value);
+
+	_protocol->sendMessage2(Comm::GRAPH_SINGLE_VALUE, d);
+}
+
 SimCommInterface::SimCommInterface()
 {
 }

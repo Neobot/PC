@@ -54,6 +54,11 @@ public:
         Yellow
     };
 
+	enum SimulationGraph
+	{
+		RemainingDistanceGraph
+	};
+
     Simulator(SimProtocol* protocol, int interval, double speed, Tools::AbstractLogger* logger = 0);
     ~Simulator();
 

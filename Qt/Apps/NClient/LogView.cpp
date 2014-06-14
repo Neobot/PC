@@ -40,7 +40,7 @@ void LogView::logMessage(const QString& speaker, const QString& message, const Q
 		if (_nbLog > 200)
 		{
 			_logger->clear();
-			_nbLog == 0;
+			_nbLog = 0;
 		}
 
 		++_nbLog;

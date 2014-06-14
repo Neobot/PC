@@ -26,6 +26,9 @@ namespace Comm
 		virtual void log(const QByteArray& text) {Q_UNUSED(text);}
 		virtual void parameters(const QList<float>& values) {Q_UNUSED(values);}
 		virtual void parameterNames(const QStringList& names) {Q_UNUSED(names);}
+		virtual void registerGraph(int graphId, GraphType type, const QString& name, const QStringList& parameterNames) {Q_UNUSED(graphId); Q_UNUSED(type); Q_UNUSED(name); Q_UNUSED(parameterNames);}
+		virtual void graphValues(int graphId, const QList<float>& values) {Q_UNUSED(graphId); Q_UNUSED(values);}
+		virtual void graphSingleValues(int graphId, int parameterId, float value) {Q_UNUSED(graphId); Q_UNUSED(parameterId); Q_UNUSED(value);}
 	};
 }
 

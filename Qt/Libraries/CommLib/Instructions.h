@@ -37,6 +37,9 @@ namespace Comm
 	const quint8 LOG = 124;
 	const quint8 PARAMETERS = 125;
 	const quint8 PARAMETER_NAMES = 126;
+	const quint8 REGISTER_GRAPH = 127;
+	const quint8 GRAPH_VALUES = 128;
+	const quint8 GRAPH_SINGLE_VALUE = 129;
 	const quint8 EVENT = 130;
 	const quint8 SENSOR_EVENT = 131;
 
@@ -89,6 +92,12 @@ namespace Comm
 		ColorYellow,
 		ColorWhite,
 		ColorBlack
+	};
+
+	enum GraphType
+	{
+		CurveGraph,
+		BarGraph
 	};
 
 	//Network commands

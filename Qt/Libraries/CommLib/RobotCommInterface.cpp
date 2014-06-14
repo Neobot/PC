@@ -250,6 +250,52 @@ void RobotCommInterface::read(quint8 instruction, const Data& data)
 				_listener->parameterNames(names);
                 break;
 			}
+			case REGISTER_GRAPH:
+			{
+				quint8 id, type, nbParam;
+				QByteArray name;
+				QStringList paramNames;
+				d.take(id);
+				d.take(type);
+				d.take(name);
+				d.take(nbParam);
+
+				for(int i = 0; i < nbParam; ++i)
+				{
+					QByteArray paramName;
+					d.take(paramName);
+					paramNames << paramName;
+				}
+
+				_listener->registerGraph(id, (GraphType)type, name, paramNames);
+				break;
+			}
+			case GRAPH_VALUES:
+			{
+				quint8 id;
+				QList<float> values;
+				d.take(id);
+				while(!d.isEmpty())
+				{
+					float v = 0.0;
+					d.take(v);
+					values << v;
+				}
+
+				_listener->graphValues(id, values);
+				break;
+			}
+			case GRAPH_SINGLE_VALUE:
+			{
+				quint8 id, paramNum;
+				d.take(id).take(paramNum);
+
+				float value;
+				d.take(value);
+
+				_listener->graphSingleValues(id, paramNum, value);
+				break;
+			}
 			default:
 				logger() << "Unkow instruction : " << instruction << Tools::endl;
 		}

@@ -36,6 +36,9 @@ public:
     void restart();
 	void sendLog(const QByteArray& log);
 	void sendParameters(const QList<float>& values, const QList<QByteArray> &names);
+	void registerGraph(int id, Comm::GraphType type, const QByteArray& name, const QList<QByteArray>& paramNames);
+	void sendGraphvalues(int graphId, const QList<float>& values);
+	void sendGraphSinglevalue(int graphId, int paramId, float value);
 
 private:
     SimProtocol* _protocol;
