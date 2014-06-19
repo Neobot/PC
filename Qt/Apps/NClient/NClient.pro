@@ -46,7 +46,8 @@ SOURCES += main.cpp\
     StoredTrajectoriesManagerDialog.cpp \
     StrategiesView.cpp \
     ParametersView.cpp \
-    Ax12View.cpp
+    Ax12View.cpp \
+    GraphsView.cpp
 
 HEADERS  += NClient.h \
     NetworkClientCommInterface.h \
@@ -62,7 +63,8 @@ HEADERS  += NClient.h \
     StoredTrajectoriesManagerDialog.h \
     StrategiesView.h \
     ParametersView.h \
-    Ax12View.h
+    Ax12View.h \
+    GraphsView.h
 
 FORMS    += NClient.ui \
     ConnectionView.ui \
@@ -74,7 +76,8 @@ FORMS    += NClient.ui \
     StoredTrajectoriesManagerDialog.ui \
     StrategiesView.ui \
     ParametersView.ui \
-    Ax12View.ui
+    Ax12View.ui \
+    GraphsView.ui
 
 RESOURCES += \
     NClient.qrc

@@ -22,8 +22,12 @@ namespace Tools
 
         void setTitle(const QString& title);
 
+		virtual void addTimeSample(const QList<double> &values) = 0;
+		virtual void addSingleTimeSample(int plotIndex, double value) = 0;
+
 	protected:
 		bool _autoResize;
+		QList<QColor> _defaultColors;
 	};
 
 	class MultiCurveWidget : public NPlotWidget
@@ -34,10 +38,14 @@ namespace Tools
 		virtual ~MultiCurveWidget();
 
 		QCPCurve *addCurve(const QString& name, const QPen& pen);
+		QCPCurve *addCurve(const QString& name);
 		void addValue(int curveIndex, double x, double y);
 		void addValues(double x, const QList<double> &y);
 		void addValues(const QList<double>& x, double y);
 		void addValues(const QList<double>& x, const QList<double>& y);
+
+		void addTimeSample(const QList<double> &values);
+		void addSingleTimeSample(int plotIndex, double value);
 
 		void setValues(int curveIndex, const QVector<double>& x, const QVector<double>& y);
 		void clear();
@@ -50,6 +58,11 @@ namespace Tools
 		QList<QCPCurve*> _curves;
 		int _dataNumberLimit;
 
+		unsigned int _time;
+		QSet<int> _samplesPlotIndexesReceived;
+
+
+
 		void customRescale();
 	};
 
@@ -61,7 +74,11 @@ namespace Tools
 		virtual ~MultiBarWidget();
 
 		QCPBars *addBar(const QString& name, const QPen& pen, const QBrush& brush);
+		QCPBars *addBar(const QString& name);
+
 		void setValues(const QList<double> &values);
+		void addTimeSample(const QList<double> &values);
+		void addSingleTimeSample(int plotIndex, double value);
 		void clear();
 
 		QCPBars* getBar(int i) const;

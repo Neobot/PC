@@ -104,6 +104,11 @@ void RobotCommInterface::askParameters()
 	getProtocol(0)->sendMessage(ASK_PARAMETERS, Data());
 }
 
+void RobotCommInterface::askGraphs()
+{
+	getProtocol(0)->sendMessage(ASK_GRAPHS, Data());
+}
+
 void RobotCommInterface::sendNoticeOfReceipt(quint8 instruction, bool result)
 {
 	Data data;

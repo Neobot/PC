@@ -25,6 +25,7 @@ namespace Comm
 	const quint8 DISABLE_SENSOR = 21;
 	const quint8 SET_PARAMETERS = 50;
 	const quint8 ASK_PARAMETERS = 51;
+	const quint8 ASK_GRAPHS = 52;
     const quint8 ACTIONS = 60;
 
     //microC -> PC

@@ -15,6 +15,7 @@ public:
     virtual void flush() = 0;
 	virtual void askParameters() = 0;
 	virtual void setParameters(const QList<float>& values) = 0;
+	virtual void askGraphs() = 0;
 };
 
 class SimRobot : public Comm::AbstractCommInterface

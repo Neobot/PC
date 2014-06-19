@@ -9,6 +9,7 @@
 #include "LogView.h"
 #include "ParametersView.h"
 #include "Ax12View.h"
+#include "GraphsView.h"
 
 #include <QDockWidget>
 
@@ -58,31 +59,36 @@ void NClient::initTooBar()
 	action->setChecked(false);
 	action->setShortcut(QKeySequence(Qt::Key_F2));
 
+	action = ui->mainToolBar->addAction(QIcon(":/toolbar/sharp"), "Graphs", this, SLOT(changeView()));
+	addView(action, new GraphsView(_connection, this));
+	action->setChecked(false);
+	action->setShortcut(QKeySequence(Qt::Key_F3));
+
 	action = ui->mainToolBar->addAction(QIcon(":/toolbar/sharp"), "Sensors", this, SLOT(changeView()));
 	addView(action, new SensorsView(_connection, this));
 	action->setChecked(false);
-	action->setShortcut(QKeySequence(Qt::Key_F3));
+	action->setShortcut(QKeySequence(Qt::Key_F4));
 
 	action = ui->mainToolBar->addAction(QIcon(":/toolbar/ax12"), "AX-12", this, SLOT(changeView()));
 	addView(action, new Ax12View(_connection, this));
 	action->setChecked(false);
-	action->setShortcut(QKeySequence(Qt::Key_F4));
+	action->setShortcut(QKeySequence(Qt::Key_F5));
 
 	action = ui->mainToolBar->addAction(QIcon(":/toolbar/strategies"), "Strategies", this, SLOT(changeView()));
 	addView(action, new StrategiesView(_connection, this));
 	action->setChecked(false);
-	action->setShortcut(QKeySequence(Qt::Key_F5));
+	action->setShortcut(QKeySequence(Qt::Key_F6));
 
 	action = ui->mainToolBar->addAction(QIcon(":/toolbar/upload"), "Parameters", this, SLOT(changeView()));
 	addView(action, new ParametersView(_connection, this));
 	action->setChecked(false);
-	action->setShortcut(QKeySequence(Qt::Key_F6));
+	action->setShortcut(QKeySequence(Qt::Key_F7));
 
 	action = ui->mainToolBar->addAction(QIcon(":/toolbar/connection"), "Connection", this, SLOT(changeView()));
 	_activeView = new ConnectionView(_connection, this);
 	addView(action, _activeView);
 	action->setChecked(true);
-	action->setShortcut(QKeySequence(Qt::Key_F7));
+	action->setShortcut(QKeySequence(Qt::Key_F8));
 
 	ui->mainToolBar->addSeparator();
 

@@ -142,3 +142,30 @@ void CommDispatcher::sensorEvent(SensorType type, int sensorId, int value)
 	if (_main)
 		_main->sensorEvent(type, sensorId, value);
 }
+
+void CommDispatcher::registerGraph(int graphId, GraphType type, const QString &name, const QStringList &parameterNames)
+{
+	foreach(CommListener* responder, _responders)
+		responder->registerGraph(graphId, type, name, parameterNames);
+
+	if (_main)
+		_main->registerGraph(graphId, type, name, parameterNames);
+}
+
+void CommDispatcher::graphValues(int graphId, const QList<float> &values)
+{
+	foreach(CommListener* responder, _responders)
+		responder->graphValues(graphId, values);
+
+	if (_main)
+		_main->graphValues(graphId, values);
+}
+
+void CommDispatcher::graphSingleValues(int graphId, int parameterId, float value)
+{
+	foreach(CommListener* responder, _responders)
+		responder->graphSingleValues(graphId, parameterId, value);
+
+	if (_main)
+		_main->graphSingleValues(graphId, parameterId, value);
+}

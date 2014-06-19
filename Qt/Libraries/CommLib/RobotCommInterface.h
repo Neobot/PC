@@ -54,6 +54,7 @@ namespace Comm
 		
 		void setParameters(const QList<float> &values);
 		void askParameters();
+		void askGraphs();
 		
 		void executeAction(quint8 actionId, quint8 parameter);
 		

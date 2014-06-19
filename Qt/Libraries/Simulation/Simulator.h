@@ -86,6 +86,7 @@ public:
 	void flush();
 	void askParameters();
 	void setParameters(const QList<float>& values);
+	void askGraphs();
 
 private:
     QTimer _timer;

@@ -29,6 +29,9 @@ namespace Comm
 		virtual void parameterNames(const QStringList& names);
 		virtual void robotEvent(RobotEvent event);
 		virtual void sensorEvent(SensorType type, int sensorId, int value);
+		virtual void registerGraph(int graphId, GraphType type, const QString& name, const QStringList& parameterNames);
+		virtual void graphValues(int graphId, const QList<float>& values);
+		virtual void graphSingleValues(int graphId, int parameterId, float value);
 
 	private:
 		CommListener* _main;

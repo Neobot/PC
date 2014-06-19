@@ -62,10 +62,14 @@ void SimRobot::read(quint8 instruction, const Comm::Data &data)
 		case Comm::PING:
 			sendNoticeOfReceipt(Comm::PING, true);
 			break;
+		case Comm::ASK_GRAPHS:
+			_interface->askGraphs();
+			break;
 		case Comm::ASK_PARAMETERS:
 			_interface->askParameters();
 			break;
 		case Comm::SET_PARAMETERS:
+		{
 			quint8 nb;
 			d.take(nb);
 
@@ -79,6 +83,8 @@ void SimRobot::read(quint8 instruction, const Comm::Data &data)
 
 			_interface->setParameters(values);
 			break;
+		}
+
 	}
 }
 

@@ -5,6 +5,7 @@ using namespace Tools;
 NPlotWidget::NPlotWidget(QWidget *parent) :
 	QCustomPlot(parent), _autoResize(true)
 {
+	_defaultColors << Qt::blue << Qt::red << Qt::green << Qt::yellow << Qt::darkBlue << Qt::darkRed << Qt::darkGreen << Qt::darkYellow;
     setBackground(QBrush(Qt::white));
 
 	legend->setVisible(true);
@@ -64,8 +65,9 @@ void NPlotWidget::setTitle(const QString &title)
 //------------
 
 
-MultiCurveWidget::MultiCurveWidget(QWidget *parent) : NPlotWidget(parent), _dataNumberLimit(-1)
+MultiCurveWidget::MultiCurveWidget(QWidget *parent) : NPlotWidget(parent), _dataNumberLimit(-1), _time(0)
 {
+
 }
 
 MultiCurveWidget::~MultiCurveWidget()
@@ -81,6 +83,11 @@ QCPCurve* MultiCurveWidget::addCurve(const QString &name, const QPen &pen)
 	_curves << c;
 
 	return c;
+}
+
+QCPCurve *MultiCurveWidget::addCurve(const QString &name)
+{
+	return addCurve(name, QPen(_defaultColors.value(_curves.count())));
 }
 
 void MultiCurveWidget::addValue(int curveIndex, double x, double y)
@@ -154,6 +161,28 @@ void MultiCurveWidget::addValues(const QList<double> &x, const QList<double> &y)
 
 	customRescale();
 	replot();
+}
+
+void MultiCurveWidget::addTimeSample(const QList<double> &values)
+{
+	if (!_samplesPlotIndexesReceived.isEmpty())
+		++_time;
+
+	addValues(_time, values);
+	++_time;
+	_samplesPlotIndexesReceived.clear();
+}
+
+void MultiCurveWidget::addSingleTimeSample(int plotIndex, double value)
+{
+	if (_samplesPlotIndexesReceived.contains(plotIndex))
+	{
+		++_time;
+		_samplesPlotIndexesReceived.clear();
+	}
+
+	addValue(plotIndex, _time, value);
+	_samplesPlotIndexesReceived.insert(plotIndex);
 }
 
 void MultiCurveWidget::setValues(int curveIndex, const QVector<double> &x, const QVector<double> &y)
@@ -236,6 +265,11 @@ QCPBars *MultiBarWidget::addBar(const QString &name, const QPen &pen, const QBru
 	return b;
 }
 
+QCPBars *MultiBarWidget::addBar(const QString &name)
+{
+	return addBar(name, QPen(Qt::black), QBrush(_defaultColors.value(_bars.count())));
+}
+
 void MultiBarWidget::setValues(const QList<double> &values)
 {
 	int i = 0;
@@ -244,6 +278,25 @@ void MultiBarWidget::setValues(const QList<double> &values)
 		b->clearData();
 		b->addData(i + 1, values.value(i));
 		i++;
+	}
+
+	if (_autoResize)
+		rescaleAxes();
+	replot();
+}
+
+void MultiBarWidget::addTimeSample(const QList<double> &values)
+{
+	setValues(values);
+}
+
+void MultiBarWidget::addSingleTimeSample(int plotIndex, double value)
+{
+	QCPBars* b = _bars.value(plotIndex, nullptr);
+	if (b)
+	{
+		b->clearData();
+		b->addData(plotIndex + 1, value);
 	}
 
 	if (_autoResize)

@@ -85,6 +85,18 @@ void Simulator::setParameters(const QList<float> &values)
 	}
 }
 
+void Simulator::askGraphs()
+{
+	_simRobot->registerGraph(RemainingDistanceGraph, Comm::CurveGraph, "Remainig distance", {"Distance (mm)"});
+	_simRobot->registerGraph(2, Comm::CurveGraph, "Remainig distance", {"Distance (mm)"});
+	_simRobot->registerGraph(3, Comm::CurveGraph, "Remainig distance", {"Distance (mm)"});
+	_simRobot->registerGraph(4, Comm::CurveGraph, "Remainig distance", {"Distance (mm)"});
+	_simRobot->registerGraph(5, Comm::CurveGraph, "Remainig distance", {"Distance (mm)"});
+	_simRobot->registerGraph(6, Comm::CurveGraph, "Remainig distance", {"Distance (mm)"});
+	_simRobot->registerGraph(7, Comm::CurveGraph, "Remainig distance", {"Distance (mm)"});
+	_simRobot->registerGraph(8, Comm::CurveGraph, "Remainig distance", {"Distance (mm)"});
+}
+
 void Simulator::addDestination(qint16 x, qint16 y, double theta, quint8 type, quint8 deplacementType, bool isStopPoint, int speed)
 {
 	if (_isBlocked)
@@ -500,8 +512,7 @@ void Simulator::start()
 	_timer.start();
 
 	if (_isAtBeginning)
-	{
-		_simRobot->registerGraph(RemainingDistanceGraph, Comm::CurveGraph, "Remainig distance", {"Distance (mm)"});
+	{	
 		_simRobot->go(_color == Yellow); //mirrored simu = yellow
 		_simRobot->sendLog("I'm alive, alive!");
 
