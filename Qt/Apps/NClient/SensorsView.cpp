@@ -8,7 +8,7 @@ const int PLOT_MAX_NB_VALUES = 1000;
 SensorsView::SensorsView(NetworkConnection *connection, QWidget *parent) :
 	AbstractView(connection, QImage(), parent),
 	ui(new Ui::SensorsView), _nbAvoidingCurvesInitialized(0), _timeAvoiding(PLOT_MAX_NB_VALUES - 1),
-	_defaultTimeValues(PLOT_MAX_NB_VALUES), _isPaused(false)
+	_isPaused(false)
 {
 	ui->setupUi(this);
 
@@ -23,10 +23,6 @@ SensorsView::SensorsView(NetworkConnection *connection, QWidget *parent) :
 	ui->avoidingSensorsBars->setAxisScale(0, 6, 0, 255);
 	ui->avoidingSensorsBars->setAxisValuesVisible(false, true);
 	ui->avoidingSensorsBars->setDefaultInteractionEnabled(false);
-
-
-	for(int i = 0; i < PLOT_MAX_NB_VALUES; ++i)
-		_defaultTimeValues[i] = i;
 
 	_connection->registerRobotResponder(this);
 
@@ -58,8 +54,7 @@ void SensorsView::activatedSensors(const QList<quint8> &values)
 		for(int i = nbExistingSensors; i < _nbAvoidingCurvesInitialized; ++i)
 		{
 			QColor c = _colors.value(i);
-			QCPCurve* curve = ui->avoidingSensorsPlot->addCurve(QString("Sensor").append(QString::number(i)), QPen(c));
-			curve->setData(_defaultTimeValues, QVector<double>(PLOT_MAX_NB_VALUES, 0.0));
+			ui->avoidingSensorsPlot->addCurve(QString("Sensor").append(QString::number(i)), QPen(c));
 			ui->avoidingSensorsBars->addBar(QString("Sensor").append(QString::number(i)), QPen(Qt::black), QBrush(c));
 		}
 	}

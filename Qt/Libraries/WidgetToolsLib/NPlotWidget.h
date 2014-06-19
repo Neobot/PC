@@ -22,6 +22,9 @@ namespace Tools
 
         void setTitle(const QString& title);
 
+		virtual void rescale();
+		virtual void clear() {}
+
 		virtual void addTimeSample(const QList<double> &values) = 0;
 		virtual void addSingleTimeSample(int plotIndex, double value) = 0;
 
@@ -54,16 +57,16 @@ namespace Tools
 
 		void setDataNumberLimit(int limit);
 
+		void rescale();
+
 	private:
 		QList<QCPCurve*> _curves;
 		int _dataNumberLimit;
 
+		QVector<double> _defaultTimeValues;
+
 		unsigned int _time;
 		QSet<int> _samplesPlotIndexesReceived;
-
-
-
-		void customRescale();
 	};
 
 	class MultiBarWidget : public NPlotWidget

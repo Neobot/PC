@@ -59,7 +59,14 @@ void NPlotWidget::setDefaultInteractionEnabled(bool value)
 void NPlotWidget::setTitle(const QString &title)
 {
     plotLayout()->insertRow(0);
-    plotLayout()->addElement(0, 0, new QCPPlotTitle(this, title));
+	plotLayout()->addElement(0, 0, new QCPPlotTitle(this, title));
+}
+
+void NPlotWidget::rescale()
+{
+	if (_autoResize)
+		rescaleAxes();
+	replot();
 }
 
 //------------
@@ -79,8 +86,14 @@ QCPCurve* MultiCurveWidget::addCurve(const QString &name, const QPen &pen)
 	QCPCurve* c = new QCPCurve(xAxis, yAxis);
 	c->setPen(pen);
 	c->setName(name);
+
 	addPlottable(c);
 	_curves << c;
+
+	if (_dataNumberLimit > 0)
+	{
+		c->setData(_defaultTimeValues, QVector<double>(_dataNumberLimit, 0.0));
+	}
 
 	return c;
 }
@@ -99,8 +112,7 @@ void MultiCurveWidget::addValue(int curveIndex, double x, double y)
 		if (_dataNumberLimit > 0 && c->data()->count() > _dataNumberLimit)
 			c->removeData(c->data()->begin().key());
 
-		customRescale();
-		replot();
+		rescale();
 	}
 }
 
@@ -119,8 +131,7 @@ void MultiCurveWidget::addValues(double x, const QList<double>& y)
 		++itValues;
 	}
 
-	customRescale();
-	replot();
+	rescale();
 }
 
 void MultiCurveWidget::addValues(const QList<double> &x, double y)
@@ -138,8 +149,7 @@ void MultiCurveWidget::addValues(const QList<double> &x, double y)
 		++itValues;
 	}
 
-	customRescale();
-	replot();
+	rescale();
 }
 
 void MultiCurveWidget::addValues(const QList<double> &x, const QList<double> &y)
@@ -159,8 +169,7 @@ void MultiCurveWidget::addValues(const QList<double> &x, const QList<double> &y)
 		++itYValues;
 	}
 
-	customRescale();
-	replot();
+	rescale();
 }
 
 void MultiCurveWidget::addTimeSample(const QList<double> &values)
@@ -194,16 +203,22 @@ void MultiCurveWidget::setValues(int curveIndex, const QVector<double> &x, const
 		if (_dataNumberLimit > 0 && c->data()->count() > _dataNumberLimit)
 			c->removeData(c->data()->begin().key(), c->data()->begin().key() + c->data()->count() - _dataNumberLimit - 1);
 
-		customRescale();
-		replot();
+		rescale();
 	}
 }
 
 void MultiCurveWidget::clear()
 {
 	foreach(QCPCurve* c, _curves)
+	{
 		c->clearData();
+		if (_dataNumberLimit > 0)
+		{
+			c->setData(_defaultTimeValues, QVector<double>(_dataNumberLimit, 0.0));
+		}
+	}
 
+	_time = _dataNumberLimit;
 	replot();
 }
 
@@ -212,13 +227,27 @@ QCPCurve *MultiCurveWidget::getCurve(int i) const
 	return _curves.value(i, 0);
 }
 
-
 void MultiCurveWidget::setDataNumberLimit(int limit)
 {
 	_dataNumberLimit = limit;
+
+	if (_dataNumberLimit > 0)
+	{
+		_defaultTimeValues.clear();
+		_defaultTimeValues.resize(_dataNumberLimit);
+		for(int i = 0; i < _dataNumberLimit; ++i)
+			_defaultTimeValues[i] = i;
+
+		foreach(QCPCurve* c, _curves)
+		{
+			c->setData(_defaultTimeValues, QVector<double>(_dataNumberLimit, 0.0));
+		}
+	}
+
+	_time += _dataNumberLimit;
 }
 
-void MultiCurveWidget::customRescale()
+void MultiCurveWidget::rescale()
 {
 	if (_autoResize)
 		rescaleAxes();
@@ -230,6 +259,8 @@ void MultiCurveWidget::customRescale()
 				c->rescaleKeyAxis();
 		}
 	}
+
+	replot();
 }
 
 //-----------------------
@@ -280,9 +311,7 @@ void MultiBarWidget::setValues(const QList<double> &values)
 		i++;
 	}
 
-	if (_autoResize)
-		rescaleAxes();
-	replot();
+	rescale();
 }
 
 void MultiBarWidget::addTimeSample(const QList<double> &values)
@@ -299,9 +328,7 @@ void MultiBarWidget::addSingleTimeSample(int plotIndex, double value)
 		b->addData(plotIndex + 1, value);
 	}
 
-	if (_autoResize)
-		rescaleAxes();
-	replot();
+	rescale();
 }
 
 void MultiBarWidget::clear()

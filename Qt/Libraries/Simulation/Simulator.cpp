@@ -142,6 +142,7 @@ void Simulator::simulationTimerEvent()
 	RPoint robot = _map->getRobotPosition();
 	_simRobot->sendCoordinates(robot.getX(), robot.getY(), robot.getTheta(), _moveForward);
 	_simRobot->sendObjective(_currentObjectve.getX(), _currentObjectve.getY(), _currentObjectve.getTheta());
+	_simRobot->sendGraphvalues(2, {(float)robot.getX()});
 
     //Avoiding sharps
 	if (!_subMovements.isEmpty())

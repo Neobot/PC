@@ -8,6 +8,7 @@
         <file alias="log">resources/Toolbar - Playlist.png</file>
         <file alias="strategies">resources/Library.png</file>
         <file alias="ax12">resources/Android.png</file>
+        <file alias="graph">resources/Stocks.png</file>
     </qresource>
     <qresource prefix="/app">
         <file alias="AppIcon">resources/ProcessorNeobot.png</file>

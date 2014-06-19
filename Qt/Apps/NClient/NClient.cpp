@@ -59,7 +59,7 @@ void NClient::initTooBar()
 	action->setChecked(false);
 	action->setShortcut(QKeySequence(Qt::Key_F2));
 
-	action = ui->mainToolBar->addAction(QIcon(":/toolbar/sharp"), "Graphs", this, SLOT(changeView()));
+	action = ui->mainToolBar->addAction(QIcon(":/toolbar/graph"), "Graphs", this, SLOT(changeView()));
 	addView(action, new GraphsView(_connection, this));
 	action->setChecked(false);
 	action->setShortcut(QKeySequence(Qt::Key_F3));

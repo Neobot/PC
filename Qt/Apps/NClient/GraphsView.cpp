@@ -35,7 +35,10 @@ void GraphsView::connectionStatusChanged(NetworkConnection::ConnectionStatus sta
 
 void GraphsView::clear()
 {
-	//TODO
+	for(GraphTab* tab: _tabs)
+	{
+		tab->clearData();
+	}
 }
 
 void GraphsView::pauseButtonClicked()
@@ -69,17 +72,21 @@ void GraphsView::registerGraph(int graphId, Comm::GraphType type, const QString 
 
 	GraphTab* currentTab = getTabForGraphId(graphId);
 
-	if (currentTab == nullptr && (_tabs.isEmpty() || _tabs.last()->isFull()))
+	if (currentTab == nullptr)
 	{
-		currentTab = new GraphTab(this);
-		QString tabName = QString("Page ").append(QString::number(_tabs.count() + 1));
-		ui->tabWidget->addTab(currentTab, tabName);
-		_tabs << currentTab;
+		if (_tabs.isEmpty() || _tabs.last()->isFull())
+		{
+			currentTab = new GraphTab(this);
+			QString tabName = QString("Page ").append(QString::number(_tabs.count() + 1));
+			ui->tabWidget->addTab(currentTab, tabName);
+			_tabs << currentTab;
+		}
+		else
+		{
+			currentTab = _tabs.last();
+		}
 	}
-	else if (!_tabs.isEmpty())
-	{
-		currentTab = _tabs.last();
-	}
+
 
 	Q_ASSERT(currentTab);
 	if (currentTab)
@@ -88,16 +95,22 @@ void GraphsView::registerGraph(int graphId, Comm::GraphType type, const QString 
 
 void GraphsView::graphValues(int graphId, const QList<float> &values)
 {
-	GraphTab* currentTab = getTabForGraphId(graphId);
-	if (currentTab)
-		currentTab->addSample(graphId, values);
+	if (!_isPaused)
+	{
+		GraphTab* currentTab = getTabForGraphId(graphId);
+		if (currentTab)
+			currentTab->addSample(graphId, values);
+	}
 }
 
 void GraphsView::graphSingleValues(int graphId, int parameterId, float value)
 {
-	GraphTab* currentTab = getTabForGraphId(graphId);
-	if (currentTab)
-		currentTab->addSingleSample(graphId, parameterId, value);
+	if (!_isPaused)
+	{
+		GraphTab* currentTab = getTabForGraphId(graphId);
+		if (currentTab)
+			currentTab->addSingleSample(graphId, parameterId, value);
+	}
 }
 
 Tools::NPlotWidget *GraphsView::getPlotWidget(Comm::GraphType type, const QString &name, const QStringList &parameterNames)
@@ -105,7 +118,7 @@ Tools::NPlotWidget *GraphsView::getPlotWidget(Comm::GraphType type, const QStrin
 	if (type == Comm::CurveGraph)
 	{
 		Tools::MultiCurveWidget* curveGraph = new Tools::MultiCurveWidget(this);
-		curveGraph->setDataNumberLimit(PLOT_MAX_NB_VALUES);
+
 		curveGraph->setAxisValuesVisible(false, true);
 		curveGraph->setTitle(name);
 
@@ -113,6 +126,10 @@ Tools::NPlotWidget *GraphsView::getPlotWidget(Comm::GraphType type, const QStrin
 		{
 			curveGraph->addCurve(param);
 		}
+
+		curveGraph->setDataNumberLimit(PLOT_MAX_NB_VALUES);
+
+		curveGraph->rescale();
 
 		return curveGraph;
 	}
@@ -162,6 +179,12 @@ void GraphTab::clear()
 	_graphs.clear();
 }
 
+void GraphTab::clearData()
+{
+	for(Tools::NPlotWidget* w: _graphs)
+		w->clear();
+}
+
 void GraphTab::addGraph(int id, Tools::NPlotWidget *widget)
 {
 	if (_graphs.contains(id))
@@ -169,6 +192,7 @@ void GraphTab::addGraph(int id, Tools::NPlotWidget *widget)
 		Tools::NPlotWidget* existingWidget = _graphs[id];
 		_layout->replaceWidget(existingWidget, widget, Qt::FindDirectChildrenOnly);
 		_graphs[id] = widget;
+		_layout->invalidate();
 
 		delete existingWidget;
 	}

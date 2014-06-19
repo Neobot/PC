@@ -23,8 +23,6 @@ private:
 	int _nbAvoidingCurvesInitialized;
 	unsigned int _timeAvoiding;
 
-	QVector<double> _defaultTimeValues;
-
 	QList<quint8> _lastAvoidingValues;
 	QList<QColor> _colors;
 

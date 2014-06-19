@@ -21,6 +21,7 @@ public:
 	GraphTab(QWidget *parent = 0);
 
 	void clear();
+	void clearData();
 	void addGraph(int id, Tools::NPlotWidget* widget);
 	bool isFull() const;
 	bool contains(int id) const;
