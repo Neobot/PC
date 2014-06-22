@@ -3,4 +3,5 @@ CONFIG += ordered
 
 SUBDIRS = 	Micropather \
                 QCustomPlot \
-                qtpropertybrowser
+		qtpropertybrowser \
+		gpengine

@@ -10,6 +10,7 @@
 #include "ParametersView.h"
 #include "Ax12View.h"
 #include "GraphsView.h"
+#include "ScriptView.h"
 
 #include <QDockWidget>
 
@@ -84,11 +85,16 @@ void NClient::initTooBar()
 	action->setChecked(false);
 	action->setShortcut(QKeySequence(Qt::Key_F7));
 
+	action = ui->mainToolBar->addAction(QIcon(":/toolbar/script"), "Script", this, SLOT(changeView()));
+	addView(action, new ScriptView(_connection, this));
+	action->setChecked(false);
+	action->setShortcut(QKeySequence(Qt::Key_F8));
+
 	action = ui->mainToolBar->addAction(QIcon(":/toolbar/connection"), "Connection", this, SLOT(changeView()));
 	_activeView = new ConnectionView(_connection, this);
 	addView(action, _activeView);
 	action->setChecked(true);
-	action->setShortcut(QKeySequence(Qt::Key_F8));
+	action->setShortcut(QKeySequence(Qt::Key_F9));
 
 	ui->mainToolBar->addSeparator();
 

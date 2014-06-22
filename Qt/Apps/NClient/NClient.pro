@@ -21,9 +21,10 @@ DEPENDENCY_LIBS +=  NeobotGridEditor \
                     NeobotTools
 
 EXTERNAL_LIBS +=    QCustomPlot \
-                    QtSolutions_PropertyBrowser
+		    QtSolutions_PropertyBrowser \
+		    gpengine
 
-include( ../../BuildConfiguration.pri)
+include(../../BuildConfiguration.pri)
 
 INCLUDEPATH += $${LIBS_HEADER_DIR}/GridEditorLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
@@ -31,6 +32,7 @@ INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/WidgetToolsLib
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/QCustomPlot
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/qtpropertybrowser/src
+INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/gpengine/include
 
 SOURCES += main.cpp\
         NClient.cpp \
@@ -47,7 +49,8 @@ SOURCES += main.cpp\
     StrategiesView.cpp \
     ParametersView.cpp \
     Ax12View.cpp \
-    GraphsView.cpp
+    GraphsView.cpp \
+    ScriptView.cpp
 
 HEADERS  += NClient.h \
     NetworkClientCommInterface.h \
@@ -64,7 +67,8 @@ HEADERS  += NClient.h \
     StrategiesView.h \
     ParametersView.h \
     Ax12View.h \
-    GraphsView.h
+    GraphsView.h \
+    ScriptView.h
 
 FORMS    += NClient.ui \
     ConnectionView.ui \
@@ -77,7 +81,8 @@ FORMS    += NClient.ui \
     StrategiesView.ui \
     ParametersView.ui \
     Ax12View.ui \
-    GraphsView.ui
+    GraphsView.ui \
+    ScriptView.ui
 
 RESOURCES += \
     NClient.qrc

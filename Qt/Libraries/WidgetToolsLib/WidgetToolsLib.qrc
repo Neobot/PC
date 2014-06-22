@@ -12,4 +12,8 @@
         <file alias="king">Resources/King.png</file>
         <file alias="queen">Resources/Queen.png</file>
     </qresource>
+    <qresource prefix="/grammar">
+        <file alias="nraV5">Resources/nra_v5.egt</file>
+        <file alias="nra">Resources/nra.cgt</file>
+    </qresource>
 </RCC>
