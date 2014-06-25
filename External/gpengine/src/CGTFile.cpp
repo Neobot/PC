@@ -68,7 +68,7 @@ bool CGTFile::load (char *filename) {
   return result;
 }
 
-bool CGTFile::load (ifstream *myStream) {
+bool CGTFile::load (istream *myStream) {
   int i;	
   
   EntryStruct entry;

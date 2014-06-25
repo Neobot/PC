@@ -24,6 +24,7 @@ HEADERS += ToolsLib.h \
     NGridArea.h \
     NSettings.h \
     Ax12MovementManager.h
+
 SOURCES += ToolsLib.cpp \
     AbstractLogger.cpp \
     Point.cpp \
@@ -37,5 +38,3 @@ SOURCES += ToolsLib.cpp \
     NGridArea.cpp \
     NSettings.cpp \
     Ax12MovementManager.cpp
-
-

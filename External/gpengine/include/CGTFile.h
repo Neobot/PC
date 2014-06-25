@@ -55,7 +55,7 @@
    Returns true if succesfull, false if error.
    */
    bool load (char *filename);
-   bool load (ifstream *myStream);
+   bool load (istream *myStream);
 
    GrammarInfo *getInfo ();	
 
@@ -82,7 +82,7 @@
 
    char *errorString;
 
-   ifstream *theStream;
+   istream *theStream;
 
    // Character Table
    integer nbrCharacterSets;

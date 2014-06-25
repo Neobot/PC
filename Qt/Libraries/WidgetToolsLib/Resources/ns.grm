@@ -1,0 +1,197 @@
+﻿"Name"     = 'NeobotScript'
+"Author"   = 'Neobot'
+"Version"  = '1.0'
+"About"    = 'Neobot Robot Action description Language'
+
+"Case Sensitive" = False 
+"Start Symbol" = <Start>
+
+! -------------------------------------------------
+! Character Sets
+! -------------------------------------------------
+
+{WS}           = {Whitespace} - {CR} - {LF}
+{String Chars} = {Printable} + {HT} - ["\]
+{IdCharacter} = {String Chars} - [:]
+{Non Blank String Chars} =  {String Chars} -  {Whitespace}    
+                         
+{Id Head}        = {Letter} + [_]
+{Id Tail}        = {Id Head} + {Digit}       
+
+! -------------------------------------------------
+! Terminals
+! -------------------------------------------------
+
+! The following defines the Whitespace terminal using the {WS}
+! set - which excludes the carriage return and line feed 
+! characters
+
+Whitespace    = {WS}+
+
+NewLine       = {CR}{LF} | {CR} | {LF}
+
+Identifier    = {Id Head}{Id Tail}* 
+String =  '"' {String Chars}* '"'        
+
+Integer = {Digit}+
+Float  = {Digit}+ '.' {Digit}+ 
+
+Comment Start = '/*'
+Comment End   = '*/'
+Comment Line  = '//'
+
+
+
+! -------------------------------------------------
+! Rules
+! -------------------------------------------------
+
+! The following rule defines a series of newline tokens.
+! Use this rule rather than the newline terminal.
+
+<nl>     ::= NewLine <nl>          !One or more
+          |  NewLine
+
+<nl Opt> ::= NewLine <nl Opt>      !Zero or more
+          |  !Empty
+
+<statement_end> ::= ';' 
+                 | <nl>
+                 | eof
+                 
+
+! Global concepts
+<opt_bracket> ::= '('
+               | !Empty
+               
+<id> ::= Integer
+<num> ::= Float | Integer
+
+<speed> ::= 'speed' Integer '%'
+<opt_speed> ::= <speed> | <>  
+                      
+<angle>::= <num> '°'
+<time_unit> ::= 's' | 'ms'
+<time> ::= Integer <time_unit>
+        
+<var> ::= Identifier 
+       
+<angleRange> ::= <angle> '-' <angle>
+                      
+<point> ::= <opt_bracket> <num> ',' <num> <opt_bracket>
+         |  <opt_bracket> <num> ',' <num> ',' <angle> <opt_bracket>
+<point_or_var> ::= <point> | <var>         
+
+<rect> ::= 'Rect' '(' <num> ',' <num> ',' <num> ',' <num> ')'
+<rect_or_var> ::= <rect> | <var> 
+                
+           
+<direction> ::= 'forward' | 'backward' | 'auto'
+<opt_direction> ::= <direction> | <>  
+          
+<sensor> ::= 'color' 'sensor' | 'microswitch' | 'sharp'
+<sensor_identifier> ::= <sensor> <id>
+<sensor_or_var> ::=  <sensor_identifier> | <var>                   
+   
+<colorSensorValue> ::= 'unknown' | 'red' | 'green' | 'blue' | 'yellow' | 'white' | 'black'
+<sharpValue> ::= 'detected' | 'far' | 'close'        
+<microSwitchValue> ::= 'on' | 'off'                       
+<sensorValue> ::= <colorSensorValue> | <sharpValue> | <microSwitchValue> | <num>
+ 
+<concurrencyCondition> ::= 'AllActionsFinished' | 'OneActionFinished' | 'FirstActionFinished' | 'LastActionFinished'          
+
+<action> ::=  'action' Integer ',' Integer ',' <time>     
+<action_or_var> ::= <action> | <var>
+                 
+<parameter_identifier> ::= 'parameter' <id>
+<parameter_or_var> ::= <parameter_identifier> | <var>
+                    
+<ax12_identifier> ::= 'ax12' <id>
+<ax12_or_var> ::= <ax12_identifier> | <var>                  
+
+! Program
+
+<Start>   ::= <nl opt> <Program>
+<Program> ::= <Statements>
+
+<Statements> ::= <Statement> <Statements> 
+              |  !Empty
+              
+! To complete
+<Statement> ::= <ImportStatement>
+             | <WaitStatement>
+             | <DeclareActionStatement>
+             | <DeclareSensorStatement>
+             | <DeclareParamStatement>
+             | <DeclarePointStatement>
+             | <DeclareRectStatement>
+             | <DeclareAx12Statement>
+             | <TeleportStatement>
+             | <MoveToStatement>
+             | <ListStatement>
+             | <ConcurrentStatement>
+             | <SetParamStatement>
+             | <EnableSensorStatement>
+             | <DisableSensorStatement>
+             | <Ax12MovementStatement>
+             | <Ax12AsyncMovementStatement>
+             | <MoveAx12Statement>
+             | <ActuatorStatement>
+             | <ConditionStatement>
+             | <SwitchStatement> 
+             
+<ImportStatement> ::= 'import' String
+       
+<WaitStatement> ::= 'wait' <time> <statement_end>    
+
+<DeclareActionStatement> ::= 'declare' <action> 'as' <var> <statement_end>
+<DeclareSensorStatement> ::=  'declare' <sensor_identifier> 'as' <var> <statement_end>
+<DeclareParamStatement> ::=  'declare' <parameter_identifier> 'as' <var> <statement_end>                     
+<DeclarePointStatement> ::=  'declare' <point> 'as' <var> <statement_end> 
+<DeclareRectStatement> ::=  'declare' <rect> 'as' <var> <statement_end>
+<DeclareAx12Statement> ::=  'declare' <ax12_identifier> 'as' <var> <statement_end>
+                                                                                           
+<TeleportStatement> ::= 'teleport' <point_or_var> <statement_end>
+<MoveToStatement> ::= 'go' 'to' <point_or_var> <opt_speed> <opt_direction> <statement_end>    
+                           
+<ListStatement> ::= '{' <nl Opt> <Statements> <nl Opt> '}' <statement_end>
+<ConcurrentStatement> ::= 'concurrent' <nl Opt> <ListStatement>                       
+                       | 'concurrent' <concurrencyCondition> <nl Opt> <ListStatement>
+                       
+<SetParamStatement> ::= 'set' <parameter_or_var> '=' <num> <statement_end>      
+                                                  
+<EnableSensorStatement> ::= 'enable' <sensor_or_var> <statement_end>
+                         |  'enable' 'all' <sensor> <statement_end>
+<DisableSensorStatement> ::= 'disable' <sensor_or_var> <statement_end> 
+                          |  'disable' 'all' <sensor> <statement_end>    
+                          
+<Ax12MovementStatement> ::= 'make' 'ax12' 'movement' String <opt_speed> <statement_end>
+<Ax12AsyncMovementStatement> ::= 'make' 'ax12' 'async' 'movement' String <opt_speed> <statement_end>
+<MoveAx12Statement> ::= 'move' <ax12_or_var> 'to' <angle> <opt_speed> <statement_end>     
+                     
+<ActuatorStatement> ::= 'do' <action_or_var> <statement_end>                    
+                                      
+    !if      
+<SensorCondition> ::= <sensor_or_var> 'is' <sensorValue>
+<OrientationCondition> ::= 'orientation' 'in' <angleRange>
+<PositionCondition> ::= 'position' 'in' <rect_or_var>                                      
+<IfCondition> ::= <SensorCondition> | <OrientationCondition> | <PositionCondition>
+                                    
+<ConditionStatement> ::= 'if' <IfCondition> <nl Opt> <Statement>
+                      |  'if' <IfCondition> <nl Opt> <Statement> 'else' <nl Opt> <Statement>               
+
+    !switch
+<SwitchStatement> ::= 'switch' <SwitchCondition> <nl Opt> '{' <nl Opt> <switch_cases> <nl Opt> '}' <statement_end>
+<SwitchCondition> ::= 'orientation' | 'position' | <sensor_or_var> 
+
+<switch_cases> ::= <switch_case> <switch_cases>  
+                | <>  
+                               
+<switch_case> ::= 'case' <switch_value> <nl Opt> <Statements>
+               |  'defaults' <nl Opt> <Statements>
+               
+<switch_value> ::= <sensorValue> | <angleRange> | <rect_or_var>
+
+
+
+                   

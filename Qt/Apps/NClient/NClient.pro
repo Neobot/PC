@@ -15,6 +15,7 @@ unix:DEFINES   = _TTY_POSIX_
 win32:DEFINES  = _TTY_WIN_
 
 DEPENDENCY_LIBS +=  NeobotGridEditor \
+		    NeobotStrategy \
                     NeobotSimulation \
                     NeobotComm \
                     NeobotWidgetTools \
@@ -27,6 +28,7 @@ EXTERNAL_LIBS +=    QCustomPlot \
 include(../../BuildConfiguration.pri)
 
 INCLUDEPATH += $${LIBS_HEADER_DIR}/GridEditorLib
+INCLUDEPATH += $${LIBS_HEADER_DIR}/GraphicStrategy
 INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/WidgetToolsLib

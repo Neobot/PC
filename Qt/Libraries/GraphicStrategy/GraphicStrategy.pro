@@ -14,6 +14,7 @@ include( ../../BuildConfiguration.pri)
 INCLUDEPATH += ../CommLib
 INCLUDEPATH += ../ToolsLib
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/Micropather
+INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/gpengine/include
 
 win32 {
     INCLUDEPATH += ./strategies
@@ -45,7 +46,8 @@ SOURCES += TrajectoryFinder.cpp \
     GameState.cpp \
     AbstractAICommand.cpp \
     AIEngine.cpp \
-    Sensor.cpp
+    Sensor.cpp \
+    NSParser.cpp
 
 HEADERS += TrajectoryFinder.h \
     Sharp.h \
@@ -71,7 +73,9 @@ HEADERS += TrajectoryFinder.h \
     GameState.h \
     AbstractAICommand.h \
     AIEngine.h \
-    Sensor.h
+    Sensor.h \
+    NSParser.h \
+    ns.h
 
 FORMS += StrategyDialog.ui
 
