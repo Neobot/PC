@@ -24,7 +24,12 @@ int ActionFactory::getRealSpeed(int requestedSpeed) const
 
 AbstractAction * ActionFactory::waitAction(int ms) const
 {
-    return new WaitAction(ms);
+	return new WaitAction(ms);
+}
+
+AbstractAction *ActionFactory::teleportAction(const Tools::RPoint &point) const
+{
+	return new TeleportAction(point, _robot);
 }
 
 AbstractAction * ActionFactory::moveAction(Tools::NGridNode* destination, int speed, bool forceForward, bool forceBackward, Tools::Deplacement deplacementType) const

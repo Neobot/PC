@@ -1,7 +1,7 @@
-﻿"Name"     = 'NeobotScript'
+﻿"Name"     = 'Neobot Script'
 "Author"   = 'Neobot'
 "Version"  = '1.0'
-"About"    = 'Neobot Robot Action description Language'
+"About"    = ''
 
 "Case Sensitive" = False 
 "Start Symbol" = <Start>
@@ -73,6 +73,7 @@ Comment Line  = '//'
 <angle>::= <num> '°'
 <time_unit> ::= 's' | 'ms'
 <time> ::= Integer <time_unit>
+<opt_time> ::= <time> | <>        
         
 <var> ::= Identifier 
        
@@ -80,9 +81,13 @@ Comment Line  = '//'
                       
 <point> ::= <opt_bracket> <num> ',' <num> <opt_bracket>
          |  <opt_bracket> <num> ',' <num> ',' <angle> <opt_bracket>
+         |  <r_point>
+<r_point> ::= 'r' '(' <point> ')'         
 <point_or_var> ::= <point> | <var>         
 
-<rect> ::= 'Rect' '(' <num> ',' <num> ',' <num> ',' <num> ')'
+<rect> ::= 'rect' <num> ',' <num> ',' <num> ',' <num> 
+        | <r_rect>
+<r_rect> ::= 'r' '(' <rect> ')'       
 <rect_or_var> ::= <rect> | <var> 
                 
            
@@ -138,6 +143,7 @@ Comment Line  = '//'
              | <MoveAx12Statement>
              | <ActuatorStatement>
              | <ConditionStatement>
+             | <WhileStatement>
              | <SwitchStatement> 
              
 <ImportStatement> ::= 'import' String
@@ -172,17 +178,24 @@ Comment Line  = '//'
 <ActuatorStatement> ::= 'do' <action_or_var> <statement_end>                    
                                       
     !if      
-<SensorCondition> ::= <sensor_or_var> 'is' <sensorValue>
-<OrientationCondition> ::= 'orientation' 'in' <angleRange>
-<PositionCondition> ::= 'position' 'in' <rect_or_var>                                      
-<IfCondition> ::= <SensorCondition> | <OrientationCondition> | <PositionCondition>
+<ConditionIsOperator> ::= 'is' | 'is not'
+<ConditionInOperator> ::= 'in' | 'not in'                      
+<SensorCondition> ::= <sensor_or_var> <ConditionIsOperator> <sensorValue>
+<OrientationCondition> ::= 'orientation' <ConditionInOperator> <angleRange>
+<PositionCondition> ::= 'position' <ConditionInOperator> <rect_or_var>
+<OpponentCondition> ::= 'opponent' <ConditionInOperator> <rect_or_var>
+<reverseCondition> ::= 'strategy' <ConditionIsOperator> 'reversed'                                                                              
+<IfCondition> ::= <SensorCondition> | <OrientationCondition> | <PositionCondition> | <OpponentCondition> | <reverseCondition>
                                     
 <ConditionStatement> ::= 'if' <IfCondition> <nl Opt> <Statement>
                       |  'if' <IfCondition> <nl Opt> <Statement> 'else' <nl Opt> <Statement>               
 
+    !while
+<WhileStatement> ::= 'while' <IfCondition> <opt_time> <nl Opt> <Statement>
+                  
     !switch
 <SwitchStatement> ::= 'switch' <SwitchCondition> <nl Opt> '{' <nl Opt> <switch_cases> <nl Opt> '}' <statement_end>
-<SwitchCondition> ::= 'orientation' | 'position' | <sensor_or_var> 
+<SwitchCondition> ::= 'orientation' | 'position' | 'opponent' | <sensor_or_var> 
 
 <switch_cases> ::= <switch_case> <switch_cases>  
                 | <>  
@@ -191,7 +204,6 @@ Comment Line  = '//'
                |  'defaults' <nl Opt> <Statements>
                
 <switch_value> ::= <sensorValue> | <angleRange> | <rect_or_var>
-
 
 
                    

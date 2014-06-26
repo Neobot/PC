@@ -30,6 +30,8 @@ public:
 
     AbstractAction* waitAction(int ms) const;
 
+	AbstractAction* teleportAction(const Tools::RPoint& point) const;
+
     AbstractAction* moveAction(Tools::NGridNode* destination, int speed, bool forceForward = false, bool forceBackward = false, Tools::Deplacement deplacementType = Tools::TURN_THEN_MOVE) const;
     AbstractAction* moveAction(const QPointF& destinationPoint, int speed, bool forceForward = false, bool forceBackward = false, Tools::Deplacement deplacementType = Tools::TURN_THEN_MOVE) const;
     AbstractAction* moveAction(const QString& destinationAlias, int speed, bool forceForward = false, bool forceBackward = false, Tools::Deplacement deplacementType = Tools::TURN_THEN_MOVE) const;

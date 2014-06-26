@@ -33,6 +33,28 @@ QString WaitAction::getActionName() const
 	return QString("Waiting ").append(QString::number(_ms)).append(" ms");
 }
 
+//Teleport-----------------------------------------------------------------------
+
+TeleportAction::TeleportAction(const Tools::RPoint &point, Comm::RobotCommInterface *robot, QObject* parent)
+	: AbstractAction(parent), _point(point), _robot(robot)
+{
+}
+
+void TeleportAction::execute()
+{
+	_robot->setPosition(_point.getX(), _point.getY(), _point.getTheta());
+	succeed();
+}
+
+QString TeleportAction::getActionName() const
+{
+	return QString("Teleport to ").append(QString::number(_point.getX())).append(",")
+			.append(QString::number(_point.getY())).append(")")
+			.append(QString::number(_point.getThetaDegree()))
+			.append("°");
+}
+
+
 //--------------------------------------------------------------------------------
 
 MoveAction::MoveAction(Tools::NGridNode* destination, int speed, bool forceForward, bool forceBackward, Tools::Deplacement deplacementType, TrajectoryFinder *finder, QObject *parent)
@@ -364,3 +386,4 @@ QString SetSensorEnabledAction::getActionName() const
 {
 	return QString("%1 sensor of type %2 with id %3").arg(_enabled ? "Enable" : "Disable").arg(_type).arg(_id);
 }
+

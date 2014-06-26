@@ -1,5 +1,6 @@
 #include "RobotCommInterface.h"
 #include "Instructions.h"
+#include "ToolsLib.h"
 
 #include <QColor>
 
@@ -49,6 +50,8 @@ void RobotCommInterface::ping()
 
 void RobotCommInterface::setPosition(qint16 x, qint16 y, double theta)
 {
+	theta = Tools::angleInZeroTwoPi(theta);
+
 	Data data;
 	data.add(x);
 	data.add(y);

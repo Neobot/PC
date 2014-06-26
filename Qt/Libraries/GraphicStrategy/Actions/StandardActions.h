@@ -41,6 +41,18 @@ private:
 	QTimer* _timer;
 };
 
+class TeleportAction  : public AbstractAction
+{
+public:
+	TeleportAction(const Tools::RPoint& point, Comm::RobotCommInterface* robot, QObject* parent = 0);
+
+	void execute();
+	QString getActionName() const;
+
+private:
+	Tools::RPoint _point;
+	Comm::RobotCommInterface* _robot;
+};
 
 class MoveAction : public AbstractAction
 {
