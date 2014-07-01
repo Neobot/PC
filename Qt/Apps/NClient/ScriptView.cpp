@@ -44,4 +44,7 @@ void ScriptView::check()
 		QMessageBox::critical(this, "Verification failed", QString("The following error occured:\n").append(errors.join("\n")));
 
 	}
+
+	QTextStream s(stdout);
+	parser.print(s);
 }

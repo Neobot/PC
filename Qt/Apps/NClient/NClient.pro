@@ -23,7 +23,8 @@ DEPENDENCY_LIBS +=  NeobotGridEditor \
 
 EXTERNAL_LIBS +=    QCustomPlot \
 		    QtSolutions_PropertyBrowser \
-		    gpengine
+		    gpengine \
+		    Micropather
 
 include(../../BuildConfiguration.pri)
 
