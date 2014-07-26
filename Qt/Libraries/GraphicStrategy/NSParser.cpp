@@ -195,19 +195,27 @@ void NSParser::printTree(QTextStream& out, Symbol *s, int level)
 
 void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, VariableList& variables)
 {
+	AbstractAction* action = nullptr;
 	switch(symbol->symbolIndex)
 	{
 		case SYM_WAITSTATEMENT: //<WaitStatement>
-		{
-			AbstractAction* waitAction = buildWaitAction(symbol);
-			if (waitAction)
-				actions << waitAction;
+			action = buildWaitAction(symbol);
+			if (action)
+				actions << action;
 			break;
-		}
-		case SYM_DECLAREPOINTSTATEMENT:
-		{
+		case SYM_DECLARESTATEMENT:
 			readVariable(symbol, variables);
-		}
+			break;
+		case SYM_TELEPORTSTATEMENT:
+			action = buildTeleportAction(symbol, variables);
+			if (action)
+				actions << action;
+			break;
+		case SYM_MOVETOSTATEMENT:
+			action = buildGoToAction(symbol, variables);
+			if (action)
+				actions << action;
+			break;
 		default:
 		{
 			if (symbol->type == NON_TERMINAL)
@@ -234,13 +242,21 @@ void NSParser::readVariable(Symbol* symbol, VariableList& variables)
 			switch(child->symbolIndex)	
 			{
 				case SYM_POINT: 
+				case SYM_FIXED_POINT:
 				{
 					Tools::RPoint p = readPoint(child);
 					var = DelclaredVariable::fromPoint(p);
 					break;
 				}
+				case SYM_RECT:
+				case SYM_FIXED_RECT:
+				{
+					QRectF r = readRect(child);
+					var = DelclaredVariable::fromRect(r);
+					break;
+				}
 				case SYM_VAR:
-					//name = readVariableName(child);
+					name = readVar(child);
 					break;
 			}
 		}
@@ -274,6 +290,69 @@ AbstractAction* NSParser::buildWaitAction(Symbol* symbol)
 			return _factory->waitAction(time);
 	}
 	
+	return nullptr;
+}
+
+AbstractAction* NSParser::buildTeleportAction(Symbol* symbol, VariableList& variables)
+{
+	if (symbol->type == NON_TERMINAL)
+	{
+		Tools::RPoint point;
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			switch(child->symbolIndex)
+			{
+				case SYM_POINT_OR_VAR:
+				case SYM_POINT:
+				case SYM_FIXED_POINT:
+				case SYM_VAR:
+					point = readPointOrVar(child, variables);
+					break;
+			}
+		}
+
+		if (_factory)
+			return _factory->teleportAction(point);
+	}
+
+	return nullptr;
+}
+
+AbstractAction* NSParser::buildGoToAction(Symbol* symbol, VariableList& variables)
+{
+	if (symbol->type == NON_TERMINAL)
+	{
+		Tools::RPoint point;
+		Tools::Direction dir = Tools::Unknown;
+		int speed = 100;
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			switch(child->symbolIndex)
+			{
+				case SYM_POINT_OR_VAR:
+				case SYM_POINT:
+				case SYM_FIXED_POINT:
+				case SYM_VAR:
+					point = readPointOrVar(child, variables);
+					break;
+				case SYM_DIRECTION:
+					dir = readDirection(child);
+					break;
+				case SYM_SPEED2:
+					speed = readSpeed(child);
+					break;
+			}
+		}
+
+		bool forceForward = dir == Tools::Forward;
+		bool forceBackward = dir == Tools::Backward;
+
+		if (_factory)
+			return _factory->moveAction(point.toQPointF(), speed, forceForward, forceBackward);
+	}
+
 	return nullptr;
 }
 
@@ -342,25 +421,102 @@ double NSParser::readNum(Symbol* symbol)
 	return num;
 }
 
-double NSParser::readAngleInDegrees(Symbol* symbol)
+double NSParser::readFixedAngleInRadian(Symbol* symbol)
 {
 	double value = 0.0;
 	if (symbol->type == NON_TERMINAL)
-	{	
+	{
 		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
-		for(Symbol* child: nt->children)
+		Symbol* numSymbol = searchChild(symbol, SYM_NUM);
+		if (numSymbol)
+			value = readNum(numSymbol);
+
+		switch(nt->ruleIndex)
 		{
-			switch(child->symbolIndex)	
+			case PROD_FIXED_ANGLE_RAD:
+				break;
+			case PROD_FIXED_ANGLE_DEG:
+			case PROD_FIXED_ANGLE:
+			default:
+				value = Tools::degreeToRadian(value);
+				break;
+		}
+	}
+
+	return value;
+}
+
+double NSParser::readAngleInRadian(Symbol* symbol)
+{
+	double value = 0.0;
+	if (symbol->type == NON_TERMINAL)
+	{
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		Symbol* fixedSymbol = searchChild(symbol, SYM_FIXED_ANGLE);
+		if (fixedSymbol)
+		{
+			value = readFixedAngleInRadian(fixedSymbol);
+			switch(nt->ruleIndex)
 			{
-				case SYM_NUM:
-					value = readNum(child);
+				case PROD_ANGLE_AUTO_REVERSED:
+					//do auto reverse
+					break;
+				case PROD_ANGLE_REVERSED:
+					//do reverse
+					break;
+				case PROD_ANGLE:
 					break;
 			}
 		}
 	}
-	
+
 	return value;
 }
+
+QString NSParser::readVar(Symbol* symbol)
+{
+	QString varName;
+	Symbol* identifier = searchChild(symbol, SYM_IDENTIFIER);
+	if (identifier)
+		varName = readIdentifier(identifier);
+
+	return varName;
+}
+
+int NSParser::readSpeed(Symbol* symbol)
+{
+	int speed = 100;
+	Symbol* intergerSymbol = searchChild(symbol, SYM_INTEGER);
+	if (intergerSymbol)
+		speed = readInteger(intergerSymbol);
+
+	return speed;
+}
+
+Tools::Direction NSParser::readDirection(Symbol* symbol)
+{
+	Tools::Direction dir  = Tools::Unknown;
+	if (symbol->type == NON_TERMINAL)
+	{
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		switch(nt->ruleIndex)
+		{
+			case PROD_DIRECTION_FORWARD:
+				dir = Tools::Forward;
+				break;
+			case PROD_DIRECTION_BACKWARD:
+				dir = Tools::Backward;
+				break;
+			case PROD_DIRECTION_AUTO:
+				dir = Tools::Unknown;
+				break;
+		}
+	}
+
+	return dir;
+}
+
+
 
 int NSParser::readTimeInMs(Symbol* symbol)
 {
@@ -389,10 +545,11 @@ int NSParser::readTimeInMs(Symbol* symbol)
 	return value * unitFactor;
 }
 
-Tools::RPoint NSParser::readPoint(Symbol* symbol)
+Tools::RPoint NSParser::readFixedPoint(Symbol* symbol)
 {
 	Tools::RPoint point;
 	bool xOk = false;
+	bool yOk = false;
 	if (symbol->type == NON_TERMINAL)
 	{
 		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
@@ -401,19 +558,25 @@ Tools::RPoint NSParser::readPoint(Symbol* symbol)
 			switch(child->symbolIndex)
 			{
 				case SYM_NUM:
+				case SYM_FIXED_ANGLE:
 				{
 					double value = readNum(child);
 					if (!xOk)
+					{
 						point.setX(value);
-					else
+						xOk = true;
+					}
+					else if (!yOk)
+					{
 						point.setY(value);
-					xOk = true;
+						yOk = true;
+					}
+					else
+					{
+						double angle = readFixedAngleInRadian(child);
+						point.setTheta(angle);
+					}
 					break;
-				}
-				case SYM_ANGLE:
-				{
-					double angle = readAngleInDegrees(symbol);
-					point.setTheta(Tools::degreeToRadian(angle));
 				}
 			}
 		}
@@ -422,7 +585,100 @@ Tools::RPoint NSParser::readPoint(Symbol* symbol)
 	return point;
 }
 
+Tools::RPoint NSParser::readPointOrVar(Symbol* symbol, VariableList& variables)
+{
+	Tools::RPoint point;
+	if (symbol->type == NON_TERMINAL)
+	{
+		if (symbol->symbolIndex == SYM_POINT)
+			point = readPoint(symbol);
+		else if (symbol->symbolIndex == SYM_FIXED_POINT)
+			point = readFixedPoint(symbol);
+		else if (symbol->symbolIndex == SYM_VAR)
+			point = variables[readVar(symbol)].toPoint();
+		else //SYM_POINT_OR_VAR
+		{
+			NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+			switch(nt->ruleIndex)
+			{
+				case PROD_POINT_OR_VAR:
+					point = readPoint(searchChild(symbol, SYM_POINT));
+					break;
+				case PROD_POINT_OR_VAR2:
+				{
+					QString varName = readVar(symbol);
+					point = variables[varName].toPoint();
+					break;
+				}
+			}
+		}
+	}
+
+	return point;
+}
+
+Tools::RPoint NSParser::readPoint(Symbol* symbol)
+{
+	Tools::RPoint point;
+	if (symbol->type == NON_TERMINAL)
+	{
+		if (symbol->symbolIndex == SYM_FIXED_POINT)
+			point = readFixedPoint(symbol);
+		else
+		{
+			NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+			Symbol* fixedPointSymbol = searchChild(symbol, SYM_FIXED_POINT);
+			if (fixedPointSymbol)
+			{
+				point = readFixedPoint(fixedPointSymbol);
+				switch(nt->ruleIndex)
+				{
+					case PROD_POINT_AUTO_REVERSED:
+						//do auto reverse
+						break;
+					case PROD_POINT_REVERSED:
+						//do reverse
+						break;
+					case PROD_POINT:
+						break;
+				}
+			}
+		}
+	}
+
+	return point;
+}
+
 QRectF NSParser::readRect(Symbol* symbol)
+{
+	QRectF r;
+	if (symbol->type == NON_TERMINAL)
+	{
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		Symbol* fixedSymbol = searchChild(symbol, SYM_FIXED_RECT);
+		if (fixedSymbol)
+		{
+			r = readFixedRect(fixedSymbol);
+			switch(nt->ruleIndex)
+			{
+				case PROD_RECT_AUTO_REVERSED:
+					//do auto reverse
+					break;
+				case PROD_RECT_REVERSED:
+					//do reverse
+					break;
+				case PROD_RECT:
+					break;
+			}
+		}
+	}
+
+	return r;
+}
+
+
+
+QRectF NSParser::readFixedRect(Symbol* symbol)
 {
 	QRectF r(0,0,1,1);
 	int nbParamRead = 0;
@@ -452,6 +708,56 @@ QRectF NSParser::readRect(Symbol* symbol)
 	}
 	
 	return r;
+}
+
+QRectF NSParser::NSParser::readRectOrVar(Symbol *symbol, NSParser::VariableList &variables)
+{
+	QRectF r(0,0,1,1);
+	if (symbol->type == NON_TERMINAL)
+	{
+		if (symbol->symbolIndex == SYM_RECT)
+			r = readRect(symbol);
+		else if (symbol->symbolIndex == SYM_FIXED_RECT)
+			r = readFixedRect(symbol);
+		else if (symbol->symbolIndex == SYM_VAR)
+			r = variables[readVar(symbol)].toRect();
+		else //SYM_RECT_OR_VAR
+		{
+			NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+			switch(nt->ruleIndex)
+			{
+				case PROD_RECT_OR_VAR:
+					r = readRect(searchChild(symbol, SYM_RECT));
+					break;
+				case PROD_RECT_OR_VAR2:
+				{
+					QString varName = readVar(symbol);
+					r = variables[varName].toRect();
+					break;
+				}
+			}
+		}
+	}
+
+	return r;
+}
+
+Symbol* NSParser::searchChild(Symbol* symbol, unsigned short symbolIndex)
+{
+	if (symbol->type == NON_TERMINAL)
+	{
+		if (symbol->symbolIndex == symbolIndex)
+			return symbol;
+
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			if (child->symbolIndex == symbolIndex)
+				return child;
+		}
+	}
+
+	return nullptr;
 }
 
 //-----------------------------------------------------------------

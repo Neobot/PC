@@ -55,7 +55,7 @@ Comment Line  = '//'
 <nl Opt> ::= NewLine <nl Opt>      !Zero or more
           |  !Empty
 
-<statement_end> ::= ';' 
+<statement_end> ::= ';' <nl Opt>
                  | <nl>
                  | eof
                  
@@ -68,9 +68,14 @@ Comment Line  = '//'
 <num> ::= Float | Integer
 
 <speed> ::= 'speed' Integer '%'
-<opt_speed> ::= <speed> | <>  
-                      
-<angle>::= <num> '°'
+ 
+<fixed_angle> ::= <num> 'deg'
+               |  <num> 'rad'     
+               |  <num>                             
+<angle> ::= <fixed_angle>
+        |  'auto' 'reversed' <fixed_angle>   
+        |  'reversed' <fixed_angle>   
+                
 <time_unit> ::= 's' | 'ms'
 <time> ::= Integer <time_unit>
 <opt_time> ::= <time> | <>        
@@ -79,20 +84,22 @@ Comment Line  = '//'
        
 <angleRange> ::= <angle> '-' <angle>
                       
-<point> ::= <opt_bracket> <num> ',' <num> <opt_bracket>
-         |  <opt_bracket> <num> ',' <num> ',' <angle> <opt_bracket>
-         |  <r_point>
-<r_point> ::= 'r' '(' <point> ')'         
+<fixed_point> ::= <opt_bracket> <num> ',' <num> <opt_bracket>
+               |  <opt_bracket> <num> ',' <num> ',' <fixed_angle> <opt_bracket>   
+<point> ::= <fixed_point> 
+         |  'auto' 'reversed' <fixed_point>  
+         |  'reversed' <fixed_point>          
 <point_or_var> ::= <point> | <var>         
 
-<rect> ::= 'rect' <num> ',' <num> ',' <num> ',' <num> 
-        | <r_rect>
-<r_rect> ::= 'r' '(' <rect> ')'       
+
+<fixed_rect> ::= 'rect' <num> ',' <num> ',' <num> ',' <num> 
+<rect> ::= <fixed_rect> 
+        |  'auto' 'reversed' <fixed_rect>     
+        |  'reversed' <fixed_rect>     
 <rect_or_var> ::= <rect> | <var> 
                 
            
 <direction> ::= 'forward' | 'backward' | 'auto'
-<opt_direction> ::= <direction> | <>  
           
 <sensor> ::= 'color' 'sensor' | 'microswitch' | 'sharp'
 <sensor_identifier> ::= <sensor> <id>
@@ -119,22 +126,16 @@ Comment Line  = '//'
 <Start>   ::= <nl opt> <Program>
 <Program> ::= <Statements>
 
-<Statements> ::= <Statement> <Statements> 
+<Statements> ::= <Statement> <statement_end> <Statements> 
+              |  <Statement> 
               |  !Empty
               
 ! To complete
 <Statement> ::= <ImportStatement>
              | <WaitStatement>
-             | <DeclareActionStatement>
-             | <DeclareSensorStatement>
-             | <DeclareParamStatement>
-             | <DeclarePointStatement>
-             | <DeclareRectStatement>
-             | <DeclareAx12Statement>
+             | <DeclareStatement>
              | <TeleportStatement>
              | <MoveToStatement>
-             | <ListStatement>
-             | <ConcurrentStatement>
              | <SetParamStatement>
              | <EnableSensorStatement>
              | <DisableSensorStatement>
@@ -142,40 +143,49 @@ Comment Line  = '//'
              | <Ax12AsyncMovementStatement>
              | <MoveAx12Statement>
              | <ActuatorStatement>
+             | <ListStatement>
+             | <ConcurrentStatement>
              | <ConditionStatement>
              | <WhileStatement>
-             | <SwitchStatement> 
+             | <SwitchStatement>   
              
 <ImportStatement> ::= 'import' String
        
-<WaitStatement> ::= 'wait' <time> <statement_end>    
+<WaitStatement> ::= 'wait' <time>     
 
-<DeclareActionStatement> ::= 'declare' <action> 'as' <var> <statement_end>
-<DeclareSensorStatement> ::=  'declare' <sensor_identifier> 'as' <var> <statement_end>
-<DeclareParamStatement> ::=  'declare' <parameter_identifier> 'as' <var> <statement_end>                     
-<DeclarePointStatement> ::=  'declare' <point> 'as' <var> <statement_end> 
-<DeclareRectStatement> ::=  'declare' <rect> 'as' <var> <statement_end>
-<DeclareAx12Statement> ::=  'declare' <ax12_identifier> 'as' <var> <statement_end>
+<DeclareStatement> ::= 'declare' <action> 'as' <var>
+                    |  'declare' <sensor_identifier> 'as' <var> 
+                    |  'declare' <parameter_identifier> 'as' <var>                     
+                    |  'declare' <point> 'as' <var>  
+                    |  'declare' <rect> 'as' <var> 
+                    |  'declare' <ax12_identifier> 'as' <var> 
                                                                                            
-<TeleportStatement> ::= 'teleport' <point_or_var> <statement_end>
-<MoveToStatement> ::= 'go' 'to' <point_or_var> <opt_speed> <opt_direction> <statement_end>    
+<TeleportStatement> ::= 'teleport' <point_or_var> 
+<MoveToStatement> ::= 'go' 'to' <point_or_var>  
+                   |  'go' 'to' <point_or_var> <speed>  
+                   |  'go' 'to' <point_or_var> <direction>  
+                   |  'go' 'to' <point_or_var> <speed> <direction>  
+                   |  'go' 'to' <point_or_var> <direction> <speed> 
                            
-<ListStatement> ::= '{' <nl Opt> <Statements> <nl Opt> '}' <statement_end>
+<ListStatement> ::= '{' <nl Opt> <Statements> <nl Opt> '}' <nl Opt>
 <ConcurrentStatement> ::= 'concurrent' <nl Opt> <ListStatement>                       
                        | 'concurrent' <concurrencyCondition> <nl Opt> <ListStatement>
                        
-<SetParamStatement> ::= 'set' <parameter_or_var> '=' <num> <statement_end>      
+<SetParamStatement> ::= 'set' <parameter_or_var> '=' <num>       
                                                   
-<EnableSensorStatement> ::= 'enable' <sensor_or_var> <statement_end>
-                         |  'enable' 'all' <sensor> <statement_end>
-<DisableSensorStatement> ::= 'disable' <sensor_or_var> <statement_end> 
-                          |  'disable' 'all' <sensor> <statement_end>    
+<EnableSensorStatement> ::= 'enable' <sensor_or_var> 
+                         |  'enable' 'all' <sensor> 
+<DisableSensorStatement> ::= 'disable' <sensor_or_var>  
+                          |  'disable' 'all' <sensor>     
                           
-<Ax12MovementStatement> ::= 'make' 'ax12' 'movement' String <opt_speed> <statement_end>
-<Ax12AsyncMovementStatement> ::= 'make' 'ax12' 'async' 'movement' String <opt_speed> <statement_end>
-<MoveAx12Statement> ::= 'move' <ax12_or_var> 'to' <angle> <opt_speed> <statement_end>     
+<Ax12MovementStatement> ::= 'make' 'ax12' 'movement' String 
+                         |  'make' 'ax12' 'movement' String <speed> 
+<Ax12AsyncMovementStatement> ::= 'make' 'ax12' 'async' 'movement' String 
+                              |  'make' 'ax12' 'async' 'movement' String <speed> 
+<MoveAx12Statement> ::= 'move' <ax12_or_var> 'to' <angle>    
+                     |  'move' <ax12_or_var> 'to' <angle> <speed>    
                      
-<ActuatorStatement> ::= 'do' <action_or_var> <statement_end>                    
+<ActuatorStatement> ::= 'do' <action_or_var>                    
                                       
     !if      
 <ConditionIsOperator> ::= 'is' | 'is not'
@@ -188,13 +198,13 @@ Comment Line  = '//'
 <IfCondition> ::= <SensorCondition> | <OrientationCondition> | <PositionCondition> | <OpponentCondition> | <reverseCondition>
                                     
 <ConditionStatement> ::= 'if' <IfCondition> <nl Opt> <Statement>
-                      |  'if' <IfCondition> <nl Opt> <Statement> 'else' <nl Opt> <Statement>               
+                      |  'if' <IfCondition> <nl Opt> <Statement> 'else' <nl Opt> <Statement>              
 
     !while
 <WhileStatement> ::= 'while' <IfCondition> <opt_time> <nl Opt> <Statement>
                   
     !switch
-<SwitchStatement> ::= 'switch' <SwitchCondition> <nl Opt> '{' <nl Opt> <switch_cases> <nl Opt> '}' <statement_end>
+<SwitchStatement> ::= 'switch' <SwitchCondition> <nl Opt> '{' <nl Opt> <switch_cases> <nl Opt> '}' 
 <SwitchCondition> ::= 'orientation' | 'position' | 'opponent' | <sensor_or_var> 
 
 <switch_cases> ::= <switch_case> <switch_cases>  

@@ -5,6 +5,7 @@
 #include <QTextStream>
 
 #include "RPoint.h"
+#include "RMovement.h"
 
 #include "CGTFile.h"
 
@@ -35,6 +36,7 @@ protected:
 	{
 		enum DeclaredType
 		{
+			None,
 			Point,
 			Rect,
 			Action,
@@ -45,6 +47,9 @@ protected:
 		
 		DeclaredType type;
 		QVariantList data;
+
+		DelclaredVariable() : type(None) {}
+		bool isValid() const {return type != None;}
 		
 		Tools::RPoint toPoint() const;
 		QRectF toRect() const;
@@ -67,6 +72,8 @@ protected:
 	void buildActions(Symbol* symbol, QList<AbstractAction*>& actions, VariableList& variables);
 	
 	AbstractAction* buildWaitAction(Symbol* symbol);
+	AbstractAction *buildTeleportAction(Symbol *symbol, VariableList &variables);
+	AbstractAction *buildGoToAction(Symbol *symbol, VariableList &variables);
 	void readVariable(Symbol* symbol, VariableList& variables);
 	
 	QString readIdentifier(Symbol* symbol);
@@ -74,14 +81,33 @@ protected:
 	double readFloat(Symbol* symbol);
 	int readInteger(Symbol* symbol);
 	double readNum(Symbol* symbol);
+
+	QString readVar(Symbol *symbol);
+
+	double readFixedAngleInRadian(Symbol *symbol);
+	double readAngleInRadian(Symbol *symbol);
+
+	Tools::RPoint readFixedPoint(Symbol* symbol);
+	Tools::RPoint readPoint(Symbol *symbol);
+	Tools::RPoint readPointOrVar(Symbol *symbol, VariableList &variables);
+
+	QRectF readRect(Symbol* symbol);
+	QRectF readFixedRect(Symbol* symbol);
+	QRectF readRectOrVar(Symbol* symbol, VariableList &variables);
+
+	int readSpeed(Symbol *symbol);
+	Tools::Direction readDirection(Symbol *symbol);
 	int readTimeInMs(Symbol* symbol);
 	int readTimeUnitFactor(Symbol* symbol);
-	double readAngleInDegrees(Symbol* symbol);
-	Tools::RPoint readPoint(Symbol* symbol);
-	QRectF readRect(Symbol* symbol);
+
+	Symbol *searchChild(Symbol *symbol, unsigned short symbolIndex);
 	
 	QString composeErrorMsg(GPError* err) const;
 	void printTree(QTextStream& out, Symbol *s, int level);
+
+
+
+
 
 private:
 	CGTFile _cgtFile;
@@ -89,6 +115,7 @@ private:
 	
 	Symbol* _tree;
 	ActionFactory* _factory;
+
 };
 
 #endif // NSPARSER_H
