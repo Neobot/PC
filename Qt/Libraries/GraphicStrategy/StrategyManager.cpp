@@ -268,6 +268,7 @@ void StrategyManager::sensorEvent(Comm::SensorType type, int sensorId, int value
 		case Comm::SharpSensor: 			family = &_scannerSharps; break;
 		case Comm::MicroswitchSensor:		family = &_microswitchs; break;
 		case Comm::ColorSensor:  			family = &_colorSensors; break;
+		case Comm::UnknownedSensor:			break;
 	}
 	
 	if (family)
@@ -610,6 +611,7 @@ const Sensor *StrategyManager::getSensor(int index, Comm::SensorType type) const
 		case Comm::SharpSensor:   		return getOtherSharp(index);
 		case Comm::MicroswitchSensor:   return getMicroswitch(index);
         case Comm::ColorSensor:     	return getColorSensor(index);
+		case Comm::UnknownedSensor:		break;
     }
 
 	return nullptr;

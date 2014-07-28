@@ -66,6 +66,7 @@ namespace Comm
 	
 	enum SensorType
 	{
+		UnknownedSensor = -1,
 		SharpSensor = 0,
 		MicroswitchSensor = 1,
 		ColorSensor = 2

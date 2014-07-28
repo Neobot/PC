@@ -6,6 +6,7 @@
 
 #include "RPoint.h"
 #include "RMovement.h"
+#include "Instructions.h"
 
 #include "CGTFile.h"
 
@@ -55,7 +56,7 @@ protected:
 		QRectF toRect() const;
 		int toAx12() const;
 		int toParameter() const;
-		int toSensor() const;
+		void toSensor(int& id, int& type) const;
 		void toAction(int& id, int& param, int& timeMs);
 		
 		static DelclaredVariable fromPoint(const Tools::RPoint& p);
@@ -74,14 +75,27 @@ protected:
 	AbstractAction* buildWaitAction(Symbol* symbol);
 	AbstractAction *buildTeleportAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildGoToAction(Symbol *symbol, VariableList &variables);
+	AbstractAction *buildSetParameterAction(Symbol *symbol, VariableList &variables);
+	AbstractAction *buildEnableSensorAction(Symbol *symbol, VariableList &variables);
+	AbstractAction *buildDisableSensorAction(Symbol *symbol, VariableList &variables);
 	void readVariable(Symbol* symbol, VariableList& variables);
-	
+
+	int readParameterOrVar(Symbol* symbol, VariableList &variables);
+	int readAx12OrVar(Symbol* symbol, VariableList &variables);
+
+	void readAction(Symbol* symbol, int &actionId, int& param, int& time);
+	void readActionOrVar(Symbol* symbol, VariableList &variables, int &actionId, int& param, int& time);
+
+	void readSensorIdentifier(Symbol* symbol, int &sensorType, int& id);
+	void readSensorOrVar(Symbol* symbol, VariableList &variables, int &sensorType, int& id);
+	int readSensorType(Symbol* symbol);
+
 	QString readIdentifier(Symbol* symbol);
 	QString readString(Symbol* symbol);
 	double readFloat(Symbol* symbol);
 	int readInteger(Symbol* symbol);
 	double readNum(Symbol* symbol);
-
+	int readSubId(Symbol* symbol);
 	QString readVar(Symbol *symbol);
 
 	double readFixedAngleInRadian(Symbol *symbol);
@@ -89,25 +103,21 @@ protected:
 
 	Tools::RPoint readFixedPoint(Symbol* symbol);
 	Tools::RPoint readPoint(Symbol *symbol);
-	Tools::RPoint readPointOrVar(Symbol *symbol, VariableList &variables);
+	bool readPointOrVar(Symbol *symbol, VariableList &variables, Tools::RPoint& point);
 
 	QRectF readRect(Symbol* symbol);
 	QRectF readFixedRect(Symbol* symbol);
-	QRectF readRectOrVar(Symbol* symbol, VariableList &variables);
+	bool readRectOrVar(Symbol* symbol, VariableList &variables, QRectF &r);
 
 	int readSpeed(Symbol *symbol);
 	Tools::Direction readDirection(Symbol *symbol);
 	int readTimeInMs(Symbol* symbol);
 	int readTimeUnitFactor(Symbol* symbol);
 
-	Symbol *searchChild(Symbol *symbol, unsigned short symbolIndex);
+	Symbol *searchChild(Symbol *symbol, unsigned short symbolIndex, bool recursive = false);
 	
 	QString composeErrorMsg(GPError* err) const;
 	void printTree(QTextStream& out, Symbol *s, int level);
-
-
-
-
 
 private:
 	CGTFile _cgtFile;

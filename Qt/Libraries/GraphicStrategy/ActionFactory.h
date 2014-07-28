@@ -81,6 +81,8 @@ public:
 	AbstractAction* morseLetterColor(int colorSensorId, int nbSignal, int duration) const;
 	AbstractAction* sosColor(int colorSensorId) const;
 
+	AbstractAction* setParameterAction(int parameterId, double value) const;
+
 private:
     StrategyManager*	_manager;
     TrajectoryFinder*	_finder;

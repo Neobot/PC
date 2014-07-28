@@ -269,3 +269,8 @@ AbstractAction *ActionFactory::sosColor(int colorSensorId) const
 						  morseLetterColor(colorSensorId, 3, 1000)	//S
 					  });
 }
+
+AbstractAction *ActionFactory::setParameterAction(int parameterId, double value) const
+{
+	return new SetParameterAction(parameterId, value, _manager);
+}
