@@ -8,6 +8,8 @@
 #include "RMovement.h"
 #include "Instructions.h"
 
+#include "NSParsingError.h"
+
 #include "CGTFile.h"
 
 class Symbol;
@@ -24,11 +26,13 @@ public:
 	
 	void setActionFactory(ActionFactory* factory);
 
-	bool parse(const QString& scriptCode, QStringList& messages, QList<AbstractAction*>& actions);
-	bool parseFile(const QString& filepath, QStringList& messages, QList<AbstractAction*>& actions);
+	bool parse(const QString& scriptCode, QList<AbstractAction*>& actions);
+	bool parseFile(const QString& filepath, QList<AbstractAction*>& actions);
 
-	bool verify(const QString& scriptCode, QStringList& messages);
-	bool verifyFile(const QString& filepath, QStringList& messages);
+	bool verify(const QString& scriptCode);
+	bool verifyFile(const QString& filepath);
+
+	const QList<NSParsingError>& getErrors() const;
 	
 	void print(QTextStream& out);
 
@@ -58,6 +62,14 @@ protected:
 		int toParameter() const;
 		void toSensor(int& id, int& type) const;
 		void toAction(int& id, int& param, int& timeMs);
+
+		bool isPoint() const {return type == Point;}
+		bool isRect() const {return type == Rect;}
+		bool isAction() const {return type == Action;}
+		bool isAx12() const {return type == Ax12;}
+		bool isParameter() const {return type == Param;}
+		bool isSensor() const {return type == Sensor;}
+		bool isDefined() const {return type != None;}
 		
 		static DelclaredVariable fromPoint(const Tools::RPoint& p);
 		static DelclaredVariable fromRect(const QRectF& rect);
@@ -69,9 +81,11 @@ protected:
 	
 	typedef QHash<QString, DelclaredVariable> VariableList;
 	
-	Symbol* getParsedTree(const QString& scriptCode, QStringList& messages);
+	bool parse(const QString& scriptCode, QList<AbstractAction*>& actions, const QString& originalFilename);
+	Symbol* getParsedTree(const QString& scriptCode);
 	void buildActions(Symbol* symbol, QList<AbstractAction*>& actions, VariableList& variables);
 	
+	//Action parsers
 	AbstractAction* buildWaitAction(Symbol* symbol);
 	AbstractAction *buildTeleportAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildGoToAction(Symbol *symbol, VariableList &variables);
@@ -80,16 +94,41 @@ protected:
 	AbstractAction *buildDisableSensorAction(Symbol *symbol, VariableList &variables);
 	void readVariable(Symbol* symbol, VariableList& variables);
 
-	int readParameterOrVar(Symbol* symbol, VariableList &variables);
-	int readAx12OrVar(Symbol* symbol, VariableList &variables);
+	//Variable parsers
+	bool readParameterOrVar(Symbol* symbol, VariableList &variables, int &paramId);
+	bool readParameterVar(Symbol* symbol, VariableList &variables, int &paramId);
+
+	bool readAx12OrVar(Symbol* symbol, VariableList &variables, int &ax12Id);
+	bool readAx12Var(Symbol* symbol, VariableList &variables, int &ax12Id);
 
 	void readAction(Symbol* symbol, int &actionId, int& param, int& time);
-	void readActionOrVar(Symbol* symbol, VariableList &variables, int &actionId, int& param, int& time);
+	bool readActionOrVar(Symbol* symbol, VariableList &variables, int &actionId, int& param, int& time);
+	bool readActionVar(Symbol* symbol, VariableList &variables, int &actionId, int& param, int& time);
 
 	void readSensorIdentifier(Symbol* symbol, int &sensorType, int& id);
-	void readSensorOrVar(Symbol* symbol, VariableList &variables, int &sensorType, int& id);
+	bool readSensorOrVar(Symbol* symbol, VariableList &variables, int &sensorType, int& id);
+	bool readSensorVar(Symbol* symbol, VariableList &variables, int &sensorType, int& id);
 	int readSensorType(Symbol* symbol);
 
+	Tools::RPoint readFixedPoint(Symbol* symbol);
+	Tools::RPoint readPoint(Symbol *symbol);
+	bool readPointOrVar(Symbol *symbol, VariableList &variables, Tools::RPoint& point);
+	bool readPointVar(Symbol* symbol, VariableList& variables, Tools::RPoint &point);
+
+	QRectF readRect(Symbol* symbol);
+	QRectF readFixedRect(Symbol* symbol);
+	bool readRectOrVar(Symbol* symbol, VariableList &variables, QRectF &r);
+	bool readRectVar(Symbol* symbol, VariableList &variables, QRectF &r);
+
+	//Advanced types parsers
+	int readSpeed(Symbol *symbol);
+	Tools::Direction readDirection(Symbol *symbol);
+	int readTimeInMs(Symbol* symbol);
+	int readTimeUnitFactor(Symbol* symbol);
+	double readFixedAngleInRadian(Symbol *symbol);
+	double readAngleInRadian(Symbol *symbol);
+
+	//Based types parsers
 	QString readIdentifier(Symbol* symbol);
 	QString readString(Symbol* symbol);
 	double readFloat(Symbol* symbol);
@@ -98,26 +137,11 @@ protected:
 	int readSubId(Symbol* symbol);
 	QString readVar(Symbol *symbol);
 
-	double readFixedAngleInRadian(Symbol *symbol);
-	double readAngleInRadian(Symbol *symbol);
-
-	Tools::RPoint readFixedPoint(Symbol* symbol);
-	Tools::RPoint readPoint(Symbol *symbol);
-	bool readPointOrVar(Symbol *symbol, VariableList &variables, Tools::RPoint& point);
-
-	QRectF readRect(Symbol* symbol);
-	QRectF readFixedRect(Symbol* symbol);
-	bool readRectOrVar(Symbol* symbol, VariableList &variables, QRectF &r);
-
-	int readSpeed(Symbol *symbol);
-	Tools::Direction readDirection(Symbol *symbol);
-	int readTimeInMs(Symbol* symbol);
-	int readTimeUnitFactor(Symbol* symbol);
-
 	Symbol *searchChild(Symbol *symbol, unsigned short symbolIndex, bool recursive = false);
 	
-	QString composeErrorMsg(GPError* err) const;
+
 	void printTree(QTextStream& out, Symbol *s, int level);
+	void addError(const NSParsingError &error);
 
 private:
 	CGTFile _cgtFile;
@@ -125,6 +149,9 @@ private:
 	
 	Symbol* _tree;
 	ActionFactory* _factory;
+
+	QString _currentFile;
+	QList<NSParsingError> _errors;
 
 };
 

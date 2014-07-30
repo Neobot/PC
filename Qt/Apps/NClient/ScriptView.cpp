@@ -29,8 +29,7 @@ void ScriptView::check()
 {
 	NSParser parser;
 
-	QStringList errors;
-	bool ok = parser.verify(ui->plainTextEdit->toPlainText(), errors);
+	bool ok = parser.verify(ui->plainTextEdit->toPlainText());
 
 	if (ok)
 	{
@@ -38,10 +37,15 @@ void ScriptView::check()
 	}
 	else
 	{
-		for(QString& e: errors)
-			e.prepend(" - ");
+		QString text;
+		for(const NSParsingError& e : parser.getErrors())
+		{
+			text += " - ";
+			text += e.print();
+			text += '\n';
+		}
 
-		QMessageBox::critical(this, "Verification failed", QString("The following error occured:\n").append(errors.join("\n")));
+		QMessageBox::critical(this, "Verification failed", QString("The following error occured:\n").append(text));
 
 	}
 

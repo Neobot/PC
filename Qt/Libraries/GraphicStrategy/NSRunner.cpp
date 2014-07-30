@@ -27,10 +27,9 @@ bool NSRunner::startScript(const QString& scriptCode)
 	if (!_manager->isRunning())
 	{
 		QList<AbstractAction*> actions;
-		QStringList errors;
 
 		NSParser parser(_manager->_actionFactory);
-		if (parser.parse(scriptCode, errors, actions))
+		if (parser.parse(scriptCode, actions))
 		{
 			ok = true;
 			_manager->_actions = actions;

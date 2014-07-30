@@ -41,44 +41,64 @@ void NSParser::setActionFactory(ActionFactory* factory)
 	_factory = factory;
 }
 
-bool NSParser::parse(const QString &scriptCode, QStringList &messages, QList<AbstractAction *> &actions)
+void NSParser::addError(const NSParsingError &error)
 {
+	NSParsingError errorCopy(error);
+	errorCopy.setFilename(_currentFile);
+	_errors << errorCopy;
+}
+
+const QList<NSParsingError> &NSParser::getErrors() const
+{
+	return _errors;
+}
+
+bool NSParser::parse(const QString &scriptCode, QList<AbstractAction *> &actions, const QString &originalFilename)
+{
+	_errors.clear();
+	_currentFile = QFileInfo(originalFilename).fileName();
+
 	if (_tree)
 		delete _tree;
-		
-	_tree = getParsedTree(scriptCode, messages);
+
+	_tree = getParsedTree(scriptCode);
 
 	if (_tree)
 	{
 		VariableList variables;
 		buildActions(_tree, actions, variables);
 	}
-	
-	return _tree;
+
+	return _errors.isEmpty();
 }
 
-bool NSParser::parseFile(const QString &filepath, QStringList &messages, QList<AbstractAction *> &actions)
+bool NSParser::parse(const QString &scriptCode, QList<AbstractAction *> &actions)
+{
+	return parse(scriptCode, actions, QString());
+}
+
+bool NSParser::parseFile(const QString &filepath, QList<AbstractAction *> &actions)
 {
 	QFile file(filepath);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		messages << QString("The file \"").append(filepath).append("\" cannot be opened.");
+		_errors << NSParsingError(NSParsingError::Error, filepath, -1, -1, "The file cannot be opened");
 		return false;
 	}
 
-	return	parse(filepath, messages, actions);
+	return	parse(filepath, actions, filepath);
 }
 
-bool NSParser::verify(const QString &scriptCode, QStringList &messages)
+bool NSParser::verify(const QString &scriptCode)
 {
 	QList<AbstractAction *> actions;
-	return parse(scriptCode, messages, actions);
+	return parse(scriptCode, actions);
 }
 
-bool NSParser::verifyFile(const QString &filepath, QStringList &messages)
+bool NSParser::verifyFile(const QString &filepath)
 {
 	QList<AbstractAction *> actions;
-	return parseFile(filepath, messages, actions);
+	return parseFile(filepath, actions);
 }
 
 void NSParser::print(QTextStream& out)
@@ -87,11 +107,11 @@ void NSParser::print(QTextStream& out)
 		printTree(out, _tree, 0);
 }
 
-Symbol *NSParser::getParsedTree(const QString &scriptCode, QStringList &messages)
+Symbol *NSParser::getParsedTree(const QString &scriptCode)
 {
 	if (_invalidGrammar)
 	{
-		messages << "Critical: An error occured while loading the grammar!";
+		addError(NSParsingError(NSParsingError::Error, "", -1, -1, "Critical: An error occured while loading the grammar!"));
 		return nullptr;
 	}
 
@@ -104,7 +124,7 @@ Symbol *NSParser::getParsedTree(const QString &scriptCode, QStringList &messages
 	//Report the dfa errors
 	for (GPError* e: dfa->getErrors()->errors)
 	{
-		messages << composeErrorMsg(e);
+		addError(NSParsingError::fromGPError(e));
 	}
 
 	// Get the tokens to feed the LALR machine with them
@@ -119,31 +139,10 @@ Symbol *NSParser::getParsedTree(const QString &scriptCode, QStringList &messages
 	//Report the lalr errors
 	for (GPError* e: lalr->getErrors()->errors)
 	{
-		messages << composeErrorMsg(e);
+		addError(NSParsingError::fromGPError(e));
 	}
 
 	return rdc;
-}
-
-QString NSParser::composeErrorMsg(GPError *err) const
-{
-	QString message("Error: Line ");
-	message += QString::number(err->lastTerminal.line);
-	message += ", Col ";
-	message += QString::number(err->lastTerminal.col);
-
-	if (err->expected.size() > 0)
-	{
-		message += ". Expected one of the following tokens: ";
-
-		for(const std::wstring& exp : err->expected)
-		{
-			message += QString::fromStdWString(exp);
-			message += " ";
-		}
-	}
-
-	return message;
 }
 
 void NSParser::printTree(QTextStream& out, Symbol *s, int level)
@@ -344,10 +343,7 @@ AbstractAction* NSParser::buildTeleportAction(Symbol* symbol, VariableList& vari
 			}
 		}
 
-		//if (!ok)
-			//error, invalid point var
-
-		if (_factory)
+		if (ok && _factory)
 			return _factory->teleportAction(point);
 	}
 
@@ -382,13 +378,10 @@ AbstractAction* NSParser::buildGoToAction(Symbol* symbol, VariableList& variable
 			}
 		}
 
-		//if (!ok)
-			//error, invalid point var
-
 		bool forceForward = dir == Tools::Forward;
 		bool forceBackward = dir == Tools::Backward;
 
-		if (_factory)
+		if (ok && _factory)
 			return _factory->moveAction(point.toQPointF(), speed, forceForward, forceBackward);
 	}
 
@@ -399,6 +392,7 @@ AbstractAction *NSParser::buildSetParameterAction(Symbol *symbol, NSParser::Vari
 {
 	if (symbol->type == NON_TERMINAL)
 	{
+		bool ok = false;
 		int paramId = -1;
 		double paramValue = 0.0;
 		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
@@ -409,7 +403,7 @@ AbstractAction *NSParser::buildSetParameterAction(Symbol *symbol, NSParser::Vari
 				case SYM_PARAMETER_IDENTIFIER:
 				case SYM_PARAMETER_OR_VAR:
 				case SYM_VAR:
-					paramId = readParameterOrVar(child, variables);
+					ok = readParameterOrVar(child, variables, paramId);
 					break;
 				case SYM_NUM:
 					paramValue = readNum(child);
@@ -417,10 +411,7 @@ AbstractAction *NSParser::buildSetParameterAction(Symbol *symbol, NSParser::Vari
 			}
 		}
 
-		//if (paramId < 0)
-			//error
-
-		if (_factory)
+		if (ok && _factory)
 			return _factory->setParameterAction(paramId, paramValue);
 	}
 
@@ -432,6 +423,7 @@ AbstractAction *NSParser::buildEnableSensorAction(Symbol *symbol, NSParser::Vari
 	AbstractAction* action = nullptr;
 	if (symbol->type == NON_TERMINAL)
 	{
+		bool ok = false;
 		int sensorId = -1, sensorType = -1;
 		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
 		bool all = nt->ruleIndex == PROD_ENABLESENSORSTATEMENT_ENABLE_ALL;
@@ -442,7 +434,7 @@ AbstractAction *NSParser::buildEnableSensorAction(Symbol *symbol, NSParser::Vari
 				case SYM_SENSOR_IDENTIFIER:
 				case SYM_SENSOR_OR_VAR:
 				case SYM_VAR:
-					readSensorOrVar(child, variables, sensorType, sensorId);
+					ok = readSensorOrVar(child, variables, sensorType, sensorId);
 					break;
 				case SYM_SENSOR2:
 					sensorType = readSensorType(child);
@@ -450,16 +442,13 @@ AbstractAction *NSParser::buildEnableSensorAction(Symbol *symbol, NSParser::Vari
 			}
 		}
 
-		//if (sensorType < 0)
-			//error
-
-		//if (!all && sensorId <= 0)
-			//error
-
 		if (all)
+		{
 			sensorId = 0;
+			ok = true;
+		}
 
-		if (_factory)
+		if (ok && _factory)
 		{
 			switch(sensorType)
 			{
@@ -484,6 +473,7 @@ AbstractAction *NSParser::buildDisableSensorAction(Symbol *symbol, NSParser::Var
 	AbstractAction* action = nullptr;
 	if (symbol->type == NON_TERMINAL)
 	{
+		bool ok = false;
 		int sensorId = -1, sensorType = -1;
 		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
 		bool all = nt->ruleIndex == PROD_DISABLESENSORSTATEMENT_DISABLE_ALL;
@@ -494,7 +484,7 @@ AbstractAction *NSParser::buildDisableSensorAction(Symbol *symbol, NSParser::Var
 				case SYM_SENSOR_IDENTIFIER:
 				case SYM_SENSOR_OR_VAR:
 				case SYM_VAR:
-					readSensorOrVar(child, variables, sensorType, sensorId);
+					ok = readSensorOrVar(child, variables, sensorType, sensorId);
 					break;
 				case SYM_SENSOR2:
 					sensorType = readSensorType(child);
@@ -502,16 +492,13 @@ AbstractAction *NSParser::buildDisableSensorAction(Symbol *symbol, NSParser::Var
 			}
 		}
 
-		//if (sensorType < 0)
-			//error
-
-		//if (!all && sensorId <= 0)
-			//error
-
 		if (all)
+		{
 			sensorId = 0;
+			ok = true;
+		}
 
-		if (_factory)
+		if (ok && _factory)
 		{
 			switch(sensorType)
 			{
@@ -622,16 +609,16 @@ void NSParser::readSensorIdentifier(Symbol *symbol, int& sensorType, int &id)
 	}
 }
 
-void NSParser::readSensorOrVar(Symbol *symbol, NSParser::VariableList &variables, int &sensorType, int &id)
+bool NSParser::readSensorOrVar(Symbol *symbol, NSParser::VariableList &variables, int &sensorType, int &id)
 {
+	bool result = false;
 	if (symbol->type == NON_TERMINAL)
 	{
+		result = true;
 		if (symbol->symbolIndex == SYM_SENSOR_IDENTIFIER)
 			readSensorIdentifier(symbol, sensorType, id);
 		else if (symbol->symbolIndex == SYM_VAR)
-		{
-			variables[readVar(symbol)].toSensor(id, sensorType);
-		}
+			result = readSensorVar(symbol, variables, sensorType, id);
 		else //SYM_PARAMETER_OR_VAR
 		{
 			NonTerminal* nt = static_cast<NonTerminal*>(symbol);
@@ -641,14 +628,37 @@ void NSParser::readSensorOrVar(Symbol *symbol, NSParser::VariableList &variables
 					readSensorIdentifier(symbol, sensorType, id);
 					break;
 				case PROD_PARAMETER_OR_VAR2:
-				{
-					QString varName = readVar(symbol);
-					 variables[varName].toSensor(id, sensorType);
+					result = readSensorVar(symbol, variables, sensorType, id);
 					break;
-				}
+				default:
+					result = false;
+					break;
 			}
 		}
 	}
+
+	return result;
+}
+
+bool NSParser::readSensorVar(Symbol *symbol, NSParser::VariableList &variables, int &sensorType, int &id)
+{
+	bool result = false;
+	QString varName = readVar(symbol);
+	if (variables.contains(varName))
+	{
+		DelclaredVariable& var = variables[varName];
+		if (var.isSensor())
+		{
+			var.toSensor(id, sensorType);
+			result = true;
+		}
+		else
+			addError(NSParsingError::invalidVariableTypeError(varName, "sensor", symbol));
+	}
+	else
+		addError(NSParsingError::undeclaredVariableError(varName, symbol));
+
+	return result;
 }
 
 int NSParser::readSensorType(Symbol *symbol)
@@ -676,15 +686,16 @@ int NSParser::readSubId(Symbol *symbol)
 	return -1;
 }
 
-int NSParser::readParameterOrVar(Symbol *symbol, NSParser::VariableList &variables)
+bool NSParser::readParameterOrVar(Symbol *symbol, NSParser::VariableList &variables, int& paramId)
 {
-	int paramId = -1;
+	bool result = false;
 	if (symbol->type == NON_TERMINAL)
 	{
+		result = true;
 		if (symbol->symbolIndex == SYM_PARAMETER_IDENTIFIER)
 			paramId = readSubId(symbol);
 		else if (symbol->symbolIndex == SYM_VAR)
-			paramId = variables[readVar(symbol)].toParameter();
+			result = readParameterVar(symbol, variables, paramId);
 		else //SYM_PARAMETER_OR_VAR
 		{
 			NonTerminal* nt = static_cast<NonTerminal*>(symbol);
@@ -694,28 +705,50 @@ int NSParser::readParameterOrVar(Symbol *symbol, NSParser::VariableList &variabl
 					paramId = readSubId(symbol);
 					break;
 				case PROD_PARAMETER_OR_VAR2:
-				{
-					QString varName = readVar(symbol);
-					paramId = variables[varName].toParameter();
+					result = readParameterVar(symbol, variables, paramId);
 					break;
-				}
+				default:
+					result = false;
+					break;
 			}
 		}
 	}
 
-	return paramId;
+	return result;
 }
 
-int NSParser::readAx12OrVar(Symbol *symbol, NSParser::VariableList &variables)
+bool NSParser::readParameterVar(Symbol *symbol, NSParser::VariableList &variables, int &paramId)
 {
-	int ax12Id = -1;
+	bool result = false;
+	QString varName = readVar(symbol);
+	if (variables.contains(varName))
+	{
+		DelclaredVariable& var = variables[varName];
+		if (var.isParameter())
+		{
+			paramId = var.toParameter();
+			result = true;
+		}
+		else
+			addError(NSParsingError::invalidVariableTypeError(varName, "parameter", symbol));
+	}
+	else
+		addError(NSParsingError::undeclaredVariableError(varName, symbol));
+
+	return result;
+}
+
+bool NSParser::readAx12OrVar(Symbol *symbol, NSParser::VariableList &variables, int& ax12Id)
+{
+	bool result = false;
 	if (symbol->type == NON_TERMINAL)
 	{
+		result = true;
 		if (symbol->symbolIndex == SYM_AX12_IDENTIFIER)
 			ax12Id = readSubId(symbol);
 		else if (symbol->symbolIndex == SYM_VAR)
-			ax12Id = variables[readVar(symbol)].toAx12();
-		else //SYM_PARAMETER_OR_VAR
+			result = readAx12Var(symbol, variables, ax12Id);
+		else //SYM_AX12_OR_VAR
 		{
 			NonTerminal* nt = static_cast<NonTerminal*>(symbol);
 			switch(nt->ruleIndex)
@@ -724,16 +757,37 @@ int NSParser::readAx12OrVar(Symbol *symbol, NSParser::VariableList &variables)
 					ax12Id = readSubId(symbol);
 					break;
 				case PROD_AX12_OR_VAR2:
-				{
-					QString varName = readVar(symbol);
-					ax12Id = variables[varName].toAx12();
+					result = readAx12Var(symbol, variables, ax12Id);
 					break;
-				}
+				default:
+					result = false;
+					break;
 			}
 		}
 	}
 
-	return ax12Id;
+	return result;
+}
+
+bool NSParser::readAx12Var(Symbol *symbol, NSParser::VariableList &variables, int &ax12Id)
+{
+	bool result = false;
+	QString varName = readVar(symbol);
+	if (variables.contains(varName))
+	{
+		DelclaredVariable& var = variables[varName];
+		if (var.isAx12())
+		{
+			ax12Id = var.toAx12();
+			result = true;
+		}
+		else
+			addError(NSParsingError::invalidVariableTypeError(varName, "ax12", symbol));
+	}
+	else
+		addError(NSParsingError::undeclaredVariableError(varName, symbol));
+
+	return result;
 }
 
 void NSParser::readAction(Symbol *symbol, int &actionId, int &param, int &time)
@@ -773,16 +827,16 @@ void NSParser::readAction(Symbol *symbol, int &actionId, int &param, int &time)
 	}
 }
 
-void NSParser::readActionOrVar(Symbol *symbol, NSParser::VariableList &variables, int &actionId, int &param, int &time)
+bool NSParser::readActionOrVar(Symbol *symbol, NSParser::VariableList &variables, int &actionId, int &param, int &time)
 {
+	bool result = false;
 	if (symbol->type == NON_TERMINAL)
 	{
+		result = true;
 		if (symbol->symbolIndex == SYM_ACTION2)
 			readAction(symbol, actionId, param, time);
 		else if (symbol->symbolIndex == SYM_VAR)
-		{
-			variables[readVar(symbol)].toAction(actionId, param, time);
-		}
+			result = readActionVar(symbol, variables, actionId, param, time);
 		else //SYM_ACTION_OR_VAR
 		{
 			NonTerminal* nt = static_cast<NonTerminal*>(symbol);
@@ -792,16 +846,38 @@ void NSParser::readActionOrVar(Symbol *symbol, NSParser::VariableList &variables
 					readAction(symbol, actionId, param, time);
 					break;
 				case PROD_ACTION_OR_VAR2:
-				{
-					QString varName = readVar(symbol);
-					 variables[varName].toAction(actionId, param, time);
+					result = readActionVar(symbol, variables, actionId, param, time);
 					break;
-				}
+				default:
+					result = false;
+					break;
 			}
 		}
 	}
+
+	return result;
 }
 
+bool NSParser::readActionVar(Symbol *symbol, NSParser::VariableList &variables, int &actionId, int &param, int &time)
+{
+	bool result = false;
+	QString varName = readVar(symbol);
+	if (variables.contains(varName))
+	{
+		DelclaredVariable& var = variables[varName];
+		if (var.isAction())
+		{
+			var.toAction(actionId, param, time);
+			result = true;
+		}
+		else
+			addError(NSParsingError::invalidVariableTypeError(varName, "action", symbol));
+	}
+	else
+		addError(NSParsingError::undeclaredVariableError(varName, symbol));
+
+	return result;
+}
 
 double NSParser::readFixedAngleInRadian(Symbol* symbol)
 {
@@ -978,12 +1054,7 @@ bool NSParser::readPointOrVar(Symbol* symbol, VariableList& variables, Tools::RP
 		else if (symbol->symbolIndex == SYM_FIXED_POINT)
 			point = readFixedPoint(symbol);
 		else if (symbol->symbolIndex == SYM_VAR)
-		{
-			QString varName = readVar(symbol);
-			result = variables.contains(varName);
-			if (result)
-				point = variables[varName].toPoint();
-		}
+			result = readPointVar(symbol, variables, point);
 		else //SYM_POINT_OR_VAR
 		{
 			NonTerminal* nt = static_cast<NonTerminal*>(symbol);
@@ -993,16 +1064,35 @@ bool NSParser::readPointOrVar(Symbol* symbol, VariableList& variables, Tools::RP
 					point = readPoint(searchChild(symbol, SYM_POINT));
 					break;
 				case PROD_POINT_OR_VAR2:
-				{
-					QString varName = readVar(symbol);
-					result = variables.contains(varName);
-					if (result)
-						point = variables[varName].toPoint();
+					result = readPointVar(symbol, variables, point);
 					break;
-				}
+				default:
+					result = false;
+					break;
 			}
 		}
 	}
+
+	return result;
+}
+
+bool NSParser::readPointVar(Symbol* symbol, VariableList& variables, Tools::RPoint &point)
+{
+	bool result = false;
+	QString varName = readVar(symbol);
+	if (variables.contains(varName))
+	{
+		DelclaredVariable& var = variables[varName];
+		if (var.isPoint())
+		{
+			point = var.toPoint();
+			result = true;
+		}
+		else
+			addError(NSParsingError::invalidVariableTypeError(varName, "point", symbol));
+	}
+	else
+		addError(NSParsingError::undeclaredVariableError(varName, symbol));
 
 	return result;
 }
@@ -1111,12 +1201,7 @@ bool NSParser::NSParser::readRectOrVar(Symbol *symbol, NSParser::VariableList &v
 		else if (symbol->symbolIndex == SYM_FIXED_RECT)
 			r = readFixedRect(symbol);
 		else if (symbol->symbolIndex == SYM_VAR)
-		{
-			QString varName = readVar(symbol);
-			result = variables.contains(varName);
-			if (result)
-				r = variables[varName].toRect();
-		}
+			result = readRectVar(symbol, variables, r);
 		else //SYM_RECT_OR_VAR
 		{
 			NonTerminal* nt = static_cast<NonTerminal*>(symbol);
@@ -1126,16 +1211,35 @@ bool NSParser::NSParser::readRectOrVar(Symbol *symbol, NSParser::VariableList &v
 					r = readRect(searchChild(symbol, SYM_RECT));
 					break;
 				case PROD_RECT_OR_VAR2:
-				{
-					QString varName = readVar(symbol);
-					result = variables.contains(varName);
-					if (result)
-						r = variables[varName].toRect();
+					result = readRectVar(symbol, variables, r);
 					break;
-				}
+				default:
+					result = false;
+					break;
 			}
 		}
 	}
+
+	return result;
+}
+
+bool NSParser::readRectVar(Symbol* symbol, VariableList &variables, QRectF &r)
+{
+	bool result = false;
+	QString varName = readVar(symbol);
+	if (variables.contains(varName))
+	{
+		DelclaredVariable& var = variables[varName];
+		if (var.isRect())
+		{
+			r = var.toRect();
+			result = true;
+		}
+		else
+			addError(NSParsingError::invalidVariableTypeError(varName, "rect", symbol));
+	}
+	else
+		addError(NSParsingError::undeclaredVariableError(varName, symbol));
 
 	return result;
 }

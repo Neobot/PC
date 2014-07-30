@@ -48,7 +48,8 @@ SOURCES += TrajectoryFinder.cpp \
     AIEngine.cpp \
     Sensor.cpp \
     NSParser.cpp \
-    NSRunner.cpp
+    NSRunner.cpp \
+    NSParsingError.cpp
 
 HEADERS += TrajectoryFinder.h \
     Sharp.h \
@@ -77,7 +78,8 @@ HEADERS += TrajectoryFinder.h \
     Sensor.h \
     NSParser.h \
     ns.h \
-    NSRunner.h
+    NSRunner.h \
+    NSParsingError.h
 
 FORMS += StrategyDialog.ui
 

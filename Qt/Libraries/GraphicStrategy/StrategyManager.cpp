@@ -425,10 +425,9 @@ int StrategyManager::getActionCount() const
 
 void StrategyManager::addActionsFromScript(const QString &scriptCode)
 {
-    QStringList errors;
     QList<AbstractAction*> actions;
 	NSParser parser(getActionFactory());
-    if (parser.parse(scriptCode, errors, actions))
+	if (parser.parse(scriptCode, actions))
     {
        _actions << actions;
     }
