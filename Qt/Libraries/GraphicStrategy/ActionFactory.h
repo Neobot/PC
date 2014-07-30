@@ -18,6 +18,7 @@ class ActionFactory
 public:
     ActionFactory(StrategyManager* manager, TrajectoryFinder* finder, StrategyMap* map, Comm::RobotCommInterface* robot, Tools::Ax12MovementManager* ax12MovementsManager);
 	void setMaxMovementSpeed(int maxSpeed);
+	void setPatherEnabled(bool value);
 
 	ActionGroup* actionList(const QList<AbstractAction*>& actions = QList<AbstractAction*>()) const;
 	AsynchroneActionGroup* asynchroneActionList(const QList<AbstractAction*>& actions = QList<AbstractAction*>(), AsynchroneActionGroup::StopCondition stopCondition = AsynchroneActionGroup::OneActionFinished) const;
@@ -39,7 +40,7 @@ public:
     AbstractAction* moveAction(Tools::NGridArea* destinationArea, int speed, Tools::NGridNode* targetNode, bool forceForward = false, bool forceBackward = false, Tools::Deplacement deplacementType = Tools::TURN_THEN_MOVE) const;
 
     AbstractAction* manualMoveAction(const Tools::Trajectory& trajectory, int speed, Tools::Movement movement, Tools::Deplacement deplacementType = Tools::TURN_THEN_MOVE) const;
-    AbstractAction* manualMoveToPointAction(const Tools::RPoint& point, int speed, bool forward = true, Tools::Deplacement deplacementType = Tools::TURN_THEN_MOVE) const;
+	AbstractAction* manualMoveToPointAction(const Tools::RPoint& point, int speed, bool forceForward = false, bool forceBackward = false, Tools::Deplacement deplacementType = Tools::TURN_THEN_MOVE) const;
     AbstractAction* manualBackwardMoveAction(double mm, int speed) const;
     AbstractAction* manualForwardMoveAction(double mm, int speed) const;
     AbstractAction* manualTurnToAction(const Tools::RPoint& point, int speed, bool clockwize = false) const;
@@ -90,6 +91,7 @@ private:
     Comm::RobotCommInterface*	_robot;
 	Tools::Ax12MovementManager* _ax12MovementsManager;
 	int _maxMovementSpeed;
+	bool _isPatherEnabled;
 	
 	int getRealSpeed(int requestedSpeed) const;
 

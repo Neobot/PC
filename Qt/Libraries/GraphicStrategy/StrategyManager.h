@@ -26,10 +26,12 @@ namespace Tools
 class StrategyInterface;
 class Pather;
 class TrajectoryFinder;
+class NSRunner;
 
 class StrategyManager : public QObject, public Comm::CommListener, public Tools::LoggerInterface
 {
     Q_OBJECT
+	friend class NSRunner;
 
 public:
     StrategyManager(Comm::RobotCommInterface* robot, Pather* pather, Tools::AbstractLogger* logger = 0);
@@ -43,12 +45,15 @@ public:
 	void setAx12MovementManager(Tools::Ax12MovementManager* movementManager);
 
     void addAtion(AbstractAction* action);
+	void addActionsFromScript(const QString &scriptCode);
     void insertAction(int index, AbstractAction* action);
     void insertActionHere(AbstractAction* action);
 
     bool isLastAction() const;
     bool isFirstAction() const;
     bool isEmpty() const;
+
+    bool isRunning() const;
 
     bool movementInProgress() const;
     void cancelCurrentAction();
@@ -103,8 +108,6 @@ public:
     GameState& getCurrentState();
     double getFuturePathingDistance(const GameState& state, Tools::NGridNode *from, Tools::NGridNode *to);
 
-    void setPause(bool value);
-
 	QList<float> params;
 
 private:    
@@ -128,13 +131,13 @@ private:
     StrategyMap*	_futureMap;
 
     bool _initDone;
-    bool _goAsked;
     bool _autoQuit;
     bool _loop;
     bool _reversed;
 
     int _currentActionIndex;
     QList<AbstractAction*> _actions;
+    bool _isRunning;
 
     bool _debugPositions;
     bool _debugCaptors;
@@ -148,6 +151,7 @@ private:
     //Action management
     void next();
     void execute(AbstractAction*action);
+	ActionFactory* createActionFactory();
 
     //Listener
 	void coordinates(qint16 x, qint16 y, double theta, quint8 forward);
@@ -173,7 +177,6 @@ private:
     QTimer _recordTimer;
     QTimer _matchTimer;
     int _matchTime;
-    bool _isPaused;
 
 
 private slots:

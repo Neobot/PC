@@ -47,7 +47,8 @@ SOURCES += TrajectoryFinder.cpp \
     AbstractAICommand.cpp \
     AIEngine.cpp \
     Sensor.cpp \
-    NSParser.cpp
+    NSParser.cpp \
+    NSRunner.cpp
 
 HEADERS += TrajectoryFinder.h \
     Sharp.h \
@@ -75,7 +76,8 @@ HEADERS += TrajectoryFinder.h \
     AIEngine.h \
     Sensor.h \
     NSParser.h \
-    ns.h
+    ns.h \
+    NSRunner.h
 
 FORMS += StrategyDialog.ui
 

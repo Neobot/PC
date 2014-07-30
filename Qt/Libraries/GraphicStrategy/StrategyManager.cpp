@@ -7,20 +7,21 @@
 #include "RobotCommInterface.h"
 #include "ToolsLib.h"
 #include "NMicropather.h"
+#include "NSParser.h"
 
 using namespace Tools;
 
 StrategyManager::StrategyManager(Comm::RobotCommInterface* robot, Pather* pather, Tools::AbstractLogger* logger) :
-	LoggerInterface(logger),  _strategy(0), _robot(robot), _map(0), _ax12MovementManager(0), _initDone(false), _goAsked(false), _autoQuit(false),
-	_loop(false), _reversed(false), _debugPositions(false), _debugCaptors(false), _record(false), _matchTime(0), _isPaused(false)
+	LoggerInterface(logger),  _strategy(nullptr), _robot(robot), _map(nullptr), _grid(nullptr), _ax12MovementManager(nullptr), _initDone(false), _autoQuit(false),
+    _loop(false), _reversed(false), _isRunning(false), _debugPositions(false), _debugCaptors(false), _record(false), _matchTime(0)
 {
-	_actionFactory = 0;
+    _actionFactory = nullptr;
 	_trajectoryFinder = new TrajectoryFinder(robot, pather, logger);
 
 	_currentActionIndex = 0;
 
-	_recorder = 0;
-	_recordFile = 0;
+    _recorder = nullptr;
+    _recordFile = nullptr;
 
 	connect(&_recordTimer, SIGNAL(timeout()), this, SLOT(record()));
 	_recordTimer.setInterval(100);
@@ -29,14 +30,17 @@ StrategyManager::StrategyManager(Comm::RobotCommInterface* robot, Pather* pather
 	connect(&_matchTimer, SIGNAL(timeout()), this, SLOT(incrementMatchTime()));
 	_matchTimer.setInterval(1000);
 
-	_futureMap = 0;
-	_futurePather = 0;
+    _futureMap = nullptr;
+    _futurePather = nullptr;
 }
 
 StrategyManager::~StrategyManager()
 {
 	delete _trajectoryFinder;
 	delete _futureMap;
+
+	delete _map;
+	delete _actionFactory;
 
 	qDeleteAll(_actions);
 	_actions.clear();
@@ -56,7 +60,7 @@ void StrategyManager::connectToRobot()
 
 void StrategyManager::disconnectFromRobot()
 {
-	_robot->setListener(0);
+    _robot->setListener(nullptr);
 }
 
 void StrategyManager::setStrategy(StrategyInterface* strategy)
@@ -84,7 +88,6 @@ bool StrategyManager::init()
 		return false;
 	}
 
-	_goAsked = false;
 	_initDone = false;
 
 	const StrategyInterface::StrategyParameters& parameters = _strategy->getParameters();
@@ -105,7 +108,7 @@ bool StrategyManager::init()
 	_map->setNoDetectionZones(parameters.noDetectionZones);
 
 	//init Future object
-	if (!_futureMap)
+    if (!_futureMap)
 	{
 		_futureMap = new StrategyMap(parameters.tableSize, parameters.robotRadius, parameters.opponentRadius);
 		_futurePather = new NMicropather(0, NMicropather::Manhattan);
@@ -137,6 +140,7 @@ bool StrategyManager::init()
 	_trajectoryFinder->setAvoidingEnabled(parameters.enableAutoAvoiding);
 
 	//init actions
+    _isRunning = false;
 	qDeleteAll(_actions);
 	_actions.clear();
 	_currentActionIndex = 0;
@@ -144,7 +148,7 @@ bool StrategyManager::init()
 	if (_actionFactory)
 		delete _actionFactory;
 
-	_actionFactory = new ActionFactory(this, _trajectoryFinder, _map, _robot, _ax12MovementManager);
+	_actionFactory = createActionFactory();
 	_strategy->mainStrategy(_actions);
 
 	//init sharps
@@ -167,7 +171,6 @@ bool StrategyManager::go(bool mirrored)
 	if (!init())
 		return false;
 
-	_goAsked = true;
 	if (!_initDone)
 	{
 		logger() << "Can't go now. Waiting for PC Initialisation !" << Tools::endl;
@@ -227,17 +230,18 @@ void StrategyManager::isArrived()
 
 void StrategyManager::isBlocked()
 {
-	return;
+    if (_strategy)
+    {
+        QVector2D dir(_trajectoryFinder->getDirection() == Tools::Forward ? 1 : -1, 0);
+        QPointF p = _map->getSharpDetectionPoint(QPointF(0,0), dir, _map->getRobot()->getRadius());
+        bool ok = _map->addTemporaryBlockingSharpObject(p);
+        _futureMap->addTemporaryBlockingSharpObject(p);
 
-	QVector2D dir(_trajectoryFinder->getDirection() == Tools::Forward ? 1 : -1, 0);
-	QPointF p = _map->getSharpDetectionPoint(QPointF(0,0), dir, _map->getRobot()->getRadius());
-	bool ok = _map->addTemporaryBlockingSharpObject(p);
-	_futureMap->addTemporaryBlockingSharpObject(p);
+        if (!ok)
+            logger() << "Blocked !!!" << Tools::endl;
 
-	if (!ok)
-		logger() << "Blocked !!!" << Tools::endl;
-
-	_strategy->blockingDeteced();
+        _strategy->blockingDeteced();
+    }
 }
 
 void StrategyManager::opponentPosition(qint16 x, qint16 y)
@@ -319,31 +323,34 @@ void StrategyManager::activatedSensors(const QList<quint8> &values)
 	bool avoidingNecessary = false;
 	bool hasAvoidingSharp = !activatedSharps.isEmpty();
 
-	QList<QPointF> obstacles = _strategy->doDetection(activatedSharps);
-	foreach(const QPointF& o, obstacles)
-	{
-		bool sharpObjectAdded = _map->addTemporarySharpObject(o);
-		avoidingNecessary = sharpObjectAdded | avoidingNecessary;
+    if (_strategy)
+    {
+        QList<QPointF> obstacles = _strategy->doDetection(activatedSharps);
+        foreach(const QPointF& o, obstacles)
+        {
+            bool sharpObjectAdded = _map->addTemporarySharpObject(o);
+            avoidingNecessary = sharpObjectAdded | avoidingNecessary;
 
-		if (sharpObjectAdded && _trajectoryFinder->avoidingIsEnabled())
-		{
-			logger() << "Object spotted in " << o << ", Robot is in " <<  _map->getRobot()->getPosition()
-					 << ", Directions is " << (_trajectoryFinder->getDirection() == Tools::Forward ? "forward" : "backward") << Tools::endl;
-		}
+            if (sharpObjectAdded && _trajectoryFinder->avoidingIsEnabled())
+            {
+                logger() << "Object spotted in " << o << ", Robot is in " <<  _map->getRobot()->getPosition()
+                         << ", Directions is " << (_trajectoryFinder->getDirection() == Tools::Forward ? "forward" : "backward") << Tools::endl;
+            }
 
-		_futureMap->addTemporarySharpObject(o);
-	}
+            _futureMap->addTemporarySharpObject(o);
+        }
 
-	//Launch the avoiding if necessary
-	if (_trajectoryFinder->avoidingIsEnabled())
-	{
-		if (avoidingNecessary)
-			_trajectoryFinder->checkAvoiding();
-		else if (!hasAvoidingSharp)
-			_trajectoryFinder->clearAvoiding();
-	}
-	else if (avoidingNecessary)
-		_strategy->obstacleDetected();
+        //Launch the avoiding if necessary
+        if (_trajectoryFinder->avoidingIsEnabled())
+        {
+            if (avoidingNecessary)
+                _trajectoryFinder->checkAvoiding();
+            else if (!hasAvoidingSharp)
+                _trajectoryFinder->clearAvoiding();
+        }
+        else if (avoidingNecessary)
+            _strategy->obstacleDetected();
+    }
 }
 
 bool StrategyManager::pingReceived()
@@ -416,6 +423,17 @@ int StrategyManager::getActionCount() const
 	return _actions.count();
 }
 
+void StrategyManager::addActionsFromScript(const QString &scriptCode)
+{
+    QStringList errors;
+    QList<AbstractAction*> actions;
+	NSParser parser(getActionFactory());
+    if (parser.parse(scriptCode, errors, actions))
+    {
+       _actions << actions;
+    }
+}
+
 GameState &StrategyManager::getCurrentState()
 {
 	_currentState._robotposition = _grid->getNearestNode(_map->getRobot()->getPosition());
@@ -426,40 +444,25 @@ GameState &StrategyManager::getCurrentState()
 
 void StrategyManager::updateFutureMap(const GameState &state)
 {
-	_futureMap->moveRobot(state._robotposition->getPosition());
-	_futureMap->moveOpponent(state._opponentPosition);
+    if (_futureMap)
+    {
+        _futureMap->moveRobot(state._robotposition->getPosition());
+        _futureMap->moveOpponent(state._opponentPosition);
+    }
 }
 
 double StrategyManager::getFuturePathingDistance(const GameState &state, Tools::NGridNode* from, Tools::NGridNode* to)
 {
-	updateFutureMap(state);
-	_futurePather->prepareReplan(from, to);
+    Tools::Trajectory t;
 
-	Tools::Trajectory t;
-	_futurePather->replanTrajectory(t);
+    if (_futurePather)
+    {
+        updateFutureMap(state);
+        _futurePather->prepareReplan(from, to);
+        _futurePather->replanTrajectory(t);
+    }
 
 	return t.manhattanDistance();
-}
-
-void StrategyManager::setPause(bool value)
-{
-	if (_isPaused != value)
-	{
-		if (value)
-		{
-			_matchTimer.stop();
-			_recordTimer.stop();
-		}
-		else
-		{
-			_matchTimer.start();
-
-			if (_record)
-				_recordTimer.start();
-		}
-
-		_isPaused = value;
-	}
 }
 
 void StrategyManager::execute(AbstractAction *action)
@@ -469,6 +472,11 @@ void StrategyManager::execute(AbstractAction *action)
 
 	connect(action, SIGNAL(finished(bool)), this, SLOT(actionFinished(bool)));
 	action->execute();
+}
+
+ActionFactory *StrategyManager::createActionFactory()
+{
+	return new ActionFactory(this, _trajectoryFinder, _map, _robot, _ax12MovementManager);
 }
 
 void StrategyManager::actionFinished(bool result)
@@ -497,9 +505,6 @@ void StrategyManager::actionFinished(bool result)
 
 	if (isLastAction())
 	{
-		logger() << "No more actions to do." << Tools::endl;
-		emit strategyFinished();
-
 		if (_autoQuit)
 			quit();
 	}
@@ -521,17 +526,23 @@ void StrategyManager::cancelCurrentAction()
 {
 	AbstractAction* currentAction = _actions.value(_currentActionIndex);
 	if (currentAction)
-		currentAction->stop();
+        currentAction->stop();
 }
 
 void StrategyManager::next()
 {
-	if (isLastAction() || _currentActionIndex < 0)
-		return;
-
-	AbstractAction* a = _actions.value(_currentActionIndex, 0);
-
-	execute(a);
+    if (!isLastAction() && _currentActionIndex > 0)
+    {
+        _isRunning = true;
+        AbstractAction* a = _actions.value(_currentActionIndex, 0);
+        execute(a);
+    }
+    else
+    {
+		logger() << "No more actions to do." << Tools::endl;
+		emit strategyFinished();
+        _isRunning = false;
+    }
 }
 
 bool StrategyManager::isLastAction() const
@@ -546,7 +557,12 @@ bool StrategyManager::isFirstAction() const
 
 bool StrategyManager::isEmpty() const
 {
-	return _actions.isEmpty();
+    return _actions.isEmpty();
+}
+
+bool StrategyManager::isRunning() const
+{
+    return _isRunning;
 }
 
 bool StrategyManager::movementInProgress() const

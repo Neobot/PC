@@ -10,11 +10,17 @@ ActionFactory::ActionFactory(StrategyManager* manager, TrajectoryFinder* finder,
     _robot = robot;
 	_ax12MovementsManager = ax12MovementsManager;
 	_maxMovementSpeed = 100;
+	_isPatherEnabled = true;
 }
 
 void ActionFactory::setMaxMovementSpeed(int maxSpeed)
 {
 	_maxMovementSpeed = maxSpeed;
+}
+
+void ActionFactory::setPatherEnabled(bool value)
+{
+	_isPatherEnabled = value;
 }
 
 int ActionFactory::getRealSpeed(int requestedSpeed) const
@@ -34,31 +40,43 @@ AbstractAction *ActionFactory::teleportAction(const Tools::RPoint &point) const
 
 AbstractAction * ActionFactory::moveAction(Tools::NGridNode* destination, int speed, bool forceForward, bool forceBackward, Tools::Deplacement deplacementType) const
 {
-    return new MoveAction(destination, getRealSpeed(speed), forceForward, forceBackward, deplacementType, _finder);
+	if (_isPatherEnabled)
+		return new MoveAction(destination, getRealSpeed(speed), forceForward, forceBackward, deplacementType, _finder);
+	else
+		return manualMoveToPointAction(destination->getPosition(), speed, forceForward, forceBackward, deplacementType);
 }
 
 AbstractAction *ActionFactory::moveAction(const QPointF &destinationPoint, int speed, bool forceForward, bool forceBackward, Tools::Deplacement deplacementType) const
 {
-    return new MoveAction(_manager->getGrid()->getNearestNode(destinationPoint), getRealSpeed(speed), forceForward, forceBackward, deplacementType, _finder);
+	if (_isPatherEnabled)
+		return new MoveAction(_manager->getGrid()->getNearestNode(destinationPoint), getRealSpeed(speed), forceForward, forceBackward, deplacementType, _finder);
+	else
+		return manualMoveToPointAction(destinationPoint, speed, forceForward, forceBackward, deplacementType);
 }
 
 AbstractAction *ActionFactory::moveAction(const QString &destinationAlias, int speed, bool forceForward, bool forceBackward, Tools::Deplacement deplacementType) const
 {
     Tools::NGridNode* destination = _manager->getGrid()->getNode(destinationAlias);
     if (destination)
-        return new MoveAction(destination, getRealSpeed(speed), forceForward, forceBackward, deplacementType, _finder);
+		return moveAction(destination, getRealSpeed(speed), forceForward, forceBackward, deplacementType);
 
     return 0;
 }
 
 AbstractAction *ActionFactory::moveAction(Tools::NGridArea *destination, int speed, bool forceForward, bool forceBackward, Tools::Deplacement deplacementType) const
 {
-    return new MoveAction(destination, getRealSpeed(speed), forceForward, forceBackward, deplacementType, _finder);
+	if (_isPatherEnabled)
+		return new MoveAction(destination, getRealSpeed(speed), forceForward, forceBackward, deplacementType, _finder);
+	else
+		return manualMoveToPointAction(destination->getCentralNode()->getPosition(), speed, forceForward, forceBackward, deplacementType);
 }
 
 AbstractAction *ActionFactory::moveAction(Tools::NGridArea *destinationArea, int speed, Tools::NGridNode *targetNode, bool forceForward, bool forceBackward, Tools::Deplacement deplacementType) const
 {
-    return new MoveAction(destinationArea, targetNode, getRealSpeed(speed), forceForward, forceBackward, deplacementType, _finder);
+	if (_isPatherEnabled)
+		return new MoveAction(destinationArea, targetNode, getRealSpeed(speed), forceForward, forceBackward, deplacementType, _finder);
+	else
+		return manualMoveToPointAction(targetNode->getPosition(), speed, forceForward, forceBackward, deplacementType);
 }
 
 AbstractAction * ActionFactory::manualMoveAction(const Tools::Trajectory &trajectory, int speed, Tools::Movement movement, Tools::Deplacement deplacementType) const
@@ -66,11 +84,18 @@ AbstractAction * ActionFactory::manualMoveAction(const Tools::Trajectory &trajec
     return new ManualMoveAction(trajectory, getRealSpeed(speed), movement, deplacementType, _finder);
 }
 
-AbstractAction* ActionFactory::manualMoveToPointAction(const Tools::RPoint& point, int speed, bool forward, Tools::Deplacement deplacementType) const
+AbstractAction* ActionFactory::manualMoveToPointAction(const Tools::RPoint& point, int speed, bool forceForward, bool forceBackward, Tools::Deplacement deplacementType) const
 {
     Tools::Trajectory t;
     t << Tools::RPoint(point);
-    return new ManualMoveAction(t, getRealSpeed(speed), forward ? Tools::AVANT_XY : Tools::ARRIERE_XY, deplacementType, _finder);
+
+	Tools::Movement mvtType = Tools::AUTO;
+	if (forceForward)
+		mvtType = Tools::AVANT_XY;
+	else if (forceBackward)
+		mvtType = Tools::ARRIERE_XY;
+
+	return new ManualMoveAction(t, getRealSpeed(speed), mvtType, deplacementType, _finder);
 }
 
 AbstractAction * ActionFactory::manualBackwardMoveAction(double mm, int speed) const

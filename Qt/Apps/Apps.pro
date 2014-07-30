@@ -4,7 +4,7 @@
 TEMPLATE = subdirs
 CONFIG += ordered
 
-SUBDIRS = NeobotMain \
+SUBDIRS = \
           CommunicationTools \
           NeobotTests\
           GridEditor \

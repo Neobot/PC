@@ -85,6 +85,8 @@ void SensorsView::sensorEvent(Comm::SensorType type, int sensorId, int value)
 		case Comm::SharpSensor: //TODO
 		case Comm::MicroswitchSensor: //TODO
 			break;
+		case Comm::UnknownedSensor:
+			break;
 	}
 }
 

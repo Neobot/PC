@@ -139,7 +139,6 @@ void NPlayer::run(bool value)
 			_playTimer.start();
 		else if (_strategy)
 		{
-			_manager->setPause(false);
 			_simulator->start();
 		}
 
@@ -153,7 +152,6 @@ void NPlayer::run(bool value)
 			_playTimer.stop();
 		else if (_strategy)
 		{
-			_manager->setPause(true);
 			_simulator->pause();
 		}
 	}

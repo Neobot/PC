@@ -19,7 +19,8 @@ DEPENDENCY_LIBS +=  NeobotStrategy \
                     NeobotComm \
                     NeobotTools
 
-EXTERNAL_LIBS +=   Micropather
+EXTERNAL_LIBS +=   Micropather \
+		   gpengine
 
 include( ../../BuildConfiguration.pri)
 
