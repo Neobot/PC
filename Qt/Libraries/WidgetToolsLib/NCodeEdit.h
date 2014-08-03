@@ -13,11 +13,38 @@ namespace Tools
 	{
 		Q_OBJECT
 
+		class LineNumberArea : public QWidget
+		{
+		 public:
+			 LineNumberArea(NCodeEdit* editor);
+			 QSize sizeHint() const;
+
+		 protected:
+			 void paintEvent(QPaintEvent *event);
+
+		 private:
+			 NCodeEdit* _editor;
+		};
+
+		class ErrorNotificationArea : public QWidget
+		{
+		 public:
+			 ErrorNotificationArea(NCodeEdit* editor);
+			 QSize sizeHint() const;
+
+		 protected:
+			 void paintEvent(QPaintEvent *event);
+			 void mouseMoveEvent(QMouseEvent* event);
+
+		 private:
+			 NCodeEdit* _editor;
+		};
+
+		friend class LineNumberArea;
+		friend class ErrorNotificationArea;
+
 	public:
 		NCodeEdit(QWidget *parent);
-
-		void lineNumberAreaPaintEvent(QPaintEvent *event);
-		int lineNumberAreaWidth();
 		
 		void setCurrentLineBackgroundColor(const QColor& color);
 		void setErrorFormat(const QTextCharFormat& format);
@@ -29,7 +56,8 @@ namespace Tools
 
 	protected:
 		void resizeEvent(QResizeEvent *event);
-		bool event(QEvent* event);
+		void lineNumberAreaPaintEvent(QPaintEvent *event, LineNumberArea* area);
+		void errorAreaPaintEvent(QPaintEvent *event, ErrorNotificationArea* area);
 
 	private slots:
 		void updateLineNumberAreaWidth(int newBlockCount);
@@ -38,6 +66,7 @@ namespace Tools
 
 	private:
 		QWidget* _leftArea;		
+		QWidget* _rightArea;
 		QTextCharFormat _currentLineFormat;
 		QTextCharFormat _errorFormat;
 		
@@ -52,19 +81,11 @@ namespace Tools
 		};
 		
 		QHash<int, QList<Error>> _errorsPerLine;
-		
-		class MarginArea : public QWidget
-		{
-		 public:
-			 MarginArea(NCodeEdit* editor);
-			 QSize sizeHint() const;
+		QList<int> _errorLinesPos;
 
-		 protected:
-			 void paintEvent(QPaintEvent *event);
-
-		 private:
-			 NCodeEdit* _editor;
-		};
+		int lineNumberAreaWidth();
+		int errorAreaWidth();
+		void showError(const QPoint &pos);
 	};
 }
 

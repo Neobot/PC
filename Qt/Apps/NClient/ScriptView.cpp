@@ -27,6 +27,7 @@ void ScriptView::connectionStatusChanged(NetworkConnection::ConnectionStatus sta
 
 void ScriptView::check()
 {
+	ui->editor->codeEdit()->clearErrors();
 	NSParser parser;
 
 	bool ok = parser.verify(ui->editor->codeEdit()->toPlainText());
@@ -38,7 +39,7 @@ void ScriptView::check()
 	else
 	{
 		QString text;
-		ui->editor->codeEdit()->clearErrors();
+
 		for(const NSParsingError& e : parser.getErrors())
 		{
 			ui->editor->codeEdit()->addError(e.getLine(), e.getColumn(), e.getLength(), e.getMessage());
