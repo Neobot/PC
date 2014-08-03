@@ -30,7 +30,13 @@ HEADERS += TextEditLogger.h \
     Ax12MovementEditor.h \
     SpinBoxDelegate.h \
     TapWidget.h \
-    ColorDisplayWidget.h
+    ColorDisplayWidget.h \
+    LineHighlighting.h \
+    NCodeEdit.h \
+    SyntaxRuleHighlighting.h \
+    TextHighlighter.h \
+    TextHighlighterStrategyInterface.h \
+    NSEditor.h
 
 SOURCES += TextEditLogger.cpp \
     SlidingStackedWidget.cpp \
@@ -43,7 +49,13 @@ SOURCES += TextEditLogger.cpp \
     Ax12MovementEditor.cpp \
     SpinBoxDelegate.cpp \
     TapWidget.cpp \
-    ColorDisplayWidget.cpp
+    ColorDisplayWidget.cpp \
+    LineHighlighting.cpp \
+    NCodeEdit.cpp \
+    SyntaxRuleHighlighting.cpp \
+    TextHighlighter.cpp \
+    TextHighlighterStrategyInterface.cpp \
+    NSEditor.cpp
 
 RESOURCES += WidgetToolsLib.qrc
 

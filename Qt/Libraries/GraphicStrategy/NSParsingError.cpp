@@ -3,17 +3,17 @@
 
 NSParsingError NSParsingError::warning(const QString& warningMessage, Symbol *symbol)
 {
-	return NSParsingError(Warning, QString(),  symbol->line, symbol->col, warningMessage);
+	return NSParsingError(Warning, QString(),  symbol->line, symbol->col, symbol->symbol.length(), warningMessage);
 }
 
 NSParsingError NSParsingError::error(const QString& errorMessage, Symbol *symbol)
 {
-	return NSParsingError(Error, QString(),  symbol->line, symbol->col, errorMessage);
+	return NSParsingError(Error, QString(),  symbol->line, symbol->col, symbol->symbol.length(), errorMessage);
 }
 
 NSParsingError NSParsingError::info(const QString& infoMessage, Symbol *symbol)
 {
-	return NSParsingError(Info, QString(), symbol->line, symbol->col, infoMessage);
+	return NSParsingError(Info, QString(), symbol->line, symbol->col, symbol->symbol.length(), infoMessage);
 }
 
 NSParsingError NSParsingError::fromGPError(GPError* e)
@@ -31,7 +31,7 @@ NSParsingError NSParsingError::fromGPError(GPError* e)
 	message += QString::fromStdWString(e->lastTerminal.image);
 	message += "'";
 
-	return NSParsingError(Error, QString(), e->line, e->col, message);
+	return NSParsingError(Error, QString(), e->line, e->col, e->lastTerminal.image.length(), message);
 }
 
 NSParsingError NSParsingError::undeclaredVariableError(const QString &variableName, Symbol *symbol)
@@ -96,6 +96,16 @@ int NSParsingError::getLine() const
 int NSParsingError::getColumn() const
 {
 	return _column;
+}
+
+int NSParsingError::getLength() const
+{
+	return _length;
+}
+
+const QString &NSParsingError::getMessage() const
+{
+	return _message;
 }
 
 void NSParsingError::setFilename(const QString &filename)

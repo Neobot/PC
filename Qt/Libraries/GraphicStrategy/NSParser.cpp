@@ -82,7 +82,7 @@ bool NSParser::parseFile(const QString &filepath, QList<AbstractAction *> &actio
 	QFile file(filepath);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
-		_errors << NSParsingError(NSParsingError::Error, filepath, -1, -1, "The file cannot be opened");
+		_errors << NSParsingError(NSParsingError::Error, filepath, -1, -1, -1, "The file cannot be opened");
 		return false;
 	}
 
@@ -111,7 +111,7 @@ Symbol *NSParser::getParsedTree(const QString &scriptCode)
 {
 	if (_invalidGrammar)
 	{
-		addError(NSParsingError(NSParsingError::Error, "", -1, -1, "Critical: An error occured while loading the grammar!"));
+		addError(NSParsingError(NSParsingError::Error, "", -1, -1, -1, "Critical: An error occured while loading the grammar!"));
 		return nullptr;
 	}
 

@@ -13,6 +13,7 @@ include( ../../BuildConfiguration.pri)
 
 INCLUDEPATH += ../CommLib
 INCLUDEPATH += ../ToolsLib
+INCLUDEPATH += ../WidgetToolsLib
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/Micropather
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/gpengine/include
 

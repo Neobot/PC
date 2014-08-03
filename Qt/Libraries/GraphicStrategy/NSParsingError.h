@@ -17,8 +17,8 @@ public:
 		Error
 	};
 
-	NSParsingError(ErrorType errorType, const QString& errorFilename, int errorLine, int errorColumn, const QString& errorMessage)
-		: _type(errorType), _filename(errorFilename), _line(errorLine), _column(errorColumn), _message(errorMessage) {}
+	NSParsingError(ErrorType errorType, const QString& errorFilename, int errorLine, int errorColumn, int errorLength, const QString& errorMessage)
+		: _type(errorType), _filename(errorFilename), _line(errorLine), _column(errorColumn), _length(errorLength), _message(errorMessage) {}
 
 	static NSParsingError warning(const QString& warningMessage, Symbol* symbol);
 	static NSParsingError error(const QString& errorMessage, Symbol* symbol);
@@ -34,6 +34,7 @@ public:
 	const QString& getFilename() const;
 	int getLine() const;
 	int getColumn() const;
+	int getLength() const;
 	const QString& getMessage() const;
 
 	void setFilename(const QString& filename);
@@ -43,6 +44,7 @@ private:
 	QString _filename;
 	int _line;
 	int _column;
+	int _length;
 	QString _message;
 };
 

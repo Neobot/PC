@@ -12,7 +12,7 @@ ScriptView::ScriptView(NetworkConnection *connection, QWidget *parent) :
 	ui(new Ui::ScriptView)
 {
 	ui->setupUi(this);
-	connect(ui->btnCheck, SIGNAL(clicked()), this, SLOT(check()));
+	connect(ui->editor, SIGNAL(check()), this, SLOT(check()));
 }
 
 ScriptView::~ScriptView()
@@ -29,7 +29,7 @@ void ScriptView::check()
 {
 	NSParser parser;
 
-	bool ok = parser.verify(ui->plainTextEdit->toPlainText());
+	bool ok = parser.verify(ui->editor->codeEdit()->toPlainText());
 
 	if (ok)
 	{
@@ -38,8 +38,11 @@ void ScriptView::check()
 	else
 	{
 		QString text;
+		ui->editor->codeEdit()->clearErrors();
 		for(const NSParsingError& e : parser.getErrors())
 		{
+			ui->editor->codeEdit()->addError(e.getLine(), e.getColumn(), e.getLength(), e.getMessage());
+
 			text += " - ";
 			text += e.print();
 			text += '\n';
@@ -48,7 +51,4 @@ void ScriptView::check()
 		QMessageBox::critical(this, "Verification failed", QString("The following error occured:\n").append(text));
 
 	}
-
-	QTextStream s(stdout);
-	parser.print(s);
 }
