@@ -2,6 +2,7 @@
 #define NCODEEDITOR_H
 
 #include <QPlainTextEdit>
+#include <QLabel>
 
 namespace Tools
 {
@@ -54,21 +55,30 @@ namespace Tools
 		void clearErrors();
 		void addError(int line, int col, int length, const QString& message);
 
+        void setLineNumbersVisible(bool value);
+        void setErrorAreaVisible(bool value);
+        void setCurrentLineHighlighted(bool value);
+
 	protected:
 		void resizeEvent(QResizeEvent *event);
 		void lineNumberAreaPaintEvent(QPaintEvent *event, LineNumberArea* area);
 		void errorAreaPaintEvent(QPaintEvent *event, ErrorNotificationArea* area);
 
 	private slots:
-		void updateLineNumberAreaWidth(int newBlockCount);
+		void updateEditorLayout();
 		void highlightCurrentLine();
-		void updateLineNumberArea(const QRect &, int);
+		void updateAdditionalAreas(const QRect &, int);
+        void textChangedAt(int pos, int charsRemoved, int charsAdded);
 
 	private:
-		QWidget* _leftArea;		
-		QWidget* _rightArea;
+		QWidget* _lineNumberArea;
+		QWidget* _errorArea;
 		QTextCharFormat _currentLineFormat;
 		QTextCharFormat _errorFormat;
+
+        bool _currentLineHighlighted;
+		bool _lineAreaVisibled;
+		bool _errorAreaVisibled;
 		
 		TextHighlighter* _highlighter;
 		SyntaxRuleHighlighting* _syntaxHighlighting;
@@ -86,6 +96,9 @@ namespace Tools
 		int lineNumberAreaWidth();
 		int errorAreaWidth();
 		void showError(const QPoint &pos);
+
+	signals:
+		void codeChanged();
 	};
 }
 

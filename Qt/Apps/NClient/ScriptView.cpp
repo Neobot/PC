@@ -13,6 +13,10 @@ ScriptView::ScriptView(NetworkConnection *connection, QWidget *parent) :
 {
 	ui->setupUi(this);
 	connect(ui->editor, SIGNAL(check()), this, SLOT(check()));
+
+	_codeChangedSignalDelayer = new Tools::SignalDelayer(this);
+	_codeChangedSignalDelayer->setDelayedSignal(ui->editor->codeEdit(), SIGNAL(codeChanged()), 1000);
+	connect(_codeChangedSignalDelayer, SIGNAL(raised()), this, SLOT(check()));
 }
 
 ScriptView::~ScriptView()
@@ -27,6 +31,9 @@ void ScriptView::connectionStatusChanged(NetworkConnection::ConnectionStatus sta
 
 void ScriptView::check()
 {
+	if (ui->editor->codeEdit()->toPlainText().isEmpty())
+		return;
+
 	ui->editor->codeEdit()->clearErrors();
 	NSParser parser;
 
@@ -34,7 +41,7 @@ void ScriptView::check()
 
 	if (ok)
 	{
-		QMessageBox::information(this, "No errors", "The parsing has succeded");
+		//QMessageBox::information(this, "No errors", "The parsing has succeded");
 	}
 	else
 	{
@@ -49,7 +56,7 @@ void ScriptView::check()
 			text += '\n';
 		}
 
-		QMessageBox::critical(this, "Verification failed", QString("The following error occured:\n").append(text));
+		//QMessageBox::critical(this, "Verification failed", QString("The following error occured:\n").append(text));
 
 	}
 }

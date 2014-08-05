@@ -2,6 +2,7 @@
 #define SCRIPTVIEW_H
 
 #include "AbstractView.h"
+#include "SignalDelayer.h"
 
 namespace Ui {
 	class ScriptView;
@@ -21,6 +22,7 @@ public slots:
 	void check();
 private:
 	Ui::ScriptView *ui;
+	Tools::SignalDelayer* _codeChangedSignalDelayer;
 };
 
 #endif // SCRIPTVIEW_H

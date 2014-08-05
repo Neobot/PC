@@ -15,4 +15,7 @@
     <qresource prefix="/ns">
         <file alias="nsgrammar">Resources/ns.cgt</file>
     </qresource>
+    <qresource prefix="/other">
+        <file alias="error">Resources/error_small.png</file>
+    </qresource>
 </RCC>

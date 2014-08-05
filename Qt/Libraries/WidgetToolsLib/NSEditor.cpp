@@ -43,6 +43,10 @@ void Tools::NSEditor::setupUi()
 	addNSKeywordSyntax("teleport", syntax);
 	addNSKeywordSyntax("go", syntax);
 	addNSKeywordSyntax("to", syntax);
+	addNSKeywordSyntax("speed", syntax);
+	addNSKeywordSyntax("forward", syntax);
+	addNSKeywordSyntax("backward", syntax);
+	addNSKeywordSyntax("auto", syntax);
 	addNSKeywordSyntax("set", syntax);
 	addNSKeywordSyntax("enable", syntax);
 	addNSKeywordSyntax("disable", syntax);

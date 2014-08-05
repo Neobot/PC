@@ -23,7 +23,8 @@ HEADERS += ToolsLib.h \
     NGrid.h \
     NGridArea.h \
     NSettings.h \
-    Ax12MovementManager.h
+    Ax12MovementManager.h \
+    SignalDelayer.h
 
 SOURCES += ToolsLib.cpp \
     AbstractLogger.cpp \
@@ -37,4 +38,5 @@ SOURCES += ToolsLib.cpp \
     NGrid.cpp \
     NGridArea.cpp \
     NSettings.cpp \
-    Ax12MovementManager.cpp
+    Ax12MovementManager.cpp \
+    SignalDelayer.cpp

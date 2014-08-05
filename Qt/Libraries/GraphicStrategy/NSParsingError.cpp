@@ -1,19 +1,21 @@
 #include "NSParsingError.h"
 #include "ErrorTable.h"
+#include "NonTerminal.h"
+#include "Terminal.h"
 
 NSParsingError NSParsingError::warning(const QString& warningMessage, Symbol *symbol)
 {
-	return NSParsingError(Warning, QString(),  symbol->line, symbol->col, symbol->symbol.length(), warningMessage);
+    return NSParsingError(Warning, QString(),  symbol->line, symbol->col - 1, findSymbolLength(symbol), warningMessage);
 }
 
 NSParsingError NSParsingError::error(const QString& errorMessage, Symbol *symbol)
 {
-	return NSParsingError(Error, QString(),  symbol->line, symbol->col, symbol->symbol.length(), errorMessage);
+    return NSParsingError(Error, QString(),  symbol->line, symbol->col - 1, findSymbolLength(symbol), errorMessage);
 }
 
 NSParsingError NSParsingError::info(const QString& infoMessage, Symbol *symbol)
 {
-	return NSParsingError(Info, QString(), symbol->line, symbol->col, symbol->symbol.length(), infoMessage);
+    return NSParsingError(Info, QString(), symbol->line, symbol->col - 1, findSymbolLength(symbol), infoMessage);
 }
 
 NSParsingError NSParsingError::fromGPError(GPError* e)
@@ -31,7 +33,7 @@ NSParsingError NSParsingError::fromGPError(GPError* e)
 	message += QString::fromStdWString(e->lastTerminal.image);
 	message += "'";
 
-	return NSParsingError(Error, QString(), e->line, e->col, e->lastTerminal.image.length(), message);
+	return NSParsingError(Error, QString(), e->line, e->col - 1, findSymbolLength(&e->lastTerminal), message);
 }
 
 NSParsingError NSParsingError::undeclaredVariableError(const QString &variableName, Symbol *symbol)
@@ -110,5 +112,43 @@ const QString &NSParsingError::getMessage() const
 
 void NSParsingError::setFilename(const QString &filename)
 {
-	_filename = filename;
+    _filename = filename;
+}
+
+int NSParsingError::findSymbolLength(Symbol *symbol)
+{
+    int length = -1;
+    if (symbol->type == TERMINAL)
+    {
+        Terminal* t = static_cast<Terminal*>(symbol);
+        length = t->image.length();
+    }
+    else
+    {
+        int originalCol = symbol->col;
+        int originalLine = symbol->line;
+        while (true)
+        {
+            //search the last child-terminal of the symbol
+            NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+            if (!nt->children.empty())
+            {
+				symbol = *(nt->children.end() - 1);
+                if (symbol->type == TERMINAL)
+                {
+                    //last terminal found
+                    Terminal* t = static_cast<Terminal*>(symbol);
+                    if (t->line == originalLine) //if the last terminal is on the same line
+                        length = t->col + t->image.length() - originalCol;
+
+                    break;
+                }
+            }
+            else
+                break;
+
+        }
+    }
+
+    return length;
 }

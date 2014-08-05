@@ -46,6 +46,8 @@ private:
 	int _column;
 	int _length;
 	QString _message;
+
+    static int findSymbolLength(Symbol* symbol);
 };
 
 #endif // NSPARSINGERROR_H

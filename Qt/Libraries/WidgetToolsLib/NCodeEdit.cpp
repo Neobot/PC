@@ -10,32 +10,35 @@
 using namespace Tools;
 
 NCodeEdit::NCodeEdit(QWidget *parent)
-	: QPlainTextEdit(parent), _errorHighlighting(nullptr)
+	: QPlainTextEdit(parent), _currentLineHighlighted(false), _lineAreaVisibled(true), _errorAreaVisibled(true), _errorHighlighting(nullptr)
 {
-	_leftArea = new LineNumberArea(this);
-	_rightArea = new ErrorNotificationArea(this);
+	_lineNumberArea = new LineNumberArea(this);
+	_errorArea = new ErrorNotificationArea(this);
 
-     connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateLineNumberAreaWidth(int)));
-     connect(this, SIGNAL(updateRequest(const QRect &, int)), this, SLOT(updateLineNumberArea(const QRect &, int)));
-     connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
+	connect(this, SIGNAL(blockCountChanged(int)), this, SLOT(updateEditorLayout()));
+	connect(this, SIGNAL(updateRequest(const QRect &, int)), this, SLOT(updateAdditionalAreas(const QRect &, int)));
+	connect(this, SIGNAL(cursorPositionChanged()), this, SLOT(highlightCurrentLine()));
 
-	QColor lineColor = QColor(Qt::yellow).lighter(160);
+	QColor lineColor = QColor(239,239,239);
 	_currentLineFormat.setBackground(lineColor);
 	_currentLineFormat.setProperty(QTextFormat::FullWidthSelection, true);
 
 	_errorFormat.setUnderlineStyle(QTextCharFormat::SpellCheckUnderline);
 	_errorFormat.setUnderlineColor(Qt::red);
 	_errorFormat.setFontUnderline(true);
-	
+
 	_highlighter = new TextHighlighter(document());
-		
-     updateLineNumberAreaWidth(0);
-     highlightCurrentLine();
 
-	 setTabStopWidth(20);
-	 setLineWrapMode(QPlainTextEdit::NoWrap);
+	updateEditorLayout();
+	highlightCurrentLine();
 
-	 _rightArea->hide();
+	setTabStopWidth(20);
+	setLineWrapMode(QPlainTextEdit::NoWrap);
+
+	connect(document(), SIGNAL(contentsChange(int,int,int)), this, SLOT(textChangedAt(int,int,int)));
+
+	setLineNumbersVisible(true);
+	setErrorAreaVisible(true);
 }
 
 void NCodeEdit::setCurrentLineBackgroundColor(const QColor& color)
@@ -62,7 +65,6 @@ void NCodeEdit::clearErrors()
 	if (_errorHighlighting)
 		_errorHighlighting->clearSelection();
 		
-	_rightArea->hide();
 	_highlighter->rehighlight();
 }
 
@@ -82,8 +84,27 @@ void NCodeEdit::addError(int line, int col, int length, const QString& message)
 		
 	_errorHighlighting->addSelection(line, col, length);
 	
-	_rightArea->show();
-	_highlighter->rehighlight();
+    _highlighter->rehighlight();
+}
+
+void NCodeEdit::setLineNumbersVisible(bool value)
+{
+	_lineNumberArea->setVisible(value);
+	_lineAreaVisibled = value;
+	updateEditorLayout();
+}
+
+void NCodeEdit::setErrorAreaVisible(bool value)
+{
+	_errorArea->setVisible(value);
+	_errorAreaVisibled = value;
+	updateEditorLayout();
+}
+
+void NCodeEdit::setCurrentLineHighlighted(bool value)
+{
+    _currentLineHighlighted = value;
+    highlightCurrentLine();
 }
 
 int NCodeEdit::lineNumberAreaWidth()
@@ -96,7 +117,7 @@ int NCodeEdit::lineNumberAreaWidth()
         ++digits;
     }
 
-    int space = 3 + fontMetrics().width(QLatin1Char('9')) * digits;
+	int space = 5 + fontMetrics().width(QLatin1Char('9')) * digits;
 
 	return space;
 }
@@ -126,49 +147,88 @@ void NCodeEdit::showError(const QPoint& pos)
 	}
 
 	if (!message.isEmpty())
-		QToolTip::showText(_rightArea->mapToGlobal(pos), message);
+		QToolTip::showText(_errorArea->mapToGlobal(pos), "<i>" + message + "</i>", _errorArea);
 }
 
-void NCodeEdit::updateLineNumberAreaWidth(int /* newBlockCount */)
+void NCodeEdit::updateEditorLayout()
 {
-	setViewportMargins(lineNumberAreaWidth(), 0, _rightArea->isVisible() ? errorAreaWidth() : 0, 0);
+    int leftSize = 0;
+
+	if (_lineAreaVisibled)
+        leftSize += lineNumberAreaWidth();
+
+	if (_errorAreaVisibled)
+        leftSize += errorAreaWidth();
+
+    setViewportMargins(leftSize, 0, 0, 0);
 }
 
-void NCodeEdit::updateLineNumberArea(const QRect &rect, int dy)
+void NCodeEdit::updateAdditionalAreas(const QRect &rect, int dy)
 {
     if (dy != 0)
 	{
-        _leftArea->scroll(0, dy);
-		_rightArea->scroll(0, dy);
+		_lineNumberArea->scroll(0, dy);
+		_errorArea->scroll(0, dy);
 	}
     else
 	{
-        _leftArea->update(0, rect.y(), _leftArea->width(), rect.height());
-		_rightArea->update(rect.right() - _rightArea->width(), rect.y(), _rightArea->width(), rect.height());
+		_lineNumberArea->update(0, rect.y(), _lineNumberArea->width(), rect.height());
+		_errorArea->update(0, rect.y(), _errorArea->width(), rect.height());
 	}
 
     if (rect.contains(viewport()->rect()))
-        updateLineNumberAreaWidth(0);
- }
+		updateEditorLayout();
+}
+
+void NCodeEdit::textChangedAt(int pos, int charsRemoved, int charsAdded)
+{
+	if (charsRemoved > 0 || charsAdded > 0)
+	{
+		emit codeChanged();
+
+		QTextBlock block = document()->findBlock(pos);
+		int lineNumber = block.blockNumber() + 1;
+
+		if (_errorsPerLine.contains(lineNumber))
+		{
+			//int posInBlock = pos - block.pos();
+
+			_errorsPerLine.remove(lineNumber);
+			_errorHighlighting->clearSelection();
+
+			for(auto it = _errorsPerLine.constBegin(); it != _errorsPerLine.constEnd(); ++it)
+			{
+				for(const Error& e : *it)
+				{
+					_errorHighlighting->addSelection(it.key(), e.pos, e.length);
+				}
+			}
+		}
+	}
+}
 
 void NCodeEdit::resizeEvent(QResizeEvent *e)
 {
     QPlainTextEdit::resizeEvent(e);
 
     QRect cr = contentsRect();
-    _leftArea->setGeometry(QRect(cr.left(), cr.top(), lineNumberAreaWidth(), cr.height()));
-	_rightArea->setGeometry(QRect(cr.right() - errorAreaWidth(), cr.top(), errorAreaWidth(), cr.height()));
+
+	int lineAreaPos = 0;
+	if (_errorAreaVisibled)
+		lineAreaPos += errorAreaWidth();
+	_lineNumberArea->setGeometry(QRect(cr.left() + lineAreaPos, cr.top(), lineNumberAreaWidth(), cr.height()));
+	_errorArea->setGeometry(QRect(cr.left(), cr.top(), errorAreaWidth(), cr.height()));
 }
 
 void NCodeEdit::highlightCurrentLine()
 {
     QList<QTextEdit::ExtraSelection> extraSelections;
 
-    if (!isReadOnly()) 
-	{
+    if (_currentLineHighlighted && !isReadOnly())
+    {
         QTextEdit::ExtraSelection selection;
-		selection.format = _currentLineFormat;
-       
+        selection.format = _currentLineFormat;
+
         selection.cursor = textCursor();
         selection.cursor.clearSelection();
         extraSelections.append(selection);
@@ -180,7 +240,7 @@ void NCodeEdit::highlightCurrentLine()
 void NCodeEdit::lineNumberAreaPaintEvent(QPaintEvent *event, LineNumberArea *area)
 {
 	QPainter painter(area);
-    painter.fillRect(event->rect(), Qt::lightGray);
+    painter.fillRect(event->rect(), QColor(235,235,235));
 
 	QTextBlock block = firstVisibleBlock();
     int blockNumber = block.blockNumber();
@@ -192,9 +252,9 @@ void NCodeEdit::lineNumberAreaPaintEvent(QPaintEvent *event, LineNumberArea *are
         if (block.isVisible() && bottom >= event->rect().top()) 
 		{
             QString number = QString::number(blockNumber + 1);
-            painter.setPen(Qt::black);
-            painter.drawText(0, top, _leftArea->width(), fontMetrics().height(),
-                            Qt::AlignRight, number);
+            painter.setPen(QColor(167,167,167));
+			painter.drawText(0, top, _lineNumberArea->width(), fontMetrics().height(),
+							Qt::AlignCenter, number);
         }
 
         block = block.next();
@@ -207,7 +267,7 @@ void NCodeEdit::lineNumberAreaPaintEvent(QPaintEvent *event, LineNumberArea *are
 void NCodeEdit::errorAreaPaintEvent(QPaintEvent *event, ErrorNotificationArea *area)
 {
 	QPainter painter(area);
-	painter.fillRect(event->rect(), Qt::white);
+    painter.fillRect(event->rect(), QColor(235,235,235));
 
 	_errorLinesPos.clear();
 
@@ -222,8 +282,10 @@ void NCodeEdit::errorAreaPaintEvent(QPaintEvent *event, ErrorNotificationArea *a
 		if (block.isVisible() && bottom >= event->rect().top() && !_errorsPerLine.value(blockNumber + 1).isEmpty())
 		{
 			painter.setPen(Qt::black);
-			painter.drawText(0, top, _leftArea->width(), fontMetrics().height(),
-							Qt::AlignRight, "e");
+			QRect drawArea(0, top, _errorArea->width(), fontMetrics().height());
+			QPixmap icon(":/other/error");
+			//icon = icon.scaled(8,8, Qt::KeepAspectRatio);
+			painter.drawPixmap(drawArea, icon);
 		}
 
 		block = block.next();
@@ -255,6 +317,8 @@ void NCodeEdit::LineNumberArea::paintEvent(QPaintEvent *event)
 NCodeEdit::ErrorNotificationArea::ErrorNotificationArea(NCodeEdit* editor) : QWidget(editor), _editor(editor)
 {
 	setMouseTracking(true);
+
+	setStyleSheet("QToolTip{background-color: rgb(255,172,154); color: black; font-weight: bold;}");
 }
 
 QSize NCodeEdit::ErrorNotificationArea::sizeHint() const
