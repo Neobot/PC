@@ -17,5 +17,6 @@
     </qresource>
     <qresource prefix="/other">
         <file alias="error">Resources/error_small.png</file>
+        <file alias="error_croped">Resources/error_small_croped.png</file>
     </qresource>
 </RCC>

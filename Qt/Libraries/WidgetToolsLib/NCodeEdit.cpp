@@ -127,29 +127,6 @@ int NCodeEdit::errorAreaWidth()
 	return 20;
 }
 
-void NCodeEdit::showError(const QPoint& pos)
-{
-	int line = 0;
-	for(int linePos : _errorLinesPos)
-	{
-		++line;
-		if (pos.y() < linePos)
-			break;
-	}
-
-	QString message;
-	QList<Error> errors = _errorsPerLine.value(line);
-	for(const Error& e : errors)
-	{
-		if (!message.isEmpty())
-			message += '\n';
-		message += e.error;
-	}
-
-	if (!message.isEmpty())
-		QToolTip::showText(_errorArea->mapToGlobal(pos), "<i>" + message + "</i>", _errorArea);
-}
-
 void NCodeEdit::updateEditorLayout()
 {
     int leftSize = 0;
@@ -296,6 +273,37 @@ void NCodeEdit::errorAreaPaintEvent(QPaintEvent *event, ErrorNotificationArea *a
 	}
 }
 
+void NCodeEdit::showError(const QPoint& pos)
+{
+    int line = 0;
+    for(int linePos : _errorLinesPos)
+    {
+        ++line;
+        if (pos.y() < linePos)
+            break;
+    }
+
+    QString message;
+    QList<Error> errors = _errorsPerLine.value(line);
+    for(const Error& e : errors)
+    {
+        if (!message.isEmpty())
+            message += '\n';
+        message += e.error;
+    }
+
+    if (!message.isEmpty())
+    {
+		_errorArea->setToolTipWidthForText(message, 18);
+
+		QString htmlMessage = "<p><img src=\":/other/error_croped\"> ";
+        htmlMessage += message;
+		htmlMessage += "</p>";
+
+        QToolTip::showText(_errorArea->mapToGlobal(pos), htmlMessage, _errorArea);
+    }
+}
+
 //----------------------------------------------------------------------------
 
 NCodeEdit::LineNumberArea::LineNumberArea(NCodeEdit* editor) : QWidget(editor), _editor(editor)
@@ -317,13 +325,25 @@ void NCodeEdit::LineNumberArea::paintEvent(QPaintEvent *event)
 NCodeEdit::ErrorNotificationArea::ErrorNotificationArea(NCodeEdit* editor) : QWidget(editor), _editor(editor)
 {
 	setMouseTracking(true);
-
-	setStyleSheet("QToolTip{background-color: rgb(255,172,154); color: black; font-weight: bold;}");
+    setToolTipWidthForText(QString(), 42);
 }
 
 QSize NCodeEdit::ErrorNotificationArea::sizeHint() const
 {
-	return QSize(_editor->errorAreaWidth(), 0);
+    return QSize(_editor->errorAreaWidth(), 0);
+}
+
+void NCodeEdit::ErrorNotificationArea::setToolTipWidthForText(const QString& text, int fixedWidth)
+{
+	QFont f = QToolTip::font();
+    f.setBold(true);
+    QFontMetrics fm(f);
+    int width = fm.width(text) + fixedWidth;
+
+    QString ss = "QToolTip{background-color: rgb(255,172,154); color: black; font-weight: bold; min-width: ";
+    ss += QString::number(width);
+    ss += ";}";
+    setStyleSheet(ss);
 }
 
 void NCodeEdit::ErrorNotificationArea::paintEvent(QPaintEvent *event)

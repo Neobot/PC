@@ -32,6 +32,7 @@ namespace Tools
 		 public:
 			 ErrorNotificationArea(NCodeEdit* editor);
 			 QSize sizeHint() const;
+             void setToolTipWidthForText(const QString& text, int fixedWidth);
 
 		 protected:
 			 void paintEvent(QPaintEvent *event);
@@ -72,7 +73,7 @@ namespace Tools
 
 	private:
 		QWidget* _lineNumberArea;
-		QWidget* _errorArea;
+        ErrorNotificationArea* _errorArea;
 		QTextCharFormat _currentLineFormat;
 		QTextCharFormat _errorFormat;
 
