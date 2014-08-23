@@ -42,6 +42,8 @@ public:
 	virtual void resetParameters() = 0;
 	virtual void saveParameters(const QList<float>& values) = 0;
 	virtual QList<float> getParameters() = 0;
+
+	virtual bool runScript(const QByteArray& script) = 0;
 };
 
 #endif // NETWORKCOMMLISTENER_H

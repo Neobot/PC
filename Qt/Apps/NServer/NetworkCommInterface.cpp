@@ -406,6 +406,12 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 
 			break;
 		}
+		case RUN_SCRIPT:
+		{
+			if (!_listener->runScript(data))
+				sendNoticeOfReceipt(RUN_SCRIPT, false);
+			break;
+		}
 		default:
 			if (Instruction::pcToRobotInstructions().contains(instruction) || Instruction::globalInstructions().contains(instruction))
 			{

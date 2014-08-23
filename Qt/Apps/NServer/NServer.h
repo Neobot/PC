@@ -18,6 +18,7 @@
 #include "ServerAX12RequestManager.h"
 
 class Pather;
+class NSRunner;
 
 class NServer : public QObject, public Tools::LoggerInterface, public NetworkCommListener, Comm::CommListener
 {
@@ -57,6 +58,8 @@ private:
 	Tools::Ax12MovementManager _ax12Movements;
     Comm::Ax12MovementRunner* _ax12MovementRunner;
     QHash<NetworkCommInterface*, ServerAX12RequestManager*> _ax12Requests;
+
+	NSRunner* _nsRunner;
 
     void initServerSettings();
 
@@ -98,13 +101,15 @@ private:
 	QList<float> getParameters();
 	void resetParameters();
 
+	bool runScript(const QByteArray& script);
+
 private slots:
 	void newConnection();
 	void removeConnection(int connectionIndex);
 
 	void ax12MovementFinished();
-
 	void strategyFinished();
+	void scriptFinished();
 
 	void closeRobotConnection();
 	void handleSerialError(QSerialPort::SerialPortError error);

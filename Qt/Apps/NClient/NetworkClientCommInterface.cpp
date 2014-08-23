@@ -215,6 +215,13 @@ void NetworkClientCommInterface::resetParameters()
 	getProtocol()->sendMessage(RESET_PARAMETERS, Data());
 }
 
+void NetworkClientCommInterface::runScript(const QByteArray &script)
+{
+	Data d;
+	d.append(script);
+	getProtocol()->sendMessage(RUN_SCRIPT, d);
+}
+
 void NetworkClientCommInterface::read(quint8 instruction, const Comm::Data &data)
 {
 	Data d(data);

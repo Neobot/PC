@@ -48,6 +48,8 @@ public:
 
 	void resetParameters();
 
+	void runScript(const QByteArray& script);
+
 protected slots:
 	virtual void read(quint8 instruction, const Comm::Data& data);
 

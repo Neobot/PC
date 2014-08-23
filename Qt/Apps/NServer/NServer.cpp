@@ -4,6 +4,7 @@
 #include "NetworkProtocol.h"
 #include "StrategyManager.h"
 #include "NMicropather.h"
+#include "NSRunner.h"
 
 #include <QTcpSocket>
 #include <QNetworkInterface>
@@ -22,7 +23,7 @@ const QString AX12_UPDATE_INTERVAL_KEY = "AX12Updateinterval";
 
 NServer::NServer(Tools::AbstractLogger *logger, QObject *parent) :
 	QObject(parent), Tools::LoggerInterface(logger), _settings("Neobot", "NServer"), _parametersSettings("Neobot", "RobotParameters"), _tcpServer(0), _nextConnectionIndex(0), _robotInterface(0),
-	_simulator(0), _strategyManager(0), _currentStrategy(0), _currentStrategyId(-1), _commLogger(0), _robotConnected(false), _ax12Manager(0), _ax12MovementRunner(0)
+	_simulator(0), _strategyManager(0), _currentStrategy(0), _currentStrategyId(-1), _commLogger(0), _robotConnected(false), _ax12Manager(0), _ax12MovementRunner(0), _nsRunner(0)
 {
 	_disconnectionMapper = new QSignalMapper(this);
 	connect(_disconnectionMapper, SIGNAL(mapped(int)), this, SLOT(removeConnection(int)));
@@ -197,6 +198,9 @@ void NServer::cleanRobotConnection()
 {
 	if (_robotInterface)
 	{
+		delete _nsRunner;
+		_nsRunner = 0;
+
 		delete _currentStrategy;
 		_currentStrategy = 0;
 
@@ -308,6 +312,9 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
 		_strategyManager->setDebugMode(false, false, false, false);
 		connect(_strategyManager, SIGNAL(strategyFinished()), this, SLOT(strategyFinished()));
 		_strategyManager->setAx12MovementManager(&_ax12Movements);
+
+		_nsRunner = new NSRunner(_robotInterface, _pather, &_ax12Movements);
+		connect(_nsRunner, SIGNAL(scriptFinished()), this, SLOT(scriptFinished()));
 
 		_robotInterface->ping();
 	}
@@ -524,6 +531,17 @@ void NServer::resetParameters()
 	_parametersSettings.clear();
 }
 
+bool NServer::runScript(const QByteArray &script)
+{
+	if (_robotConnected && _nsRunner)
+	{
+		_nsRunner->startScript(script);
+		return true;
+	}
+
+	return false;
+}
+
 void NServer::ax12MovementFinished()
 {
 
@@ -543,6 +561,14 @@ void NServer::strategyFinished()
 	}
 }
 
+void NServer::scriptFinished()
+{
+	for(QMap<unsigned int, NetworkCommInterface*>::const_iterator it = _connections.constBegin(); it != _connections.constEnd(); ++it)
+	{
+		NetworkCommInterface* i = *it;
+		i->sendNoticeOfReceipt(Comm::RUN_SCRIPT, true);
+	}
+}
 
 void NServer::handleSerialError(QSerialPort::SerialPortError error)
 {
