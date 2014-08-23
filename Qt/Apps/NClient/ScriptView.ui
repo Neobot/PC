@@ -15,13 +15,13 @@
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
    <item>
-    <widget class="Tools::NSEditor" name="editor" native="true"/>
+    <widget class="NSEditor" name="editor" native="true"/>
    </item>
   </layout>
  </widget>
  <customwidgets>
   <customwidget>
-   <class>Tools::NSEditor</class>
+   <class>NSEditor</class>
    <extends>QWidget</extends>
    <header>NSEditor.h</header>
    <container>1</container>

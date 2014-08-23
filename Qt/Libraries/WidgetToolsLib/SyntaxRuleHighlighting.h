@@ -47,12 +47,17 @@ namespace Tools
 		* \param color The color to apply to the text which match the pattern.
 		* \param fontWeight The font weight to apply to the text which match the pattern.
 		*/
-		void addSyntaxRule(const QString& keyword, const QColor& color, int fontWeight = QFont::Normal);
+		void addSyntaxRule(const QString& keyword, const QColor& color, int fontWeight = QFont::Normal, Qt::CaseSensitivity sensitivity = Qt::CaseSensitive);
 
 		/**
 		* \brief Adds syntax rules for the shell language to \p highlighter.
 		*/
 		static SyntaxRuleHighlighting* shellSyntaxRules(TextHighlighter* parent = 0);
+
+		/**
+		* \brief Adds syntax rules for the Neobot Script language to \p highlighter.
+		*/
+		static SyntaxRuleHighlighting* nsSyntaxRules(TextHighlighter* parent = 0);
 
 	protected:
 		void highlightBlock(const QString &text);

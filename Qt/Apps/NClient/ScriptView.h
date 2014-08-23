@@ -2,7 +2,6 @@
 #define SCRIPTVIEW_H
 
 #include "AbstractView.h"
-#include "SignalDelayer.h"
 
 namespace Ui {
 	class ScriptView;
@@ -19,10 +18,9 @@ public:
 public slots:
 	void connectionStatusChanged(NetworkConnection::ConnectionStatus status);
 
-	void check();
 private:
 	Ui::ScriptView *ui;
-	Tools::SignalDelayer* _codeChangedSignalDelayer;
+
 };
 
 #endif // SCRIPTVIEW_H

@@ -53,7 +53,8 @@ SOURCES += main.cpp\
     ParametersView.cpp \
     Ax12View.cpp \
     GraphsView.cpp \
-    ScriptView.cpp
+    ScriptView.cpp \
+    NSEditor.cpp
 
 HEADERS  += NClient.h \
     NetworkClientCommInterface.h \
@@ -71,7 +72,8 @@ HEADERS  += NClient.h \
     ParametersView.h \
     Ax12View.h \
     GraphsView.h \
-    ScriptView.h
+    ScriptView.h \
+    NSEditor.h
 
 FORMS    += NClient.ui \
     ConnectionView.ui \
