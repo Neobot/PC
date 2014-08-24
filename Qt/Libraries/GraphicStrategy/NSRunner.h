@@ -18,6 +18,12 @@ public:
 	~NSRunner();
 
 	bool startScript(const QString &scriptCode);
+	void stopScript();
+
+	StrategyManager* getInternalManager() const;
+
+	bool isRunning() const;
+
 
 private:
 	StrategyManager* _manager;

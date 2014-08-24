@@ -32,6 +32,8 @@ NServer::NServer(Tools::AbstractLogger *logger, QObject *parent) :
 	_dataDirectory.mkdir(NEOBOT_SERVER_DATA_DIR_NAME);
 	_dataDirectory.cd(NEOBOT_SERVER_DATA_DIR_NAME);
 
+	_dispatcher.registerResponder(this);
+
     initServerSettings();
 }
 
@@ -237,7 +239,7 @@ bool NServer::networkPingReceived()
 	return true;
 }
 
-void NServer::noticeOfReceipt(quint8 instruction, bool result)
+void NServer::networkNoticeOfReceipt(quint8 instruction, bool result)
 {
 	Q_UNUSED(instruction);
 	Q_UNUSED(result);
@@ -304,7 +306,7 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
         foreach(ServerAX12RequestManager* request, _ax12Requests)
             request->setAX12CommManager(_ax12Manager);
 
-		_robotInterface = new Comm::RobotCommInterface(p, _ax12Manager, 0, this);
+		_robotInterface = new Comm::RobotCommInterface(p, _ax12Manager, 0, &_dispatcher);
 		_robotInterface->disableNoticeOfReceiptChecking();
 
 		_pather = new NMicropather(_commLogger, NMicropather::Euclidean, 1000.0);
@@ -444,6 +446,13 @@ void NServer::initReceived()
 {
 	if (_robotInterface)
 	{
+		if (_currentStrategy || _nsRunner->isRunning())
+		{
+			//stop the running strategy
+			int currentStrat = 0;
+			stopStrategy(currentStrat);
+		}
+
 		int autoStrat = -1;
 		bool enabled = false;
 		bool simulation = false;
@@ -533,13 +542,22 @@ void NServer::resetParameters()
 
 bool NServer::runScript(const QByteArray &script)
 {
-	if (_robotConnected && _nsRunner)
+	bool result = false;
+	if (_robotConnected && !_nsRunner->isRunning() && !_currentStrategy)
 	{
-		_nsRunner->startScript(script);
-		return true;
+		_dispatcher.registerResponder(_nsRunner->getInternalManager());
+		result = _nsRunner->startScript(script);
+		if (result)
+		{
+			for(QMap<unsigned int, NetworkCommInterface*>::const_iterator it = _connections.constBegin(); it != _connections.constEnd(); ++it)
+			{
+				NetworkCommInterface* i = *it;
+				i->sendStrategyStatus(-1, true);
+			}
+		}
 	}
 
-	return false;
+	return result;
 }
 
 void NServer::ax12MovementFinished()
@@ -563,10 +581,12 @@ void NServer::strategyFinished()
 
 void NServer::scriptFinished()
 {
+	_dispatcher.unregisterResponder(_nsRunner->getInternalManager());
+
 	for(QMap<unsigned int, NetworkCommInterface*>::const_iterator it = _connections.constBegin(); it != _connections.constEnd(); ++it)
 	{
 		NetworkCommInterface* i = *it;
-		i->sendNoticeOfReceipt(Comm::RUN_SCRIPT, true);
+		i->sendStrategyStatus(-1, false);
 	}
 }
 
@@ -616,7 +636,7 @@ void NServer::updateRobotConnection()
 
 bool NServer::startStrategy(int strategyNum, bool mirror)
 {
-	if (_robotConnected && !_currentStrategy)
+	if (_robotConnected && !_currentStrategy && !_nsRunner->isRunning())
 	{
 		//start the strategy
 		_currentStrategy = _strategiesEnumerator.start((StrategyEnumerator::Strategy)strategyNum);
@@ -628,7 +648,8 @@ bool NServer::startStrategy(int strategyNum, bool mirror)
 			_currentStrategy->init();
 
 			_strategyManager->setStrategy(_currentStrategy);
-			_strategyManager->connectToRobot();
+			_dispatcher.registerResponder(_strategyManager);
+			_robotInterface->ping();
 			_strategyManager->params = getParameters();
 
 			if (_simulator)
@@ -658,32 +679,51 @@ bool NServer::startStrategy(int strategyNum, bool mirror)
 
 bool NServer::stopStrategy(int &currentStrategyNum)
 {
+	currentStrategyNum = -1;
 	bool result = false;
 
-	if (_robotConnected && _currentStrategy)
+	if (_robotConnected)
 	{
-		_strategyManager->cancelCurrentAction();
-		_strategyManager->setStrategy(0);
-		_strategyManager->disconnectFromRobot();
-		delete _currentStrategy;
-		_currentStrategy = 0;
+		if (_currentStrategy)
+		{
+			if (_strategyManager->isRunning())
+			{
+				_strategyManager->stopStrategy();
 
-		for(QMap<unsigned int, NetworkCommInterface*>::const_iterator it = _connections.constBegin(); it != _connections.constEnd(); ++it)
-        {
-			NetworkCommInterface* i = *it;
+				_strategyManager->setStrategy(0);
+				_dispatcher.unregisterResponder(_strategyManager);
+				delete _currentStrategy;
+				_currentStrategy = 0;
 
-            int strNum;
-            bool isRunning;
-            askStrategyStatus(strNum, isRunning);
-            i->sendStrategyStatus(strNum, isRunning);
-        }
+				for(QMap<unsigned int, NetworkCommInterface*>::const_iterator it = _connections.constBegin(); it != _connections.constEnd(); ++it)
+				{
+					NetworkCommInterface* i = *it;
 
-		result = true;
+					int strNum;
+					bool isRunning;
+					askStrategyStatus(strNum, isRunning);
+					i->sendStrategyStatus(strNum, isRunning);
+				}
+			}
 
-		_robotInterface->setListener(this);
+			result = true;
+			currentStrategyNum = _currentStrategyId;
+		}
+
+		else if (_nsRunner->isRunning())
+		{
+			_nsRunner->stopScript();
+			_dispatcher.unregisterResponder(_nsRunner->getInternalManager());
+
+			for(QMap<unsigned int, NetworkCommInterface*>::const_iterator it = _connections.constBegin(); it != _connections.constEnd(); ++it)
+			{
+				NetworkCommInterface* i = *it;
+				i->sendStrategyStatus(-1, false);
+			}
+		}
 	}
 
-	currentStrategyNum = _currentStrategyId;
+
 
 	return result;
 }

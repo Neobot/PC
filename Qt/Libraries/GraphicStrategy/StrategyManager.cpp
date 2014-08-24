@@ -525,7 +525,13 @@ void StrategyManager::cancelCurrentAction()
 {
 	AbstractAction* currentAction = _actions.value(_currentActionIndex);
 	if (currentAction)
-        currentAction->stop();
+		currentAction->stop();
+}
+
+void StrategyManager::stopStrategy()
+{
+	_actions.erase(_actions.begin() + _currentActionIndex + 1, _actions.end());
+	cancelCurrentAction();
 }
 
 void StrategyManager::next()
@@ -539,8 +545,8 @@ void StrategyManager::next()
     else
     {
 		logger() << "No more actions to do." << Tools::endl;
+		_isRunning = false;
 		emit strategyFinished();
-        _isRunning = false;
     }
 }
 

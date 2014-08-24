@@ -92,6 +92,8 @@ void RemoteControlView::connectionStatusChanged(NetworkConnection::ConnectionSta
 
 	foreach(TrajectoryPointWidget* tr, _trajectoryEditors)
 		tr->disableEdition(_isMoving || _strategyRunning);
+
+	ui->btnRunScript->setEnabled(status == NetworkConnection::Controled && !_strategyRunning && !_isMoving);
 }
 
 void RemoteControlView::activeStatusChanged(bool isActive)
@@ -279,6 +281,14 @@ void RemoteControlView::strategyStatusUpdated(int strategyNum, bool isRunning)
 	ui->cbStrategies->setCurrentIndex(strategyNum);
 	_strategyRunning = isRunning;
 	refreshConnectionStatusGui();
+}
+
+void RemoteControlView::networkNoticeOfReceipt(quint8 instruction, bool result)
+{
+	if (instruction == Comm::RUN_SCRIPT && !result)
+	{
+		QMessageBox::critical(this, "Error", "The script contains some errors and cannot be run.");
+	}
 }
 
 void RemoteControlView::addPoint(const QVector3D& defaultValue)
@@ -471,7 +481,8 @@ void RemoteControlView::startStopStrategy()
 void RemoteControlView::sendScript()
 {
 	QString script = ui->nsEditor->getScript();
-	_connection->getComm()->runScript(script.toLatin1());
+	if (!script.trimmed().isEmpty())
+		_connection->getComm()->runScript(script.toLatin1());
 }
 
 void RemoteControlView::addColorToCombobox(const QColor& color, QComboBox* combo) const

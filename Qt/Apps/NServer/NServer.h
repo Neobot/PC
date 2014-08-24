@@ -16,6 +16,7 @@
 #include "Ax12MovementRunner.h"
 #include "AX12StatusListener.h"
 #include "ServerAX12RequestManager.h"
+#include "CommDispatcher.h"
 
 class Pather;
 class NSRunner;
@@ -43,6 +44,7 @@ private:
 	QSignalMapper* _disconnectionMapper;
 
 	Comm::RobotCommInterface* _robotInterface;
+	Comm::CommDispatcher _dispatcher;
 	Simulator* _simulator;
 
 	StrategyEnumerator _strategiesEnumerator;
@@ -64,11 +66,13 @@ private:
     void initServerSettings();
 
 	void sendGlobalAnnoucement(const QByteArray &message);
-	
-	void cleanRobotConnection();
 
+	void cleanRobotConnection();
+	void updateRobotConnection();
+
+	//Listener from the client
 	bool networkPingReceived();
-	void noticeOfReceipt(quint8 instruction, bool result);
+	void networkNoticeOfReceipt(quint8 instruction, bool result);
 	bool connectToRobot(NetworkCommInterface* networkInterface, bool simulation, const QString& robotPort, const QString& ax12Port, QByteArray &message);
 	bool disconnectToRobot(NetworkCommInterface* networkInterface);
 	bool updateServer(const QByteArray &data);
@@ -80,10 +84,6 @@ private:
     void askAx12Positions(NetworkCommInterface* networkInterface, const QList<quint8>& ids, bool recursive);
 	void moveAx12(float maxSpeed, QList<Comm::Ax12Info>& ax12s);
 	void lockAx12(const QMap<quint8, bool>& servoLockInfo);
-
-	void initReceived();
-
-	void updateRobotConnection();
 
 	bool startStrategy(int strategyNum, bool mirror);
 	bool stopStrategy(int& currentStrategyNum) ;
@@ -102,6 +102,9 @@ private:
 	void resetParameters();
 
 	bool runScript(const QByteArray& script);
+
+	//Listener from the robot
+	void initReceived();
 
 private slots:
 	void newConnection();

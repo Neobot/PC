@@ -57,6 +57,7 @@ public:
 
     bool movementInProgress() const;
     void cancelCurrentAction();
+	void stopStrategy();
 
     /**
       * \brief Enable or disable auto-quit.

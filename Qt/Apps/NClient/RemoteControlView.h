@@ -99,6 +99,8 @@ private:
 	void setStrategies(const QStringList &strategies);
 	void strategyStatusUpdated(int strategyNum, bool isRunning);
 
+	void networkNoticeOfReceipt(quint8 instruction, bool result);
+
 	void addPoint(const QVector3D &defaultValue = QVector3D());
 	void clearTrajectory();
 	void updateTrajectoryNumeratation();

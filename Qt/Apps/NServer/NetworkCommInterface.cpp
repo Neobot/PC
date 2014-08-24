@@ -379,7 +379,7 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 			bool result;
 			d.take(inst).take(result);
 			noticeOfReceiptReceived(inst);
-			_listener->noticeOfReceipt(inst, result);
+			_listener->networkNoticeOfReceipt(inst, result);
 			break;
 		case SET_PARAMETERS:
 		{

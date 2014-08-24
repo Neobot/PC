@@ -35,7 +35,6 @@ bool NSRunner::startScript(const QString& scriptCode)
 			ok = true;
 			_manager->_currentActionIndex = 0;
 			_manager->_actions = actions;
-			_manager->connectToRobot();
 			_manager->next();
 		}
 	}
@@ -43,8 +42,22 @@ bool NSRunner::startScript(const QString& scriptCode)
 	return ok;
 }
 
+void NSRunner::stopScript()
+{
+	_manager->stopStrategy();
+}
+
+StrategyManager *NSRunner::getInternalManager() const
+{
+	return _manager;
+}
+
+bool NSRunner::isRunning() const
+{
+	return _manager->isRunning();
+}
+
 void NSRunner::strategyFinished()
 {
-	_manager->disconnectFromRobot();
 	emit scriptFinished();
 }
