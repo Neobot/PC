@@ -15,6 +15,7 @@ public:
 	~NSEditor();
 
 	Tools::NCodeEdit* codeEdit() const;
+	QString getScript() const;
 
 private:
 	Tools::NCodeEdit* _codeEdit;

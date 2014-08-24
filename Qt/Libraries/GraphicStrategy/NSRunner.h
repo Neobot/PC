@@ -24,6 +24,9 @@ private:
 
 signals:
 	void scriptFinished();
+
+private slots:
+	void strategyFinished();
 };
 
 #endif // NSRUNNER_H

@@ -29,6 +29,11 @@ Tools::NCodeEdit *NSEditor::codeEdit() const
 	return _codeEdit;
 }
 
+QString NSEditor::getScript() const
+{
+	return _codeEdit->toPlainText();
+}
+
 void NSEditor::setupUi()
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);

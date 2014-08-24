@@ -120,6 +120,8 @@ private slots:
 	void manageTrajectories();
 
 	void startStopStrategy();
+
+	void sendScript();
 };
 
 #endif // REMOTECONTROLVIEW_H

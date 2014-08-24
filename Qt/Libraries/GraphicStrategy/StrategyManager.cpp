@@ -530,7 +530,7 @@ void StrategyManager::cancelCurrentAction()
 
 void StrategyManager::next()
 {
-    if (!isLastAction() && _currentActionIndex > 0)
+	if (!isLastAction() && _currentActionIndex >= 0)
     {
         _isRunning = true;
         AbstractAction* a = _actions.value(_currentActionIndex, 0);

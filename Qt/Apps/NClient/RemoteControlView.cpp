@@ -68,6 +68,7 @@ RemoteControlView::RemoteControlView(NetworkConnection *connection, QWidget *par
 	connect(ui->btnSaveTrajectory, SIGNAL(clicked()), this, SLOT(saveCurrentTrajectoryAs()));
 	connect(ui->btnManageTrajectories, SIGNAL(clicked()), this, SLOT(manageTrajectories()));
 	connect(ui->btnStart, SIGNAL(clicked()), this, SLOT(startStopStrategy()));
+	connect(ui->btnRunScript, SIGNAL(clicked()), this, SLOT(sendScript()));
 }
 
 RemoteControlView::~RemoteControlView()
@@ -145,6 +146,8 @@ void RemoteControlView::saveSettings(QSettings *settings)
 	settings->endGroup();
 
 	settings->setValue("DeplacementType", ui->cbMoveType->currentIndex());
+
+	settings->setValue("tabIndex", ui->tabControler->currentIndex());
 }
 
 void RemoteControlView::loadSettings(QSettings *settings)
@@ -199,6 +202,8 @@ void RemoteControlView::loadSettings(QSettings *settings)
 	settings->endGroup();
 
 	ui->cbMoveType->setCurrentIndex(settings->value("DeplacementType").toInt());
+
+	ui->tabControler->setCurrentIndex(settings->value("tabIndex", 0).toInt());
 }
 
 void RemoteControlView::coordinates(qint16 x, qint16 y, double theta, quint8 forward)
@@ -461,6 +466,12 @@ void RemoteControlView::startStopStrategy()
 	}
 	else
 		_connection->getComm()->stopStrategy();
+}
+
+void RemoteControlView::sendScript()
+{
+	QString script = ui->nsEditor->getScript();
+	_connection->getComm()->runScript(script.toLatin1());
 }
 
 void RemoteControlView::addColorToCombobox(const QColor& color, QComboBox* combo) const

@@ -84,4 +84,7 @@ HEADERS += TrajectoryFinder.h \
 
 FORMS += StrategyDialog.ui
 
+RESOURCES += \
+    GraphicStrategy.qrc
+
 

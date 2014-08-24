@@ -10,8 +10,9 @@ NSRunner::NSRunner(Comm::RobotCommInterface *robot, Pather *pather, Tools::Ax12M
 	_manager->_map = new StrategyMap(QSizeF(2000,3000), 400, 400);
 	_manager->_actionFactory = _manager->createActionFactory();
 	_manager->_actionFactory->setPatherEnabled(false);
+	_manager->_initDone = true;
 	_manager->setAx12MovementManager(movementManager);
-	connect(_manager, SIGNAL(strategyFinished()), this, SIGNAL(scriptFinished()));
+	connect(_manager, SIGNAL(strategyFinished()), this, SLOT(strategyFinished()));
 
 }
 
@@ -32,10 +33,18 @@ bool NSRunner::startScript(const QString& scriptCode)
 		if (parser.parse(scriptCode, actions))
 		{
 			ok = true;
+			_manager->_currentActionIndex = 0;
 			_manager->_actions = actions;
+			_manager->connectToRobot();
 			_manager->next();
 		}
 	}
 
 	return ok;
+}
+
+void NSRunner::strategyFinished()
+{
+	_manager->disconnectFromRobot();
+	emit scriptFinished();
 }

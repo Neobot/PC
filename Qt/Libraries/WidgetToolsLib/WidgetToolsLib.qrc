@@ -12,9 +12,6 @@
         <file alias="king">Resources/King.png</file>
         <file alias="queen">Resources/Queen.png</file>
     </qresource>
-    <qresource prefix="/ns">
-        <file alias="nsgrammar">Resources/ns.cgt</file>
-    </qresource>
     <qresource prefix="/other">
         <file alias="error">Resources/error_small.png</file>
         <file alias="error_croped">Resources/error_small_croped.png</file>

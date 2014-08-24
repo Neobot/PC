@@ -6,6 +6,7 @@
 int main(int argc, char *argv[])
 {
     Q_INIT_RESOURCE(Simulation);
+	Q_INIT_RESOURCE(GraphicStrategy);
 
 	QCoreApplication a(argc, argv);
 	

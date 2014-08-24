@@ -579,7 +579,8 @@ bool TrajectoryFinder::avoidingIsEnabled() const
 
 void TrajectoryFinder::resetPatherPosition()
 {
-	_pather->setCurrentNode(_pather->getGrid()->getNearestNode(_map->getRobot()->getPosition()));
+	if (_map)
+		_pather->setCurrentNode(_pather->getGrid()->getNearestNode(_map->getRobot()->getPosition()));
 }
 
 bool TrajectoryFinder::isSingularNode(NGridNode *node) const

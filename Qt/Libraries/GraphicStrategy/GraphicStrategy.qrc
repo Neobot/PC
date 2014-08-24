@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/ns">
+        <file alias="nsgrammar">Resources/ns.cgt</file>
+    </qresource>
+</RCC>
