@@ -7,6 +7,7 @@
 #include <QMessageBox>
 
 #include "NSParser.h"
+#include "NSHelpDialog.h"
 
 NSEditor::NSEditor(QWidget *parent) :
 	QWidget(parent), _hasModifications(false)
@@ -46,6 +47,8 @@ void NSEditor::setupUi()
 	toolBar->addAction("Open", this, SLOT(open()));
 	toolBar->addAction("Save", this, SLOT(save()));
 	toolBar->addAction("Save As", this, SLOT(saveAs()));
+	toolBar->addSeparator();
+	toolBar->addAction("Reference", this, SLOT(openReference()));
 
 	_codeEdit = new Tools::NCodeEdit(this);
 	_codeEdit->setSyntaxHighlighting(Tools::SyntaxRuleHighlighting::nsSyntaxRules());
@@ -160,6 +163,12 @@ void NSEditor::saveAs()
 			_currentFileName = oldFilename;
 		}
 	}
+}
+
+void NSEditor::openReference()
+{
+	NSHelpDialog dialog(this);
+	dialog.exec();
 }
 
 bool NSEditor::checkOnClose()

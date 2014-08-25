@@ -35,7 +35,8 @@ HEADERS += TextEditLogger.h \
     NCodeEdit.h \
     SyntaxRuleHighlighting.h \
     TextHighlighter.h \
-    TextHighlighterStrategyInterface.h
+    TextHighlighterStrategyInterface.h \
+    NSHelpDialog.h
 
 SOURCES += TextEditLogger.cpp \
     SlidingStackedWidget.cpp \
@@ -53,9 +54,11 @@ SOURCES += TextEditLogger.cpp \
     NCodeEdit.cpp \
     SyntaxRuleHighlighting.cpp \
     TextHighlighter.cpp \
-    TextHighlighterStrategyInterface.cpp
+    TextHighlighterStrategyInterface.cpp \
+    NSHelpDialog.cpp
 
 RESOURCES += WidgetToolsLib.qrc
 
 FORMS += \
-    Ax12MovementEditor.ui
+    Ax12MovementEditor.ui \
+    NSHelpDialog.ui

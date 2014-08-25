@@ -4,7 +4,7 @@
 #
 #-------------------------------------------------
 
-QT       += core gui network widgets printsupport serialport
+QT       += core gui network widgets printsupport serialport webkitwidgets
 
 TARGET = "NClient"
 CONFIG += console

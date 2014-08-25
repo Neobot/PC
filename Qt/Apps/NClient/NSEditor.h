@@ -36,6 +36,7 @@ private slots:
 	void open();
 	bool save();
 	void saveAs();
+	void openReference();
 };
 
 #endif // NSEDITOR_H

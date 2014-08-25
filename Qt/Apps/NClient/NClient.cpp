@@ -89,6 +89,7 @@ void NClient::initTooBar()
 	addView(action, new ScriptView(_connection, this));
 	action->setChecked(false);
 	action->setShortcut(QKeySequence(Qt::Key_F8));
+	action->setEnabled(false);
 
 	action = ui->mainToolBar->addAction(QIcon(":/toolbar/connection"), "Connection", this, SLOT(changeView()));
 	_activeView = new ConnectionView(_connection, this);
