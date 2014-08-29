@@ -120,6 +120,8 @@ SyntaxRuleHighlighting *SyntaxRuleHighlighting::nsSyntaxRules(TextHighlighter *p
 	syntax->addSyntaxRule("wait", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("as", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("rect", keywordColor, fontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("do", keywordColor, fontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("action", keywordColor, fontWeigth, Qt::CaseInsensitive);
 
 	syntax->addSyntaxRule(QRegExp("\\d+\\.?\\d*"), Qt::red);	//numbers
 

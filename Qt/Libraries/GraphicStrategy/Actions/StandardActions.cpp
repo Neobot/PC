@@ -358,6 +358,7 @@ SetParameterAction::SetParameterAction(int parameterId, double value, StrategyMa
 void SetParameterAction::execute()
 {
 	_manager->setParameter(_parameterId, _value);
+	succeed();
 }
 
 QString SetParameterAction::getActionName() const

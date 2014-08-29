@@ -17,7 +17,8 @@ public:
 	NSRunner(Comm::RobotCommInterface* robot, Pather* pather, Tools::Ax12MovementManager* movementManager, Tools::AbstractLogger* logger = 0);
 	~NSRunner();
 
-	bool startScript(const QString &scriptCode);
+	bool parseScript(const QString &scriptCode);
+	void startScript();
 	void stopScript();
 
 	StrategyManager* getInternalManager() const;

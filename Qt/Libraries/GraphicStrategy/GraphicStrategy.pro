@@ -50,7 +50,8 @@ SOURCES += TrajectoryFinder.cpp \
     Sensor.cpp \
     NSParser.cpp \
     NSRunner.cpp \
-    NSParsingError.cpp
+    NSParsingError.cpp \
+    NSParser_BasicTypes.cpp
 
 HEADERS += TrajectoryFinder.h \
     Sharp.h \

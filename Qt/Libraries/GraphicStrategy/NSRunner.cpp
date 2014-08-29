@@ -21,7 +21,7 @@ NSRunner::~NSRunner()
 	delete _manager;
 }
 
-bool NSRunner::startScript(const QString& scriptCode)
+bool NSRunner::parseScript(const QString& scriptCode)
 {
 	bool ok = false;
 
@@ -35,11 +35,16 @@ bool NSRunner::startScript(const QString& scriptCode)
 			ok = true;
 			_manager->_currentActionIndex = 0;
 			_manager->_actions = actions;
-			_manager->next();
+
 		}
 	}
 
 	return ok;
+}
+
+void NSRunner::startScript()
+{
+	_manager->next();
 }
 
 void NSRunner::stopScript()

@@ -546,14 +546,17 @@ bool NServer::runScript(const QByteArray &script)
 	if (_robotConnected && !_nsRunner->isRunning() && !_currentStrategy)
 	{
 		_dispatcher.registerResponder(_nsRunner->getInternalManager());
-		result = _nsRunner->startScript(script);
+		result = _nsRunner->parseScript(script);
 		if (result)
 		{
+			_nsRunner->getInternalManager()->params = getParameters();
 			for(QMap<unsigned int, NetworkCommInterface*>::const_iterator it = _connections.constBegin(); it != _connections.constEnd(); ++it)
 			{
 				NetworkCommInterface* i = *it;
 				i->sendStrategyStatus(-1, true);
 			}
+
+			_nsRunner->startScript();
 		}
 	}
 
