@@ -123,6 +123,8 @@ SyntaxRuleHighlighting *SyntaxRuleHighlighting::nsSyntaxRules(TextHighlighter *p
 	syntax->addSyntaxRule("action", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("move", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("ax12", keywordColor, fontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("make", keywordColor, fontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("movement", keywordColor, fontWeigth, Qt::CaseInsensitive);
 
 	QColor enumColor = Qt::darkRed;
 	int enumFontWeigth = QFont::Bold;
@@ -143,7 +145,7 @@ SyntaxRuleHighlighting *SyntaxRuleHighlighting::nsSyntaxRules(TextHighlighter *p
 	quote.setMinimal(true);
 	syntax->addSyntaxRule(quote, Qt::gray);	//quotation with "
 
-	syntax->addSyntaxRule(QRegExp("#[^\\n]*"), Qt::darkGreen);  //comment
+	syntax->addSyntaxRule(QRegExp("//[^\\n]*"), Qt::darkGreen);  //comment
 
 	return syntax;
 }

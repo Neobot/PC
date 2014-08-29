@@ -25,13 +25,13 @@ QString NSParser::readIdentifier(Symbol* symbol)
 
 QString NSParser::readString(Symbol* symbol)
 {
-	QString value = 0;
+	QString value = "";
 	if (symbol->type == TERMINAL && symbol->symbolIndex == SYM_STRING)
 	{
 		value = QString::fromStdWString(static_cast<Terminal*>(symbol)->image);
-		if (!value.startsWith("\""))
+		if (value.startsWith("\""))
 			value.remove(0, 1);
-		if (!value.endsWith("\""))
+		if (value.endsWith("\""))
 			value.remove(value.count() - 1, 1);
 	}
 
@@ -724,6 +724,59 @@ bool NSParser::readRectVar(Symbol* symbol, VariableList &variables, QRectF &r)
 		}
 		else
 			addError(NSParsingError::invalidVariableTypeError(varName, "rect", symbol));
+	}
+	else
+		addError(NSParsingError::undeclaredVariableError(varName, symbol));
+
+	return result;
+}
+
+bool NSParser::readStringOrVar(Symbol *symbol, NSParser::VariableList &variables, QString &str)
+{
+	bool result = true;
+	if (symbol->symbolIndex == SYM_STRING)
+		str = readString(symbol);
+	else if (symbol->symbolIndex == SYM_VAR)
+		result = readStringVar(symbol, variables, str);
+	else //SYM_STRING_OR_VAR
+	{
+		if (symbol->type == NON_TERMINAL)
+		{
+			NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+			switch(nt->ruleIndex)
+			{
+				case PROD_STRING_OR_VAR_STRING:
+					str = readString(searchChild(symbol, SYM_STRING));
+					break;
+				case PROD_STRING_OR_VAR:
+					result = readStringVar(symbol, variables, str);
+					break;
+				default:
+					result = false;
+					break;
+			}
+		}
+		else
+			result = false;
+	}
+
+	return result;
+}
+
+bool NSParser::readStringVar(Symbol *symbol, NSParser::VariableList &variables, QString &str)
+{
+	bool result = false;
+	QString varName = readVar(symbol);
+	if (variables.contains(varName))
+	{
+		DelclaredVariable& var = variables[varName];
+		if (var.isString())
+		{
+			str = var.toString();
+			result = true;
+		}
+		else
+			addError(NSParsingError::invalidVariableTypeError(varName, "string", symbol));
 	}
 	else
 		addError(NSParsingError::undeclaredVariableError(varName, symbol));

@@ -47,7 +47,8 @@ protected:
 			Action,
 			Ax12,
 			Param,
-			Sensor
+			Sensor,
+			String
 		};
 		
 		DeclaredType type;
@@ -61,7 +62,8 @@ protected:
 		int toAx12() const;
 		int toParameter() const;
 		void toSensor(int& id, int& type) const;
-		void toAction(int& id, int& param, int& timeMs);
+		void toAction(int& id, int& param, int& timeMs) const;
+		QString toString() const;
 
 		bool isPoint() const {return type == Point;}
 		bool isRect() const {return type == Rect;}
@@ -69,6 +71,7 @@ protected:
 		bool isAx12() const {return type == Ax12;}
 		bool isParameter() const {return type == Param;}
 		bool isSensor() const {return type == Sensor;}
+		bool isString() const {return type == String;}
 		bool isDefined() const {return type != None;}
 		
 		static DelclaredVariable fromPoint(const Tools::RPoint& p);
@@ -77,6 +80,7 @@ protected:
 		static DelclaredVariable fromAx12(int id);
 		static DelclaredVariable fromParameter(int id);
 		static DelclaredVariable fromSensor(int id, int type);
+		static DelclaredVariable fromString(const QString& str);
 	};
 	
 	typedef QHash<QString, DelclaredVariable> VariableList;
@@ -94,6 +98,7 @@ protected:
 	AbstractAction *buildDisableSensorAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildActuatorAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildMoveAx12Action(Symbol *symbol, VariableList &variables);
+	AbstractAction *buildAx12MovementAction(Symbol *symbol, VariableList &variables);
 	void readVariable(Symbol* symbol, VariableList& variables);
 
 	//Variable parsers
@@ -121,6 +126,9 @@ protected:
 	QRectF readFixedRect(Symbol* symbol);
 	bool readRectOrVar(Symbol* symbol, VariableList &variables, QRectF &r);
 	bool readRectVar(Symbol* symbol, VariableList &variables, QRectF &r);
+
+	bool readStringOrVar(Symbol* symbol, VariableList& variables, QString &str);
+	bool readStringVar(Symbol* symbol, VariableList& variables, QString &str);
 
 	//Advanced types parsers
 	int readSpeed(Symbol *symbol);

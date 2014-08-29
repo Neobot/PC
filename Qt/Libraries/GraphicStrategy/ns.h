@@ -142,176 +142,180 @@
    SYM_STATEMENT                  = 139, // <Statement>
    SYM_STATEMENT_END              = 140, // <statement_end>
    SYM_STATEMENTS                 = 141, // <Statements>
-   SYM_SWITCH_CASE                = 142, // <switch_case>
-   SYM_SWITCH_CASES               = 143, // <switch_cases>
-   SYM_SWITCH_VALUE               = 144, // <switch_value>
-   SYM_SWITCHCONDITION            = 145, // <SwitchCondition>
-   SYM_SWITCHSTATEMENT            = 146, // <SwitchStatement>
-   SYM_TELEPORTSTATEMENT          = 147, // <TeleportStatement>
-   SYM_TIME                       = 148, // <time>
-   SYM_TIME_UNIT                  = 149, // <time_unit>
-   SYM_VAR                        = 150, // <var>
-   SYM_WAITSTATEMENT              = 151, // <WaitStatement>
-   SYM_WHILESTATEMENT             = 152  // <WhileStatement>
+   SYM_STRING_OR_VAR              = 142, // <string_or_var>
+   SYM_SWITCH_CASE                = 143, // <switch_case>
+   SYM_SWITCH_CASES               = 144, // <switch_cases>
+   SYM_SWITCH_VALUE               = 145, // <switch_value>
+   SYM_SWITCHCONDITION            = 146, // <SwitchCondition>
+   SYM_SWITCHSTATEMENT            = 147, // <SwitchStatement>
+   SYM_TELEPORTSTATEMENT          = 148, // <TeleportStatement>
+   SYM_TIME                       = 149, // <time>
+   SYM_TIME_UNIT                  = 150, // <time_unit>
+   SYM_VAR                        = 151, // <var>
+   SYM_WAITSTATEMENT              = 152, // <WaitStatement>
+   SYM_WHILESTATEMENT             = 153  // <WhileStatement>
 };
 
 enum ProductionConstants
 {
-   PROD_NL_NEWLINE                                                  =   0, // <nl> ::= NewLine <nl>
-   PROD_NL_NEWLINE2                                                 =   1, // <nl> ::= NewLine
-   PROD_NLOPT_NEWLINE                                               =   2, // <nl Opt> ::= NewLine <nl Opt>
-   PROD_NLOPT                                                       =   3, // <nl Opt> ::= 
-   PROD_STATEMENT_END_SEMI                                          =   4, // <statement_end> ::= ';' <nl Opt>
-   PROD_STATEMENT_END                                               =   5, // <statement_end> ::= <nl>
-   PROD_STATEMENT_END_EOF                                           =   6, // <statement_end> ::= eof
-   PROD_OPT_BRACKET_LPAREN                                          =   7, // <opt_bracket> ::= '('
-   PROD_OPT_BRACKET                                                 =   8, // <opt_bracket> ::= 
-   PROD_ID_INTEGER                                                  =   9, // <id> ::= Integer
-   PROD_NUM_FLOAT                                                   =  10, // <num> ::= Float
-   PROD_NUM_INTEGER                                                 =  11, // <num> ::= Integer
-   PROD_SPEED_SPEED_INTEGER_PERCENT                                 =  12, // <speed> ::= speed Integer '%'
-   PROD_FIXED_ANGLE_DEG                                             =  13, // <fixed_angle> ::= <num> deg
-   PROD_FIXED_ANGLE_RAD                                             =  14, // <fixed_angle> ::= <num> rad
-   PROD_FIXED_ANGLE                                                 =  15, // <fixed_angle> ::= <num>
-   PROD_ANGLE                                                       =  16, // <angle> ::= <fixed_angle>
-   PROD_ANGLE_AUTO_REVERSED                                         =  17, // <angle> ::= auto reversed <fixed_angle>
-   PROD_ANGLE_REVERSED                                              =  18, // <angle> ::= reversed <fixed_angle>
-   PROD_TIME_UNIT_S                                                 =  19, // <time_unit> ::= s
-   PROD_TIME_UNIT_MS                                                =  20, // <time_unit> ::= ms
-   PROD_TIME_INTEGER                                                =  21, // <time> ::= Integer <time_unit>
-   PROD_OPT_TIME                                                    =  22, // <opt_time> ::= <time>
-   PROD_OPT_TIME2                                                   =  23, // <opt_time> ::= 
-   PROD_VAR_IDENTIFIER                                              =  24, // <var> ::= Identifier
-   PROD_ANGLERANGE_MINUS                                            =  25, // <angleRange> ::= <angle> '-' <angle>
-   PROD_FIXED_POINT_COMMA                                           =  26, // <fixed_point> ::= <opt_bracket> <num> ',' <num> <opt_bracket>
-   PROD_FIXED_POINT_COMMA_COMMA                                     =  27, // <fixed_point> ::= <opt_bracket> <num> ',' <num> ',' <fixed_angle> <opt_bracket>
-   PROD_POINT                                                       =  28, // <point> ::= <fixed_point>
-   PROD_POINT_AUTO_REVERSED                                         =  29, // <point> ::= auto reversed <fixed_point>
-   PROD_POINT_REVERSED                                              =  30, // <point> ::= reversed <fixed_point>
-   PROD_POINT_OR_VAR                                                =  31, // <point_or_var> ::= <point>
-   PROD_POINT_OR_VAR2                                               =  32, // <point_or_var> ::= <var>
-   PROD_FIXED_RECT_RECT_COMMA_COMMA_COMMA                           =  33, // <fixed_rect> ::= rect <num> ',' <num> ',' <num> ',' <num>
-   PROD_RECT                                                        =  34, // <rect> ::= <fixed_rect>
-   PROD_RECT_AUTO_REVERSED                                          =  35, // <rect> ::= auto reversed <fixed_rect>
-   PROD_RECT_REVERSED                                               =  36, // <rect> ::= reversed <fixed_rect>
-   PROD_RECT_OR_VAR                                                 =  37, // <rect_or_var> ::= <rect>
-   PROD_RECT_OR_VAR2                                                =  38, // <rect_or_var> ::= <var>
-   PROD_DIRECTION_FORWARD                                           =  39, // <direction> ::= forward
-   PROD_DIRECTION_BACKWARD                                          =  40, // <direction> ::= backward
-   PROD_DIRECTION_AUTO                                              =  41, // <direction> ::= auto
-   PROD_SENSOR_COLOR_SENSOR                                         =  42, // <sensor> ::= color sensor
-   PROD_SENSOR_MICROSWITCH                                          =  43, // <sensor> ::= microswitch
-   PROD_SENSOR_SHARP                                                =  44, // <sensor> ::= sharp
-   PROD_SENSOR_IDENTIFIER                                           =  45, // <sensor_identifier> ::= <sensor> <id>
-   PROD_SENSOR_OR_VAR                                               =  46, // <sensor_or_var> ::= <sensor_identifier>
-   PROD_SENSOR_OR_VAR2                                              =  47, // <sensor_or_var> ::= <var>
-   PROD_COLORSENSORVALUE_UNKNOWN                                    =  48, // <colorSensorValue> ::= unknown
-   PROD_COLORSENSORVALUE_RED                                        =  49, // <colorSensorValue> ::= red
-   PROD_COLORSENSORVALUE_GREEN                                      =  50, // <colorSensorValue> ::= green
-   PROD_COLORSENSORVALUE_BLUE                                       =  51, // <colorSensorValue> ::= blue
-   PROD_COLORSENSORVALUE_YELLOW                                     =  52, // <colorSensorValue> ::= yellow
-   PROD_COLORSENSORVALUE_WHITE                                      =  53, // <colorSensorValue> ::= white
-   PROD_COLORSENSORVALUE_BLACK                                      =  54, // <colorSensorValue> ::= black
-   PROD_SHARPVALUE_DETECTED                                         =  55, // <sharpValue> ::= detected
-   PROD_SHARPVALUE_FAR                                              =  56, // <sharpValue> ::= far
-   PROD_SHARPVALUE_CLOSE                                            =  57, // <sharpValue> ::= close
-   PROD_MICROSWITCHVALUE_ON                                         =  58, // <microSwitchValue> ::= on
-   PROD_MICROSWITCHVALUE_OFF                                        =  59, // <microSwitchValue> ::= off
-   PROD_SENSORVALUE                                                 =  60, // <sensorValue> ::= <colorSensorValue>
-   PROD_SENSORVALUE2                                                =  61, // <sensorValue> ::= <sharpValue>
-   PROD_SENSORVALUE3                                                =  62, // <sensorValue> ::= <microSwitchValue>
-   PROD_SENSORVALUE4                                                =  63, // <sensorValue> ::= <num>
-   PROD_CONCURRENCYCONDITION_ALLACTIONSFINISHED                     =  64, // <concurrencyCondition> ::= AllActionsFinished
-   PROD_CONCURRENCYCONDITION_ONEACTIONFINISHED                      =  65, // <concurrencyCondition> ::= OneActionFinished
-   PROD_CONCURRENCYCONDITION_FIRSTACTIONFINISHED                    =  66, // <concurrencyCondition> ::= FirstActionFinished
-   PROD_CONCURRENCYCONDITION_LASTACTIONFINISHED                     =  67, // <concurrencyCondition> ::= LastActionFinished
-   PROD_ACTION_ACTION_INTEGER_COMMA_INTEGER_COMMA                   =  68, // <action> ::= action Integer ',' Integer ',' <time>
-   PROD_ACTION_OR_VAR                                               =  69, // <action_or_var> ::= <action>
-   PROD_ACTION_OR_VAR2                                              =  70, // <action_or_var> ::= <var>
-   PROD_PARAMETER_IDENTIFIER_PARAMETER                              =  71, // <parameter_identifier> ::= parameter <id>
-   PROD_PARAMETER_OR_VAR                                            =  72, // <parameter_or_var> ::= <parameter_identifier>
-   PROD_PARAMETER_OR_VAR2                                           =  73, // <parameter_or_var> ::= <var>
-   PROD_AX12_IDENTIFIER_AX12                                        =  74, // <ax12_identifier> ::= 'ax12' <id>
-   PROD_AX12_OR_VAR                                                 =  75, // <ax12_or_var> ::= <ax12_identifier>
-   PROD_AX12_OR_VAR2                                                =  76, // <ax12_or_var> ::= <var>
-   PROD_START                                                       =  77, // <Start> ::= <nl Opt> <Program>
-   PROD_PROGRAM                                                     =  78, // <Program> ::= <Statements>
-   PROD_STATEMENTS                                                  =  79, // <Statements> ::= <Statement> <statement_end> <Statements>
-   PROD_STATEMENTS2                                                 =  80, // <Statements> ::= <Statement>
-   PROD_STATEMENTS3                                                 =  81, // <Statements> ::= 
-   PROD_STATEMENT                                                   =  82, // <Statement> ::= <ImportStatement>
-   PROD_STATEMENT2                                                  =  83, // <Statement> ::= <WaitStatement>
-   PROD_STATEMENT3                                                  =  84, // <Statement> ::= <DeclareStatement>
-   PROD_STATEMENT4                                                  =  85, // <Statement> ::= <TeleportStatement>
-   PROD_STATEMENT5                                                  =  86, // <Statement> ::= <MoveToStatement>
-   PROD_STATEMENT6                                                  =  87, // <Statement> ::= <SetParamStatement>
-   PROD_STATEMENT7                                                  =  88, // <Statement> ::= <EnableSensorStatement>
-   PROD_STATEMENT8                                                  =  89, // <Statement> ::= <DisableSensorStatement>
-   PROD_STATEMENT9                                                  =  90, // <Statement> ::= <Ax12MovementStatement>
-   PROD_STATEMENT10                                                 =  91, // <Statement> ::= <Ax12AsyncMovementStatement>
-   PROD_STATEMENT11                                                 =  92, // <Statement> ::= <MoveAx12Statement>
-   PROD_STATEMENT12                                                 =  93, // <Statement> ::= <ActuatorStatement>
-   PROD_STATEMENT13                                                 =  94, // <Statement> ::= <ListStatement>
-   PROD_STATEMENT14                                                 =  95, // <Statement> ::= <ConcurrentStatement>
-   PROD_STATEMENT15                                                 =  96, // <Statement> ::= <ConditionStatement>
-   PROD_STATEMENT16                                                 =  97, // <Statement> ::= <WhileStatement>
-   PROD_STATEMENT17                                                 =  98, // <Statement> ::= <SwitchStatement>
-   PROD_IMPORTSTATEMENT_IMPORT_STRING                               =  99, // <ImportStatement> ::= import String
-   PROD_WAITSTATEMENT_WAIT                                          = 100, // <WaitStatement> ::= wait <time>
-   PROD_DECLARESTATEMENT_DECLARE_AS                                 = 101, // <DeclareStatement> ::= declare <action> as <var>
-   PROD_DECLARESTATEMENT_DECLARE_AS2                                = 102, // <DeclareStatement> ::= declare <sensor_identifier> as <var>
-   PROD_DECLARESTATEMENT_DECLARE_AS3                                = 103, // <DeclareStatement> ::= declare <parameter_identifier> as <var>
-   PROD_DECLARESTATEMENT_DECLARE_AS4                                = 104, // <DeclareStatement> ::= declare <point> as <var>
-   PROD_DECLARESTATEMENT_DECLARE_AS5                                = 105, // <DeclareStatement> ::= declare <rect> as <var>
-   PROD_DECLARESTATEMENT_DECLARE_AS6                                = 106, // <DeclareStatement> ::= declare <ax12_identifier> as <var>
-   PROD_TELEPORTSTATEMENT_TELEPORT                                  = 107, // <TeleportStatement> ::= teleport <point_or_var>
-   PROD_MOVETOSTATEMENT_GO_TO                                       = 108, // <MoveToStatement> ::= go to <point_or_var>
-   PROD_MOVETOSTATEMENT_GO_TO2                                      = 109, // <MoveToStatement> ::= go to <point_or_var> <speed>
-   PROD_MOVETOSTATEMENT_GO_TO3                                      = 110, // <MoveToStatement> ::= go to <point_or_var> <direction>
-   PROD_MOVETOSTATEMENT_GO_TO4                                      = 111, // <MoveToStatement> ::= go to <point_or_var> <speed> <direction>
-   PROD_MOVETOSTATEMENT_GO_TO5                                      = 112, // <MoveToStatement> ::= go to <point_or_var> <direction> <speed>
-   PROD_LISTSTATEMENT_LBRACE_RBRACE                                 = 113, // <ListStatement> ::= '{' <nl Opt> <Statements> <nl Opt> '}' <nl Opt>
-   PROD_CONCURRENTSTATEMENT_CONCURRENT                              = 114, // <ConcurrentStatement> ::= concurrent <nl Opt> <ListStatement>
-   PROD_CONCURRENTSTATEMENT_CONCURRENT2                             = 115, // <ConcurrentStatement> ::= concurrent <concurrencyCondition> <nl Opt> <ListStatement>
-   PROD_SETPARAMSTATEMENT_SET_EQ                                    = 116, // <SetParamStatement> ::= set <parameter_or_var> '=' <num>
-   PROD_ENABLESENSORSTATEMENT_ENABLE                                = 117, // <EnableSensorStatement> ::= enable <sensor_or_var>
-   PROD_ENABLESENSORSTATEMENT_ENABLE_ALL                            = 118, // <EnableSensorStatement> ::= enable all <sensor>
-   PROD_DISABLESENSORSTATEMENT_DISABLE                              = 119, // <DisableSensorStatement> ::= disable <sensor_or_var>
-   PROD_DISABLESENSORSTATEMENT_DISABLE_ALL                          = 120, // <DisableSensorStatement> ::= disable all <sensor>
-   PROD_AX12MOVEMENTSTATEMENT_MAKE_AX12_MOVEMENT_STRING             = 121, // <Ax12MovementStatement> ::= make 'ax12' movement String
-   PROD_AX12MOVEMENTSTATEMENT_MAKE_AX12_MOVEMENT_STRING2            = 122, // <Ax12MovementStatement> ::= make 'ax12' movement String <speed>
-   PROD_AX12ASYNCMOVEMENTSTATEMENT_MAKE_AX12_ASYNC_MOVEMENT_STRING  = 123, // <Ax12AsyncMovementStatement> ::= make 'ax12' async movement String
-   PROD_AX12ASYNCMOVEMENTSTATEMENT_MAKE_AX12_ASYNC_MOVEMENT_STRING2 = 124, // <Ax12AsyncMovementStatement> ::= make 'ax12' async movement String <speed>
-   PROD_MOVEAX12STATEMENT_MOVE_TO                                   = 125, // <MoveAx12Statement> ::= move <ax12_or_var> to <angle>
-   PROD_MOVEAX12STATEMENT_MOVE_TO2                                  = 126, // <MoveAx12Statement> ::= move <ax12_or_var> to <angle> <speed>
-   PROD_ACTUATORSTATEMENT_DO                                        = 127, // <ActuatorStatement> ::= do <action_or_var>
-   PROD_CONDITIONISOPERATOR_IS                                      = 128, // <ConditionIsOperator> ::= is
-   PROD_CONDITIONISOPERATOR_ISNOT                                   = 129, // <ConditionIsOperator> ::= 'is not'
-   PROD_CONDITIONINOPERATOR_IN                                      = 130, // <ConditionInOperator> ::= in
-   PROD_CONDITIONINOPERATOR_NOTIN                                   = 131, // <ConditionInOperator> ::= 'not in'
-   PROD_SENSORCONDITION                                             = 132, // <SensorCondition> ::= <sensor_or_var> <ConditionIsOperator> <sensorValue>
-   PROD_ORIENTATIONCONDITION_ORIENTATION                            = 133, // <OrientationCondition> ::= orientation <ConditionInOperator> <angleRange>
-   PROD_POSITIONCONDITION_POSITION                                  = 134, // <PositionCondition> ::= position <ConditionInOperator> <rect_or_var>
-   PROD_OPPONENTCONDITION_OPPONENT                                  = 135, // <OpponentCondition> ::= opponent <ConditionInOperator> <rect_or_var>
-   PROD_REVERSECONDITION_STRATEGY_REVERSED                          = 136, // <reverseCondition> ::= strategy <ConditionIsOperator> reversed
-   PROD_IFCONDITION                                                 = 137, // <IfCondition> ::= <SensorCondition>
-   PROD_IFCONDITION2                                                = 138, // <IfCondition> ::= <OrientationCondition>
-   PROD_IFCONDITION3                                                = 139, // <IfCondition> ::= <PositionCondition>
-   PROD_IFCONDITION4                                                = 140, // <IfCondition> ::= <OpponentCondition>
-   PROD_IFCONDITION5                                                = 141, // <IfCondition> ::= <reverseCondition>
-   PROD_CONDITIONSTATEMENT_IF                                       = 142, // <ConditionStatement> ::= if <IfCondition> <nl Opt> <Statement>
-   PROD_CONDITIONSTATEMENT_IF_ELSE                                  = 143, // <ConditionStatement> ::= if <IfCondition> <nl Opt> <Statement> else <nl Opt> <Statement>
-   PROD_WHILESTATEMENT_WHILE                                        = 144, // <WhileStatement> ::= while <IfCondition> <opt_time> <nl Opt> <Statement>
-   PROD_SWITCHSTATEMENT_SWITCH_LBRACE_RBRACE                        = 145, // <SwitchStatement> ::= switch <SwitchCondition> <nl Opt> '{' <nl Opt> <switch_cases> <nl Opt> '}'
-   PROD_SWITCHCONDITION_ORIENTATION                                 = 146, // <SwitchCondition> ::= orientation
-   PROD_SWITCHCONDITION_POSITION                                    = 147, // <SwitchCondition> ::= position
-   PROD_SWITCHCONDITION_OPPONENT                                    = 148, // <SwitchCondition> ::= opponent
-   PROD_SWITCHCONDITION                                             = 149, // <SwitchCondition> ::= <sensor_or_var>
-   PROD_SWITCH_CASES                                                = 150, // <switch_cases> ::= <switch_case> <switch_cases>
-   PROD_SWITCH_CASES2                                               = 151, // <switch_cases> ::= 
-   PROD_SWITCH_CASE_CASE                                            = 152, // <switch_case> ::= case <switch_value> <nl Opt> <Statements>
-   PROD_SWITCH_CASE_DEFAULTS                                        = 153, // <switch_case> ::= defaults <nl Opt> <Statements>
-   PROD_SWITCH_VALUE                                                = 154, // <switch_value> ::= <sensorValue>
-   PROD_SWITCH_VALUE2                                               = 155, // <switch_value> ::= <angleRange>
-   PROD_SWITCH_VALUE3                                               = 156  // <switch_value> ::= <rect_or_var>
+   PROD_NL_NEWLINE                                           =   0, // <nl> ::= NewLine <nl>
+   PROD_NL_NEWLINE2                                          =   1, // <nl> ::= NewLine
+   PROD_NLOPT_NEWLINE                                        =   2, // <nl Opt> ::= NewLine <nl Opt>
+   PROD_NLOPT                                                =   3, // <nl Opt> ::= 
+   PROD_STATEMENT_END_SEMI                                   =   4, // <statement_end> ::= ';' <nl Opt>
+   PROD_STATEMENT_END                                        =   5, // <statement_end> ::= <nl>
+   PROD_STATEMENT_END_EOF                                    =   6, // <statement_end> ::= eof
+   PROD_OPT_BRACKET_LPAREN                                   =   7, // <opt_bracket> ::= '('
+   PROD_OPT_BRACKET                                          =   8, // <opt_bracket> ::= 
+   PROD_ID_INTEGER                                           =   9, // <id> ::= Integer
+   PROD_NUM_FLOAT                                            =  10, // <num> ::= Float
+   PROD_NUM_INTEGER                                          =  11, // <num> ::= Integer
+   PROD_SPEED_SPEED_INTEGER_PERCENT                          =  12, // <speed> ::= speed Integer '%'
+   PROD_FIXED_ANGLE_DEG                                      =  13, // <fixed_angle> ::= <num> deg
+   PROD_FIXED_ANGLE_RAD                                      =  14, // <fixed_angle> ::= <num> rad
+   PROD_FIXED_ANGLE                                          =  15, // <fixed_angle> ::= <num>
+   PROD_ANGLE                                                =  16, // <angle> ::= <fixed_angle>
+   PROD_ANGLE_AUTO_REVERSED                                  =  17, // <angle> ::= auto reversed <fixed_angle>
+   PROD_ANGLE_REVERSED                                       =  18, // <angle> ::= reversed <fixed_angle>
+   PROD_TIME_UNIT_S                                          =  19, // <time_unit> ::= s
+   PROD_TIME_UNIT_MS                                         =  20, // <time_unit> ::= ms
+   PROD_TIME_INTEGER                                         =  21, // <time> ::= Integer <time_unit>
+   PROD_OPT_TIME                                             =  22, // <opt_time> ::= <time>
+   PROD_OPT_TIME2                                            =  23, // <opt_time> ::= 
+   PROD_STRING_OR_VAR_STRING                                 =  24, // <string_or_var> ::= String
+   PROD_STRING_OR_VAR                                        =  25, // <string_or_var> ::= <var>
+   PROD_VAR_IDENTIFIER                                       =  26, // <var> ::= Identifier
+   PROD_ANGLERANGE_MINUS                                     =  27, // <angleRange> ::= <angle> '-' <angle>
+   PROD_FIXED_POINT_COMMA                                    =  28, // <fixed_point> ::= <opt_bracket> <num> ',' <num> <opt_bracket>
+   PROD_FIXED_POINT_COMMA_COMMA                              =  29, // <fixed_point> ::= <opt_bracket> <num> ',' <num> ',' <fixed_angle> <opt_bracket>
+   PROD_POINT                                                =  30, // <point> ::= <fixed_point>
+   PROD_POINT_AUTO_REVERSED                                  =  31, // <point> ::= auto reversed <fixed_point>
+   PROD_POINT_REVERSED                                       =  32, // <point> ::= reversed <fixed_point>
+   PROD_POINT_OR_VAR                                         =  33, // <point_or_var> ::= <point>
+   PROD_POINT_OR_VAR2                                        =  34, // <point_or_var> ::= <var>
+   PROD_FIXED_RECT_RECT_COMMA_COMMA_COMMA                    =  35, // <fixed_rect> ::= rect <num> ',' <num> ',' <num> ',' <num>
+   PROD_RECT                                                 =  36, // <rect> ::= <fixed_rect>
+   PROD_RECT_AUTO_REVERSED                                   =  37, // <rect> ::= auto reversed <fixed_rect>
+   PROD_RECT_REVERSED                                        =  38, // <rect> ::= reversed <fixed_rect>
+   PROD_RECT_OR_VAR                                          =  39, // <rect_or_var> ::= <rect>
+   PROD_RECT_OR_VAR2                                         =  40, // <rect_or_var> ::= <var>
+   PROD_DIRECTION_FORWARD                                    =  41, // <direction> ::= forward
+   PROD_DIRECTION_BACKWARD                                   =  42, // <direction> ::= backward
+   PROD_DIRECTION_AUTO                                       =  43, // <direction> ::= auto
+   PROD_SENSOR_COLOR_SENSOR                                  =  44, // <sensor> ::= color sensor
+   PROD_SENSOR_MICROSWITCH                                   =  45, // <sensor> ::= microswitch
+   PROD_SENSOR_SHARP                                         =  46, // <sensor> ::= sharp
+   PROD_SENSOR_IDENTIFIER                                    =  47, // <sensor_identifier> ::= <sensor> <id>
+   PROD_SENSOR_OR_VAR                                        =  48, // <sensor_or_var> ::= <sensor_identifier>
+   PROD_SENSOR_OR_VAR2                                       =  49, // <sensor_or_var> ::= <var>
+   PROD_COLORSENSORVALUE_UNKNOWN                             =  50, // <colorSensorValue> ::= unknown
+   PROD_COLORSENSORVALUE_RED                                 =  51, // <colorSensorValue> ::= red
+   PROD_COLORSENSORVALUE_GREEN                               =  52, // <colorSensorValue> ::= green
+   PROD_COLORSENSORVALUE_BLUE                                =  53, // <colorSensorValue> ::= blue
+   PROD_COLORSENSORVALUE_YELLOW                              =  54, // <colorSensorValue> ::= yellow
+   PROD_COLORSENSORVALUE_WHITE                               =  55, // <colorSensorValue> ::= white
+   PROD_COLORSENSORVALUE_BLACK                               =  56, // <colorSensorValue> ::= black
+   PROD_SHARPVALUE_DETECTED                                  =  57, // <sharpValue> ::= detected
+   PROD_SHARPVALUE_FAR                                       =  58, // <sharpValue> ::= far
+   PROD_SHARPVALUE_CLOSE                                     =  59, // <sharpValue> ::= close
+   PROD_MICROSWITCHVALUE_ON                                  =  60, // <microSwitchValue> ::= on
+   PROD_MICROSWITCHVALUE_OFF                                 =  61, // <microSwitchValue> ::= off
+   PROD_SENSORVALUE                                          =  62, // <sensorValue> ::= <colorSensorValue>
+   PROD_SENSORVALUE2                                         =  63, // <sensorValue> ::= <sharpValue>
+   PROD_SENSORVALUE3                                         =  64, // <sensorValue> ::= <microSwitchValue>
+   PROD_SENSORVALUE4                                         =  65, // <sensorValue> ::= <num>
+   PROD_CONCURRENCYCONDITION_ALLACTIONSFINISHED              =  66, // <concurrencyCondition> ::= AllActionsFinished
+   PROD_CONCURRENCYCONDITION_ONEACTIONFINISHED               =  67, // <concurrencyCondition> ::= OneActionFinished
+   PROD_CONCURRENCYCONDITION_FIRSTACTIONFINISHED             =  68, // <concurrencyCondition> ::= FirstActionFinished
+   PROD_CONCURRENCYCONDITION_LASTACTIONFINISHED              =  69, // <concurrencyCondition> ::= LastActionFinished
+   PROD_ACTION_ACTION_INTEGER_COMMA_INTEGER_COMMA            =  70, // <action> ::= action Integer ',' Integer ',' <time>
+   PROD_ACTION_OR_VAR                                        =  71, // <action_or_var> ::= <action>
+   PROD_ACTION_OR_VAR2                                       =  72, // <action_or_var> ::= <var>
+   PROD_PARAMETER_IDENTIFIER_PARAMETER                       =  73, // <parameter_identifier> ::= parameter <id>
+   PROD_PARAMETER_OR_VAR                                     =  74, // <parameter_or_var> ::= <parameter_identifier>
+   PROD_PARAMETER_OR_VAR2                                    =  75, // <parameter_or_var> ::= <var>
+   PROD_AX12_IDENTIFIER_AX12                                 =  76, // <ax12_identifier> ::= 'ax12' <id>
+   PROD_AX12_OR_VAR                                          =  77, // <ax12_or_var> ::= <ax12_identifier>
+   PROD_AX12_OR_VAR2                                         =  78, // <ax12_or_var> ::= <var>
+   PROD_START                                                =  79, // <Start> ::= <nl Opt> <Program>
+   PROD_PROGRAM                                              =  80, // <Program> ::= <Statements>
+   PROD_STATEMENTS                                           =  81, // <Statements> ::= <Statement> <statement_end> <Statements>
+   PROD_STATEMENTS2                                          =  82, // <Statements> ::= <Statement>
+   PROD_STATEMENTS3                                          =  83, // <Statements> ::= 
+   PROD_STATEMENT                                            =  84, // <Statement> ::= <ImportStatement>
+   PROD_STATEMENT2                                           =  85, // <Statement> ::= <WaitStatement>
+   PROD_STATEMENT3                                           =  86, // <Statement> ::= <DeclareStatement>
+   PROD_STATEMENT4                                           =  87, // <Statement> ::= <TeleportStatement>
+   PROD_STATEMENT5                                           =  88, // <Statement> ::= <MoveToStatement>
+   PROD_STATEMENT6                                           =  89, // <Statement> ::= <SetParamStatement>
+   PROD_STATEMENT7                                           =  90, // <Statement> ::= <EnableSensorStatement>
+   PROD_STATEMENT8                                           =  91, // <Statement> ::= <DisableSensorStatement>
+   PROD_STATEMENT9                                           =  92, // <Statement> ::= <Ax12MovementStatement>
+   PROD_STATEMENT10                                          =  93, // <Statement> ::= <Ax12AsyncMovementStatement>
+   PROD_STATEMENT11                                          =  94, // <Statement> ::= <MoveAx12Statement>
+   PROD_STATEMENT12                                          =  95, // <Statement> ::= <ActuatorStatement>
+   PROD_STATEMENT13                                          =  96, // <Statement> ::= <ListStatement>
+   PROD_STATEMENT14                                          =  97, // <Statement> ::= <ConcurrentStatement>
+   PROD_STATEMENT15                                          =  98, // <Statement> ::= <ConditionStatement>
+   PROD_STATEMENT16                                          =  99, // <Statement> ::= <WhileStatement>
+   PROD_STATEMENT17                                          = 100, // <Statement> ::= <SwitchStatement>
+   PROD_IMPORTSTATEMENT_IMPORT_STRING                        = 101, // <ImportStatement> ::= import String
+   PROD_WAITSTATEMENT_WAIT                                   = 102, // <WaitStatement> ::= wait <time>
+   PROD_DECLARESTATEMENT_DECLARE_AS                          = 103, // <DeclareStatement> ::= declare <action> as <var>
+   PROD_DECLARESTATEMENT_DECLARE_AS2                         = 104, // <DeclareStatement> ::= declare <sensor_identifier> as <var>
+   PROD_DECLARESTATEMENT_DECLARE_AS3                         = 105, // <DeclareStatement> ::= declare <parameter_identifier> as <var>
+   PROD_DECLARESTATEMENT_DECLARE_AS4                         = 106, // <DeclareStatement> ::= declare <point> as <var>
+   PROD_DECLARESTATEMENT_DECLARE_AS5                         = 107, // <DeclareStatement> ::= declare <rect> as <var>
+   PROD_DECLARESTATEMENT_DECLARE_AS6                         = 108, // <DeclareStatement> ::= declare <ax12_identifier> as <var>
+   PROD_DECLARESTATEMENT_DECLARE_STRING_AS                   = 109, // <DeclareStatement> ::= declare String as <var>
+   PROD_TELEPORTSTATEMENT_TELEPORT                           = 110, // <TeleportStatement> ::= teleport <point_or_var>
+   PROD_MOVETOSTATEMENT_GO_TO                                = 111, // <MoveToStatement> ::= go to <point_or_var>
+   PROD_MOVETOSTATEMENT_GO_TO2                               = 112, // <MoveToStatement> ::= go to <point_or_var> <speed>
+   PROD_MOVETOSTATEMENT_GO_TO3                               = 113, // <MoveToStatement> ::= go to <point_or_var> <direction>
+   PROD_MOVETOSTATEMENT_GO_TO4                               = 114, // <MoveToStatement> ::= go to <point_or_var> <speed> <direction>
+   PROD_MOVETOSTATEMENT_GO_TO5                               = 115, // <MoveToStatement> ::= go to <point_or_var> <direction> <speed>
+   PROD_LISTSTATEMENT_LBRACE_RBRACE                          = 116, // <ListStatement> ::= '{' <nl Opt> <Statements> <nl Opt> '}' <nl Opt>
+   PROD_CONCURRENTSTATEMENT_CONCURRENT                       = 117, // <ConcurrentStatement> ::= concurrent <nl Opt> <ListStatement>
+   PROD_CONCURRENTSTATEMENT_CONCURRENT2                      = 118, // <ConcurrentStatement> ::= concurrent <concurrencyCondition> <nl Opt> <ListStatement>
+   PROD_SETPARAMSTATEMENT_SET_EQ                             = 119, // <SetParamStatement> ::= set <parameter_or_var> '=' <num>
+   PROD_ENABLESENSORSTATEMENT_ENABLE                         = 120, // <EnableSensorStatement> ::= enable <sensor_or_var>
+   PROD_ENABLESENSORSTATEMENT_ENABLE_ALL                     = 121, // <EnableSensorStatement> ::= enable all <sensor>
+   PROD_DISABLESENSORSTATEMENT_DISABLE                       = 122, // <DisableSensorStatement> ::= disable <sensor_or_var>
+   PROD_DISABLESENSORSTATEMENT_DISABLE_ALL                   = 123, // <DisableSensorStatement> ::= disable all <sensor>
+   PROD_AX12MOVEMENTSTATEMENT_MAKE_AX12_MOVEMENT             = 124, // <Ax12MovementStatement> ::= make 'ax12' movement <string_or_var> <string_or_var>
+   PROD_AX12MOVEMENTSTATEMENT_MAKE_AX12_MOVEMENT2            = 125, // <Ax12MovementStatement> ::= make 'ax12' movement <string_or_var> <string_or_var> <speed>
+   PROD_AX12ASYNCMOVEMENTSTATEMENT_MAKE_AX12_ASYNC_MOVEMENT  = 126, // <Ax12AsyncMovementStatement> ::= make 'ax12' async movement <string_or_var> <string_or_var>
+   PROD_AX12ASYNCMOVEMENTSTATEMENT_MAKE_AX12_ASYNC_MOVEMENT2 = 127, // <Ax12AsyncMovementStatement> ::= make 'ax12' async movement <string_or_var> <string_or_var> <speed>
+   PROD_MOVEAX12STATEMENT_MOVE_TO                            = 128, // <MoveAx12Statement> ::= move <ax12_or_var> to <angle>
+   PROD_MOVEAX12STATEMENT_MOVE_TO2                           = 129, // <MoveAx12Statement> ::= move <ax12_or_var> to <angle> <speed>
+   PROD_ACTUATORSTATEMENT_DO                                 = 130, // <ActuatorStatement> ::= do <action_or_var>
+   PROD_CONDITIONISOPERATOR_IS                               = 131, // <ConditionIsOperator> ::= is
+   PROD_CONDITIONISOPERATOR_ISNOT                            = 132, // <ConditionIsOperator> ::= 'is not'
+   PROD_CONDITIONINOPERATOR_IN                               = 133, // <ConditionInOperator> ::= in
+   PROD_CONDITIONINOPERATOR_NOTIN                            = 134, // <ConditionInOperator> ::= 'not in'
+   PROD_SENSORCONDITION                                      = 135, // <SensorCondition> ::= <sensor_or_var> <ConditionIsOperator> <sensorValue>
+   PROD_ORIENTATIONCONDITION_ORIENTATION                     = 136, // <OrientationCondition> ::= orientation <ConditionInOperator> <angleRange>
+   PROD_POSITIONCONDITION_POSITION                           = 137, // <PositionCondition> ::= position <ConditionInOperator> <rect_or_var>
+   PROD_OPPONENTCONDITION_OPPONENT                           = 138, // <OpponentCondition> ::= opponent <ConditionInOperator> <rect_or_var>
+   PROD_REVERSECONDITION_STRATEGY_REVERSED                   = 139, // <reverseCondition> ::= strategy <ConditionIsOperator> reversed
+   PROD_IFCONDITION                                          = 140, // <IfCondition> ::= <SensorCondition>
+   PROD_IFCONDITION2                                         = 141, // <IfCondition> ::= <OrientationCondition>
+   PROD_IFCONDITION3                                         = 142, // <IfCondition> ::= <PositionCondition>
+   PROD_IFCONDITION4                                         = 143, // <IfCondition> ::= <OpponentCondition>
+   PROD_IFCONDITION5                                         = 144, // <IfCondition> ::= <reverseCondition>
+   PROD_CONDITIONSTATEMENT_IF                                = 145, // <ConditionStatement> ::= if <IfCondition> <nl Opt> <Statement>
+   PROD_CONDITIONSTATEMENT_IF_ELSE                           = 146, // <ConditionStatement> ::= if <IfCondition> <nl Opt> <Statement> else <nl Opt> <Statement>
+   PROD_WHILESTATEMENT_WHILE                                 = 147, // <WhileStatement> ::= while <IfCondition> <opt_time> <nl Opt> <Statement>
+   PROD_SWITCHSTATEMENT_SWITCH_LBRACE_RBRACE                 = 148, // <SwitchStatement> ::= switch <SwitchCondition> <nl Opt> '{' <nl Opt> <switch_cases> <nl Opt> '}'
+   PROD_SWITCHCONDITION_ORIENTATION                          = 149, // <SwitchCondition> ::= orientation
+   PROD_SWITCHCONDITION_POSITION                             = 150, // <SwitchCondition> ::= position
+   PROD_SWITCHCONDITION_OPPONENT                             = 151, // <SwitchCondition> ::= opponent
+   PROD_SWITCHCONDITION                                      = 152, // <SwitchCondition> ::= <sensor_or_var>
+   PROD_SWITCH_CASES                                         = 153, // <switch_cases> ::= <switch_case> <switch_cases>
+   PROD_SWITCH_CASES2                                        = 154, // <switch_cases> ::= 
+   PROD_SWITCH_CASE_CASE                                     = 155, // <switch_case> ::= case <switch_value> <nl Opt> <Statements>
+   PROD_SWITCH_CASE_DEFAULTS                                 = 156, // <switch_case> ::= defaults <nl Opt> <Statements>
+   PROD_SWITCH_VALUE                                         = 157, // <switch_value> ::= <sensorValue>
+   PROD_SWITCH_VALUE2                                        = 158, // <switch_value> ::= <angleRange>
+   PROD_SWITCH_VALUE3                                        = 159  // <switch_value> ::= <rect_or_var>
 };

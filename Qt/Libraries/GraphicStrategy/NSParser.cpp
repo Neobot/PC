@@ -224,6 +224,9 @@ void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, Var
 		case SYM_MOVEAX12STATEMENT:
 			action = buildMoveAx12Action(symbol, variables);
 			break;
+		case SYM_AX12MOVEMENTSTATEMENT:
+			action = buildAx12MovementAction(symbol, variables);
+			break;
 		default:
 		{
 			if (symbol->type == NON_TERMINAL)
@@ -290,6 +293,11 @@ void NSParser::readVariable(Symbol* symbol, VariableList& variables)
 					int actionId, param, time;
 					readAction(child, actionId, param, time);
 					var = DelclaredVariable::fromAction(actionId, param, time);
+				}
+				case SYM_STRING:
+				{
+					QString str = readString(child);
+					var = DelclaredVariable::fromString(str);
 				}
 				case SYM_VAR:
 					name = readVar(child);
@@ -587,6 +595,41 @@ AbstractAction *NSParser::buildMoveAx12Action(Symbol *symbol, NSParser::Variable
 	return nullptr;
 }
 
+AbstractAction *NSParser::buildAx12MovementAction(Symbol *symbol, NSParser::VariableList &variables)
+{
+	if (symbol->type == NON_TERMINAL)
+	{
+		bool groupOk = false;
+		bool mvtOk = false;
+		QString group;
+		QString mvt;
+		int speed = 100;
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			switch(child->symbolIndex)
+			{
+				case SYM_STRING_OR_VAR:
+				case SYM_STRING:
+				case SYM_VAR:
+					if (!groupOk)
+						groupOk = readStringOrVar(child, variables, group);
+					else
+						mvtOk = readStringOrVar(child, variables, mvt);
+					break;
+				case SYM_SPEED2:
+					speed = readSpeed(child);
+					break;
+			}
+		}
+
+		if (groupOk && mvtOk && _factory)
+			return _factory->ax12Movement(group, mvt, speed);
+	}
+
+	return nullptr;
+}
+
 Symbol* NSParser::searchChild(Symbol* symbol, unsigned short symbolIndex, bool recursive)
 {
 	if (symbol->type == NON_TERMINAL)
@@ -672,6 +715,15 @@ NSParser::DelclaredVariable NSParser::DelclaredVariable::fromSensor(int id, int 
 	return var;
 }
 
+NSParser::DelclaredVariable NSParser::DelclaredVariable::fromString(const QString &str)
+{
+	DelclaredVariable var;
+	var.type = String;
+	var.data << str;
+
+	return var;
+}
+
 Tools::RPoint NSParser::DelclaredVariable::toPoint() const
 {
 	QPointF p = data.value(0).toPointF();
@@ -700,9 +752,14 @@ void NSParser::DelclaredVariable::toSensor(int& id, int& type) const
 	type = data.value(1, -1).toInt();
 }
 
-void NSParser::DelclaredVariable::toAction(int& id, int& param, int& timeMs)
+void NSParser::DelclaredVariable::toAction(int& id, int& param, int& timeMs) const
 {
 	id = data.value(0, -1).toInt();
 	param = data.value(1, -1).toInt();
 	timeMs = data.value(2, -1).toInt();
+}
+
+QString NSParser::DelclaredVariable::toString() const
+{
+	return data.value(0).toString();
 }

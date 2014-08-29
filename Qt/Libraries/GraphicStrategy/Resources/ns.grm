@@ -78,7 +78,9 @@ Comment Line  = '//'
                 
 <time_unit> ::= 's' | 'ms'
 <time> ::= Integer <time_unit>
-<opt_time> ::= <time> | <>        
+<opt_time> ::= <time> | <>   
+            
+<string_or_var> ::= String | <var>     
         
 <var> ::= Identifier 
        
@@ -159,6 +161,7 @@ Comment Line  = '//'
                     |  'declare' <point> 'as' <var>  
                     |  'declare' <rect> 'as' <var> 
                     |  'declare' <ax12_identifier> 'as' <var> 
+                    |  'declare' String 'as' <var> 
                                                                                            
 <TeleportStatement> ::= 'teleport' <point_or_var> 
 <MoveToStatement> ::= 'go' 'to' <point_or_var>  
@@ -178,10 +181,10 @@ Comment Line  = '//'
 <DisableSensorStatement> ::= 'disable' <sensor_or_var>  
                           |  'disable' 'all' <sensor>     
                           
-<Ax12MovementStatement> ::= 'make' 'ax12' 'movement' String 
-                         |  'make' 'ax12' 'movement' String <speed> 
-<Ax12AsyncMovementStatement> ::= 'make' 'ax12' 'async' 'movement' String 
-                              |  'make' 'ax12' 'async' 'movement' String <speed> 
+<Ax12MovementStatement> ::= 'make' 'ax12' 'movement' <string_or_var> <string_or_var>
+                         |  'make' 'ax12' 'movement' <string_or_var> <string_or_var> <speed> 
+<Ax12AsyncMovementStatement> ::= 'make' 'ax12' 'async' 'movement' <string_or_var> <string_or_var>
+                              |  'make' 'ax12' 'async' 'movement' <string_or_var> <string_or_var> <speed> 
 <MoveAx12Statement> ::= 'move' <ax12_or_var> 'to' <angle>    
                      |  'move' <ax12_or_var> 'to' <angle> <speed>    
                      
