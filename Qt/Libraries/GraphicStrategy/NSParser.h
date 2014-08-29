@@ -93,6 +93,7 @@ protected:
 	AbstractAction *buildEnableSensorAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildDisableSensorAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildActuatorAction(Symbol *symbol, VariableList &variables);
+	AbstractAction *buildMoveAx12Action(Symbol *symbol, VariableList &variables);
 	void readVariable(Symbol* symbol, VariableList& variables);
 
 	//Variable parsers

@@ -102,6 +102,8 @@ SyntaxRuleHighlighting *SyntaxRuleHighlighting::nsSyntaxRules(TextHighlighter *p
 {
 	SyntaxRuleHighlighting* syntax = new SyntaxRuleHighlighting(parent);
 
+	syntax->addSyntaxRule(QRegExp("\\d+\\.?\\d*"), Qt::red);	//numbers
+
 	QColor keywordColor = Qt::darkBlue;
 	int fontWeigth = QFont::Bold;
 
@@ -110,9 +112,6 @@ SyntaxRuleHighlighting *SyntaxRuleHighlighting::nsSyntaxRules(TextHighlighter *p
 	syntax->addSyntaxRule("go", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("to", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("speed", keywordColor, fontWeigth, Qt::CaseInsensitive);
-	syntax->addSyntaxRule("forward", keywordColor, fontWeigth, Qt::CaseInsensitive);
-	syntax->addSyntaxRule("backward", keywordColor, fontWeigth, Qt::CaseInsensitive);
-	syntax->addSyntaxRule("auto", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("set", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("enable", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("disable", keywordColor, fontWeigth, Qt::CaseInsensitive);
@@ -122,8 +121,23 @@ SyntaxRuleHighlighting *SyntaxRuleHighlighting::nsSyntaxRules(TextHighlighter *p
 	syntax->addSyntaxRule("rect", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("do", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("action", keywordColor, fontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("move", keywordColor, fontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("ax12", keywordColor, fontWeigth, Qt::CaseInsensitive);
 
-	syntax->addSyntaxRule(QRegExp("\\d+\\.?\\d*"), Qt::red);	//numbers
+	QColor enumColor = Qt::darkRed;
+	int enumFontWeigth = QFont::Bold;
+	syntax->addSyntaxRule("forward", enumColor, enumFontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("backward", enumColor, enumFontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("auto", enumColor, enumFontWeigth, Qt::CaseInsensitive);
+
+//	QColor unitColor = QColor(230,100,0);
+//	int unitFontWeigth = QFont::Normal;
+
+//	syntax->addSyntaxRule(QRegExp("ms\\b", Qt::CaseInsensitive), unitColor, unitFontWeigth);
+//	syntax->addSyntaxRule(QRegExp("s\\b", Qt::CaseInsensitive), unitColor, unitFontWeigth);
+//	syntax->addSyntaxRule(QRegExp("rad\\b", Qt::CaseInsensitive), unitColor, unitFontWeigth);
+//	syntax->addSyntaxRule(QRegExp("deg\\b", Qt::CaseInsensitive), unitColor, unitFontWeigth);
+//	syntax->addSyntaxRule(QRegExp("\\%\\b", Qt::CaseInsensitive), unitColor, unitFontWeigth);
 
 	QRegExp quote("\".*\"");
 	quote.setMinimal(true);

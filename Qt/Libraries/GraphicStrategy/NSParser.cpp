@@ -221,6 +221,9 @@ void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, Var
 		case SYM_ACTUATORSTATEMENT:
 			action = buildActuatorAction(symbol, variables);
 			break;
+		case SYM_MOVEAX12STATEMENT:
+			action = buildMoveAx12Action(symbol, variables);
+			break;
 		default:
 		{
 			if (symbol->type == NON_TERMINAL)
@@ -544,6 +547,41 @@ AbstractAction *NSParser::buildActuatorAction(Symbol *symbol, NSParser::Variable
 
 		if (ok && _factory)
 			return _factory->actuatorAction((Comm::RobotAction)actionId, param, time);
+	}
+
+	return nullptr;
+}
+
+AbstractAction *NSParser::buildMoveAx12Action(Symbol *symbol, NSParser::VariableList &variables)
+{
+	if (symbol->type == NON_TERMINAL)
+	{
+		bool ok = false;
+		int ax12id = -1;
+		double angle = -1;
+		int speed = 100;
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			switch(child->symbolIndex)
+			{
+				case SYM_AX12_IDENTIFIER:
+				case SYM_AX12_OR_VAR:
+				case SYM_VAR:
+					ok = readAx12OrVar(child, variables, ax12id);
+					break;
+				case SYM_SPEED2:
+					speed = readSpeed(child);
+					break;
+				case SYM_ANGLE:
+				case SYM_FIXED_ANGLE:
+					angle = readAngleInRadian(child);
+					break;
+			}
+		}
+
+		if (ok && _factory)
+			return _factory->ax12Action(ax12id, Tools::radianToDegree(angle), speed);
 	}
 
 	return nullptr;
