@@ -4,43 +4,28 @@
 <head>
 <title>Neobot Script Reference</title>
 <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-<!--[if lt IE 9]>
 <style type="text/css">
-   html {overflow: hidden;}
+   html, body {
+   overflow: hidden;
+}
 </style>
-<![endif]-->
 <script type="text/javascript" src="jquery.js"></script>
 <script type="text/javascript" src="helpman_settings.js"></script>
 <script type="text/javascript" src="helpman_navigation.js"></script>
-<script type="text/javascript" src="neobotscriptreference_contextids.js"></script>
 <script type="text/javascript">
-    var defaulttopic="syntax.htm";
-    var query = window.location.search.substring(1), hash = window.location.hash, xssTest = /javascript|:|&#58;|&#x3a;|%3a|3a;|58;|\//i;
-    if (query !== "") query = (xssTest.test(query)) ? "" : query;
-    if (hash !== "") hash = (xssTest.test(hash)) ? "" : hash;
-    if (query != "") {
-      if (typeof(hmGetContextId) != "undefined") {
-        var tmpCntx = hmGetContextId(query);
-        if (tmpCntx != "") {
-          defaulttopic = tmpCntx;
-        } else {
-          defaulttopic = query + hash;
-        }
-      }
-    }
-    document.write('<frameset cols="280,*" frameborder="1" framespacing="1">');
-    if (document.getElementById) {
-      document.write('<frame name="hmnavigation" src="neobotscriptreference_content.htm" title="Navigation frame">'); 
-    }
-    else {
-      document.write('<frame name="hmnavigation" src="neobotscriptreference_content.htm" title="Navigation frame">'); 
-    }
-    document.write('<frame name="hmcontent" src="' + defaulttopic + '" title="Content frame">');
-    document.write('</frameset>');
+var defaulttopic="syntax.htm";
+if (location.href.lastIndexOf("?") > 0) defaulttopic=location.href.substring(location.href.lastIndexOf("?")+1,location.href.length).replace(/:/g,"");
+document.write('<frameset cols="30%,*" frameborder="1" framespacing="1">');
+if (document.getElementById) {
+  document.write('<frame name="hmnavigation" src="neobotscriptreference_content.htm" title="Navigation frame">'); }
+else {
+  document.write('<frame name="hmnavigation" src="neobotscriptreference_content.htm" title="Navigation frame">'); }
+document.write('<frame name="hmcontent" src="' + defaulttopic + '" title="Content frame">');
+document.write('</frameset>');
 </script>
 </head>
 <noscript>
-  <frameset cols="280,*" frameborder="1" framespacing="1">
+  <frameset cols="30%,*" frameborder="1" framespacing="1">
     <frame name="hmnavigation" src="neobotscriptreference_content.htm" title="Navigation frame">
     <frame name="hmcontent" src="syntax.htm" title="Content frame">
     <noframes>

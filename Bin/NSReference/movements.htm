@@ -67,10 +67,6 @@ div#printheader {
    #overview-table a:visited {text-decoration: none; color: black;}
    #callout-table a:hover, #overview-table a:hover {text-decoration: underline;}
    p.help-url { margin: 20px 0 5px 0; text-align: center; font-size: 80%; text-decoration: none }
-   .sync-toc { color: #ffffff; font-size: 8pt; font-weight: bold; display: none; }
-   .sync-toc a { color: #ffffff; text-decoration: none; font-weight: bold;}
-   .sync-toc a:visited { color: #ffffff; }
-   .sync-toc a:hover { text-decoration: underline; }
    </style>
 <!--[if lt IE 7]>
 <style type="text/css">
@@ -104,7 +100,6 @@ span.f_Heading1 { color: black; }
 <body>
 <!--ZOOMSTOP-->
 
-
 <div id="printheader"><h1 class="p_Heading1"><span class="f_Heading1">Movements</span></h1>
 </div>
 <div id="idheader">
@@ -114,7 +109,6 @@ span.f_Heading1 { color: black; }
 
   <tr valign="bottom">
     <td align="left" valign="bottom" class="topichead">
-   <p class="sync-toc">&lt;&lt; <a rel="nofollow" href="index.html?movements.htm" target="_top">Click to Display Table of Contents</a> &gt;&gt;</p>
    <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
    
    Reference&nbsp;&gt;</p>
@@ -123,7 +117,7 @@ span.f_Heading1 { color: black; }
     </td>
     <td align="right" width="120" valign="middle" class="topichead" id="idnav">
     
-     <a href="alias.htm"
+     <a href="basic_actions.htm"
         onmouseover="document.images.prev.src='btn_prev_h.gif'" 
         onmouseout="document.images.prev.src='btn_prev_n.gif'"
         ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
@@ -183,7 +177,6 @@ if( document.URL.substring(lastSlashPos + 1, lastSlashPos + 4).toLowerCase() != 
     else nsrInit();
  } 
 
-if ((!parent.hmNavigationFrame) && (parent.location) && (parent.location.href)) { $('.sync-toc').show();$('p.crumbs').hide();}
 
 </script>
 </body>
