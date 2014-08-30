@@ -418,6 +418,32 @@ double NSParser::readAngleInRadian(Symbol* symbol)
 	return value;
 }
 
+int NSParser::readConcurrencyStopCondition(Symbol *symbol)
+{
+	AsynchroneActionGroup::StopCondition condition  = AsynchroneActionGroup::AllActionFinished;
+	if (symbol->type == NON_TERMINAL)
+	{
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		switch(nt->ruleIndex)
+		{
+			case PROD_CONCURRENCYCONDITION_ALLACTIONSFINISHED:
+				condition = AsynchroneActionGroup::AllActionFinished;
+				break;
+			case PROD_CONCURRENCYCONDITION_ONEACTIONFINISHED:
+				condition = AsynchroneActionGroup::OneActionFinished;
+				break;
+			case PROD_CONCURRENCYCONDITION_FIRSTACTIONFINISHED:
+				condition = AsynchroneActionGroup::FirstActionFinished;
+				break;
+			case PROD_CONCURRENCYCONDITION_LASTACTIONFINISHED:
+				condition = AsynchroneActionGroup::LastActionFinished;
+				break;
+		}
+	}
+
+	return condition;
+}
+
 QString NSParser::readVar(Symbol* symbol)
 {
 	QString varName;

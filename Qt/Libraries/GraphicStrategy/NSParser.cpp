@@ -227,6 +227,12 @@ void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, Var
 		case SYM_AX12MOVEMENTSTATEMENT:
 			action = buildAx12MovementAction(symbol, variables);
 			break;
+		case SYM_LISTSTATEMENT:
+			action = buildListAction(symbol, variables);
+			break;
+		case SYM_CONCURRENTSTATEMENT:
+			action = buildConcurrentListAction(symbol, variables);
+			break;
 		default:
 		{
 			if (symbol->type == NON_TERMINAL)
@@ -626,6 +632,57 @@ AbstractAction *NSParser::buildAx12MovementAction(Symbol *symbol, NSParser::Vari
 		if (groupOk && mvtOk && _factory)
 			return _factory->ax12Movement(group, mvt, speed);
 	}
+
+	return nullptr;
+}
+
+AbstractAction *NSParser::buildListAction(Symbol *symbol, NSParser::VariableList &variables)
+{
+	QList<AbstractAction*> actionList;
+	if (symbol->type == NON_TERMINAL)
+	{
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+			buildActions(child, actionList, variables);
+	}
+
+	if (!actionList.isEmpty() && _factory)
+		return _factory->actionList(actionList);
+
+	return nullptr;
+}
+
+AbstractAction *NSParser::buildConcurrentListAction(Symbol *symbol, NSParser::VariableList &variables)
+{
+	QList<AbstractAction*> actionList;
+	AsynchroneActionGroup::StopCondition stopCondition = AsynchroneActionGroup::AllActionFinished;
+	if (symbol->type == NON_TERMINAL)
+	{
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			switch(child->symbolIndex)
+			{
+				case SYM_CONCURRENCYCONDITION:
+				{
+					stopCondition = (AsynchroneActionGroup::StopCondition)readConcurrencyStopCondition(child);
+					break;
+				}
+				case SYM_LISTSTATEMENT:
+				{
+					if (child->type == NON_TERMINAL)
+					{
+						NonTerminal* ntChild = static_cast<NonTerminal*>(child);
+						for(Symbol* listChild: ntChild->children)
+							buildActions(listChild, actionList, variables);
+					}
+				}
+			}
+		}
+	}
+
+	if (!actionList.isEmpty() && _factory)
+		return _factory->asynchroneActionList(actionList, stopCondition);
 
 	return nullptr;
 }

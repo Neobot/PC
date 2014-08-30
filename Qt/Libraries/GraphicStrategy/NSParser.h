@@ -99,6 +99,8 @@ protected:
 	AbstractAction *buildActuatorAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildMoveAx12Action(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildAx12MovementAction(Symbol *symbol, VariableList &variables);
+	AbstractAction *buildListAction(Symbol *symbol, VariableList &variables);
+	AbstractAction *buildConcurrentListAction(Symbol *symbol, VariableList &variables);
 	void readVariable(Symbol* symbol, VariableList& variables);
 
 	//Variable parsers
@@ -137,6 +139,7 @@ protected:
 	int readTimeUnitFactor(Symbol* symbol);
 	double readFixedAngleInRadian(Symbol *symbol);
 	double readAngleInRadian(Symbol *symbol);
+	int readConcurrencyStopCondition(Symbol *symbol);
 
 	//Based types parsers
 	QString readIdentifier(Symbol* symbol);

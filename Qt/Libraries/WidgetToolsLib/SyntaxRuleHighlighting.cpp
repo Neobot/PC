@@ -125,12 +125,18 @@ SyntaxRuleHighlighting *SyntaxRuleHighlighting::nsSyntaxRules(TextHighlighter *p
 	syntax->addSyntaxRule("ax12", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("make", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("movement", keywordColor, fontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("concurrent", keywordColor, fontWeigth, Qt::CaseInsensitive);
+
 
 	QColor enumColor = Qt::darkRed;
 	int enumFontWeigth = QFont::Bold;
 	syntax->addSyntaxRule("forward", enumColor, enumFontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("backward", enumColor, enumFontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("auto", enumColor, enumFontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("AllActionFinished", enumColor, enumFontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("OneActionFinished", enumColor, enumFontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("FirstActionFinished", enumColor, enumFontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("LastActionFinished", enumColor, enumFontWeigth, Qt::CaseInsensitive);
 
 //	QColor unitColor = QColor(230,100,0);
 //	int unitFontWeigth = QFont::Normal;
