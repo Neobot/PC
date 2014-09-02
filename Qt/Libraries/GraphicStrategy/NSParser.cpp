@@ -225,7 +225,10 @@ void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, Var
 			action = buildMoveAx12Action(symbol, variables);
 			break;
 		case SYM_AX12MOVEMENTSTATEMENT:
-			action = buildAx12MovementAction(symbol, variables);
+			action = buildAx12MovementAction(symbol, variables, false);
+			break;
+		case SYM_AX12ASYNCMOVEMENTSTATEMENT:
+			action = buildAx12MovementAction(symbol, variables, true);
 			break;
 		case SYM_LISTSTATEMENT:
 			action = buildListAction(symbol, variables);
@@ -601,7 +604,7 @@ AbstractAction *NSParser::buildMoveAx12Action(Symbol *symbol, NSParser::Variable
 	return nullptr;
 }
 
-AbstractAction *NSParser::buildAx12MovementAction(Symbol *symbol, NSParser::VariableList &variables)
+AbstractAction *NSParser::buildAx12MovementAction(Symbol *symbol, NSParser::VariableList &variables, bool async)
 {
 	if (symbol->type == NON_TERMINAL)
 	{
@@ -629,8 +632,15 @@ AbstractAction *NSParser::buildAx12MovementAction(Symbol *symbol, NSParser::Vari
 			}
 		}
 
+
+
 		if (groupOk && mvtOk && _factory)
-			return _factory->ax12Movement(group, mvt, speed);
+		{
+			if (!async)
+				return _factory->ax12Movement(group, mvt, speed);
+			else
+				return _factory->ax12AsynchroneMovement(group, mvt, speed);
+		}
 	}
 
 	return nullptr;

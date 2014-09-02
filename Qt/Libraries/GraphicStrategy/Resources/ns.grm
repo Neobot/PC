@@ -150,6 +150,8 @@ Comment Line  = '//'
              | <ConditionStatement>
              | <WhileStatement>
              | <SwitchStatement>   
+             | <FunctionStatement>
+             | <CallStatement>
              
 <ImportStatement> ::= 'import' String
        
@@ -170,7 +172,7 @@ Comment Line  = '//'
                    |  'go' 'to' <point_or_var> <speed> <direction>  
                    |  'go' 'to' <point_or_var> <direction> <speed> 
                            
-<ListStatement> ::= '{' <nl Opt> <Statements> <nl Opt> '}' <nl Opt>
+<ListStatement> ::= '{' <nl Opt> <Statements> <nl Opt> '}'
 <ConcurrentStatement> ::= 'concurrent' <nl Opt> <ListStatement>                       
                        | 'concurrent' <concurrencyCondition> <nl Opt> <ListStatement>
                        
@@ -204,7 +206,8 @@ Comment Line  = '//'
                       |  'if' <IfCondition> <nl Opt> <Statement> 'else' <nl Opt> <Statement>              
 
     !while
-<WhileStatement> ::= 'while' <IfCondition> <opt_time> <nl Opt> <Statement>
+<timeout> ::= 'timeout' <time> | <>
+<WhileStatement> ::= 'while' <timeout> <IfCondition> <opt_time> <nl Opt> <Statement>
                   
     !switch
 <SwitchStatement> ::= 'switch' <SwitchCondition> <nl Opt> '{' <nl Opt> <switch_cases> <nl Opt> '}' 
@@ -218,5 +221,23 @@ Comment Line  = '//'
                
 <switch_value> ::= <sensorValue> | <angleRange> | <rect_or_var>
 
-
+<varList> ::= <var> ',' <varList>
+           | <var>
+           | 
+           
+<FunctionStatement> ::= 'function' <var> '(' <varList> ')' <nl Opt> <ListStatement>  
+        
+<CallArg> ::= <var>
+           | '[' <point> ']'
+           | '[' <rect> ']'
+           | <action>
+           | <sensor_identifier>
+           | <parameter_identifier>
+           | <ax12_identifier>
+           
+<CallArgList> ::= <CallArg> ',' <CallArgList>
+           | <CallArg>
+           | 
+           
+<CallStatement> ::= <var>  '(' <CallArgList> ')'   
                    

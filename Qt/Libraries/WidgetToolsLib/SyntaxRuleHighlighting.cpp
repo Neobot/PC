@@ -123,6 +123,7 @@ SyntaxRuleHighlighting *SyntaxRuleHighlighting::nsSyntaxRules(TextHighlighter *p
 	syntax->addSyntaxRule("action", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("move", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("ax12", keywordColor, fontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("async", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("make", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("movement", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("concurrent", keywordColor, fontWeigth, Qt::CaseInsensitive);

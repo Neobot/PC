@@ -98,7 +98,7 @@ protected:
 	AbstractAction *buildDisableSensorAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildActuatorAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildMoveAx12Action(Symbol *symbol, VariableList &variables);
-	AbstractAction *buildAx12MovementAction(Symbol *symbol, VariableList &variables);
+	AbstractAction *buildAx12MovementAction(Symbol *symbol, VariableList &variables, bool async);
 	AbstractAction *buildListAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildConcurrentListAction(Symbol *symbol, VariableList &variables);
 	void readVariable(Symbol* symbol, VariableList& variables);
