@@ -413,9 +413,46 @@ double NSParser::readAngleInRadian(Symbol* symbol)
 					break;
 			}
 		}
+		else
+		{
+			value = readFixedAngleInRadian(symbol);
+		}
 	}
 
 	return value;
+}
+
+void NSParser::readAngleRangeInRadian(Symbol *symbol, double &min, double &max)
+{
+	bool minSet = false;
+	bool maxSet = false;
+	if (symbol->type == NON_TERMINAL)
+	{
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			switch(child->symbolIndex)
+			{
+				case SYM_NUM:
+				case SYM_ANGLE:
+				case SYM_FIXED_ANGLE:
+				{
+					double angle = readAngleInRadian(child);
+					if (!minSet)
+					{
+						min = angle;
+						minSet = true;
+					}
+					else if (!maxSet)
+					{
+						max = angle;
+						maxSet = true;
+					}
+					break;
+				}
+			}
+		}
+	}
 }
 
 int NSParser::readConcurrencyStopCondition(Symbol *symbol)
@@ -442,6 +479,183 @@ int NSParser::readConcurrencyStopCondition(Symbol *symbol)
 	}
 
 	return condition;
+}
+
+NSParser::ConditionInfo NSParser::readCondition(Symbol *symbol, VariableList& variables)
+{
+	ConditionInfo info;
+	if (symbol->type == NON_TERMINAL)
+	{
+		Symbol* conditionSymbol = nullptr;
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		switch(nt->ruleIndex)
+		{
+			case PROD_SENSORCONDITION:
+			case PROD_IFCONDITION: //sensor
+				conditionSymbol = searchChild(symbol, SYM_SENSORCONDITION);
+				break;
+			case PROD_ORIENTATIONCONDITION_ORIENTATION:
+			case PROD_IFCONDITION2: //orientation
+				info.type = ConditionInfo::RobotOrientationCondition;
+				conditionSymbol = searchChild(symbol, SYM_ORIENTATIONCONDITION);
+				break;
+			case PROD_POSITIONCONDITION_POSITION:
+			case PROD_IFCONDITION3: //position
+				info.type = ConditionInfo::RobotPosCondition;
+				conditionSymbol = searchChild(symbol, SYM_POSITIONCONDITION);
+				break;
+			case PROD_OPPONENTCONDITION_OPPONENT:
+			case PROD_IFCONDITION4: //opponent
+				info.type = ConditionInfo::OpponentPosCondition;
+				conditionSymbol = searchChild(symbol, SYM_OPPONENTCONDITION);
+				break;
+			case PROD_REVERSECONDITION_STRATEGY_REVERSED:
+			case PROD_IFCONDITION5: //strategy reversed
+				info.type = ConditionInfo::ReversedStrategyCondition;
+				conditionSymbol = searchChild(symbol, SYM_REVERSECONDITION);
+				break;
+			case PROD_IFCONDITION_TRUE: //strategy reversed
+				info.type = ConditionInfo::AlwaysTrueCondition;
+				break;
+			case PROD_IFCONDITION_FALSE: //strategy reversed
+				info.type = ConditionInfo::AlwaysFalseCondition;
+				break;
+		}
+
+		int sensorType = Comm::UnknownedSensor;
+		if (conditionSymbol && conditionSymbol->type == NON_TERMINAL)
+		{
+			NonTerminal* conditionSymbolNt = static_cast<NonTerminal*>(conditionSymbol);
+			for(Symbol* c: conditionSymbolNt->children)
+			{
+				switch(c->symbolIndex)
+				{
+					case SYM_SENSOR_IDENTIFIER:
+					case SYM_SENSOR_OR_VAR:
+					{
+						readSensorOrVar(c, variables, sensorType, info.sensorId);
+						if (sensorType == Comm::ColorSensor)
+							info.type = ConditionInfo::ColorSensorValueCondition;
+						else if (sensorType == Comm::SharpSensor)
+							info.type = ConditionInfo::SharpValueCondition;
+						else if (sensorType == Comm::MicroswitchSensor)
+							info.type = ConditionInfo::MicroswitchValueCondition;
+						break;
+					}
+					case SYM_COLORSENSORVALUE:
+					case SYM_MICROSWITCHVALUE:
+					case SYM_SHARPVALUE:
+					case SYM_SENSORVALUE:
+					{
+						Comm::SensorType valueSensorType;
+						info.sensorValue = readSensorValue(c, valueSensorType);
+						if (valueSensorType != sensorType)
+						{
+							addError(NSParsingError::invalidSensorValueError(readTerminals(c), c));
+							info.sensorValue = -1;
+							info.setInvalid();
+						}
+						break;
+					}
+					case SYM_RECT_OR_VAR:
+					case SYM_RECT:
+					case SYM_FIXED_RECT:
+						readRectOrVar(c, variables, info.rect);
+						break;
+					case SYM_ANGLERANGE:
+						readAngleRangeInRadian(c, info.angleMin, info.angleMax);
+						break;
+					case SYM_VAR:
+					{
+						QString varName = readVar(c);
+						if (variables.contains(varName))
+						{
+							DelclaredVariable& var = variables[varName];
+							if (info.type == ConditionInfo::OpponentPosCondition || info.type == ConditionInfo::RobotPosCondition)
+							{
+								//expected rect
+								if (var.isRect())
+									info.rect = var.toRect();
+								else
+								{
+									info.setInvalid();
+									addError(NSParsingError::invalidVariableTypeError(varName, "rect", c));
+								}
+							}
+							else
+							{
+								//expected sensor
+								if (var.isSensor())
+									var.toSensor(info.sensorId, sensorType);
+								if (sensorType == Comm::ColorSensor)
+									info.type = ConditionInfo::ColorSensorValueCondition;
+								else if (sensorType == Comm::SharpSensor)
+									info.type = ConditionInfo::SharpValueCondition;
+								else if (sensorType == Comm::MicroswitchSensor)
+									info.type = ConditionInfo::MicroswitchValueCondition;
+								else
+								{
+									info.setInvalid();
+									addError(NSParsingError::invalidVariableTypeError(varName, "sensor", c));
+								}
+							}
+
+						}
+						else
+						{
+							info.setInvalid();
+							addError(NSParsingError::undeclaredVariableError(varName, c));
+						}
+						break;
+					}
+					case SYM_CONDITIONINOPERATOR:
+						info.neg = static_cast<NonTerminal*>(c)->ruleIndex == PROD_CONDITIONINOPERATOR_NOT_IN;
+						break;
+					case SYM_CONDITIONISOPERATOR:
+						info.neg = static_cast<NonTerminal*>(c)->ruleIndex == PROD_CONDITIONISOPERATOR_IS_NOT;
+						break;
+				}
+			}
+		}
+	}
+
+	return info;
+}
+
+int NSParser::readSensorValue(Symbol *symbol, Comm::SensorType& type)
+{
+	int value = -1;
+	type = Comm::UnknownedSensor;
+
+	//find the terminal symbol
+	while (symbol->type != TERMINAL)
+	{
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		if (!nt->children.empty())
+		{
+			symbol = *(nt->children.begin());
+		}
+		else
+			break;
+	}
+
+	switch(symbol->symbolIndex)
+	{
+		case SYM_UNKNOWN:	type = Comm::ColorSensor; value = Comm::ColorUnknown; break;
+		case SYM_RED:		type = Comm::ColorSensor; value = Comm::ColorRed; break;
+		case SYM_GREEN:		type = Comm::ColorSensor; value = Comm::ColorGreen; break;
+		case SYM_BLUE:		type = Comm::ColorSensor; value = Comm::ColorBlue; break;
+		case SYM_YELLOW:	type = Comm::ColorSensor; value = Comm::ColorYellow; break;
+		case SYM_WHITE:		type = Comm::ColorSensor; value = Comm::ColorWhite; break;
+		case SYM_BLACK:		type = Comm::ColorSensor; value = Comm::ColorBlack; break;
+		case SYM_FAR:		type = Comm::SharpSensor; value = Comm::SharpNothingDetected; break;
+		case SYM_DETECTED:	type = Comm::SharpSensor; value = Comm::SharpObjectDetected; break;
+		case SYM_CLOSE:		type = Comm::SharpSensor; value = Comm::SharpObjectVeryClose; break;
+		case SYM_OFF:		type = Comm::MicroswitchSensor; value = Comm::MicroswicthOff; break;
+		case SYM_ON:		type = Comm::MicroswitchSensor; value = Comm::MicroswicthOn; break;
+	}
+
+	return value;
 }
 
 QString NSParser::readVar(Symbol* symbol)

@@ -149,7 +149,7 @@ Comment Line  = '//'
              | <ConcurrentStatement>
              | <ConditionStatement>
              | <WhileStatement>
-             | <SwitchStatement>   
+!             | <SwitchStatement>   
              | <FunctionStatement>
              | <CallStatement>
              
@@ -193,34 +193,35 @@ Comment Line  = '//'
 <ActuatorStatement> ::= 'do' <action_or_var>                    
                                       
     !if      
-<ConditionIsOperator> ::= 'is' | 'is not'
-<ConditionInOperator> ::= 'in' | 'not in'                      
+<ConditionIsOperator> ::= 'is' | 'is' 'not'
+<ConditionInOperator> ::= 'in' | 'not' 'in'                      
 <SensorCondition> ::= <sensor_or_var> <ConditionIsOperator> <sensorValue>
 <OrientationCondition> ::= 'orientation' <ConditionInOperator> <angleRange>
 <PositionCondition> ::= 'position' <ConditionInOperator> <rect_or_var>
 <OpponentCondition> ::= 'opponent' <ConditionInOperator> <rect_or_var>
 <reverseCondition> ::= 'strategy' <ConditionIsOperator> 'reversed'                                                                              
-<IfCondition> ::= <SensorCondition> | <OrientationCondition> | <PositionCondition> | <OpponentCondition> | <reverseCondition>
+<IfCondition> ::= <SensorCondition> | <OrientationCondition> | <PositionCondition> | <OpponentCondition> | <reverseCondition> | 'true' | 'false'
                                     
-<ConditionStatement> ::= 'if' <IfCondition> <nl Opt> <Statement>
-                      |  'if' <IfCondition> <nl Opt> <Statement> 'else' <nl Opt> <Statement>              
+<ConditionStatement> ::= 'if' <IfCondition> <nl Opt> <Statement> <statement_end>
+                      |  'if' <IfCondition> <nl Opt> <Statement> <statement_end> 'else' <nl Opt> <Statement>              
 
     !while
 <timeout> ::= 'timeout' <time> | <>
 <WhileStatement> ::= 'while' <timeout> <IfCondition> <opt_time> <nl Opt> <Statement>
                   
     !switch
-<SwitchStatement> ::= 'switch' <SwitchCondition> <nl Opt> '{' <nl Opt> <switch_cases> <nl Opt> '}' 
-<SwitchCondition> ::= 'orientation' | 'position' | 'opponent' | <sensor_or_var> 
+!<SwitchStatement> ::= 'switch' <SwitchCondition> <nl Opt> '{' <nl Opt> <switch_cases> <nl Opt> '}' 
+!<SwitchCondition> ::= 'orientation' | 'position' | 'opponent' | <sensor_or_var> 
 
-<switch_cases> ::= <switch_case> <switch_cases>  
-                | <>  
+!<switch_cases> ::= <switch_case> <switch_cases>  
+!                | <>  
                                
-<switch_case> ::= 'case' <switch_value> <nl Opt> <Statements>
-               |  'defaults' <nl Opt> <Statements>
+!<switch_case> ::= 'case' <switch_value> <nl Opt> <Statements>
+!               |  'defaults' <nl Opt> <Statements>
                
-<switch_value> ::= <sensorValue> | <angleRange> | <rect_or_var>
+!<switch_value> ::= <sensorValue> | <angleRange> | <rect_or_var>
 
+    !functions
 <varList> ::= <var> ',' <varList>
            | <var>
            | 

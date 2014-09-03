@@ -46,6 +46,11 @@ NSParsingError NSParsingError::invalidVariableTypeError(const QString &variableN
 	return error(QString("The variable '").append(variableName).append("' is not a ").append(expectedType).append("."), symbol);
 }
 
+NSParsingError NSParsingError::invalidSensorValueError(const QString &value, Symbol *symbol)
+{
+	return error(QString("'").append(value).append("'' is not a valid value for this type of sensor."), symbol);
+}
+
 QString NSParsingError::print() const
 {
 	QString text;

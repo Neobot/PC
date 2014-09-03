@@ -135,9 +135,25 @@ AsynchroneActionGroup *ActionFactory::asynchroneActionList(const QList<AbstractA
 	return new AsynchroneActionGroup(actions, stopCondition);
 }
 
+AbstractAction *ActionFactory::ifOrientationAction(double minAngle, double maxAngle, AbstractAction *thenAction, AbstractAction *elseAction)
+{
+	OrientationSwitchCaseAction* switchAction = orientationSwitchCaseAction();
+	switchAction->addCase(qMakePair(minAngle, maxAngle), thenAction);
+	switchAction->setDefaultAction(elseAction);
+	return switchAction;
+}
+
 OrientationSwitchCaseAction *ActionFactory::orientationSwitchCaseAction() const
 {
 	return new OrientationSwitchCaseAction(_manager);
+}
+
+AbstractAction *ActionFactory::ifColorSensorAction(int colorSensorId, int value, AbstractAction *thenAction, AbstractAction *elseAction)
+{
+	SensorSwitchCaseAction* switchAction = colorSensorSwitchCaseAction(colorSensorId);
+	switchAction->addCase(value, thenAction);
+	switchAction->setDefaultAction(elseAction);
+	return switchAction;
 }
 
 SensorSwitchCaseAction *ActionFactory::colorSensorSwitchCaseAction(int colorSensorId) const
@@ -145,9 +161,25 @@ SensorSwitchCaseAction *ActionFactory::colorSensorSwitchCaseAction(int colorSens
 	return new SensorSwitchCaseAction(colorSensorId, Comm::ColorSensor, _manager);
 }
 
+AbstractAction *ActionFactory::ifSharpAction(int sharpId, int value, AbstractAction *thenAction, AbstractAction *elseAction)
+{
+	SensorSwitchCaseAction* switchAction = sharpSwitchCaseAction(sharpId);
+	switchAction->addCase(value, thenAction);
+	switchAction->setDefaultAction(elseAction);
+	return switchAction;
+}
+
 SensorSwitchCaseAction *ActionFactory::sharpSwitchCaseAction(int sharpId) const
 {
 	return new SensorSwitchCaseAction(sharpId, Comm::SharpSensor, _manager);
+}
+
+AbstractAction *ActionFactory::ifMicroswitchAction(int microswicthId, int value, AbstractAction *thenAction, AbstractAction *elseAction)
+{
+	SensorSwitchCaseAction* switchAction = microswitchSwitchCaseAction(microswicthId);
+	switchAction->addCase(value, thenAction);
+	switchAction->setDefaultAction(elseAction);
+	return switchAction;
 }
 
 SensorSwitchCaseAction* ActionFactory::microswitchSwitchCaseAction(int microswicthId) const
@@ -155,9 +187,38 @@ SensorSwitchCaseAction* ActionFactory::microswitchSwitchCaseAction(int microswic
 	return new SensorSwitchCaseAction(microswicthId, Comm::MicroswitchSensor, _manager);
 }
 
+AbstractAction *ActionFactory::ifPositionAction(const QRectF &rect, AbstractAction *thenAction, AbstractAction *elseAction)
+{
+	PositionSwitchCaseAction* switchAction = positionSwitchCaseAction();
+	switchAction->addCase(rect, thenAction);
+	switchAction->setDefaultAction(elseAction);
+	return switchAction;
+}
+
 PositionSwitchCaseAction *ActionFactory::positionSwitchCaseAction() const
 {
 	return new PositionSwitchCaseAction(_manager);
+}
+
+AbstractAction *ActionFactory::ifOpponentAction(const QRectF &rect, AbstractAction *thenAction, AbstractAction *elseAction)
+{
+	OpponentSwitchCaseAction* switchAction = opponentSwitchCaseAction();
+	switchAction->addCase(rect, thenAction);
+	switchAction->setDefaultAction(elseAction);
+	return switchAction;
+}
+
+OpponentSwitchCaseAction *ActionFactory::opponentSwitchCaseAction() const
+{
+	return new OpponentSwitchCaseAction(_manager);
+}
+
+AbstractAction *ActionFactory::ifStrategyReversedAction(AbstractAction *thenAction, AbstractAction *elseAction)
+{
+	StrategyReversedSwitchCaseAction* switchAction = new StrategyReversedSwitchCaseAction(_manager);
+	switchAction->addCase(true, thenAction);
+	switchAction->setDefaultAction(elseAction);
+	return switchAction;
 }
 
 AbstractAction *ActionFactory::ax12Action(quint8 id, float angle, float speed) const

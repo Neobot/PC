@@ -236,6 +236,9 @@ void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, Var
 		case SYM_CONCURRENTSTATEMENT:
 			action = buildConcurrentListAction(symbol, variables);
 			break;
+		case SYM_CONDITIONSTATEMENT:
+			action = buildIfAction(symbol, variables);
+			break;
 		default:
 		{
 			if (symbol->type == NON_TERMINAL)
@@ -697,6 +700,75 @@ AbstractAction *NSParser::buildConcurrentListAction(Symbol *symbol, NSParser::Va
 	return nullptr;
 }
 
+AbstractAction *NSParser::buildIfAction(Symbol *symbol, NSParser::VariableList &variables)
+{
+	if (symbol->type == NON_TERMINAL)
+	{
+		ConditionInfo info;
+		AbstractAction* thenAction = nullptr;
+		AbstractAction* elseAction = nullptr;
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			switch(child->symbolIndex)
+			{
+				case SYM_IFCONDITION:
+				case SYM_SENSORCONDITION:
+				case SYM_POSITIONCONDITION:
+				case SYM_ORIENTATIONCONDITION:
+				case SYM_OPPONENTCONDITION:
+				case SYM_REVERSECONDITION:
+					info = readCondition(child, variables);
+					break;
+				default:
+				{
+					QList<AbstractAction*> list;
+					buildActions(child, list, variables);
+					if (!list.isEmpty())
+					{
+						if (!thenAction)
+							thenAction = list.first();
+						else if (!elseAction)
+							elseAction = list.first();
+					}
+				}
+			}
+		}
+
+		if (_factory && info.isValid())
+		{
+			if (info.neg)
+				qSwap(thenAction, elseAction);
+
+			switch(info.type)
+			{
+				case ConditionInfo::InvalidCondition:
+					break;
+				case ConditionInfo::AlwaysTrueCondition:
+					return thenAction;
+				case ConditionInfo::AlwaysFalseCondition:
+					return elseAction;
+				case ConditionInfo::RobotPosCondition:
+					return _factory->ifPositionAction(info.rect, thenAction, elseAction);
+				case ConditionInfo::RobotOrientationCondition:
+					return _factory->ifOrientationAction(info.angleMin, info.angleMax, thenAction, elseAction);
+				case ConditionInfo::OpponentPosCondition:
+					return _factory->ifOpponentAction(info.rect, thenAction, elseAction);
+				case ConditionInfo::ColorSensorValueCondition:
+					return _factory->ifColorSensorAction(info.sensorId, info.sensorValue, thenAction, elseAction);
+				case ConditionInfo::SharpValueCondition:
+					return _factory->ifSharpAction(info.sensorId, info.sensorValue, thenAction, elseAction);
+				case ConditionInfo::MicroswitchValueCondition:
+					return _factory->ifMicroswitchAction(info.sensorId, info.sensorValue, thenAction, elseAction);
+				case ConditionInfo::ReversedStrategyCondition:
+					return _factory->ifStrategyReversedAction(thenAction, elseAction);
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 Symbol* NSParser::searchChild(Symbol* symbol, unsigned short symbolIndex, bool recursive)
 {
 	if (symbol->type == NON_TERMINAL)
@@ -720,6 +792,27 @@ Symbol* NSParser::searchChild(Symbol* symbol, unsigned short symbolIndex, bool r
 	}
 
 	return nullptr;
+}
+
+QString NSParser::readTerminals(Symbol *symbol)
+{
+	QString text;
+	if (symbol->type == TERMINAL)
+	{
+		Terminal* t = static_cast<Terminal*>(symbol);
+		text = QString::fromStdWString(t->image);
+	}
+	else
+	{
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			text += readTerminals(child);
+			text += " ";
+		}
+	}
+
+	return text;
 }
 
 //-----------------------------------------------------------------

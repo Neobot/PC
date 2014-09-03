@@ -3,6 +3,7 @@
 
 #include <QStringList>
 #include <QTextStream>
+#include <QRectF>
 
 #include "RPoint.h"
 #include "RMovement.h"
@@ -84,6 +85,35 @@ protected:
 	};
 	
 	typedef QHash<QString, DelclaredVariable> VariableList;
+
+	struct ConditionInfo
+	{
+		enum ConditionType
+		{
+			InvalidCondition,
+			AlwaysTrueCondition,
+			AlwaysFalseCondition,
+			RobotPosCondition,
+			RobotOrientationCondition,
+			OpponentPosCondition,
+			SharpValueCondition,
+			MicroswitchValueCondition,
+			ColorSensorValueCondition,
+			ReversedStrategyCondition
+		};
+
+		ConditionInfo() : type(InvalidCondition) {}
+		bool isValid() const {return type != InvalidCondition;}
+		void setInvalid() {type = InvalidCondition;}
+
+		ConditionType type;
+		int sensorId;
+		int sensorValue;
+		double angleMin;
+		double angleMax;
+		QRectF rect;
+		bool neg;
+	};
 	
 	bool parse(const QString& scriptCode, QList<AbstractAction*>& actions, const QString& originalFilename);
 	Symbol* getParsedTree(const QString& scriptCode);
@@ -101,6 +131,7 @@ protected:
 	AbstractAction *buildAx12MovementAction(Symbol *symbol, VariableList &variables, bool async);
 	AbstractAction *buildListAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildConcurrentListAction(Symbol *symbol, VariableList &variables);
+	AbstractAction *buildIfAction(Symbol *symbol, VariableList &variables);
 	void readVariable(Symbol* symbol, VariableList& variables);
 
 	//Variable parsers
@@ -139,7 +170,11 @@ protected:
 	int readTimeUnitFactor(Symbol* symbol);
 	double readFixedAngleInRadian(Symbol *symbol);
 	double readAngleInRadian(Symbol *symbol);
+	void readAngleRangeInRadian(Symbol *symbol, double& min, double& max);
 	int readConcurrencyStopCondition(Symbol *symbol);
+	ConditionInfo readCondition(Symbol *symbol, VariableList& variables);
+	int readSensorValue(Symbol *symbol, Comm::SensorType &type);
+
 
 	//Based types parsers
 	QString readIdentifier(Symbol* symbol);
@@ -151,6 +186,7 @@ protected:
 	QString readVar(Symbol *symbol);
 
 	Symbol *searchChild(Symbol *symbol, unsigned short symbolIndex, bool recursive = false);
+	QString readTerminals(Symbol *symbol);
 	
 
 	void printTree(QTextStream& out, Symbol *s, int level);
@@ -165,7 +201,6 @@ private:
 
 	QString _currentFile;
 	QList<NSParsingError> _errors;
-
 };
 
 #endif // NSPARSER_H

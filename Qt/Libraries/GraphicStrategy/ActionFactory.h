@@ -23,11 +23,25 @@ public:
 	ActionGroup* actionList(const QList<AbstractAction*>& actions = QList<AbstractAction*>()) const;
 	AsynchroneActionGroup* asynchroneActionList(const QList<AbstractAction*>& actions = QList<AbstractAction*>(), AsynchroneActionGroup::StopCondition stopCondition = AsynchroneActionGroup::OneActionFinished) const;
 
+	AbstractAction* ifOrientationAction(double minAngle, double maxAngle, AbstractAction* thenAction, AbstractAction* elseAction = nullptr);
 	OrientationSwitchCaseAction* orientationSwitchCaseAction() const;
+
+	AbstractAction* ifColorSensorAction(int colorSensorId, int value, AbstractAction* thenAction, AbstractAction* elseAction = nullptr);
 	SensorSwitchCaseAction* colorSensorSwitchCaseAction(int colorSensorId) const;
+
+	AbstractAction* ifSharpAction(int sharpId, int value, AbstractAction* thenAction, AbstractAction* elseAction = nullptr);
 	SensorSwitchCaseAction* sharpSwitchCaseAction(int sharpId) const;
+
+	AbstractAction* ifMicroswitchAction(int microswicthId, int value, AbstractAction* thenAction, AbstractAction* elseAction = nullptr);
 	SensorSwitchCaseAction* microswitchSwitchCaseAction(int microswicthId) const;
+
+	AbstractAction* ifPositionAction(const QRectF& rect, AbstractAction* thenAction, AbstractAction* elseAction = nullptr);
 	PositionSwitchCaseAction* positionSwitchCaseAction() const;
+
+	AbstractAction* ifOpponentAction(const QRectF& rect, AbstractAction* thenAction, AbstractAction* elseAction = nullptr);
+	OpponentSwitchCaseAction *opponentSwitchCaseAction() const;
+
+	AbstractAction* ifStrategyReversedAction(AbstractAction* thenAction, AbstractAction* elseAction = nullptr);
 
     AbstractAction* waitAction(int ms) const;
 
