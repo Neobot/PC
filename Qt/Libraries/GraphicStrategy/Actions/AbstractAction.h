@@ -7,9 +7,9 @@ class StrategyManager;
 
 /**
  * @brief Represent an action to be executed in the strategy.
- * An action can be executed only once. As a consequence it is not necessary to reset the action internal state at the end.\n
+ * An action can be executed multiple times. As a consequence it is mandatory to reset the action internal state in the #end method.\n
  * The method #execute have to be reimplemented to define what the action should do.
- * The method #end can be reimplemented to clean the state after the execution.
+ * The method #end can be reimplemented to clean and reset the action internal state after the execution.
  * The method #stop can be reimplemented to support cancellation.
  */
 class AbstractAction : public QObject

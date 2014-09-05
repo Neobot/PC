@@ -7,7 +7,7 @@ class StrategyMap;
 
 #include "Actions/StandardActions.h"
 #include "Actions/ContainerActions.h"
-#include "Actions/ConditionalActions.h"
+#include "Actions/WhileAction.h"
 #include "Actions/PrehistobotActions.h"
 
 namespace Comm {class RobotCommInterface;}
@@ -24,26 +24,34 @@ public:
 	AsynchroneActionGroup* asynchroneActionList(const QList<AbstractAction*>& actions = QList<AbstractAction*>(), AsynchroneActionGroup::StopCondition stopCondition = AsynchroneActionGroup::OneActionFinished) const;
 
 	AbstractAction* ifOrientationAction(double minAngle, double maxAngle, AbstractAction* thenAction, AbstractAction* elseAction = nullptr);
+	AbstractAction* whileOrientationAction(double minAngle, double maxAngle, bool neg, AbstractAction* loopedAction);
 	OrientationSwitchCaseAction* orientationSwitchCaseAction() const;
 
 	AbstractAction* ifColorSensorAction(int colorSensorId, int value, AbstractAction* thenAction, AbstractAction* elseAction = nullptr);
+	AbstractAction* whileColorSensorAction(int colorSensorId, int value, bool neg, AbstractAction* loopedAction);
 	SensorSwitchCaseAction* colorSensorSwitchCaseAction(int colorSensorId) const;
 
 	AbstractAction* ifSharpAction(int sharpId, int value, AbstractAction* thenAction, AbstractAction* elseAction = nullptr);
+	AbstractAction* whileSharpAction(int sharpId, int value, bool neg, AbstractAction* loopedAction);
 	SensorSwitchCaseAction* sharpSwitchCaseAction(int sharpId) const;
 
 	AbstractAction* ifMicroswitchAction(int microswicthId, int value, AbstractAction* thenAction, AbstractAction* elseAction = nullptr);
+	AbstractAction* whileMicroswitchAction(int microswicthId, int value, bool neg, AbstractAction* loopedAction);
 	SensorSwitchCaseAction* microswitchSwitchCaseAction(int microswicthId) const;
 
 	AbstractAction* ifPositionAction(const QRectF& rect, AbstractAction* thenAction, AbstractAction* elseAction = nullptr);
+	AbstractAction* whilePositionAction(const QRectF& rect, bool neg, AbstractAction* loopedAction);
 	PositionSwitchCaseAction* positionSwitchCaseAction() const;
 
 	AbstractAction* ifOpponentAction(const QRectF& rect, AbstractAction* thenAction, AbstractAction* elseAction = nullptr);
+	AbstractAction* whileOpponentAction(const QRectF& rect, bool neg, AbstractAction* loopedAction);
 	OpponentSwitchCaseAction *opponentSwitchCaseAction() const;
 
 	AbstractAction* ifStrategyReversedAction(AbstractAction* thenAction, AbstractAction* elseAction = nullptr);
+	AbstractAction* whileStrategyReversedAction(bool neg, AbstractAction* loopedAction);
 
     AbstractAction* waitAction(int ms) const;
+	AbstractAction* timeoutAction(AbstractAction* action, int timeoutInMs) const;
 
 	AbstractAction* teleportAction(const Tools::RPoint& point) const;
 

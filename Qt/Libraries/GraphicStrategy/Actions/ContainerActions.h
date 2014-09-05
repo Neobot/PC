@@ -19,6 +19,7 @@ public:
 
 	void execute();
 	void stop();
+	void end();
 
 	QString getActionName() const;
 
@@ -58,6 +59,7 @@ public:
 
 	void execute();
 	void stop();
+	void end();
 
 	QString getActionName() const;
 

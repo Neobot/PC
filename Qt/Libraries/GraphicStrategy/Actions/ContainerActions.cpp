@@ -43,6 +43,15 @@ void ActionGroup::stop()
 	}
 }
 
+void ActionGroup::end()
+{
+	while(!_finishedList.isEmpty())
+	{
+		_list.insert(0, _finishedList.takeLast());
+	}
+	_result = true;
+}
+
 void ActionGroup::nextAction(bool lastActionResult)
 {
 	AbstractAction* prevAction = _list.takeFirst();
@@ -110,6 +119,33 @@ void AsynchroneActionGroup::stop()
 	_stopCondition = AllActionFinished; //We need to wait for all action to stop.
 
 	stopRemainingActions();
+}
+
+void AsynchroneActionGroup::end()
+{
+	while(!_finishedList.isEmpty())
+	{
+		_list.insert(0, _finishedList.takeLast());
+	}
+
+	if (_firstAction)
+	{
+		//ensure _firstAction is first
+		_list.removeOne(_firstAction);
+		_list.insert(0, _firstAction);
+	}
+
+	if (_lastAction)
+	{
+		//ensure _lastAction is last
+		_list.removeOne(_lastAction);
+		_list.append(_lastAction);
+	}
+
+	_firstAction = nullptr;
+	_lastAction = nullptr;
+	_globalResult = true;
+	_isCanceled = false;
 }
 
 void AsynchroneActionGroup::subActionFinished(bool lastActionResult)

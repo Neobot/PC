@@ -323,7 +323,7 @@ void WaitUntilSensorAction::end()
     if (_timeout)
         _timeout->stop();
 
-    disconnect();
+   disconnect(_manager, SIGNAL(sensorStateChanged(Comm::SensorType, int, int)), this, SLOT(testSensor(Comm::SensorType, int, int)));
 }
 
 void WaitUntilSensorAction::stop()

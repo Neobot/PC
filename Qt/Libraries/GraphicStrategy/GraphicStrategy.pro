@@ -35,6 +35,7 @@ SOURCES += TrajectoryFinder.cpp \
     Actions/ContainerActions.cpp \
     Actions/ConditionalActions.cpp \
     Actions/PrehistobotActions.cpp \
+    Actions/WhileAction.cpp \
     StrategyMap.cpp \
     Strategies/TestStrategy.cpp \
     Strategies/StrategyEnumerator.cpp \
@@ -53,6 +54,7 @@ SOURCES += TrajectoryFinder.cpp \
     NSParsingError.cpp \
     NSParser_BasicTypes.cpp
 
+
 HEADERS += TrajectoryFinder.h \
     Sharp.h \
     StrategyInterface.h \
@@ -65,7 +67,8 @@ HEADERS += TrajectoryFinder.h \
     Actions/StandardActions.h \
     Actions/ContainerActions.h \
     Actions/ConditionalActions.h \
-    Actions/PrehistobotActions.h \
+    Actions/PrehistobotActions.h  \
+    Actions/WhileAction.h\
     StrategyMap.h \
     Strategies/TestStrategy.h \
     Strategies/StrategyEnumerator.h \

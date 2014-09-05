@@ -33,6 +33,11 @@ AbstractAction * ActionFactory::waitAction(int ms) const
 	return new WaitAction(ms);
 }
 
+AbstractAction *ActionFactory::timeoutAction(AbstractAction *action, int timeoutInMs) const
+{
+	return asynchroneActionList({action, waitAction(timeoutInMs)}, AsynchroneActionGroup::OneActionFinished);
+}
+
 AbstractAction *ActionFactory::teleportAction(const Tools::RPoint &point) const
 {
 	//Wait 300ms after the teleport to wait for the position feedback of the microC
@@ -144,6 +149,11 @@ AbstractAction *ActionFactory::ifOrientationAction(double minAngle, double maxAn
 	return switchAction;
 }
 
+AbstractAction *ActionFactory::whileOrientationAction(double minAngle, double maxAngle, bool neg, AbstractAction *loopedAction)
+{
+	return new OrientationWhileAction(_manager, minAngle, maxAngle, loopedAction, neg);
+}
+
 OrientationSwitchCaseAction *ActionFactory::orientationSwitchCaseAction() const
 {
 	return new OrientationSwitchCaseAction(_manager);
@@ -155,6 +165,11 @@ AbstractAction *ActionFactory::ifColorSensorAction(int colorSensorId, int value,
 	switchAction->addCase(value, thenAction);
 	switchAction->setDefaultAction(elseAction);
 	return switchAction;
+}
+
+AbstractAction *ActionFactory::whileColorSensorAction(int colorSensorId, int value, bool neg, AbstractAction *loopedAction)
+{
+	return new SensorWhileAction(_manager, colorSensorId, Comm::ColorSensor, value, loopedAction, neg);
 }
 
 SensorSwitchCaseAction *ActionFactory::colorSensorSwitchCaseAction(int colorSensorId) const
@@ -170,6 +185,11 @@ AbstractAction *ActionFactory::ifSharpAction(int sharpId, int value, AbstractAct
 	return switchAction;
 }
 
+AbstractAction *ActionFactory::whileSharpAction(int sharpId, int value, bool neg, AbstractAction *loopedAction)
+{
+	return new SensorWhileAction(_manager, sharpId, Comm::SharpSensor, value, loopedAction, neg);
+}
+
 SensorSwitchCaseAction *ActionFactory::sharpSwitchCaseAction(int sharpId) const
 {
 	return new SensorSwitchCaseAction(sharpId, Comm::SharpSensor, _manager);
@@ -181,6 +201,11 @@ AbstractAction *ActionFactory::ifMicroswitchAction(int microswicthId, int value,
 	switchAction->addCase(value, thenAction);
 	switchAction->setDefaultAction(elseAction);
 	return switchAction;
+}
+
+AbstractAction *ActionFactory::whileMicroswitchAction(int microswicthId, int value, bool neg, AbstractAction *loopedAction)
+{
+	return new SensorWhileAction(_manager, microswicthId, Comm::MicroswitchSensor, value, loopedAction, neg);
 }
 
 SensorSwitchCaseAction* ActionFactory::microswitchSwitchCaseAction(int microswicthId) const
@@ -196,6 +221,11 @@ AbstractAction *ActionFactory::ifPositionAction(const QRectF &rect, AbstractActi
 	return switchAction;
 }
 
+AbstractAction *ActionFactory::whilePositionAction(const QRectF &rect, bool neg, AbstractAction *loopedAction)
+{
+	return new PositionWhileAction(_manager, rect, loopedAction, neg);
+}
+
 PositionSwitchCaseAction *ActionFactory::positionSwitchCaseAction() const
 {
 	return new PositionSwitchCaseAction(_manager);
@@ -209,6 +239,11 @@ AbstractAction *ActionFactory::ifOpponentAction(const QRectF &rect, AbstractActi
 	return switchAction;
 }
 
+AbstractAction *ActionFactory::whileOpponentAction(const QRectF &rect, bool neg, AbstractAction *loopedAction)
+{
+	return new OpponentWhileAction(_manager, rect, loopedAction, neg);
+}
+
 OpponentSwitchCaseAction *ActionFactory::opponentSwitchCaseAction() const
 {
 	return new OpponentSwitchCaseAction(_manager);
@@ -220,6 +255,11 @@ AbstractAction *ActionFactory::ifStrategyReversedAction(AbstractAction *thenActi
 	switchAction->addCase(true, thenAction);
 	switchAction->setDefaultAction(elseAction);
 	return switchAction;
+}
+
+AbstractAction *ActionFactory::whileStrategyReversedAction(bool neg, AbstractAction *loopedAction)
+{
+	return new StrategyReversedWhileAction(_manager, loopedAction, neg);
 }
 
 AbstractAction *ActionFactory::ax12Action(quint8 id, float angle, float speed) const
