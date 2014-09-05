@@ -35,7 +35,8 @@ AbstractAction * ActionFactory::waitAction(int ms) const
 
 AbstractAction *ActionFactory::teleportAction(const Tools::RPoint &point) const
 {
-	return new TeleportAction(point, _robot);
+	//Wait 300ms after the teleport to wait for the position feedback of the microC
+	return actionList({new TeleportAction(point, _robot), waitAction(300)});
 }
 
 AbstractAction * ActionFactory::moveAction(Tools::NGridNode* destination, int speed, bool forceForward, bool forceBackward, Tools::Deplacement deplacementType) const

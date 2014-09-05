@@ -109,6 +109,7 @@ void StrategyReversedTest::updateTest()
 PositionSwitchCaseAction::PositionSwitchCaseAction(StrategyManager* manager, QObject* parent)
 	: AbstractSwitch<QPointF, QRectF>(new PositionTest(manager), parent)
 {
+	setTestType(ConditionTest<QPointF, QRectF>::Inside);
 }
 
 QString PositionSwitchCaseAction::getActionName() const
@@ -121,6 +122,7 @@ QString PositionSwitchCaseAction::getActionName() const
 OpponentSwitchCaseAction::OpponentSwitchCaseAction(StrategyManager* manager, QObject* parent)
 	: AbstractSwitch<QPointF, QRectF>(new OpponentTest(manager), parent)
 {
+	setTestType(ConditionTest<QPointF, QRectF>::Inside);
 }
 
 QString OpponentSwitchCaseAction::getActionName() const
@@ -133,6 +135,7 @@ QString OpponentSwitchCaseAction::getActionName() const
 OrientationSwitchCaseAction::OrientationSwitchCaseAction(StrategyManager* manager, bool degrees, QObject* parent)
 	: AbstractSwitch<double, QPair<double, double>>(new OrientationTest(degrees, manager), parent)
 {
+	setTestType(ConditionTest<double, QPair<double, double>>::Inside);
 }
 
 QString OrientationSwitchCaseAction::getActionName() const

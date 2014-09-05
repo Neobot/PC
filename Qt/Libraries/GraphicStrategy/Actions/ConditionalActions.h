@@ -28,7 +28,7 @@ public:
 	void setLeftOperand(TL left) {_left = left;}
 	void setRightOperand(TR right) {_right = right;}
 
-	void setType(ConditionType type) {_type = type;}
+	void setType(int type) {_type = type;}
 
 	virtual void updateTest() = 0;
 
@@ -36,7 +36,7 @@ public:
 		TL _left;
 		TR _right;
 		bool _neg;
-		ConditionType _type;
+		int _type;
 };
 
 //----------------------------------------------------------------------------------------------------------------------------------
