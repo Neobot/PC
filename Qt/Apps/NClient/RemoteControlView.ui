@@ -36,7 +36,7 @@
     <widget class="QWidget" name="widget" native="true">
      <property name="minimumSize">
       <size>
-       <width>350</width>
+       <width>435</width>
        <height>0</height>
       </size>
      </property>
@@ -250,7 +250,7 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>287</width>
+               <width>385</width>
                <height>243</height>
               </rect>
              </property>
@@ -369,7 +369,6 @@
            </widget>
           </item>
          </layout>
-         <zorder></zorder>
          <zorder></zorder>
          <zorder>framePoints</zorder>
         </widget>
