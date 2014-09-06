@@ -132,6 +132,7 @@ SyntaxRuleHighlighting *SyntaxRuleHighlighting::nsSyntaxRules(TextHighlighter *p
 	syntax->addSyntaxRule("is", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("in", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("not", keywordColor, fontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("while", keywordColor, fontWeigth, Qt::CaseInsensitive);
 
 
 	QColor enumColor = Qt::darkRed;
@@ -152,6 +153,8 @@ SyntaxRuleHighlighting *SyntaxRuleHighlighting::nsSyntaxRules(TextHighlighter *p
 	syntax->addSyntaxRule("microswitch", enumColor, enumFontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("color", enumColor, enumFontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("sensor", enumColor, enumFontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("true", enumColor, enumFontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("false", enumColor, enumFontWeigth, Qt::CaseInsensitive);
 
 	QColor valueColor = Qt::darkGreen;
 	int valueFontWeigth = QFont::Bold;

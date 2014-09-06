@@ -50,6 +50,8 @@ public:
 	AbstractAction* ifStrategyReversedAction(AbstractAction* thenAction, AbstractAction* elseAction = nullptr);
 	AbstractAction* whileStrategyReversedAction(bool neg, AbstractAction* loopedAction);
 
+	AbstractAction* infiniteLoop(AbstractAction* loopedAction);
+
     AbstractAction* waitAction(int ms) const;
 	AbstractAction* timeoutAction(AbstractAction* action, int timeoutInMs) const;
 

@@ -262,6 +262,11 @@ AbstractAction *ActionFactory::whileStrategyReversedAction(bool neg, AbstractAct
 	return new StrategyReversedWhileAction(_manager, loopedAction, neg);
 }
 
+AbstractAction *ActionFactory::infiniteLoop(AbstractAction *loopedAction)
+{
+	return new InfiniteWhileAction(loopedAction);
+}
+
 AbstractAction *ActionFactory::ax12Action(quint8 id, float angle, float speed) const
 {
     QList<quint8> idList;

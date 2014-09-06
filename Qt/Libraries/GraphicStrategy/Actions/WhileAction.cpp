@@ -1,5 +1,30 @@
 #include "WhileAction.h"
 
+AbstractWhileBase::AbstractWhileBase(QObject *parent)
+ : AbstractAction(parent)
+{
+
+}
+
+void AbstractWhileBase::connectSubAction(AbstractAction* action)
+{
+	if (action)
+		connect(action, SIGNAL(finished(bool)), this, SLOT(actionFinished()));
+}
+
+void AbstractWhileBase::disconnectSubAction(AbstractAction *action)
+{
+	if (action)
+		disconnect(action, SIGNAL(finished(bool)), this, SLOT(actionFinished()));
+}
+
+void AbstractWhileBase::actionFinished()
+{
+	actionExecutionFinished();
+}
+
+//----------------------------------------------------------------------------------------------------------------------------------
+
 PositionWhileAction::PositionWhileAction(StrategyManager* manager, const QRectF& rect, AbstractAction* loopedAction, bool neg, QObject* parent)
 	: AbstractWhile<QPointF, QRectF>(new PositionTest(manager), neg, rect, loopedAction, parent)
 {
@@ -60,3 +85,18 @@ QString StrategyReversedWhileAction::getActionName() const
 {
 	return QString("While strategy reversed");
 }
+
+//----------------------------------------------------------------------------------------------------------------------------------
+
+InfiniteWhileAction::InfiniteWhileAction(AbstractAction *loopedAction, QObject *parent)
+	: AbstractWhile<bool, bool>(new AlwaysTrueTest(), false, true, loopedAction, parent)
+{
+
+}
+
+QString InfiniteWhileAction::getActionName() const
+{
+	return "Infinite loop";
+}
+
+

@@ -56,6 +56,12 @@ bool SingleBoolTest::isTrue() const
 	return _neg ? !ok : ok;
 }
 
+
+bool AlwaysTrueTest::isTrue() const
+{
+	return true;
+}
+
 //----------------------------------------------------------------------------------------------------------------------------------
 
 
@@ -175,4 +181,7 @@ QString StrategyReversedSwitchCaseAction::getActionName() const
 {
 	return QString("Sensor switch case action");
 }
+
+
+
 

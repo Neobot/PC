@@ -239,6 +239,9 @@ void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, Var
 		case SYM_CONDITIONSTATEMENT:
 			action = buildIfAction(symbol, variables);
 			break;
+		case SYM_WHILESTATEMENT:
+			action = buildWhileAction(symbol, variables);
+			break;
 		default:
 		{
 			if (symbol->type == NON_TERMINAL)
@@ -762,6 +765,66 @@ AbstractAction *NSParser::buildIfAction(Symbol *symbol, NSParser::VariableList &
 					return _factory->ifMicroswitchAction(info.sensorId, info.sensorValue, thenAction, elseAction);
 				case ConditionInfo::ReversedStrategyCondition:
 					return _factory->ifStrategyReversedAction(thenAction, elseAction);
+			}
+		}
+	}
+
+	return nullptr;
+}
+
+AbstractAction *NSParser::buildWhileAction(Symbol *symbol, NSParser::VariableList &variables)
+{
+	if (symbol->type == NON_TERMINAL)
+	{
+		ConditionInfo info;
+		AbstractAction* loopedAction = nullptr;
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			switch(child->symbolIndex)
+			{
+				case SYM_IFCONDITION:
+				case SYM_SENSORCONDITION:
+				case SYM_POSITIONCONDITION:
+				case SYM_ORIENTATIONCONDITION:
+				case SYM_OPPONENTCONDITION:
+				case SYM_REVERSECONDITION:
+					info = readCondition(child, variables);
+					break;
+				default:
+				{
+					QList<AbstractAction*> list;
+					buildActions(child, list, variables);
+					if (!list.isEmpty())
+						loopedAction = list.first();
+				}
+			}
+		}
+
+		if (_factory && info.isValid() && loopedAction)
+		{
+			switch(info.type)
+			{
+				case ConditionInfo::InvalidCondition:
+					break;
+				case ConditionInfo::AlwaysTrueCondition:
+					return _factory->infiniteLoop(loopedAction);
+				case ConditionInfo::AlwaysFalseCondition:
+					return nullptr;
+				case ConditionInfo::RobotPosCondition:
+					return _factory->whilePositionAction(info.rect, info.neg, loopedAction);
+				case ConditionInfo::RobotOrientationCondition:
+					return _factory->whileOrientationAction(info.angleMin, info.angleMax, info.neg, loopedAction);
+				case ConditionInfo::OpponentPosCondition:
+					return _factory->whileOpponentAction(info.rect, info.neg, loopedAction);
+				case ConditionInfo::ColorSensorValueCondition:
+					return _factory->whileColorSensorAction(info.sensorId, info.sensorValue, info.neg, loopedAction);
+				case ConditionInfo::SharpValueCondition:
+					return _factory->whileSharpAction(info.sensorId, info.sensorValue, info.neg, loopedAction);
+				case ConditionInfo::MicroswitchValueCondition:
+					return _factory->whileMicroswitchAction(info.sensorId, info.sensorValue, info.neg, loopedAction);
+				case ConditionInfo::ReversedStrategyCondition:
+					return _factory->whileStrategyReversedAction(info.neg, loopedAction);
 			}
 		}
 	}

@@ -102,7 +102,7 @@ protected:
 			ReversedStrategyCondition
 		};
 
-		ConditionInfo() : type(InvalidCondition) {}
+		ConditionInfo() : type(InvalidCondition), neg(false) {}
 		bool isValid() const {return type != InvalidCondition;}
 		void setInvalid() {type = InvalidCondition;}
 
@@ -132,6 +132,7 @@ protected:
 	AbstractAction *buildListAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildConcurrentListAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildIfAction(Symbol *symbol, VariableList &variables);
+	AbstractAction *buildWhileAction(Symbol *symbol, VariableList &variables);
 	void readVariable(Symbol* symbol, VariableList& variables);
 
 	//Variable parsers

@@ -112,6 +112,8 @@ class AbstractSwitch : public AbstractAction
 				_currentAction->end();
 				disconnect(_currentAction, SIGNAL(finished(bool)), this, SIGNAL(finished(bool)));
 			}
+
+			_currentAction = nullptr;
 		}
 
 		void setDefaultAction(AbstractAction *defaultAction)
@@ -184,6 +186,14 @@ public:
 	bool isTrue() const;
 };
 
+class AlwaysTrueTest : public ConditionTest<bool, bool>
+{
+public:
+	bool isTrue() const;
+	void updateTest() {}
+};
+
+
 //----------------------------------------------------------------------------------------------------------------------------------
 
 class PositionTest : public PointTest
@@ -243,6 +253,7 @@ public:
 private:
 	StrategyManager* _manager;
 };
+
 
 //----------------------------------------------------------------------------------------------------------------------------------
 class PositionSwitchCaseAction : public AbstractSwitch<QPointF, QRectF>
