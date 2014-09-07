@@ -28,6 +28,9 @@ public:
 	static NSParsingError undeclaredVariableError(const QString& variableName, Symbol* symbol);
 	static NSParsingError invalidVariableTypeError(const QString& variableName, const QString &expectedType, Symbol* symbol);
 	static NSParsingError invalidSensorValueError(const QString& value, Symbol* symbol);
+	static NSParsingError functionAlreadyDefinedError(const QString& functionName, Symbol* symbol);
+	static NSParsingError invalidNumberOfArguments(const QString& functionName, int nbExpectedArgs, int nbFoundArgs, Symbol* symbol);
+	static NSParsingError undeclaredFunctionError(const QString& variableName, Symbol* symbol);
 
 	QString print() const;
 

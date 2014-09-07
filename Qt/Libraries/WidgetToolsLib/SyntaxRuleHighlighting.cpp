@@ -133,6 +133,7 @@ SyntaxRuleHighlighting *SyntaxRuleHighlighting::nsSyntaxRules(TextHighlighter *p
 	syntax->addSyntaxRule("in", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("not", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("while", keywordColor, fontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("function", keywordColor, fontWeigth, Qt::CaseInsensitive);
 
 
 	QColor enumColor = Qt::darkRed;

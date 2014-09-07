@@ -668,6 +668,26 @@ QString NSParser::readVar(Symbol* symbol)
 	return varName;
 }
 
+void NSParser::readVarList(Symbol *symbol, QStringList& varList)
+{
+	if (symbol->type == NON_TERMINAL)
+	{
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			switch(child->symbolIndex)
+			{
+				case SYM_VAR:
+					varList << readVar(child);
+					break;
+				case SYM_VARLIST:
+					readVarList(child, varList);
+					break;
+			}
+		}
+	}
+}
+
 int NSParser::readSpeed(Symbol* symbol)
 {
 	int speed = 100;
@@ -1022,4 +1042,109 @@ bool NSParser::readStringVar(Symbol *symbol, NSParser::VariableList &variables, 
 		addError(NSParsingError::undeclaredVariableError(varName, symbol));
 
 	return result;
+}
+
+bool NSParser::readCallArg(Symbol *symbol, VariableList &variables, NSParser::DelclaredVariable& callArgVariable)
+{
+	bool result = true;
+	switch(symbol->symbolIndex)
+	{
+		case SYM_VAR:
+		{
+			QString name = readVar(symbol);
+			if (variables.contains(name))
+				callArgVariable = variables[name];
+			else
+			{
+				addError(NSParsingError::undeclaredVariableError(name, symbol));
+				result = false;
+			}
+			break;
+		}
+		case SYM_POINT:
+		case SYM_FIXED_POINT:
+		{
+			Tools::RPoint p = readPoint(symbol);
+			callArgVariable = DelclaredVariable::fromPoint(p);
+			break;
+		}
+		case SYM_RECT:
+		case SYM_FIXED_RECT:
+		{
+			QRectF r = readRect(symbol);
+			callArgVariable = DelclaredVariable::fromRect(r);
+			break;
+		}
+		case SYM_SENSOR_IDENTIFIER:
+		{
+			int type = -1, id = 0;
+			readSensorIdentifier(symbol, type, id);
+			callArgVariable = DelclaredVariable::fromSensor(id, type);
+			break;
+		}
+		case SYM_PARAMETER_IDENTIFIER:
+		{
+			int paramId = readSubId(symbol);
+			callArgVariable = DelclaredVariable::fromParameter(paramId);
+			break;
+		}
+		case SYM_AX12_IDENTIFIER:
+		{
+			int ax12Id = readSubId(symbol);
+			callArgVariable = DelclaredVariable::fromAx12(ax12Id);
+			break;
+		}
+		case SYM_ACTION2:
+		{
+			int actionId, param, time;
+			readAction(symbol, actionId, param, time);
+			callArgVariable = DelclaredVariable::fromAction(actionId, param, time);
+		}
+		case SYM_CALLARG:
+		{
+			if (symbol->type == NON_TERMINAL)
+			{
+				result = false;
+				NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+				for(Symbol* child: nt->children)
+				{
+					readCallArg(child, variables, callArgVariable);
+					if (callArgVariable.isValid())
+					{
+						result = true;
+						break;
+					}
+
+				}
+			}
+		}
+	}
+
+	return result;
+}
+
+void NSParser::readCallArgList(Symbol *symbol, VariableList &variables, QList<NSParser::DelclaredVariable>& callArgVariableList)
+{
+	if (symbol->type == NON_TERMINAL)
+	{
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			switch(child->symbolIndex)
+			{
+				default:
+				case SYM_CALLARG:
+				{
+					NSParser::DelclaredVariable var;
+					readCallArg(child, variables, var);
+					if (var.isValid())
+						callArgVariableList << var;
+					break;
+				}
+				case SYM_CALLARGLIST:
+					readCallArgList(child, variables, callArgVariableList);
+					break;
+			}
+		}
+	}
 }

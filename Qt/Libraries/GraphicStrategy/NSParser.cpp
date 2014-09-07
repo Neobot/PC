@@ -66,7 +66,8 @@ bool NSParser::parse(const QString &scriptCode, QList<AbstractAction *> &actions
 	if (_tree)
 	{
 		VariableList variables;
-		buildActions(_tree, actions, variables);
+		FunctionList functions;
+		buildActions(_tree, actions, variables, functions);
 	}
 
 	return _errors.isEmpty();
@@ -192,7 +193,7 @@ void NSParser::printTree(QTextStream& out, Symbol *s, int level)
 	}
 }
 
-void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, VariableList& variables)
+void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, VariableList& variables, FunctionList& functions)
 {
 	AbstractAction* action = nullptr;
 	switch(symbol->symbolIndex)
@@ -231,16 +232,22 @@ void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, Var
 			action = buildAx12MovementAction(symbol, variables, true);
 			break;
 		case SYM_LISTSTATEMENT:
-			action = buildListAction(symbol, variables);
+			action = buildListAction(symbol, variables, functions);
 			break;
 		case SYM_CONCURRENTSTATEMENT:
-			action = buildConcurrentListAction(symbol, variables);
+			action = buildConcurrentListAction(symbol, variables, functions);
 			break;
 		case SYM_CONDITIONSTATEMENT:
-			action = buildIfAction(symbol, variables);
+			action = buildIfAction(symbol, variables, functions);
 			break;
 		case SYM_WHILESTATEMENT:
-			action = buildWhileAction(symbol, variables);
+			action = buildWhileAction(symbol, variables, functions);
+			break;
+		case SYM_FUNCTIONSTATEMENT:
+			readFunction(symbol, functions);
+			break;
+		case SYM_CALLSTATEMENT:
+			action = buildCalledFunctionActions(symbol, variables, functions);
 			break;
 		default:
 		{
@@ -249,7 +256,7 @@ void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, Var
 				//Build sub-actions
 				NonTerminal* nt = static_cast<NonTerminal*>(symbol);
 				for(Symbol* child: nt->children)
-					buildActions(child, actions, variables);
+					buildActions(child, actions, variables, functions);
 			}
 			//else : no actions to build
 		}
@@ -652,14 +659,14 @@ AbstractAction *NSParser::buildAx12MovementAction(Symbol *symbol, NSParser::Vari
 	return nullptr;
 }
 
-AbstractAction *NSParser::buildListAction(Symbol *symbol, NSParser::VariableList &variables)
+AbstractAction *NSParser::buildListAction(Symbol *symbol, NSParser::VariableList &variables, FunctionList& functions)
 {
 	QList<AbstractAction*> actionList;
 	if (symbol->type == NON_TERMINAL)
 	{
 		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
 		for(Symbol* child: nt->children)
-			buildActions(child, actionList, variables);
+			buildActions(child, actionList, variables, functions);
 	}
 
 	if (!actionList.isEmpty() && _factory)
@@ -668,7 +675,7 @@ AbstractAction *NSParser::buildListAction(Symbol *symbol, NSParser::VariableList
 	return nullptr;
 }
 
-AbstractAction *NSParser::buildConcurrentListAction(Symbol *symbol, NSParser::VariableList &variables)
+AbstractAction *NSParser::buildConcurrentListAction(Symbol *symbol, NSParser::VariableList &variables, FunctionList& functions)
 {
 	QList<AbstractAction*> actionList;
 	AsynchroneActionGroup::StopCondition stopCondition = AsynchroneActionGroup::AllActionFinished;
@@ -690,7 +697,7 @@ AbstractAction *NSParser::buildConcurrentListAction(Symbol *symbol, NSParser::Va
 					{
 						NonTerminal* ntChild = static_cast<NonTerminal*>(child);
 						for(Symbol* listChild: ntChild->children)
-							buildActions(listChild, actionList, variables);
+							buildActions(listChild, actionList, variables, functions);
 					}
 				}
 			}
@@ -703,7 +710,7 @@ AbstractAction *NSParser::buildConcurrentListAction(Symbol *symbol, NSParser::Va
 	return nullptr;
 }
 
-AbstractAction *NSParser::buildIfAction(Symbol *symbol, NSParser::VariableList &variables)
+AbstractAction *NSParser::buildIfAction(Symbol *symbol, NSParser::VariableList &variables, FunctionList &functions)
 {
 	if (symbol->type == NON_TERMINAL)
 	{
@@ -726,7 +733,7 @@ AbstractAction *NSParser::buildIfAction(Symbol *symbol, NSParser::VariableList &
 				default:
 				{
 					QList<AbstractAction*> list;
-					buildActions(child, list, variables);
+					buildActions(child, list, variables, functions);
 					if (!list.isEmpty())
 					{
 						if (!thenAction)
@@ -772,7 +779,7 @@ AbstractAction *NSParser::buildIfAction(Symbol *symbol, NSParser::VariableList &
 	return nullptr;
 }
 
-AbstractAction *NSParser::buildWhileAction(Symbol *symbol, NSParser::VariableList &variables)
+AbstractAction *NSParser::buildWhileAction(Symbol *symbol, NSParser::VariableList &variables, FunctionList &functions)
 {
 	if (symbol->type == NON_TERMINAL)
 	{
@@ -794,7 +801,7 @@ AbstractAction *NSParser::buildWhileAction(Symbol *symbol, NSParser::VariableLis
 				default:
 				{
 					QList<AbstractAction*> list;
-					buildActions(child, list, variables);
+					buildActions(child, list, variables, functions);
 					if (!list.isEmpty())
 						loopedAction = list.first();
 				}
@@ -831,6 +838,113 @@ AbstractAction *NSParser::buildWhileAction(Symbol *symbol, NSParser::VariableLis
 
 	return nullptr;
 }
+
+void NSParser::readFunction(Symbol* symbol, FunctionList& functions)
+{
+	if (symbol->type == NON_TERMINAL)
+	{
+		QString functionName;
+		FunctionInfo info;
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			switch(child->symbolIndex)
+			{
+				case SYM_VAR:
+					if (functionName.isEmpty())
+						functionName = readVar(child);
+					else
+						info.parameterNames << readVar(child);
+					break;
+				case SYM_VARLIST:
+					readVarList(child, info.parameterNames);
+					break;
+				case SYM_LISTSTATEMENT:
+					info.actionListSymbol = child;
+					break;
+			}
+		}
+
+		if (!functionName.isEmpty() && info.actionListSymbol != nullptr)
+		{
+			if (!functions.contains(functionName))
+				functions[functionName] = info;
+			else
+				addError(NSParsingError::functionAlreadyDefinedError(functionName, symbol));
+		}
+	}
+}
+
+AbstractAction* NSParser::buildCalledFunctionActions(Symbol *symbol, VariableList &variables, FunctionList& functions)
+{
+	if (symbol->type == NON_TERMINAL)
+	{
+		QString functionName;
+		QList<DelclaredVariable> varList;
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			switch(child->symbolIndex)
+			{
+				case SYM_VAR:
+					if (functionName.isEmpty())
+						functionName = readVar(child);
+					else
+					{
+						DelclaredVariable var;
+						readCallArg(child, variables, var);
+						varList << var;
+					}
+					break;
+				case SYM_CALLARGLIST:
+					readCallArgList(child, variables, varList);
+					break;
+				case SYM_CALLARG:
+				default:
+				{
+					DelclaredVariable var;
+					readCallArg(child, variables, var);
+					if (var.isValid())
+						varList << var;
+					break;
+				}
+			}
+		}
+
+		if (!functionName.isEmpty())
+		{
+			if (functions.contains(functionName))
+			{
+				FunctionInfo& info = functions[functionName];
+
+				if (info.parameterNames.count() != varList.count())
+					addError(NSParsingError::invalidNumberOfArguments(functionName, info.parameterNames.count(), varList.count(), symbol));
+				else
+				{
+					VariableList functionVariables(variables);
+					for(int i = 0; i < info.parameterNames.count(); ++i)
+					{
+						const QString& param = info.parameterNames[i];
+						DelclaredVariable& var = varList[i];
+						functionVariables[param] = var;
+					}
+					QList<AbstractAction*> actions;
+					buildActions(info.actionListSymbol, actions, functionVariables, functions);
+
+					if (_factory)
+						return _factory->actionList(actions);
+				}
+			}
+			else
+			{
+				addError(NSParsingError::undeclaredFunctionError(functionName, symbol));
+			}
+		}
+	}
+
+	return nullptr;
+}
+
 
 Symbol* NSParser::searchChild(Symbol* symbol, unsigned short symbolIndex, bool recursive)
 {

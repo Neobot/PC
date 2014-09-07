@@ -114,10 +114,19 @@ protected:
 		QRectF rect;
 		bool neg;
 	};
+
+	struct FunctionInfo
+	{
+		FunctionInfo() : actionListSymbol(nullptr) {}
+		Symbol* actionListSymbol;
+		QStringList parameterNames;
+	};
+
+	typedef QHash<QString, FunctionInfo> FunctionList;
 	
 	bool parse(const QString& scriptCode, QList<AbstractAction*>& actions, const QString& originalFilename);
 	Symbol* getParsedTree(const QString& scriptCode);
-	void buildActions(Symbol* symbol, QList<AbstractAction*>& actions, VariableList& variables);
+	void buildActions(Symbol* symbol, QList<AbstractAction*>& actions, VariableList& variables, FunctionList &functions);
 	
 	//Action parsers
 	AbstractAction* buildWaitAction(Symbol* symbol);
@@ -129,11 +138,13 @@ protected:
 	AbstractAction *buildActuatorAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildMoveAx12Action(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildAx12MovementAction(Symbol *symbol, VariableList &variables, bool async);
-	AbstractAction *buildListAction(Symbol *symbol, VariableList &variables);
-	AbstractAction *buildConcurrentListAction(Symbol *symbol, VariableList &variables);
-	AbstractAction *buildIfAction(Symbol *symbol, VariableList &variables);
-	AbstractAction *buildWhileAction(Symbol *symbol, VariableList &variables);
+	AbstractAction *buildListAction(Symbol *symbol, VariableList &variables, FunctionList &functions);
+	AbstractAction *buildConcurrentListAction(Symbol *symbol, VariableList &variables, FunctionList& functions);
+	AbstractAction *buildIfAction(Symbol *symbol, VariableList &variables, FunctionList& functions);
+	AbstractAction *buildWhileAction(Symbol *symbol, VariableList &variables, FunctionList& functions);
+	AbstractAction* buildCalledFunctionActions(Symbol *symbol, VariableList &variables, FunctionList& functions);
 	void readVariable(Symbol* symbol, VariableList& variables);
+	void readFunction(Symbol* symbol, FunctionList& functions);
 
 	//Variable parsers
 	bool readParameterOrVar(Symbol* symbol, VariableList &variables, int &paramId);
@@ -175,9 +186,10 @@ protected:
 	int readConcurrencyStopCondition(Symbol *symbol);
 	ConditionInfo readCondition(Symbol *symbol, VariableList& variables);
 	int readSensorValue(Symbol *symbol, Comm::SensorType &type);
+	bool readCallArg(Symbol *symbol, VariableList &variables, NSParser::DelclaredVariable& callArgVariable);
+	void readCallArgList(Symbol *symbol, VariableList &variables, QList<NSParser::DelclaredVariable>& callArgVariableList);
 
-
-	//Based types parsers
+	//Basic types parsers
 	QString readIdentifier(Symbol* symbol);
 	QString readString(Symbol* symbol);
 	double readFloat(Symbol* symbol);
@@ -185,11 +197,12 @@ protected:
 	double readNum(Symbol* symbol);
 	int readSubId(Symbol* symbol);
 	QString readVar(Symbol *symbol);
+	void readVarList(Symbol *symbol, QStringList& varList);
 
+	//Tools
 	Symbol *searchChild(Symbol *symbol, unsigned short symbolIndex, bool recursive = false);
 	QString readTerminals(Symbol *symbol);
 	
-
 	void printTree(QTextStream& out, Symbol *s, int level);
 	void addError(const NSParsingError &error);
 
