@@ -120,6 +120,9 @@ protected:
 		FunctionInfo() : actionListSymbol(nullptr) {}
 		Symbol* actionListSymbol;
 		QStringList parameterNames;
+
+		VariableList currentVariables;
+		QHash<QString, FunctionInfo> currentFunctions;
 	};
 
 	typedef QHash<QString, FunctionInfo> FunctionList;
@@ -138,13 +141,13 @@ protected:
 	AbstractAction *buildActuatorAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildMoveAx12Action(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildAx12MovementAction(Symbol *symbol, VariableList &variables, bool async);
-	AbstractAction *buildListAction(Symbol *symbol, VariableList &variables, FunctionList &functions);
-	AbstractAction *buildConcurrentListAction(Symbol *symbol, VariableList &variables, FunctionList& functions);
-	AbstractAction *buildIfAction(Symbol *symbol, VariableList &variables, FunctionList& functions);
-	AbstractAction *buildWhileAction(Symbol *symbol, VariableList &variables, FunctionList& functions);
-	AbstractAction* buildCalledFunctionActions(Symbol *symbol, VariableList &variables, FunctionList& functions);
+	AbstractAction *buildListAction(Symbol *symbol, VariableList variables, FunctionList functions);
+	AbstractAction *buildConcurrentListAction(Symbol *symbol, VariableList variables, FunctionList functions);
+	AbstractAction *buildIfAction(Symbol *symbol, VariableList variables, FunctionList functions);
+	AbstractAction *buildWhileAction(Symbol *symbol, VariableList variables, FunctionList functions);
+	AbstractAction* buildCalledFunctionActions(Symbol *symbol, VariableList variables, FunctionList functions);
 	void readVariable(Symbol* symbol, VariableList& variables);
-	void readFunction(Symbol* symbol, FunctionList& functions);
+	void readFunction(Symbol* symbol, VariableList variables, FunctionList& functions);
 
 	//Variable parsers
 	bool readParameterOrVar(Symbol* symbol, VariableList &variables, int &paramId);

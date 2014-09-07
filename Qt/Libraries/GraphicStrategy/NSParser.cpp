@@ -244,7 +244,7 @@ void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, Var
 			action = buildWhileAction(symbol, variables, functions);
 			break;
 		case SYM_FUNCTIONSTATEMENT:
-			readFunction(symbol, functions);
+			readFunction(symbol, variables, functions);
 			break;
 		case SYM_CALLSTATEMENT:
 			action = buildCalledFunctionActions(symbol, variables, functions);
@@ -659,7 +659,7 @@ AbstractAction *NSParser::buildAx12MovementAction(Symbol *symbol, NSParser::Vari
 	return nullptr;
 }
 
-AbstractAction *NSParser::buildListAction(Symbol *symbol, NSParser::VariableList &variables, FunctionList& functions)
+AbstractAction *NSParser::buildListAction(Symbol *symbol, VariableList variables, FunctionList functions)
 {
 	QList<AbstractAction*> actionList;
 	if (symbol->type == NON_TERMINAL)
@@ -675,7 +675,7 @@ AbstractAction *NSParser::buildListAction(Symbol *symbol, NSParser::VariableList
 	return nullptr;
 }
 
-AbstractAction *NSParser::buildConcurrentListAction(Symbol *symbol, NSParser::VariableList &variables, FunctionList& functions)
+AbstractAction *NSParser::buildConcurrentListAction(Symbol *symbol, VariableList variables, FunctionList functions)
 {
 	QList<AbstractAction*> actionList;
 	AsynchroneActionGroup::StopCondition stopCondition = AsynchroneActionGroup::AllActionFinished;
@@ -710,7 +710,7 @@ AbstractAction *NSParser::buildConcurrentListAction(Symbol *symbol, NSParser::Va
 	return nullptr;
 }
 
-AbstractAction *NSParser::buildIfAction(Symbol *symbol, NSParser::VariableList &variables, FunctionList &functions)
+AbstractAction *NSParser::buildIfAction(Symbol *symbol, VariableList variables, FunctionList functions)
 {
 	if (symbol->type == NON_TERMINAL)
 	{
@@ -779,7 +779,7 @@ AbstractAction *NSParser::buildIfAction(Symbol *symbol, NSParser::VariableList &
 	return nullptr;
 }
 
-AbstractAction *NSParser::buildWhileAction(Symbol *symbol, NSParser::VariableList &variables, FunctionList &functions)
+AbstractAction *NSParser::buildWhileAction(Symbol *symbol, VariableList variables, FunctionList functions)
 {
 	if (symbol->type == NON_TERMINAL)
 	{
@@ -839,7 +839,7 @@ AbstractAction *NSParser::buildWhileAction(Symbol *symbol, NSParser::VariableLis
 	return nullptr;
 }
 
-void NSParser::readFunction(Symbol* symbol, FunctionList& functions)
+void NSParser::readFunction(Symbol* symbol, VariableList variables, FunctionList& functions)
 {
 	if (symbol->type == NON_TERMINAL)
 	{
@@ -868,14 +868,18 @@ void NSParser::readFunction(Symbol* symbol, FunctionList& functions)
 		if (!functionName.isEmpty() && info.actionListSymbol != nullptr)
 		{
 			if (!functions.contains(functionName))
+			{
+				info.currentVariables = variables;
+				info.currentFunctions = functions;
 				functions[functionName] = info;
+			}
 			else
 				addError(NSParsingError::functionAlreadyDefinedError(functionName, symbol));
 		}
 	}
 }
 
-AbstractAction* NSParser::buildCalledFunctionActions(Symbol *symbol, VariableList &variables, FunctionList& functions)
+AbstractAction* NSParser::buildCalledFunctionActions(Symbol *symbol, VariableList variables, FunctionList functions)
 {
 	if (symbol->type == NON_TERMINAL)
 	{
@@ -921,7 +925,7 @@ AbstractAction* NSParser::buildCalledFunctionActions(Symbol *symbol, VariableLis
 					addError(NSParsingError::invalidNumberOfArguments(functionName, info.parameterNames.count(), varList.count(), symbol));
 				else
 				{
-					VariableList functionVariables(variables);
+					VariableList functionVariables(info.currentVariables);
 					for(int i = 0; i < info.parameterNames.count(); ++i)
 					{
 						const QString& param = info.parameterNames[i];
@@ -929,7 +933,7 @@ AbstractAction* NSParser::buildCalledFunctionActions(Symbol *symbol, VariableLis
 						functionVariables[param] = var;
 					}
 					QList<AbstractAction*> actions;
-					buildActions(info.actionListSymbol, actions, functionVariables, functions);
+					buildActions(info.actionListSymbol, actions, functionVariables, info.currentFunctions);
 
 					if (_factory)
 						return _factory->actionList(actions);
