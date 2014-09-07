@@ -4,7 +4,6 @@
 #include "ToolsLib.h"
 
 
-
 double NSParser::readFloat(Symbol* symbol)
 {
 	double value = 0.0;
@@ -404,10 +403,10 @@ double NSParser::readAngleInRadian(Symbol* symbol)
 			switch(nt->ruleIndex)
 			{
 				case PROD_ANGLE_AUTO_REVERSED:
-					//do auto reverse
+					value = Tools::autoMirror(value, isMirrored());
 					break;
 				case PROD_ANGLE_REVERSED:
-					//do reverse
+					value = Tools::autoMirror(value, true);
 					break;
 				case PROD_ANGLE:
 					break;
@@ -558,7 +557,7 @@ NSParser::ConditionInfo NSParser::readCondition(Symbol *symbol, VariableList& va
 						break;
 					}
 					case SYM_RECT_OR_VAR:
-					case SYM_RECT:
+					case SYM_RECT2:
 					case SYM_FIXED_RECT:
 						readRectOrVar(c, variables, info.rect);
 						break;
@@ -861,10 +860,10 @@ Tools::RPoint NSParser::readPoint(Symbol* symbol)
 				switch(nt->ruleIndex)
 				{
 					case PROD_POINT_AUTO_REVERSED:
-						//do auto reverse
+						point = Tools::autoMirror(point, isMirrored(), getTableWidth());
 						break;
 					case PROD_POINT_REVERSED:
-						//do reverse
+						point = Tools::autoMirror(point, true, getTableWidth());
 						break;
 					case PROD_POINT:
 						break;
@@ -889,10 +888,10 @@ QRectF NSParser::readRect(Symbol* symbol)
 			switch(nt->ruleIndex)
 			{
 				case PROD_RECT_AUTO_REVERSED:
-					//do auto reverse
+					r = Tools::autoMirror(r, isMirrored(), getTableWidth());
 					break;
 				case PROD_RECT_REVERSED:
-					//do reverse
+					r = Tools::autoMirror(r, true, getTableWidth());
 					break;
 				case PROD_RECT:
 					break;
@@ -943,7 +942,7 @@ bool NSParser::NSParser::readRectOrVar(Symbol *symbol, NSParser::VariableList &v
 	if (symbol->type == NON_TERMINAL)
 	{
 		result = true;
-		if (symbol->symbolIndex == SYM_RECT)
+		if (symbol->symbolIndex == SYM_RECT2)
 			r = readRect(symbol);
 		else if (symbol->symbolIndex == SYM_FIXED_RECT)
 			r = readFixedRect(symbol);
@@ -955,7 +954,7 @@ bool NSParser::NSParser::readRectOrVar(Symbol *symbol, NSParser::VariableList &v
 			switch(nt->ruleIndex)
 			{
 				case PROD_RECT_OR_VAR:
-					r = readRect(searchChild(symbol, SYM_RECT));
+					r = readRect(searchChild(symbol, SYM_RECT2));
 					break;
 				case PROD_RECT_OR_VAR2:
 					result = readRectVar(symbol, variables, r);
@@ -1068,7 +1067,7 @@ bool NSParser::readCallArg(Symbol *symbol, VariableList &variables, NSParser::De
 			callArgVariable = DelclaredVariable::fromPoint(p);
 			break;
 		}
-		case SYM_RECT:
+		case SYM_RECT2:
 		case SYM_FIXED_RECT:
 		{
 			QRectF r = readRect(symbol);

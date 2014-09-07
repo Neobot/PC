@@ -406,3 +406,8 @@ AbstractAction *ActionFactory::setParameterAction(int parameterId, double value)
 {
 	return new SetParameterAction(parameterId, value, _manager);
 }
+
+StrategyManager *ActionFactory::getManager() const
+{
+	return _manager;
+}

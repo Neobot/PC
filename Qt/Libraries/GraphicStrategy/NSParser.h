@@ -209,6 +209,9 @@ protected:
 	void printTree(QTextStream& out, Symbol *s, int level);
 	void addError(const NSParsingError &error);
 
+	bool isMirrored() const;
+	int getTableWidth() const;
+
 private:
 	CGTFile _cgtFile;
 	bool _invalidGrammar;

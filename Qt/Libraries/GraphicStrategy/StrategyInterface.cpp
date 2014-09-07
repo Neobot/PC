@@ -89,7 +89,7 @@ double StrategyInterface::autoMirror(double angle) const
 {
 	return _mirrored ? -angle : angle;
 }
-#include <QDebug>
+
 void StrategyInterface::readAndDefineParameters(Tools::NSettings &settings)
 {
 	settings.beginGroup("Strategy");

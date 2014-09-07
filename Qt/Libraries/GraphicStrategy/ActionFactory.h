@@ -108,6 +108,8 @@ public:
 
 	AbstractAction* setParameterAction(int parameterId, double value) const;
 
+	StrategyManager* getManager() const;
+
 private:
     StrategyManager*	_manager;
     TrajectoryFinder*	_finder;

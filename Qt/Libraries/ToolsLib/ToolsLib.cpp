@@ -182,6 +182,15 @@ QPointF Tools::relativePosition(const QPointF& centerOfRotation, const QPointF& 
 	return centerOfRotation + m.map(relativePosition + r);
 }
 
+
+double Tools::autoMirror(double angle, bool mirror)
+{
+	if (mirror)
+		return -angle;
+	else
+		return angle;
+}
+
 Tools::RPoint Tools::autoMirror(const RPoint& point, bool mirror, double width)
 {
 	if (mirror)
@@ -198,6 +207,14 @@ QPointF Tools::autoMirror(const QPointF& point, bool mirror, double width)
 		return point;
 }
 
+
+QRectF Tools::autoMirror(const QRectF &rect, bool mirror, double width)
+{
+	if (mirror)
+		return QRectF(autoMirror(rect.topLeft(), true, width), QSizeF(rect.width(), -rect.height()));
+	else
+		return rect;
+}
 
 QDir Tools::getDataDirectory()
 {
@@ -219,4 +236,7 @@ QDir Tools::getDataDirectory()
 
 	return d;
 }
+
+
+
 

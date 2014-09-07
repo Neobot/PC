@@ -29,8 +29,10 @@ namespace Tools
 
 	QPointF relativePosition(const QPointF& centerOfRotation, const QPointF& relativePosition, const QVector2D& direction, double distance, double angle);
 
+	double autoMirror(double angle, bool mirror);
 	RPoint autoMirror(const RPoint& point, bool mirror, double width = 3000.0);
 	QPointF autoMirror(const QPointF& point, bool mirror, double width = 3000.0);
+	QRectF autoMirror(const QRectF& rect, bool mirror, double width = 3000.0);
 
 	template<class T>
 	struct QVariantCaster

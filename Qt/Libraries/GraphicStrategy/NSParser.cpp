@@ -2,6 +2,8 @@
 #include "ActionFactory.h"
 #include "ns.h"
 #include "ToolsLib.h"
+#include "StrategyManager.h"
+#include "StrategyMap.h"
 
 #include <QFile>
 
@@ -46,6 +48,22 @@ void NSParser::addError(const NSParsingError &error)
 	NSParsingError errorCopy(error);
 	errorCopy.setFilename(_currentFile);
 	_errors << errorCopy;
+}
+
+bool NSParser::isMirrored() const
+{
+	if (_factory)
+		return _factory->getManager()->isMirrored();
+	else
+		return false;
+}
+
+int NSParser::getTableWidth() const
+{
+	if (_factory)
+		return _factory->getManager()->getMap()->getTableRect().width();
+	else
+		return 3000;
 }
 
 const QList<NSParsingError> &NSParser::getErrors() const
@@ -284,7 +302,7 @@ void NSParser::readVariable(Symbol* symbol, VariableList& variables)
 					var = DelclaredVariable::fromPoint(p);
 					break;
 				}
-				case SYM_RECT:
+				case SYM_RECT2:
 				case SYM_FIXED_RECT:
 				{
 					QRectF r = readRect(child);
