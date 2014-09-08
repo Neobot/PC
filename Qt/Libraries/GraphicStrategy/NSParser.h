@@ -133,8 +133,10 @@ protected:
 	
 	//Action parsers
 	AbstractAction* buildWaitAction(Symbol* symbol);
+	AbstractAction* buildTimeoutAction(Symbol* symbol, VariableList variables, FunctionList functions);
 	AbstractAction *buildTeleportAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildGoToAction(Symbol *symbol, VariableList &variables);
+	AbstractAction *buildRotateToAction(Symbol *symbol);
 	AbstractAction *buildSetParameterAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildEnableSensorAction(Symbol *symbol, VariableList &variables);
 	AbstractAction *buildDisableSensorAction(Symbol *symbol, VariableList &variables);

@@ -128,30 +128,31 @@ Comment Line  = '//'
 <Start>   ::= <nl opt> <Program>
 <Program> ::= <Statements>
 
-<Statements> ::= <Statement> <statement_end> <Statements> 
-              |  <Statement> 
+<Statements> ::= <Statement> <Statements> 
               |  !Empty
               
 ! To complete
-<Statement> ::= <ImportStatement>
-             | <WaitStatement>
-             | <DeclareStatement>
-             | <TeleportStatement>
-             | <MoveToStatement>
-             | <SetParamStatement>
-             | <EnableSensorStatement>
-             | <DisableSensorStatement>
-             | <Ax12MovementStatement>
-             | <Ax12AsyncMovementStatement>
-             | <MoveAx12Statement>
-             | <ActuatorStatement>
-             | <ListStatement>
-             | <ConcurrentStatement>
+<Statement> ::= <ImportStatement> <statement_end>
+             | <WaitStatement> <statement_end>
+             | <DeclareStatement> <statement_end>
+             | <TeleportStatement> <statement_end>
+             | <MoveToStatement> <statement_end>
+             | <RotateToSTatement> <statement_end>
+             | <SetParamStatement> <statement_end>
+             | <EnableSensorStatement> <statement_end>
+             | <DisableSensorStatement> <statement_end>
+             | <Ax12MovementStatement> <statement_end>
+             | <Ax12AsyncMovementStatement> <statement_end>
+             | <MoveAx12Statement> <statement_end>
+             | <ActuatorStatement> <statement_end>
+             | <ListStatement> <statement_end>
+             | <ConcurrentStatement> <statement_end>
              | <ConditionStatement>
              | <WhileStatement>
 !             | <SwitchStatement>   
-             | <FunctionStatement>
-             | <CallStatement>
+             | <FunctionStatement> <statement_end>
+             | <CallStatement> <statement_end>
+             | <TimeOutStatement>
              
 <ImportStatement> ::= 'import' String
        
@@ -168,14 +169,18 @@ Comment Line  = '//'
 <TeleportStatement> ::= 'teleport' <point_or_var> 
 <MoveToStatement> ::= 'go' 'to' <point_or_var>  
                    |  'go' 'to' <point_or_var> <speed>  
-                   |  'go' 'to' <point_or_var> <direction>  
-                   |  'go' 'to' <point_or_var> <speed> <direction>  
-                   |  'go' 'to' <point_or_var> <direction> <speed> 
+<RotateToSTatement> ::= 'rotate' 'to' <angle>  
+                   |  'rotate' 'to' <angle> <speed>  
+                   |  'rotate' 'to' <angle> <direction>  
+                   |  'rotate' 'to' <angle> <speed> <direction>  
+                   |  'rotate' 'to' <angle> <direction> <speed>                   
                            
 <ListStatement> ::= '{' <nl Opt> <Statements> <nl Opt> '}'
 <ConcurrentStatement> ::= 'concurrent' <nl Opt> <ListStatement>                       
                        | 'concurrent' <concurrencyCondition> <nl Opt> <ListStatement>
                        
+<TimeOutStatement> ::= 'timeout' <time> <nl Opt> <Statement> 
+                    
 <SetParamStatement> ::= 'set' <parameter_or_var> '=' <num>       
                                                   
 <EnableSensorStatement> ::= 'enable' <sensor_or_var> 
@@ -202,12 +207,11 @@ Comment Line  = '//'
 <reverseCondition> ::= 'strategy' <ConditionIsOperator> 'reversed'                                                                              
 <IfCondition> ::= <SensorCondition> | <OrientationCondition> | <PositionCondition> | <OpponentCondition> | <reverseCondition> | 'true' | 'false'
                                     
-<ConditionStatement> ::= 'if' <IfCondition> <nl Opt> <Statement> <statement_end>
-                      |  'if' <IfCondition> <nl Opt> <Statement> <statement_end> 'else' <nl Opt> <Statement>              
+<ConditionStatement> ::= 'if' <IfCondition> <nl Opt> <Statement>
+                      |  'if' <IfCondition> <nl Opt> <Statement> 'else' <nl Opt> <Statement>              
 
     !while
-<timeout> ::= 'timeout' <time> | <>
-<WhileStatement> ::= 'while' <timeout> <IfCondition> <opt_time> <nl Opt> <Statement>
+<WhileStatement> ::= 'while' <IfCondition> <opt_time> <nl Opt> <Statement>
                   
     !switch
 !<SwitchStatement> ::= 'switch' <SwitchCondition> <nl Opt> '{' <nl Opt> <switch_cases> <nl Opt> '}' 
@@ -241,4 +245,4 @@ Comment Line  = '//'
            | 
            
 <CallStatement> ::= <var>  '(' <CallArgList> ')'   
-                   
+                                   

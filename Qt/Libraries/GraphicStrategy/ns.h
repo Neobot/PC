@@ -72,92 +72,94 @@
    SYM_RECT                       =  69, // rect
    SYM_RED                        =  70, // red
    SYM_REVERSED                   =  71, // reversed
-   SYM_S                          =  72, // s
-   SYM_SENSOR                     =  73, // sensor
-   SYM_SET                        =  74, // set
-   SYM_SHARP                      =  75, // sharp
-   SYM_SPEED                      =  76, // speed
-   SYM_STRATEGY                   =  77, // strategy
-   SYM_STRING                     =  78, // String
-   SYM_TELEPORT                   =  79, // teleport
-   SYM_TIMEOUT                    =  80, // timeout
-   SYM_TO                         =  81, // to
-   SYM_TRUE                       =  82, // true
-   SYM_UNKNOWN                    =  83, // unknown
-   SYM_WAIT                       =  84, // wait
-   SYM_WHILE                      =  85, // while
-   SYM_WHITE                      =  86, // white
-   SYM_YELLOW                     =  87, // yellow
-   SYM_ACTION2                    =  88, // <action>
-   SYM_ACTION_OR_VAR              =  89, // <action_or_var>
-   SYM_ACTUATORSTATEMENT          =  90, // <ActuatorStatement>
-   SYM_ANGLE                      =  91, // <angle>
-   SYM_ANGLERANGE                 =  92, // <angleRange>
-   SYM_AX12_IDENTIFIER            =  93, // <ax12_identifier>
-   SYM_AX12_OR_VAR                =  94, // <ax12_or_var>
-   SYM_AX12ASYNCMOVEMENTSTATEMENT =  95, // <Ax12AsyncMovementStatement>
-   SYM_AX12MOVEMENTSTATEMENT      =  96, // <Ax12MovementStatement>
-   SYM_CALLARG                    =  97, // <CallArg>
-   SYM_CALLARGLIST                =  98, // <CallArgList>
-   SYM_CALLSTATEMENT              =  99, // <CallStatement>
-   SYM_COLORSENSORVALUE           = 100, // <colorSensorValue>
-   SYM_CONCURRENCYCONDITION       = 101, // <concurrencyCondition>
-   SYM_CONCURRENTSTATEMENT        = 102, // <ConcurrentStatement>
-   SYM_CONDITIONINOPERATOR        = 103, // <ConditionInOperator>
-   SYM_CONDITIONISOPERATOR        = 104, // <ConditionIsOperator>
-   SYM_CONDITIONSTATEMENT         = 105, // <ConditionStatement>
-   SYM_DECLARESTATEMENT           = 106, // <DeclareStatement>
-   SYM_DIRECTION                  = 107, // <direction>
-   SYM_DISABLESENSORSTATEMENT     = 108, // <DisableSensorStatement>
-   SYM_ENABLESENSORSTATEMENT      = 109, // <EnableSensorStatement>
-   SYM_FIXED_ANGLE                = 110, // <fixed_angle>
-   SYM_FIXED_POINT                = 111, // <fixed_point>
-   SYM_FIXED_RECT                 = 112, // <fixed_rect>
-   SYM_FUNCTIONSTATEMENT          = 113, // <FunctionStatement>
-   SYM_ID                         = 114, // <id>
-   SYM_IFCONDITION                = 115, // <IfCondition>
-   SYM_IMPORTSTATEMENT            = 116, // <ImportStatement>
-   SYM_LISTSTATEMENT              = 117, // <ListStatement>
-   SYM_MICROSWITCHVALUE           = 118, // <microSwitchValue>
-   SYM_MOVEAX12STATEMENT          = 119, // <MoveAx12Statement>
-   SYM_MOVETOSTATEMENT            = 120, // <MoveToStatement>
-   SYM_NL                         = 121, // <nl>
-   SYM_NLOPT                      = 122, // <nl Opt>
-   SYM_NUM                        = 123, // <num>
-   SYM_OPPONENTCONDITION          = 124, // <OpponentCondition>
-   SYM_OPT_BRACKET                = 125, // <opt_bracket>
-   SYM_OPT_TIME                   = 126, // <opt_time>
-   SYM_ORIENTATIONCONDITION       = 127, // <OrientationCondition>
-   SYM_PARAMETER_IDENTIFIER       = 128, // <parameter_identifier>
-   SYM_PARAMETER_OR_VAR           = 129, // <parameter_or_var>
-   SYM_POINT                      = 130, // <point>
-   SYM_POINT_OR_VAR               = 131, // <point_or_var>
-   SYM_POSITIONCONDITION          = 132, // <PositionCondition>
-   SYM_PROGRAM                    = 133, // <Program>
-   SYM_RECT2                      = 134, // <rect>
-   SYM_RECT_OR_VAR                = 135, // <rect_or_var>
-   SYM_REVERSECONDITION           = 136, // <reverseCondition>
-   SYM_SENSOR2                    = 137, // <sensor>
-   SYM_SENSOR_IDENTIFIER          = 138, // <sensor_identifier>
-   SYM_SENSOR_OR_VAR              = 139, // <sensor_or_var>
-   SYM_SENSORCONDITION            = 140, // <SensorCondition>
-   SYM_SENSORVALUE                = 141, // <sensorValue>
-   SYM_SETPARAMSTATEMENT          = 142, // <SetParamStatement>
-   SYM_SHARPVALUE                 = 143, // <sharpValue>
-   SYM_SPEED2                     = 144, // <speed>
-   SYM_START                      = 145, // <Start>
-   SYM_STATEMENT                  = 146, // <Statement>
-   SYM_STATEMENT_END              = 147, // <statement_end>
-   SYM_STATEMENTS                 = 148, // <Statements>
-   SYM_STRING_OR_VAR              = 149, // <string_or_var>
-   SYM_TELEPORTSTATEMENT          = 150, // <TeleportStatement>
-   SYM_TIME                       = 151, // <time>
-   SYM_TIME_UNIT                  = 152, // <time_unit>
-   SYM_TIMEOUT2                   = 153, // <timeout>
-   SYM_VAR                        = 154, // <var>
-   SYM_VARLIST                    = 155, // <varList>
-   SYM_WAITSTATEMENT              = 156, // <WaitStatement>
-   SYM_WHILESTATEMENT             = 157  // <WhileStatement>
+   SYM_ROTATE                     =  72, // rotate
+   SYM_S                          =  73, // s
+   SYM_SENSOR                     =  74, // sensor
+   SYM_SET                        =  75, // set
+   SYM_SHARP                      =  76, // sharp
+   SYM_SPEED                      =  77, // speed
+   SYM_STRATEGY                   =  78, // strategy
+   SYM_STRING                     =  79, // String
+   SYM_TELEPORT                   =  80, // teleport
+   SYM_TIMEOUT                    =  81, // timeout
+   SYM_TO                         =  82, // to
+   SYM_TRUE                       =  83, // true
+   SYM_UNKNOWN                    =  84, // unknown
+   SYM_WAIT                       =  85, // wait
+   SYM_WHILE                      =  86, // while
+   SYM_WHITE                      =  87, // white
+   SYM_YELLOW                     =  88, // yellow
+   SYM_ACTION2                    =  89, // <action>
+   SYM_ACTION_OR_VAR              =  90, // <action_or_var>
+   SYM_ACTUATORSTATEMENT          =  91, // <ActuatorStatement>
+   SYM_ANGLE                      =  92, // <angle>
+   SYM_ANGLERANGE                 =  93, // <angleRange>
+   SYM_AX12_IDENTIFIER            =  94, // <ax12_identifier>
+   SYM_AX12_OR_VAR                =  95, // <ax12_or_var>
+   SYM_AX12ASYNCMOVEMENTSTATEMENT =  96, // <Ax12AsyncMovementStatement>
+   SYM_AX12MOVEMENTSTATEMENT      =  97, // <Ax12MovementStatement>
+   SYM_CALLARG                    =  98, // <CallArg>
+   SYM_CALLARGLIST                =  99, // <CallArgList>
+   SYM_CALLSTATEMENT              = 100, // <CallStatement>
+   SYM_COLORSENSORVALUE           = 101, // <colorSensorValue>
+   SYM_CONCURRENCYCONDITION       = 102, // <concurrencyCondition>
+   SYM_CONCURRENTSTATEMENT        = 103, // <ConcurrentStatement>
+   SYM_CONDITIONINOPERATOR        = 104, // <ConditionInOperator>
+   SYM_CONDITIONISOPERATOR        = 105, // <ConditionIsOperator>
+   SYM_CONDITIONSTATEMENT         = 106, // <ConditionStatement>
+   SYM_DECLARESTATEMENT           = 107, // <DeclareStatement>
+   SYM_DIRECTION                  = 108, // <direction>
+   SYM_DISABLESENSORSTATEMENT     = 109, // <DisableSensorStatement>
+   SYM_ENABLESENSORSTATEMENT      = 110, // <EnableSensorStatement>
+   SYM_FIXED_ANGLE                = 111, // <fixed_angle>
+   SYM_FIXED_POINT                = 112, // <fixed_point>
+   SYM_FIXED_RECT                 = 113, // <fixed_rect>
+   SYM_FUNCTIONSTATEMENT          = 114, // <FunctionStatement>
+   SYM_ID                         = 115, // <id>
+   SYM_IFCONDITION                = 116, // <IfCondition>
+   SYM_IMPORTSTATEMENT            = 117, // <ImportStatement>
+   SYM_LISTSTATEMENT              = 118, // <ListStatement>
+   SYM_MICROSWITCHVALUE           = 119, // <microSwitchValue>
+   SYM_MOVEAX12STATEMENT          = 120, // <MoveAx12Statement>
+   SYM_MOVETOSTATEMENT            = 121, // <MoveToStatement>
+   SYM_NL                         = 122, // <nl>
+   SYM_NLOPT                      = 123, // <nl Opt>
+   SYM_NUM                        = 124, // <num>
+   SYM_OPPONENTCONDITION          = 125, // <OpponentCondition>
+   SYM_OPT_BRACKET                = 126, // <opt_bracket>
+   SYM_OPT_TIME                   = 127, // <opt_time>
+   SYM_ORIENTATIONCONDITION       = 128, // <OrientationCondition>
+   SYM_PARAMETER_IDENTIFIER       = 129, // <parameter_identifier>
+   SYM_PARAMETER_OR_VAR           = 130, // <parameter_or_var>
+   SYM_POINT                      = 131, // <point>
+   SYM_POINT_OR_VAR               = 132, // <point_or_var>
+   SYM_POSITIONCONDITION          = 133, // <PositionCondition>
+   SYM_PROGRAM                    = 134, // <Program>
+   SYM_RECT2                      = 135, // <rect>
+   SYM_RECT_OR_VAR                = 136, // <rect_or_var>
+   SYM_REVERSECONDITION           = 137, // <reverseCondition>
+   SYM_ROTATETOSTATEMENT          = 138, // <RotateToSTatement>
+   SYM_SENSOR2                    = 139, // <sensor>
+   SYM_SENSOR_IDENTIFIER          = 140, // <sensor_identifier>
+   SYM_SENSOR_OR_VAR              = 141, // <sensor_or_var>
+   SYM_SENSORCONDITION            = 142, // <SensorCondition>
+   SYM_SENSORVALUE                = 143, // <sensorValue>
+   SYM_SETPARAMSTATEMENT          = 144, // <SetParamStatement>
+   SYM_SHARPVALUE                 = 145, // <sharpValue>
+   SYM_SPEED2                     = 146, // <speed>
+   SYM_START                      = 147, // <Start>
+   SYM_STATEMENT                  = 148, // <Statement>
+   SYM_STATEMENT_END              = 149, // <statement_end>
+   SYM_STATEMENTS                 = 150, // <Statements>
+   SYM_STRING_OR_VAR              = 151, // <string_or_var>
+   SYM_TELEPORTSTATEMENT          = 152, // <TeleportStatement>
+   SYM_TIME                       = 153, // <time>
+   SYM_TIME_UNIT                  = 154, // <time_unit>
+   SYM_TIMEOUTSTATEMENT           = 155, // <TimeOutStatement>
+   SYM_VAR                        = 156, // <var>
+   SYM_VARLIST                    = 157, // <varList>
+   SYM_WAITSTATEMENT              = 158, // <WaitStatement>
+   SYM_WHILESTATEMENT             = 159  // <WhileStatement>
 };
 
 enum ProductionConstants
@@ -243,91 +245,93 @@ enum ProductionConstants
    PROD_AX12_OR_VAR2                                         =  78, // <ax12_or_var> ::= <var>
    PROD_START                                                =  79, // <Start> ::= <nl Opt> <Program>
    PROD_PROGRAM                                              =  80, // <Program> ::= <Statements>
-   PROD_STATEMENTS                                           =  81, // <Statements> ::= <Statement> <statement_end> <Statements>
-   PROD_STATEMENTS2                                          =  82, // <Statements> ::= <Statement>
-   PROD_STATEMENTS3                                          =  83, // <Statements> ::= 
-   PROD_STATEMENT                                            =  84, // <Statement> ::= <ImportStatement>
-   PROD_STATEMENT2                                           =  85, // <Statement> ::= <WaitStatement>
-   PROD_STATEMENT3                                           =  86, // <Statement> ::= <DeclareStatement>
-   PROD_STATEMENT4                                           =  87, // <Statement> ::= <TeleportStatement>
-   PROD_STATEMENT5                                           =  88, // <Statement> ::= <MoveToStatement>
-   PROD_STATEMENT6                                           =  89, // <Statement> ::= <SetParamStatement>
-   PROD_STATEMENT7                                           =  90, // <Statement> ::= <EnableSensorStatement>
-   PROD_STATEMENT8                                           =  91, // <Statement> ::= <DisableSensorStatement>
-   PROD_STATEMENT9                                           =  92, // <Statement> ::= <Ax12MovementStatement>
-   PROD_STATEMENT10                                          =  93, // <Statement> ::= <Ax12AsyncMovementStatement>
-   PROD_STATEMENT11                                          =  94, // <Statement> ::= <MoveAx12Statement>
-   PROD_STATEMENT12                                          =  95, // <Statement> ::= <ActuatorStatement>
-   PROD_STATEMENT13                                          =  96, // <Statement> ::= <ListStatement>
-   PROD_STATEMENT14                                          =  97, // <Statement> ::= <ConcurrentStatement>
-   PROD_STATEMENT15                                          =  98, // <Statement> ::= <ConditionStatement>
-   PROD_STATEMENT16                                          =  99, // <Statement> ::= <WhileStatement>
-   PROD_STATEMENT17                                          = 100, // <Statement> ::= <FunctionStatement>
-   PROD_STATEMENT18                                          = 101, // <Statement> ::= <CallStatement>
-   PROD_IMPORTSTATEMENT_IMPORT_STRING                        = 102, // <ImportStatement> ::= import String
-   PROD_WAITSTATEMENT_WAIT                                   = 103, // <WaitStatement> ::= wait <time>
-   PROD_DECLARESTATEMENT_DECLARE_AS                          = 104, // <DeclareStatement> ::= declare <action> as <var>
-   PROD_DECLARESTATEMENT_DECLARE_AS2                         = 105, // <DeclareStatement> ::= declare <sensor_identifier> as <var>
-   PROD_DECLARESTATEMENT_DECLARE_AS3                         = 106, // <DeclareStatement> ::= declare <parameter_identifier> as <var>
-   PROD_DECLARESTATEMENT_DECLARE_AS4                         = 107, // <DeclareStatement> ::= declare <point> as <var>
-   PROD_DECLARESTATEMENT_DECLARE_AS5                         = 108, // <DeclareStatement> ::= declare <rect> as <var>
-   PROD_DECLARESTATEMENT_DECLARE_AS6                         = 109, // <DeclareStatement> ::= declare <ax12_identifier> as <var>
-   PROD_DECLARESTATEMENT_DECLARE_STRING_AS                   = 110, // <DeclareStatement> ::= declare String as <var>
-   PROD_TELEPORTSTATEMENT_TELEPORT                           = 111, // <TeleportStatement> ::= teleport <point_or_var>
-   PROD_MOVETOSTATEMENT_GO_TO                                = 112, // <MoveToStatement> ::= go to <point_or_var>
-   PROD_MOVETOSTATEMENT_GO_TO2                               = 113, // <MoveToStatement> ::= go to <point_or_var> <speed>
-   PROD_MOVETOSTATEMENT_GO_TO3                               = 114, // <MoveToStatement> ::= go to <point_or_var> <direction>
-   PROD_MOVETOSTATEMENT_GO_TO4                               = 115, // <MoveToStatement> ::= go to <point_or_var> <speed> <direction>
-   PROD_MOVETOSTATEMENT_GO_TO5                               = 116, // <MoveToStatement> ::= go to <point_or_var> <direction> <speed>
-   PROD_LISTSTATEMENT_LBRACE_RBRACE                          = 117, // <ListStatement> ::= '{' <nl Opt> <Statements> <nl Opt> '}'
-   PROD_CONCURRENTSTATEMENT_CONCURRENT                       = 118, // <ConcurrentStatement> ::= concurrent <nl Opt> <ListStatement>
-   PROD_CONCURRENTSTATEMENT_CONCURRENT2                      = 119, // <ConcurrentStatement> ::= concurrent <concurrencyCondition> <nl Opt> <ListStatement>
-   PROD_SETPARAMSTATEMENT_SET_EQ                             = 120, // <SetParamStatement> ::= set <parameter_or_var> '=' <num>
-   PROD_ENABLESENSORSTATEMENT_ENABLE                         = 121, // <EnableSensorStatement> ::= enable <sensor_or_var>
-   PROD_ENABLESENSORSTATEMENT_ENABLE_ALL                     = 122, // <EnableSensorStatement> ::= enable all <sensor>
-   PROD_DISABLESENSORSTATEMENT_DISABLE                       = 123, // <DisableSensorStatement> ::= disable <sensor_or_var>
-   PROD_DISABLESENSORSTATEMENT_DISABLE_ALL                   = 124, // <DisableSensorStatement> ::= disable all <sensor>
-   PROD_AX12MOVEMENTSTATEMENT_MAKE_AX12_MOVEMENT             = 125, // <Ax12MovementStatement> ::= make 'ax12' movement <string_or_var> <string_or_var>
-   PROD_AX12MOVEMENTSTATEMENT_MAKE_AX12_MOVEMENT2            = 126, // <Ax12MovementStatement> ::= make 'ax12' movement <string_or_var> <string_or_var> <speed>
-   PROD_AX12ASYNCMOVEMENTSTATEMENT_MAKE_AX12_ASYNC_MOVEMENT  = 127, // <Ax12AsyncMovementStatement> ::= make 'ax12' async movement <string_or_var> <string_or_var>
-   PROD_AX12ASYNCMOVEMENTSTATEMENT_MAKE_AX12_ASYNC_MOVEMENT2 = 128, // <Ax12AsyncMovementStatement> ::= make 'ax12' async movement <string_or_var> <string_or_var> <speed>
-   PROD_MOVEAX12STATEMENT_MOVE_TO                            = 129, // <MoveAx12Statement> ::= move <ax12_or_var> to <angle>
-   PROD_MOVEAX12STATEMENT_MOVE_TO2                           = 130, // <MoveAx12Statement> ::= move <ax12_or_var> to <angle> <speed>
-   PROD_ACTUATORSTATEMENT_DO                                 = 131, // <ActuatorStatement> ::= do <action_or_var>
-   PROD_CONDITIONISOPERATOR_IS                               = 132, // <ConditionIsOperator> ::= is
-   PROD_CONDITIONISOPERATOR_IS_NOT                           = 133, // <ConditionIsOperator> ::= is not
-   PROD_CONDITIONINOPERATOR_IN                               = 134, // <ConditionInOperator> ::= in
-   PROD_CONDITIONINOPERATOR_NOT_IN                           = 135, // <ConditionInOperator> ::= not in
-   PROD_SENSORCONDITION                                      = 136, // <SensorCondition> ::= <sensor_or_var> <ConditionIsOperator> <sensorValue>
-   PROD_ORIENTATIONCONDITION_ORIENTATION                     = 137, // <OrientationCondition> ::= orientation <ConditionInOperator> <angleRange>
-   PROD_POSITIONCONDITION_POSITION                           = 138, // <PositionCondition> ::= position <ConditionInOperator> <rect_or_var>
-   PROD_OPPONENTCONDITION_OPPONENT                           = 139, // <OpponentCondition> ::= opponent <ConditionInOperator> <rect_or_var>
-   PROD_REVERSECONDITION_STRATEGY_REVERSED                   = 140, // <reverseCondition> ::= strategy <ConditionIsOperator> reversed
-   PROD_IFCONDITION                                          = 141, // <IfCondition> ::= <SensorCondition>
-   PROD_IFCONDITION2                                         = 142, // <IfCondition> ::= <OrientationCondition>
-   PROD_IFCONDITION3                                         = 143, // <IfCondition> ::= <PositionCondition>
-   PROD_IFCONDITION4                                         = 144, // <IfCondition> ::= <OpponentCondition>
-   PROD_IFCONDITION5                                         = 145, // <IfCondition> ::= <reverseCondition>
-   PROD_IFCONDITION_TRUE                                     = 146, // <IfCondition> ::= true
-   PROD_IFCONDITION_FALSE                                    = 147, // <IfCondition> ::= false
-   PROD_CONDITIONSTATEMENT_IF                                = 148, // <ConditionStatement> ::= if <IfCondition> <nl Opt> <Statement> <statement_end>
-   PROD_CONDITIONSTATEMENT_IF_ELSE                           = 149, // <ConditionStatement> ::= if <IfCondition> <nl Opt> <Statement> <statement_end> else <nl Opt> <Statement>
-   PROD_TIMEOUT_TIMEOUT                                      = 150, // <timeout> ::= timeout <time>
-   PROD_TIMEOUT                                              = 151, // <timeout> ::= 
-   PROD_WHILESTATEMENT_WHILE                                 = 152, // <WhileStatement> ::= while <timeout> <IfCondition> <opt_time> <nl Opt> <Statement>
-   PROD_VARLIST_COMMA                                        = 153, // <varList> ::= <var> ',' <varList>
-   PROD_VARLIST                                              = 154, // <varList> ::= <var>
-   PROD_VARLIST2                                             = 155, // <varList> ::= 
-   PROD_FUNCTIONSTATEMENT_FUNCTION_LPAREN_RPAREN             = 156, // <FunctionStatement> ::= function <var> '(' <varList> ')' <nl Opt> <ListStatement>
-   PROD_CALLARG                                              = 157, // <CallArg> ::= <var>
-   PROD_CALLARG_LBRACKET_RBRACKET                            = 158, // <CallArg> ::= '[' <point> ']'
-   PROD_CALLARG_LBRACKET_RBRACKET2                           = 159, // <CallArg> ::= '[' <rect> ']'
-   PROD_CALLARG2                                             = 160, // <CallArg> ::= <action>
-   PROD_CALLARG3                                             = 161, // <CallArg> ::= <sensor_identifier>
-   PROD_CALLARG4                                             = 162, // <CallArg> ::= <parameter_identifier>
-   PROD_CALLARG5                                             = 163, // <CallArg> ::= <ax12_identifier>
-   PROD_CALLARGLIST_COMMA                                    = 164, // <CallArgList> ::= <CallArg> ',' <CallArgList>
-   PROD_CALLARGLIST                                          = 165, // <CallArgList> ::= <CallArg>
-   PROD_CALLARGLIST2                                         = 166, // <CallArgList> ::= 
-   PROD_CALLSTATEMENT_LPAREN_RPAREN                          = 167  // <CallStatement> ::= <var> '(' <CallArgList> ')'
+   PROD_STATEMENTS                                           =  81, // <Statements> ::= <Statement> <Statements>
+   PROD_STATEMENTS2                                          =  82, // <Statements> ::= 
+   PROD_STATEMENT                                            =  83, // <Statement> ::= <ImportStatement> <statement_end>
+   PROD_STATEMENT2                                           =  84, // <Statement> ::= <WaitStatement> <statement_end>
+   PROD_STATEMENT3                                           =  85, // <Statement> ::= <DeclareStatement> <statement_end>
+   PROD_STATEMENT4                                           =  86, // <Statement> ::= <TeleportStatement> <statement_end>
+   PROD_STATEMENT5                                           =  87, // <Statement> ::= <MoveToStatement> <statement_end>
+   PROD_STATEMENT6                                           =  88, // <Statement> ::= <RotateToSTatement> <statement_end>
+   PROD_STATEMENT7                                           =  89, // <Statement> ::= <SetParamStatement> <statement_end>
+   PROD_STATEMENT8                                           =  90, // <Statement> ::= <EnableSensorStatement> <statement_end>
+   PROD_STATEMENT9                                           =  91, // <Statement> ::= <DisableSensorStatement> <statement_end>
+   PROD_STATEMENT10                                          =  92, // <Statement> ::= <Ax12MovementStatement> <statement_end>
+   PROD_STATEMENT11                                          =  93, // <Statement> ::= <Ax12AsyncMovementStatement> <statement_end>
+   PROD_STATEMENT12                                          =  94, // <Statement> ::= <MoveAx12Statement> <statement_end>
+   PROD_STATEMENT13                                          =  95, // <Statement> ::= <ActuatorStatement> <statement_end>
+   PROD_STATEMENT14                                          =  96, // <Statement> ::= <ListStatement> <statement_end>
+   PROD_STATEMENT15                                          =  97, // <Statement> ::= <ConcurrentStatement> <statement_end>
+   PROD_STATEMENT16                                          =  98, // <Statement> ::= <ConditionStatement>
+   PROD_STATEMENT17                                          =  99, // <Statement> ::= <WhileStatement>
+   PROD_STATEMENT18                                          = 100, // <Statement> ::= <FunctionStatement> <statement_end>
+   PROD_STATEMENT19                                          = 101, // <Statement> ::= <CallStatement> <statement_end>
+   PROD_STATEMENT20                                          = 102, // <Statement> ::= <TimeOutStatement>
+   PROD_IMPORTSTATEMENT_IMPORT_STRING                        = 103, // <ImportStatement> ::= import String
+   PROD_WAITSTATEMENT_WAIT                                   = 104, // <WaitStatement> ::= wait <time>
+   PROD_DECLARESTATEMENT_DECLARE_AS                          = 105, // <DeclareStatement> ::= declare <action> as <var>
+   PROD_DECLARESTATEMENT_DECLARE_AS2                         = 106, // <DeclareStatement> ::= declare <sensor_identifier> as <var>
+   PROD_DECLARESTATEMENT_DECLARE_AS3                         = 107, // <DeclareStatement> ::= declare <parameter_identifier> as <var>
+   PROD_DECLARESTATEMENT_DECLARE_AS4                         = 108, // <DeclareStatement> ::= declare <point> as <var>
+   PROD_DECLARESTATEMENT_DECLARE_AS5                         = 109, // <DeclareStatement> ::= declare <rect> as <var>
+   PROD_DECLARESTATEMENT_DECLARE_AS6                         = 110, // <DeclareStatement> ::= declare <ax12_identifier> as <var>
+   PROD_DECLARESTATEMENT_DECLARE_STRING_AS                   = 111, // <DeclareStatement> ::= declare String as <var>
+   PROD_TELEPORTSTATEMENT_TELEPORT                           = 112, // <TeleportStatement> ::= teleport <point_or_var>
+   PROD_MOVETOSTATEMENT_GO_TO                                = 113, // <MoveToStatement> ::= go to <point_or_var>
+   PROD_MOVETOSTATEMENT_GO_TO2                               = 114, // <MoveToStatement> ::= go to <point_or_var> <speed>
+   PROD_ROTATETOSTATEMENT_ROTATE_TO                          = 115, // <RotateToSTatement> ::= rotate to <angle>
+   PROD_ROTATETOSTATEMENT_ROTATE_TO2                         = 116, // <RotateToSTatement> ::= rotate to <angle> <speed>
+   PROD_ROTATETOSTATEMENT_ROTATE_TO3                         = 117, // <RotateToSTatement> ::= rotate to <angle> <direction>
+   PROD_ROTATETOSTATEMENT_ROTATE_TO4                         = 118, // <RotateToSTatement> ::= rotate to <angle> <speed> <direction>
+   PROD_ROTATETOSTATEMENT_ROTATE_TO5                         = 119, // <RotateToSTatement> ::= rotate to <angle> <direction> <speed>
+   PROD_LISTSTATEMENT_LBRACE_RBRACE                          = 120, // <ListStatement> ::= '{' <nl Opt> <Statements> <nl Opt> '}'
+   PROD_CONCURRENTSTATEMENT_CONCURRENT                       = 121, // <ConcurrentStatement> ::= concurrent <nl Opt> <ListStatement>
+   PROD_CONCURRENTSTATEMENT_CONCURRENT2                      = 122, // <ConcurrentStatement> ::= concurrent <concurrencyCondition> <nl Opt> <ListStatement>
+   PROD_TIMEOUTSTATEMENT_TIMEOUT                             = 123, // <TimeOutStatement> ::= timeout <time> <nl Opt> <Statement>
+   PROD_SETPARAMSTATEMENT_SET_EQ                             = 124, // <SetParamStatement> ::= set <parameter_or_var> '=' <num>
+   PROD_ENABLESENSORSTATEMENT_ENABLE                         = 125, // <EnableSensorStatement> ::= enable <sensor_or_var>
+   PROD_ENABLESENSORSTATEMENT_ENABLE_ALL                     = 126, // <EnableSensorStatement> ::= enable all <sensor>
+   PROD_DISABLESENSORSTATEMENT_DISABLE                       = 127, // <DisableSensorStatement> ::= disable <sensor_or_var>
+   PROD_DISABLESENSORSTATEMENT_DISABLE_ALL                   = 128, // <DisableSensorStatement> ::= disable all <sensor>
+   PROD_AX12MOVEMENTSTATEMENT_MAKE_AX12_MOVEMENT             = 129, // <Ax12MovementStatement> ::= make 'ax12' movement <string_or_var> <string_or_var>
+   PROD_AX12MOVEMENTSTATEMENT_MAKE_AX12_MOVEMENT2            = 130, // <Ax12MovementStatement> ::= make 'ax12' movement <string_or_var> <string_or_var> <speed>
+   PROD_AX12ASYNCMOVEMENTSTATEMENT_MAKE_AX12_ASYNC_MOVEMENT  = 131, // <Ax12AsyncMovementStatement> ::= make 'ax12' async movement <string_or_var> <string_or_var>
+   PROD_AX12ASYNCMOVEMENTSTATEMENT_MAKE_AX12_ASYNC_MOVEMENT2 = 132, // <Ax12AsyncMovementStatement> ::= make 'ax12' async movement <string_or_var> <string_or_var> <speed>
+   PROD_MOVEAX12STATEMENT_MOVE_TO                            = 133, // <MoveAx12Statement> ::= move <ax12_or_var> to <angle>
+   PROD_MOVEAX12STATEMENT_MOVE_TO2                           = 134, // <MoveAx12Statement> ::= move <ax12_or_var> to <angle> <speed>
+   PROD_ACTUATORSTATEMENT_DO                                 = 135, // <ActuatorStatement> ::= do <action_or_var>
+   PROD_CONDITIONISOPERATOR_IS                               = 136, // <ConditionIsOperator> ::= is
+   PROD_CONDITIONISOPERATOR_IS_NOT                           = 137, // <ConditionIsOperator> ::= is not
+   PROD_CONDITIONINOPERATOR_IN                               = 138, // <ConditionInOperator> ::= in
+   PROD_CONDITIONINOPERATOR_NOT_IN                           = 139, // <ConditionInOperator> ::= not in
+   PROD_SENSORCONDITION                                      = 140, // <SensorCondition> ::= <sensor_or_var> <ConditionIsOperator> <sensorValue>
+   PROD_ORIENTATIONCONDITION_ORIENTATION                     = 141, // <OrientationCondition> ::= orientation <ConditionInOperator> <angleRange>
+   PROD_POSITIONCONDITION_POSITION                           = 142, // <PositionCondition> ::= position <ConditionInOperator> <rect_or_var>
+   PROD_OPPONENTCONDITION_OPPONENT                           = 143, // <OpponentCondition> ::= opponent <ConditionInOperator> <rect_or_var>
+   PROD_REVERSECONDITION_STRATEGY_REVERSED                   = 144, // <reverseCondition> ::= strategy <ConditionIsOperator> reversed
+   PROD_IFCONDITION                                          = 145, // <IfCondition> ::= <SensorCondition>
+   PROD_IFCONDITION2                                         = 146, // <IfCondition> ::= <OrientationCondition>
+   PROD_IFCONDITION3                                         = 147, // <IfCondition> ::= <PositionCondition>
+   PROD_IFCONDITION4                                         = 148, // <IfCondition> ::= <OpponentCondition>
+   PROD_IFCONDITION5                                         = 149, // <IfCondition> ::= <reverseCondition>
+   PROD_IFCONDITION_TRUE                                     = 150, // <IfCondition> ::= true
+   PROD_IFCONDITION_FALSE                                    = 151, // <IfCondition> ::= false
+   PROD_CONDITIONSTATEMENT_IF                                = 152, // <ConditionStatement> ::= if <IfCondition> <nl Opt> <Statement>
+   PROD_CONDITIONSTATEMENT_IF_ELSE                           = 153, // <ConditionStatement> ::= if <IfCondition> <nl Opt> <Statement> else <nl Opt> <Statement>
+   PROD_WHILESTATEMENT_WHILE                                 = 154, // <WhileStatement> ::= while <IfCondition> <opt_time> <nl Opt> <Statement>
+   PROD_VARLIST_COMMA                                        = 155, // <varList> ::= <var> ',' <varList>
+   PROD_VARLIST                                              = 156, // <varList> ::= <var>
+   PROD_VARLIST2                                             = 157, // <varList> ::= 
+   PROD_FUNCTIONSTATEMENT_FUNCTION_LPAREN_RPAREN             = 158, // <FunctionStatement> ::= function <var> '(' <varList> ')' <nl Opt> <ListStatement>
+   PROD_CALLARG                                              = 159, // <CallArg> ::= <var>
+   PROD_CALLARG_LBRACKET_RBRACKET                            = 160, // <CallArg> ::= '[' <point> ']'
+   PROD_CALLARG_LBRACKET_RBRACKET2                           = 161, // <CallArg> ::= '[' <rect> ']'
+   PROD_CALLARG2                                             = 162, // <CallArg> ::= <action>
+   PROD_CALLARG3                                             = 163, // <CallArg> ::= <sensor_identifier>
+   PROD_CALLARG4                                             = 164, // <CallArg> ::= <parameter_identifier>
+   PROD_CALLARG5                                             = 165, // <CallArg> ::= <ax12_identifier>
+   PROD_CALLARGLIST_COMMA                                    = 166, // <CallArgList> ::= <CallArg> ',' <CallArgList>
+   PROD_CALLARGLIST                                          = 167, // <CallArgList> ::= <CallArg>
+   PROD_CALLARGLIST2                                         = 168, // <CallArgList> ::= 
+   PROD_CALLSTATEMENT_LPAREN_RPAREN                          = 169  // <CallStatement> ::= <var> '(' <CallArgList> ')'
 };

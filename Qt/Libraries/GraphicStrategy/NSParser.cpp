@@ -267,6 +267,12 @@ void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, Var
 		case SYM_CALLSTATEMENT:
 			action = buildCalledFunctionActions(symbol, variables, functions);
 			break;
+		case SYM_ROTATETOSTATEMENT:
+			action = buildRotateToAction(symbol);
+			break;
+		case SYM_TIMEOUTSTATEMENT:
+			action = buildTimeoutAction(symbol, variables, functions);
+			break;
 		default:
 		{
 			if (symbol->type == NON_TERMINAL)
@@ -377,6 +383,37 @@ AbstractAction* NSParser::buildWaitAction(Symbol* symbol)
 	return nullptr;
 }
 
+AbstractAction *NSParser::buildTimeoutAction(Symbol *symbol, VariableList variables, FunctionList functions)
+{
+	if (symbol->type == NON_TERMINAL)
+	{
+		int time = 0; //inMs
+		AbstractAction* action = nullptr;
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			switch(child->symbolIndex)
+			{
+				case SYM_TIME:
+					time = readTimeInMs(child);
+					break;
+				default:
+				{
+					QList<AbstractAction*> list;
+					buildActions(child, list, variables, functions);
+					if (!list.isEmpty())
+						action = list.first();
+				}
+			}
+		}
+
+		if (_factory)
+			return _factory->timeoutAction(action, time);
+	}
+
+	return nullptr;
+}
+
 AbstractAction* NSParser::buildTeleportAction(Symbol* symbol, VariableList& variables)
 {
 	if (symbol->type == NON_TERMINAL)
@@ -437,6 +474,37 @@ AbstractAction* NSParser::buildGoToAction(Symbol* symbol, VariableList& variable
 
 		if (ok && _factory)
 			return _factory->moveAction(point.toQPointF(), speed, forceForward, forceBackward);
+	}
+
+	return nullptr;
+}
+
+AbstractAction *NSParser::buildRotateToAction(Symbol *symbol)
+{
+	if (symbol->type == NON_TERMINAL)
+	{
+		double angle = 0.0;
+		bool ok = false;
+		int speed = 100;
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			switch(child->symbolIndex)
+			{
+				case SYM_ANGLE:
+				case SYM_FIXED_ANGLE:
+				case SYM_NUM:
+					angle = readAngleInRadian(child);
+					ok = true;
+					break;
+				case SYM_SPEED2:
+					speed = readSpeed(child);
+					break;
+			}
+		}
+
+		if (ok && _factory)
+			return _factory->manualAbsoluteTurnMoveAction(angle, speed);
 	}
 
 	return nullptr;
