@@ -1,10 +1,10 @@
 ﻿<!DOCTYPE HTML>
 <html>
 <head>
-   <title>Reference &gt; Sensors</title>
+   <title>Reference &gt; Functions</title>
    <meta name="generator" content="Help & Manual">
    <meta name="keywords" content="">
-   <meta name="description" content="Sensors">
+   <meta name="description" content="Functions">
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
    <link type="text/css" href="default.css" rel="stylesheet">
@@ -90,7 +90,7 @@ span.f_Heading1 { color: black; }
    <script type="text/javascript" src="helpman_topicinit.js"></script>
 
    <script type="text/javascript">
-     HMSyncTOC("index.html", "sensors.htm");
+     HMSyncTOC("index.html", "functions.htm");
    </script>
    <script type="text/javascript" src="highlight.js"></script>
    <script type="text/javascript">
@@ -100,7 +100,7 @@ span.f_Heading1 { color: black; }
 <body>
 <!--ZOOMSTOP-->
 
-<div id="printheader"><h1 class="p_Heading1"><span class="f_Heading1">Sensors</span></h1>
+<div id="printheader"><h1 class="p_Heading1"><span class="f_Heading1">Functions</span></h1>
 </div>
 <div id="idheader">
 <div id="idheaderbg">
@@ -112,19 +112,19 @@ span.f_Heading1 { color: black; }
    <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
    
    Reference&nbsp;&gt;</p>
-   <h1 class="p_Heading1"><span class="f_Heading1">Sensors</span></h1>
+   <h1 class="p_Heading1"><span class="f_Heading1">Functions</span></h1>
 
     </td>
     <td align="right" width="120" valign="middle" class="topichead" id="idnav">
     
-     <a href="movements.htm"
+     <a href="conditions.htm"
         onmouseover="document.images.prev.src='btn_prev_h.gif'" 
         onmouseout="document.images.prev.src='btn_prev_n.gif'"
         ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
         ></a><a href="syntax.htm"
         onmouseover="document.images.main.src='btn_home_h.gif'" 
         onmouseout="document.images.main.src='btn_home_n.gif'"><img name=main src="btn_home_n.gif" border=0 alt="Return to chapter overview"
-        ></a><a href="ax12.htm"
+        ></a><a href="example_1_move_and_scan.htm"
         onmouseover="document.images.next.src='btn_next_h.gif'" 
         onmouseout="document.images.next.src='btn_next_n.gif'"><img name=next src="btn_next_n.gif" border=0 alt="Next page"
         ></a>
@@ -141,22 +141,31 @@ span.f_Heading1 { color: black; }
 
 <div id="idcontent"><div id="innerdiv"> 
 <!--ZOOMRESTART-->
-<h2 class="p_Heading2"><span class="f_Heading2">Sensor activation</span></h2>
-<p><span class="f_ImageCaption">Activate a sensor:</span> enable &lt;sensor type&gt; &lt;sensor id&gt;</p>
-<p><span class="f_ImageCaption">Deactivate a sensor:</span> disable &lt;sensor type&gt; &lt;sensor id&gt;</p>
-<p><span class="f_ImageCaption">Activate all sensors of a type:</span> enable all &lt;sensor type&gt;</p>
-<p><span class="f_ImageCaption">Deactivate all sensors of a type:</span> disable all &lt;sensor type&gt;</p>
+<h2 class="p_Heading2"><span class="f_Heading2">Functions</span></h2>
+<p><span class="f_ImageCaption">function declaration: </span>function &lt;name&gt; (&lt;parameter names&gt;) {&lt;actions&gt;}</p>
+<p><span class="f_ImageCaption">function call:</span> &lt;name&gt;(&lt;parameters&gt;)</p>
 <p>&nbsp;</p>
 <p><span style="font-style: italic;">Note:</span></p>
-<p>An alias can be used to define a sensor.</p>
-<p>&nbsp;</p>
+<p style="text-align: left; padding: 0px 0px 0px 13px; margin: 0px 0px 0px 0px;"><span style="font-size:10pt; font-family: 'Arial Unicode MS','Lucida Sans Unicode','Arial';color:#000000;display:inline-block;width:13px;margin-left:-13px">&#8226;</span>Function declaration must be done before the call.</p><p style="text-align: left; padding: 0px 0px 0px 13px; margin: 0px 0px 0px 0px;"><span style="font-size:10pt; font-family: 'Arial Unicode MS','Lucida Sans Unicode','Arial';color:#000000;display:inline-block;width:13px;margin-left:-13px">&#8226;</span>Parameters can be any types of alias.</p><p style="text-align: left; padding: 0px 0px 0px 13px; margin: 0px 0px 0px 0px;"><span style="font-size:10pt; font-family: 'Arial Unicode MS','Lucida Sans Unicode','Arial';color:#000000;display:inline-block;width:13px;margin-left:-13px">&#8226;</span>In function call, points and rects shall be surrounded by &quot;[&quot; &quot;]&quot;.</p><p>&nbsp;</p>
 <p><span style="font-style: italic;">Examples:</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">enable&nbsp;color&nbsp;sensor&nbsp;0</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">disable&nbsp;microswitch&nbsp;1</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;sharp&nbsp;0&nbsp;as&nbsp;middleSharp</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">enable&nbsp;middlesharp</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">enable&nbsp;all&nbsp;microswitch</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">disable&nbsp;all&nbsp;colorSensor</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">function&nbsp;doAction(arm)</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">{</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;make&nbsp;ax12&nbsp;movement&nbsp;arm&nbsp;&quot;take&quot;</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;wait&nbsp;1s</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;make&nbsp;ax12&nbsp;movement&nbsp;arm&nbsp;&quot;drop&quot;</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">}</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">doAction(&quot;rightArm&quot;)</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">function&nbsp;checkColorSensorAtPosition(sensor,&nbsp;pos)</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">{</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;enable&nbsp;cs</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;if&nbsp;sensor&nbsp;is&nbsp;red</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;do&nbsp;action&nbsp;1,0,300ms&nbsp;//activate&nbsp;pump</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;disable&nbsp;cs</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">}</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">checkColorSensorAtPosition(color&nbsp;sensor&nbsp;1,&nbsp;[300,400]);</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">checkColorSensorAtPosition(color&nbsp;sensor&nbsp;2,&nbsp;[800,900]);</span></p>
 
 <!--ZOOMSTOP-->
 </div></div>

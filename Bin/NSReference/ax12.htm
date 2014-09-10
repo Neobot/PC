@@ -1,10 +1,10 @@
 ﻿<!DOCTYPE HTML>
 <html>
 <head>
-   <title>Reference &gt; Sensors</title>
+   <title>Reference &gt; Actuators</title>
    <meta name="generator" content="Help & Manual">
    <meta name="keywords" content="">
-   <meta name="description" content="Sensors">
+   <meta name="description" content="Actuators">
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
    <link type="text/css" href="default.css" rel="stylesheet">
@@ -90,7 +90,7 @@ span.f_Heading1 { color: black; }
    <script type="text/javascript" src="helpman_topicinit.js"></script>
 
    <script type="text/javascript">
-     HMSyncTOC("index.html", "sensors.htm");
+     HMSyncTOC("index.html", "ax12.htm");
    </script>
    <script type="text/javascript" src="highlight.js"></script>
    <script type="text/javascript">
@@ -100,7 +100,7 @@ span.f_Heading1 { color: black; }
 <body>
 <!--ZOOMSTOP-->
 
-<div id="printheader"><h1 class="p_Heading1"><span class="f_Heading1">Sensors</span></h1>
+<div id="printheader"><h1 class="p_Heading1"><span class="f_Heading1">Actuators</span></h1>
 </div>
 <div id="idheader">
 <div id="idheaderbg">
@@ -112,19 +112,19 @@ span.f_Heading1 { color: black; }
    <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
    
    Reference&nbsp;&gt;</p>
-   <h1 class="p_Heading1"><span class="f_Heading1">Sensors</span></h1>
+   <h1 class="p_Heading1"><span class="f_Heading1">Actuators</span></h1>
 
     </td>
     <td align="right" width="120" valign="middle" class="topichead" id="idnav">
     
-     <a href="movements.htm"
+     <a href="sensors.htm"
         onmouseover="document.images.prev.src='btn_prev_h.gif'" 
         onmouseout="document.images.prev.src='btn_prev_n.gif'"
         ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
         ></a><a href="syntax.htm"
         onmouseover="document.images.main.src='btn_home_h.gif'" 
         onmouseout="document.images.main.src='btn_home_n.gif'"><img name=main src="btn_home_n.gif" border=0 alt="Return to chapter overview"
-        ></a><a href="ax12.htm"
+        ></a><a href="lists.htm"
         onmouseover="document.images.next.src='btn_next_h.gif'" 
         onmouseout="document.images.next.src='btn_next_n.gif'"><img name=next src="btn_next_n.gif" border=0 alt="Next page"
         ></a>
@@ -141,22 +141,44 @@ span.f_Heading1 { color: black; }
 
 <div id="idcontent"><div id="innerdiv"> 
 <!--ZOOMRESTART-->
-<h2 class="p_Heading2"><span class="f_Heading2">Sensor activation</span></h2>
-<p><span class="f_ImageCaption">Activate a sensor:</span> enable &lt;sensor type&gt; &lt;sensor id&gt;</p>
-<p><span class="f_ImageCaption">Deactivate a sensor:</span> disable &lt;sensor type&gt; &lt;sensor id&gt;</p>
-<p><span class="f_ImageCaption">Activate all sensors of a type:</span> enable all &lt;sensor type&gt;</p>
-<p><span class="f_ImageCaption">Deactivate all sensors of a type:</span> disable all &lt;sensor type&gt;</p>
+<h2 class="p_Heading2"><span class="f_Heading2">Generic actuator action</span></h2>
+<p><span class="f_ImageCaption">Make an action:</span> do action &lt;id&gt;, &lt;param&gt;, &lt;estimated_time&gt;</p>
 <p>&nbsp;</p>
-<p><span style="font-style: italic;">Note:</span></p>
-<p>An alias can be used to define a sensor.</p>
+<p><span style="font-style: italic;">&nbsp;</span></p>
+<p>An alias can be used to define an action.</p>
 <p>&nbsp;</p>
 <p><span style="font-style: italic;">Examples:</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">enable&nbsp;color&nbsp;sensor&nbsp;0</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">disable&nbsp;microswitch&nbsp;1</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;sharp&nbsp;0&nbsp;as&nbsp;middleSharp</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">enable&nbsp;middlesharp</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">enable&nbsp;all&nbsp;microswitch</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">disable&nbsp;all&nbsp;colorSensor</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">do&nbsp;action&nbsp;1,0,500ms</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;action&nbsp;2,42,1s&nbsp;as&nbsp;takePawn</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">do&nbsp;takePawn</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
+<h2 class="p_Heading2"><span class="f_Heading2">Single AX-12</span></h2>
+<p><span class="f_ImageCaption">move an ax12:</span> move ax12 &lt;ax12_id&gt; to &lt;angle&gt; [speed&lt;value&gt;%]</p>
+<p>&nbsp;</p>
+<p><span style="font-style: italic;">Note:</span></p>
+<p>An alias can be used to define an ax12 id.</p>
+<p>&nbsp;</p>
+<p><span style="font-style: italic;">Examples:</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">move&nbsp;ax12&nbsp;4&nbsp;to&nbsp;180deg&nbsp;speed&nbsp;50%</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">move&nbsp;ax12&nbsp;7&nbsp;to&nbsp;220deg</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;ax12&nbsp;2&nbsp;as&nbsp;mainAx12</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">move&nbsp;mainAx12&nbsp;to&nbsp;30deg</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
+<h2 class="p_Heading2"><span class="f_Heading2">AX-12 movements</span></h2>
+<p><span class="f_ImageCaption">Make a movement:</span> make ax12 movement &nbsp;&quot;&lt;group&gt;&quot; &quot;&lt;name&gt;&quot; [speed&lt;value&gt;%]</p>
+<p><span class="f_ImageCaption">Make an asynchronous movement:</span> make ax12 async movement &nbsp;&quot;&lt;group&gt;&quot; &quot;&lt;name&gt;&quot; [speed&lt;value&gt;%]</p>
+<p>&nbsp;</p>
+<p><span style="font-style: italic;">Note:</span></p>
+<p>An alias can be used to define group and movement.</p>
+<p>&nbsp;</p>
+<p><span style="font-style: italic;">Examples:</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">make&nbsp;ax12&nbsp;movement&nbsp;&quot;leftArm&quot;&nbsp;&quot;takePawn&quot;</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">make&nbsp;ax12&nbsp;movement&nbsp;&quot;leftArm&quot;&nbsp;&quot;takePawn&quot;&nbsp;50%</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;&quot;rightArm&quot;&nbsp;as&nbsp;group</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">make&nbsp;ax12&nbsp;movement&nbsp;group&nbsp;&quot;takePawn&quot;</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">make&nbsp;ax12&nbsp;async&nbsp;movement&nbsp;&quot;leftArm&quot;&nbsp;&quot;takePawn&quot;</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
 
 <!--ZOOMSTOP-->
 </div></div>

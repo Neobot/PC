@@ -1,10 +1,10 @@
 ﻿<!DOCTYPE HTML>
 <html>
 <head>
-   <title>Reference &gt; Sensors</title>
+   <title>Reference &gt; Lists</title>
    <meta name="generator" content="Help & Manual">
    <meta name="keywords" content="">
-   <meta name="description" content="Sensors">
+   <meta name="description" content="Lists">
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
    <link type="text/css" href="default.css" rel="stylesheet">
@@ -90,7 +90,7 @@ span.f_Heading1 { color: black; }
    <script type="text/javascript" src="helpman_topicinit.js"></script>
 
    <script type="text/javascript">
-     HMSyncTOC("index.html", "sensors.htm");
+     HMSyncTOC("index.html", "lists.htm");
    </script>
    <script type="text/javascript" src="highlight.js"></script>
    <script type="text/javascript">
@@ -100,7 +100,7 @@ span.f_Heading1 { color: black; }
 <body>
 <!--ZOOMSTOP-->
 
-<div id="printheader"><h1 class="p_Heading1"><span class="f_Heading1">Sensors</span></h1>
+<div id="printheader"><h1 class="p_Heading1"><span class="f_Heading1">Lists</span></h1>
 </div>
 <div id="idheader">
 <div id="idheaderbg">
@@ -112,19 +112,19 @@ span.f_Heading1 { color: black; }
    <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
    
    Reference&nbsp;&gt;</p>
-   <h1 class="p_Heading1"><span class="f_Heading1">Sensors</span></h1>
+   <h1 class="p_Heading1"><span class="f_Heading1">Lists</span></h1>
 
     </td>
     <td align="right" width="120" valign="middle" class="topichead" id="idnav">
     
-     <a href="movements.htm"
+     <a href="ax12.htm"
         onmouseover="document.images.prev.src='btn_prev_h.gif'" 
         onmouseout="document.images.prev.src='btn_prev_n.gif'"
         ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
         ></a><a href="syntax.htm"
         onmouseover="document.images.main.src='btn_home_h.gif'" 
         onmouseout="document.images.main.src='btn_home_n.gif'"><img name=main src="btn_home_n.gif" border=0 alt="Return to chapter overview"
-        ></a><a href="ax12.htm"
+        ></a><a href="conditions.htm"
         onmouseover="document.images.next.src='btn_next_h.gif'" 
         onmouseout="document.images.next.src='btn_next_n.gif'"><img name=next src="btn_next_n.gif" border=0 alt="Next page"
         ></a>
@@ -141,22 +141,45 @@ span.f_Heading1 { color: black; }
 
 <div id="idcontent"><div id="innerdiv"> 
 <!--ZOOMRESTART-->
-<h2 class="p_Heading2"><span class="f_Heading2">Sensor activation</span></h2>
-<p><span class="f_ImageCaption">Activate a sensor:</span> enable &lt;sensor type&gt; &lt;sensor id&gt;</p>
-<p><span class="f_ImageCaption">Deactivate a sensor:</span> disable &lt;sensor type&gt; &lt;sensor id&gt;</p>
-<p><span class="f_ImageCaption">Activate all sensors of a type:</span> enable all &lt;sensor type&gt;</p>
-<p><span class="f_ImageCaption">Deactivate all sensors of a type:</span> disable all &lt;sensor type&gt;</p>
+<h2 class="p_Heading2"><span class="f_Heading2">List of synchronous action</span></h2>
+<p><span class="f_ImageCaption">List of actions:</span> {&lt;actions&gt;}</p>
 <p>&nbsp;</p>
-<p><span style="font-style: italic;">Note:</span></p>
-<p>An alias can be used to define a sensor.</p>
+<p><span style="font-style: italic;">Example:</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">{</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;go&nbsp;to&nbsp;800,500</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">}</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
+<h2 class="p_Heading2"><span class="f_Heading2">List of asynchronous action</span></h2>
+<p>&nbsp;</p>
+<p>concurrent [&lt;stop_condition=AllActionsFinished | OneActionFinished | FirstActionFinished | LastActionFinished&gt;] {&lt;actions&gt;}</p>
+<p>&nbsp;</p>
+<p><span style="font-style: italic;">Notes:</span></p>
+<p>All statements are launched at the same time. Can contain any other statements, including synchronous lists.</p>
+<p>Default stop condition is AllActionFinished.</p>
 <p>&nbsp;</p>
 <p><span style="font-style: italic;">Examples:</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">enable&nbsp;color&nbsp;sensor&nbsp;0</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">disable&nbsp;microswitch&nbsp;1</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;sharp&nbsp;0&nbsp;as&nbsp;middleSharp</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">enable&nbsp;middlesharp</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">enable&nbsp;all&nbsp;microswitch</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">disable&nbsp;all&nbsp;colorSensor</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">//Equivalent&nbsp;to&nbsp;a&nbsp;timeout&nbsp;of&nbsp;3s&nbsp;on&nbsp;a&nbsp;go&nbsp;to&nbsp;action</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">concurrent&nbsp;OneActionFinished</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">{</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;wait&nbsp;3s</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;go&nbsp;to&nbsp;800,500</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">}</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">concurrent&nbsp;AllActionsFinished</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">{</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;run&nbsp;ax12&nbsp;4&nbsp;to&nbsp;80deg</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;run&nbsp;ax12&nbsp;6&nbsp;to&nbsp;180deg</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">}</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">concurrent&nbsp;FirstActionFinished</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">{</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;wait&nbsp;5s</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;{</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;go&nbsp;to&nbsp;400,400</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;go&nbsp;to&nbsp;800,500</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;}</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">}</span></p>
 
 <!--ZOOMSTOP-->
 </div></div>

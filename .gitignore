@@ -13,7 +13,6 @@
 *.a
 
 #
-Bin/
 
 #Qt
 *.pro.user
@@ -22,3 +21,27 @@ ui_*.h
 build-*
 
 Makefile
+Bin/AX12Playground
+Bin/AX12Playground-d
+Bin/GridEditor
+Bin/GridEditor-d
+Bin/NAcquisitor-d
+Bin/NClient
+Bin/NClient-d
+Bin/nct
+Bin/nct-d
+Bin/NeobotMain
+Bin/NeobotTests
+Bin/NeobotTests-d
+Bin/NPlayer
+Bin/NPlayer-d
+Bin/NServer
+Bin/NServer-d
+Bin/GridEditor-d.app/Contents/Info.plist
+Bin/GridEditor-d.app/Contents/PkgInfo
+Bin/GridEditor-d.app/Contents/MacOS/GridEditor-d
+Bin/GridEditor-d.app/Contents/Resources/empty.lproj
+Bin/GridEditor.app/Contents/Info.plist
+Bin/GridEditor.app/Contents/PkgInfo
+Bin/GridEditor.app/Contents/MacOS/GridEditor
+Bin/GridEditor.app/Contents/Resources/empty.lproj

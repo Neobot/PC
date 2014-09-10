@@ -1,10 +1,10 @@
 ﻿<!DOCTYPE HTML>
 <html>
 <head>
-   <title>Reference &gt; Aliases</title>
+   <title>Reference &gt; Conditions</title>
    <meta name="generator" content="Help & Manual">
    <meta name="keywords" content="">
-   <meta name="description" content="Aliases">
+   <meta name="description" content="Conditions">
    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
    <link type="text/css" href="default.css" rel="stylesheet">
@@ -90,7 +90,7 @@ span.f_Heading1 { color: black; }
    <script type="text/javascript" src="helpman_topicinit.js"></script>
 
    <script type="text/javascript">
-     HMSyncTOC("index.html", "alias.htm");
+     HMSyncTOC("index.html", "conditions.htm");
    </script>
    <script type="text/javascript" src="highlight.js"></script>
    <script type="text/javascript">
@@ -100,7 +100,7 @@ span.f_Heading1 { color: black; }
 <body>
 <!--ZOOMSTOP-->
 
-<div id="printheader"><h1 class="p_Heading1"><span class="f_Heading1">Aliases</span></h1>
+<div id="printheader"><h1 class="p_Heading1"><span class="f_Heading1">Conditions</span></h1>
 </div>
 <div id="idheader">
 <div id="idheaderbg">
@@ -112,19 +112,19 @@ span.f_Heading1 { color: black; }
    <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
    
    Reference&nbsp;&gt;</p>
-   <h1 class="p_Heading1"><span class="f_Heading1">Aliases</span></h1>
+   <h1 class="p_Heading1"><span class="f_Heading1">Conditions</span></h1>
 
     </td>
     <td align="right" width="120" valign="middle" class="topichead" id="idnav">
     
-     <a href="basic_types.htm"
+     <a href="lists.htm"
         onmouseover="document.images.prev.src='btn_prev_h.gif'" 
         onmouseout="document.images.prev.src='btn_prev_n.gif'"
         ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
         ></a><a href="syntax.htm"
         onmouseover="document.images.main.src='btn_home_h.gif'" 
         onmouseout="document.images.main.src='btn_home_n.gif'"><img name=main src="btn_home_n.gif" border=0 alt="Return to chapter overview"
-        ></a><a href="basic_actions.htm"
+        ></a><a href="functions.htm"
         onmouseover="document.images.next.src='btn_next_h.gif'" 
         onmouseout="document.images.next.src='btn_next_n.gif'"><img name=next src="btn_next_n.gif" border=0 alt="Next page"
         ></a>
@@ -141,52 +141,64 @@ span.f_Heading1 { color: black; }
 
 <div id="idcontent"><div id="innerdiv"> 
 <!--ZOOMRESTART-->
-<p>Alias are custom variable which can be use as shortcuts.</p>
+<h2 class="p_Heading2"><span class="f_Heading2">Conditions</span></h2>
 <p>&nbsp;</p>
-<h2 class="p_Heading2"><span class="f_Heading2">Point alias</span></h2>
-<p><span class="f_ImageCaption">Declare an alias to a point:</span> declare &lt;point&gt; as &lt;name&gt;</p>
+<p>Supported conditions in <span style="font-style: italic;">if</span> and <span style="font-style: italic;">while</span> statements:</p>
+<p> position in &lt;rect&gt;</p>
+<p><span class="f_ImageCaption">Condition on robot orientation:</span> orientation in &lt;angleMin&gt;-&lt;angleMax&gt;</p>
+<p><span class="f_ImageCaption">Condition on opponent position:</span> opponent in &lt;rect&gt;</p>
+<p><span class="f_ImageCaption">Condition on sensor value:</span> &lt;sensor&gt; is &lt;sensor value&gt;</p>
+<p><span class="f_ImageCaption">Condition on strategy color:</span> strategy is reversed</p>
+<p>&nbsp;</p>
+<p><span class="f_ImageCaption">Reversed condition:</span> replace &quot;in&quot; by &quot;not in&quot; and &quot;is&quot; by &quot;is not&quot;</p>
+<p>&nbsp;</p>
+<p>Acceptable values for sensors in conditions:</p>
+<p><span class="f_ImageCaption">Values for color sensors:</span> unknown, red, green, blue, yellow, white, black</p>
+<p><span class="f_ImageCaption">Values for sharps:</span> close, dectected, far</p>
+<p><span class="f_ImageCaption">Values for microswitches:</span> on, off</p>
+<p>&nbsp;</p>
+<p><span style="font-style: italic;">Notes:</span></p>
+<p>Conditions on opponent position require a beacon installed on the opponent robot.</p>
+<h2 class="p_Heading2"><span class="f_Heading2">&nbsp;</span></h2>
+<h2 class="p_Heading2"><span class="f_Heading2">If statement</span></h2>
+<p><span class="f_ImageCaption">&quot;if&quot; condition: </span></p>
+<p><span class="f_ImageCaption">&quot;if / else&quot; condition:</span> if &lt;condition&gt; &lt;action&gt; else &lt;action&gt;</p>
+<p>&nbsp;</p>
 <p>&nbsp;</p>
 <p><span style="font-style: italic;">Examples:</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;auto&nbsp;reversed&nbsp;0,0&nbsp;as&nbsp;origin</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;1000,1500&nbsp;as&nbsp;center</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">if&nbsp;position&nbsp;in&nbsp;rect&nbsp;0,0,300,300</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;go&nbsp;to&nbsp;500,500</span></p>
 <p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
-<h2 class="p_Heading2"><span class="f_Heading2">Rectangle alias</span></h2>
-<p><span class="f_ImageCaption">Declare an alias to a rectangle:</span> declare &lt;rectangle&gt; as &lt;name&gt;</p>
-<p>&nbsp;</p>
-<p><span style="font-style: italic;">Examples:</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;auto&nbsp;reversed&nbsp;0,0,500,500&nbsp;as&nbsp;startZone</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;800,1300,200,200&nbsp;as&nbsp;centerZone</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">if&nbsp;orientation&nbsp;in&nbsp;0-90</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">{</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;rotate&nbsp;90deg</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;wait&nbsp;1s</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;rotate&nbsp;0deg</span></p>
 <p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
-<h2 class="p_Heading2"><span class="f_Heading2">Sensor alias</span></h2>
-<p><span class="f_ImageCaption">Declare an alias to a sensor:</span> declare &lt;sensor&gt; as &lt;name&gt;</p>
-<p>&nbsp;</p>
-<p><span style="font-style: italic;">Examples:</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;color&nbsp;sensor&nbsp;0&nbsp;as&nbsp;leftSensor</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;microswitch&nbsp;1&nbsp;as&nbsp;middleSwitch</span></p>
 <p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
-<h2 class="p_Heading2"><span class="f_Heading2">Parameter alias</span></h2>
-<p><span class="f_ImageCaption">Declare an alias to a robot parameter:</span> declare &lt;parameter&gt; as &lt;name&gt;</p>
-<p>&nbsp;</p>
-<p><span style="font-style: italic;">Examples:</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;parameter&nbsp;0&nbsp;as&nbsp;maxSpeed</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;color&nbsp;sensor&nbsp;1&nbsp;as&nbsp;leftColorSensor</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">if&nbsp;leftColorSensor&nbsp;is&nbsp;red</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;make&nbsp;ax12&nbsp;movement&nbsp;&quot;leftArm&quot;&nbsp;&quot;take&quot;&nbsp;</span></p>
 <p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
-<h2 class="p_Heading2"><span class="f_Heading2">Action alias</span></h2>
-<p><span class="f_ImageCaption">Declare an alias to a robot actuator action:</span> declare &lt;action&gt; as &lt;name&gt;</p>
+<h2 class="p_Heading2"><span class="f_Heading2">While loop</span></h2>
+<p><span class="f_ImageCaption">while loop:</span> while &lt;condition&gt; &lt;action&gt;</p>
+<p><span class="f_ImageCaption">infinite loop:</span> while true &lt;action&gt;</p>
 <p>&nbsp;</p>
 <p><span style="font-style: italic;">Examples:</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;action&nbsp;0,0,2s&nbsp;as&nbsp;closeClaws</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">//wait&nbsp;for&nbsp;the&nbsp;robot&nbsp;to&nbsp;be&nbsp;in&nbsp;the&nbsp;middle&nbsp;of&nbsp;the&nbsp;table,&nbsp;check&nbsp;every&nbsp;200ms</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">while&nbsp;position&nbsp;not&nbsp;in&nbsp;rect&nbsp;950,1450,100,100</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;wait&nbsp;200ms</span></p>
 <p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
-<h2 class="p_Heading2"><span class="f_Heading2">AX-12 alias</span></h2>
-<p><span class="f_ImageCaption">Declare an alias to an AX-12:</span> declare &lt;AX-12 id&gt; as &lt;name&gt;</p>
-<p>&nbsp;</p>
-<p><span style="font-style: italic;">Examples:</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;ax12&nbsp;1&nbsp;as&nbsp;leftAx12</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">//wait&nbsp;for&nbsp;the&nbsp;color&nbsp;sensor&nbsp;1&nbsp;to&nbsp;be&nbsp;green</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">while&nbsp;color&nbsp;sensor&nbsp;1&nbsp;is&nbsp;green</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;wait&nbsp;200ms</span></p>
 <p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
-<h2 class="p_Heading2"><span class="f_Heading2">String alias</span></h2>
-<p><span class="f_ImageCaption">Declare an alias to a string:</span> declare &lt;string&gt; as &lt;name&gt;</p>
-<p>&nbsp;</p>
-<p><span style="font-style: italic;">Examples:</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;&quot;leftArm&quot;&nbsp;as&nbsp;arm</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">{</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;go&nbsp;to&nbsp;600,600</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;make&nbsp;ax12&nbsp;movement&nbsp;&quot;leftArm&quot;&nbsp;&quot;drop&quot;&nbsp;</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;&nbsp;&nbsp;go&nbsp;to&nbsp;0,0</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">}</span></p>
 
 <!--ZOOMSTOP-->
 </div></div>
