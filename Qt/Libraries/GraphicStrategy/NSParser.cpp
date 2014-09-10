@@ -79,7 +79,7 @@ bool NSParser::parse(const QString &scriptCode, QList<AbstractAction *> &actions
 	if (_tree)
 		delete _tree;
 
-	_tree = getParsedTree(scriptCode);
+	_tree = getParsedTree(QString(scriptCode).append("\n")); //Add a cariage return which is mandatory at the end
 
 	if (_tree)
 	{
@@ -295,7 +295,7 @@ void NSParser::readVariable(Symbol* symbol, VariableList& variables)
 	if (symbol->type == NON_TERMINAL)
 	{
 		QString name;
-		DelclaredVariable var;
+		DeclaredVariable var;
 		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
 		for(Symbol* child: nt->children)
 		{
@@ -305,45 +305,45 @@ void NSParser::readVariable(Symbol* symbol, VariableList& variables)
 				case SYM_FIXED_POINT:
 				{
 					Tools::RPoint p = readPoint(child);
-					var = DelclaredVariable::fromPoint(p);
+					var = DeclaredVariable::fromPoint(p);
 					break;
 				}
 				case SYM_RECT2:
 				case SYM_FIXED_RECT:
 				{
-					QRectF r = readRect(child);
-					var = DelclaredVariable::fromRect(r);
+					QRectF r = readRect(child, variables);
+					var = DeclaredVariable::fromRect(r);
 					break;
 				}
 				case SYM_SENSOR_IDENTIFIER:
 				{
 					int type = -1, id = 0;
 					readSensorIdentifier(child, type, id);
-					var = DelclaredVariable::fromSensor(id, type);
+					var = DeclaredVariable::fromSensor(id, type);
 					break;
 				}
 				case SYM_PARAMETER_IDENTIFIER:
 				{
 					int paramId = readSubId(child);
-					var = DelclaredVariable::fromParameter(paramId);
+					var = DeclaredVariable::fromParameter(paramId);
 					break;
 				}
 				case SYM_AX12_IDENTIFIER:
 				{
 					int ax12Id = readSubId(child);
-					var = DelclaredVariable::fromAx12(ax12Id);
+					var = DeclaredVariable::fromAx12(ax12Id);
 					break;
 				}
 				case SYM_ACTION2:
 				{
 					int actionId, param, time;
 					readAction(child, actionId, param, time);
-					var = DelclaredVariable::fromAction(actionId, param, time);
+					var = DeclaredVariable::fromAction(actionId, param, time);
 				}
 				case SYM_STRING:
 				{
 					QString str = readString(child);
-					var = DelclaredVariable::fromString(str);
+					var = DeclaredVariable::fromString(str);
 				}
 				case SYM_VAR:
 					name = readVar(child);
@@ -970,7 +970,7 @@ AbstractAction* NSParser::buildCalledFunctionActions(Symbol *symbol, VariableLis
 	if (symbol->type == NON_TERMINAL)
 	{
 		QString functionName;
-		QList<DelclaredVariable> varList;
+		QList<DeclaredVariable> varList;
 		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
 		for(Symbol* child: nt->children)
 		{
@@ -981,7 +981,7 @@ AbstractAction* NSParser::buildCalledFunctionActions(Symbol *symbol, VariableLis
 						functionName = readVar(child);
 					else
 					{
-						DelclaredVariable var;
+						DeclaredVariable var;
 						readCallArg(child, variables, var);
 						varList << var;
 					}
@@ -992,7 +992,7 @@ AbstractAction* NSParser::buildCalledFunctionActions(Symbol *symbol, VariableLis
 				case SYM_CALLARG:
 				default:
 				{
-					DelclaredVariable var;
+					DeclaredVariable var;
 					readCallArg(child, variables, var);
 					if (var.isValid())
 						varList << var;
@@ -1015,7 +1015,7 @@ AbstractAction* NSParser::buildCalledFunctionActions(Symbol *symbol, VariableLis
 					for(int i = 0; i < info.parameterNames.count(); ++i)
 					{
 						const QString& param = info.parameterNames[i];
-						DelclaredVariable& var = varList[i];
+						DeclaredVariable& var = varList[i];
 						functionVariables[param] = var;
 					}
 					QList<AbstractAction*> actions;
@@ -1084,9 +1084,9 @@ QString NSParser::readTerminals(Symbol *symbol)
 
 //-----------------------------------------------------------------
 
-NSParser::DelclaredVariable NSParser::DelclaredVariable::fromPoint(const Tools::RPoint& p)
+NSParser::DeclaredVariable NSParser::DeclaredVariable::fromPoint(const Tools::RPoint& p)
 {
-	DelclaredVariable var;
+	DeclaredVariable var;
 	var.type = Point;
 	var.data << QVariant(QPointF(p.getX(), p.getY()))
 			 << QVariant(p.getTheta());
@@ -1094,18 +1094,18 @@ NSParser::DelclaredVariable NSParser::DelclaredVariable::fromPoint(const Tools::
 	return var;
 }
 
-NSParser::DelclaredVariable NSParser::DelclaredVariable::fromRect(const QRectF& rect)
+NSParser::DeclaredVariable NSParser::DeclaredVariable::fromRect(const QRectF& rect)
 {
-	DelclaredVariable var;
+	DeclaredVariable var;
 	var.type = Rect;
 	var.data << QVariant(rect);
 
 	return var;
 }
 
-NSParser::DelclaredVariable NSParser::DelclaredVariable::fromAction(int id, int param, int timeMs)
+NSParser::DeclaredVariable NSParser::DeclaredVariable::fromAction(int id, int param, int timeMs)
 {
-	DelclaredVariable var;
+	DeclaredVariable var;
 	var.type = Action;
 	var.data << QVariant(id)
 			 << QVariant(param)
@@ -1114,27 +1114,27 @@ NSParser::DelclaredVariable NSParser::DelclaredVariable::fromAction(int id, int 
 	return var;
 }
 
-NSParser::DelclaredVariable NSParser::DelclaredVariable::fromAx12(int id)
+NSParser::DeclaredVariable NSParser::DeclaredVariable::fromAx12(int id)
 {
-	DelclaredVariable var;
+	DeclaredVariable var;
 	var.type = Ax12;
 	var.data << QVariant(id);
 
 	return var;
 }
 
-NSParser::DelclaredVariable NSParser::DelclaredVariable::fromParameter(int id)
+NSParser::DeclaredVariable NSParser::DeclaredVariable::fromParameter(int id)
 {
-	DelclaredVariable var;
+	DeclaredVariable var;
 	var.type = Param;
 	var.data << QVariant(id);
 
 	return var;
 }
 
-NSParser::DelclaredVariable NSParser::DelclaredVariable::fromSensor(int id, int type)
+NSParser::DeclaredVariable NSParser::DeclaredVariable::fromSensor(int id, int type)
 {
-	DelclaredVariable var;
+	DeclaredVariable var;
 	var.type = Sensor;
 	var.data << QVariant(id)
 			 << QVariant(type);
@@ -1142,51 +1142,51 @@ NSParser::DelclaredVariable NSParser::DelclaredVariable::fromSensor(int id, int 
 	return var;
 }
 
-NSParser::DelclaredVariable NSParser::DelclaredVariable::fromString(const QString &str)
+NSParser::DeclaredVariable NSParser::DeclaredVariable::fromString(const QString &str)
 {
-	DelclaredVariable var;
+	DeclaredVariable var;
 	var.type = String;
 	var.data << str;
 
 	return var;
 }
 
-Tools::RPoint NSParser::DelclaredVariable::toPoint() const
+Tools::RPoint NSParser::DeclaredVariable::toPoint() const
 {
 	QPointF p = data.value(0).toPointF();
 	double theta = data.value(1).toDouble();
 	return Tools::RPoint(p, theta);
 }
 
-QRectF NSParser::DelclaredVariable::toRect() const
+QRectF NSParser::DeclaredVariable::toRect() const
 {
 	return data.value(0).toRectF();
 }
 
-int NSParser::DelclaredVariable::toAx12() const
+int NSParser::DeclaredVariable::toAx12() const
 {
 	return data.value(0, -1).toInt();
 }
 
-int NSParser::DelclaredVariable::toParameter() const
+int NSParser::DeclaredVariable::toParameter() const
 {
 	return data.value(0, -1).toInt();
 }
 
-void NSParser::DelclaredVariable::toSensor(int& id, int& type) const
+void NSParser::DeclaredVariable::toSensor(int& id, int& type) const
 {
 	id = data.value(0, -1).toInt();
 	type = data.value(1, -1).toInt();
 }
 
-void NSParser::DelclaredVariable::toAction(int& id, int& param, int& timeMs) const
+void NSParser::DeclaredVariable::toAction(int& id, int& param, int& timeMs) const
 {
 	id = data.value(0, -1).toInt();
 	param = data.value(1, -1).toInt();
 	timeMs = data.value(2, -1).toInt();
 }
 
-QString NSParser::DelclaredVariable::toString() const
+QString NSParser::DeclaredVariable::toString() const
 {
 	return data.value(0).toString();
 }

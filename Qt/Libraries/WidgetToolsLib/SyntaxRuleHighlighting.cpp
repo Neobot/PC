@@ -102,7 +102,8 @@ SyntaxRuleHighlighting *SyntaxRuleHighlighting::nsSyntaxRules(TextHighlighter *p
 {
 	SyntaxRuleHighlighting* syntax = new SyntaxRuleHighlighting(parent);
 
-	syntax->addSyntaxRule(QRegExp("\\d+\\.?\\d*"), Qt::red);	//numbers
+	syntax->addSyntaxRule(QRegExp("\\b\\d+\\.?\\d*\\b"), Qt::red);	//numbers
+	syntax->addSyntaxRule(QRegExp("\\b\\d+\\.?\\d*\\s*(s|ms|deg|rad)\\b"), Qt::red); //numbers + unit
 
 	QColor keywordColor = Qt::darkBlue;
 	int fontWeigth = QFont::Bold;
@@ -118,6 +119,7 @@ SyntaxRuleHighlighting *SyntaxRuleHighlighting::nsSyntaxRules(TextHighlighter *p
 	syntax->addSyntaxRule("all", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("wait", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("as", keywordColor, fontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("circle", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("rect", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("do", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("action", keywordColor, fontWeigth, Qt::CaseInsensitive);

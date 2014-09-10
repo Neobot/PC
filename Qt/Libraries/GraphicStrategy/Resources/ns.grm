@@ -95,6 +95,8 @@ Comment Line  = '//'
 
 
 <fixed_rect> ::= 'rect' <num> ',' <num> ',' <num> ',' <num> 
+              | 'circle' '[' <point> ']' ',' <num>
+              | 'circle' <var> ',' <num>
 <rect> ::= <fixed_rect> 
         |  'auto' 'reversed' <fixed_rect>     
         |  'reversed' <fixed_rect>     
@@ -239,6 +241,7 @@ Comment Line  = '//'
            | <sensor_identifier>
            | <parameter_identifier>
            | <ax12_identifier>
+           | String
            
 <CallArgList> ::= <CallArg> ',' <CallArgList>
            | <CallArg>

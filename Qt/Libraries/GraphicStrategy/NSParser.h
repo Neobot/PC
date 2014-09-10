@@ -38,7 +38,7 @@ public:
 	void print(QTextStream& out);
 
 protected:
-	struct DelclaredVariable
+	struct DeclaredVariable
 	{
 		enum DeclaredType
 		{
@@ -55,7 +55,7 @@ protected:
 		DeclaredType type;
 		QVariantList data;
 
-		DelclaredVariable() : type(None) {}
+		DeclaredVariable() : type(None) {}
 		bool isValid() const {return type != None;}
 		
 		Tools::RPoint toPoint() const;
@@ -75,16 +75,16 @@ protected:
 		bool isString() const {return type == String;}
 		bool isDefined() const {return type != None;}
 		
-		static DelclaredVariable fromPoint(const Tools::RPoint& p);
-		static DelclaredVariable fromRect(const QRectF& rect);
-		static DelclaredVariable fromAction(int id, int param, int timeMs);
-		static DelclaredVariable fromAx12(int id);
-		static DelclaredVariable fromParameter(int id);
-		static DelclaredVariable fromSensor(int id, int type);
-		static DelclaredVariable fromString(const QString& str);
+		static DeclaredVariable fromPoint(const Tools::RPoint& p);
+		static DeclaredVariable fromRect(const QRectF& rect);
+		static DeclaredVariable fromAction(int id, int param, int timeMs);
+		static DeclaredVariable fromAx12(int id);
+		static DeclaredVariable fromParameter(int id);
+		static DeclaredVariable fromSensor(int id, int type);
+		static DeclaredVariable fromString(const QString& str);
 	};
 	
-	typedef QHash<QString, DelclaredVariable> VariableList;
+	typedef QHash<QString, DeclaredVariable> VariableList;
 
 	struct ConditionInfo
 	{
@@ -172,8 +172,8 @@ protected:
 	bool readPointOrVar(Symbol *symbol, VariableList &variables, Tools::RPoint& point);
 	bool readPointVar(Symbol* symbol, VariableList& variables, Tools::RPoint &point);
 
-	QRectF readRect(Symbol* symbol);
-	QRectF readFixedRect(Symbol* symbol);
+	QRectF readRect(Symbol* symbol, VariableList& variables);
+	QRectF readFixedRect(Symbol* symbol, VariableList& variables);
 	bool readRectOrVar(Symbol* symbol, VariableList &variables, QRectF &r);
 	bool readRectVar(Symbol* symbol, VariableList &variables, QRectF &r);
 
@@ -191,8 +191,8 @@ protected:
 	int readConcurrencyStopCondition(Symbol *symbol);
 	ConditionInfo readCondition(Symbol *symbol, VariableList& variables);
 	int readSensorValue(Symbol *symbol, Comm::SensorType &type);
-	bool readCallArg(Symbol *symbol, VariableList &variables, NSParser::DelclaredVariable& callArgVariable);
-	void readCallArgList(Symbol *symbol, VariableList &variables, QList<NSParser::DelclaredVariable>& callArgVariableList);
+	bool readCallArg(Symbol *symbol, VariableList &variables, NSParser::DeclaredVariable& callArgVariable);
+	void readCallArgList(Symbol *symbol, VariableList &variables, QList<NSParser::DeclaredVariable>& callArgVariableList);
 
 	//Basic types parsers
 	QString readIdentifier(Symbol* symbol);

@@ -132,7 +132,7 @@ bool NSParser::readSensorVar(Symbol *symbol, NSParser::VariableList &variables, 
 	QString varName = readVar(symbol);
 	if (variables.contains(varName))
 	{
-		DelclaredVariable& var = variables[varName];
+		DeclaredVariable& var = variables[varName];
 		if (var.isSensor())
 		{
 			var.toSensor(id, sensorType);
@@ -209,7 +209,7 @@ bool NSParser::readParameterVar(Symbol *symbol, NSParser::VariableList &variable
 	QString varName = readVar(symbol);
 	if (variables.contains(varName))
 	{
-		DelclaredVariable& var = variables[varName];
+		DeclaredVariable& var = variables[varName];
 		if (var.isParameter())
 		{
 			paramId = var.toParameter();
@@ -261,7 +261,7 @@ bool NSParser::readAx12Var(Symbol *symbol, NSParser::VariableList &variables, in
 	QString varName = readVar(symbol);
 	if (variables.contains(varName))
 	{
-		DelclaredVariable& var = variables[varName];
+		DeclaredVariable& var = variables[varName];
 		if (var.isAx12())
 		{
 			ax12Id = var.toAx12();
@@ -350,7 +350,7 @@ bool NSParser::readActionVar(Symbol *symbol, NSParser::VariableList &variables, 
 	QString varName = readVar(symbol);
 	if (variables.contains(varName))
 	{
-		DelclaredVariable& var = variables[varName];
+		DeclaredVariable& var = variables[varName];
 		if (var.isAction())
 		{
 			var.toAction(actionId, param, time);
@@ -569,7 +569,7 @@ NSParser::ConditionInfo NSParser::readCondition(Symbol *symbol, VariableList& va
 						QString varName = readVar(c);
 						if (variables.contains(varName))
 						{
-							DelclaredVariable& var = variables[varName];
+							DeclaredVariable& var = variables[varName];
 							if (info.type == ConditionInfo::OpponentPosCondition || info.type == ConditionInfo::RobotPosCondition)
 							{
 								//expected rect
@@ -828,7 +828,7 @@ bool NSParser::readPointVar(Symbol* symbol, VariableList& variables, Tools::RPoi
 	QString varName = readVar(symbol);
 	if (variables.contains(varName))
 	{
-		DelclaredVariable& var = variables[varName];
+		DeclaredVariable& var = variables[varName];
 		if (var.isPoint())
 		{
 			point = var.toPoint();
@@ -875,7 +875,7 @@ Tools::RPoint NSParser::readPoint(Symbol* symbol)
 	return point;
 }
 
-QRectF NSParser::readRect(Symbol* symbol)
+QRectF NSParser::readRect(Symbol* symbol, VariableList& variables)
 {
 	QRectF r;
 	if (symbol->type == NON_TERMINAL)
@@ -884,7 +884,7 @@ QRectF NSParser::readRect(Symbol* symbol)
 		Symbol* fixedSymbol = searchChild(symbol, SYM_FIXED_RECT);
 		if (fixedSymbol)
 		{
-			r = readFixedRect(fixedSymbol);
+			r = readFixedRect(fixedSymbol, variables);
 			switch(nt->ruleIndex)
 			{
 				case PROD_RECT_AUTO_REVERSED:
@@ -904,9 +904,12 @@ QRectF NSParser::readRect(Symbol* symbol)
 
 
 
-QRectF NSParser::readFixedRect(Symbol* symbol)
+QRectF NSParser::readFixedRect(Symbol* symbol, VariableList& variables)
 {
 	QRectF r(0,0,1,1);
+	Tools::RPoint center;
+	bool definedByCenter = false;
+	double radius = 0;
 	int nbParamRead = 0;
 	if (symbol->type == NON_TERMINAL)
 	{
@@ -918,7 +921,9 @@ QRectF NSParser::readFixedRect(Symbol* symbol)
 				case SYM_NUM:
 				{
 					double value = readNum(child);
-					if (nbParamRead == 0)
+					if (definedByCenter)
+						radius = value;
+					else if (nbParamRead == 0)
 						r.setX(value);
 					else if (nbParamRead == 1)
 						r.setY(value);
@@ -929,8 +934,42 @@ QRectF NSParser::readFixedRect(Symbol* symbol)
 					++nbParamRead;
 					break;
 				}
+				case SYM_POINT:
+				case SYM_FIXED_POINT:
+				{
+					definedByCenter = true;
+					center = readPoint(child);
+					break;
+				}
+				case SYM_VAR:
+				{
+					QString name = readVar(child);
+					if (variables.contains(name))
+					{
+						DeclaredVariable& var = variables[name];
+						if (var.isPoint())
+						{
+							center = var.toPoint();
+							definedByCenter = true;
+						}
+						else
+							addError(NSParsingError::invalidVariableTypeError(name, "point", child));
+					}
+					else
+						addError(NSParsingError::undeclaredVariableError(name, child));
+
+
+					break;
+				}
 			}
 		}
+	}
+
+	if (definedByCenter)
+	{
+		r.setWidth(radius * 2.0);
+		r.setHeight(radius * 2.0);
+		r.moveCenter(center.toQPointF());
 	}
 
 	return r;
@@ -943,9 +982,9 @@ bool NSParser::NSParser::readRectOrVar(Symbol *symbol, NSParser::VariableList &v
 	{
 		result = true;
 		if (symbol->symbolIndex == SYM_RECT2)
-			r = readRect(symbol);
+			r = readRect(symbol, variables);
 		else if (symbol->symbolIndex == SYM_FIXED_RECT)
-			r = readFixedRect(symbol);
+			r = readFixedRect(symbol, variables);
 		else if (symbol->symbolIndex == SYM_VAR)
 			result = readRectVar(symbol, variables, r);
 		else //SYM_RECT_OR_VAR
@@ -954,7 +993,7 @@ bool NSParser::NSParser::readRectOrVar(Symbol *symbol, NSParser::VariableList &v
 			switch(nt->ruleIndex)
 			{
 				case PROD_RECT_OR_VAR:
-					r = readRect(searchChild(symbol, SYM_RECT2));
+					r = readRect(searchChild(symbol, SYM_RECT2), variables);
 					break;
 				case PROD_RECT_OR_VAR2:
 					result = readRectVar(symbol, variables, r);
@@ -975,7 +1014,7 @@ bool NSParser::readRectVar(Symbol* symbol, VariableList &variables, QRectF &r)
 	QString varName = readVar(symbol);
 	if (variables.contains(varName))
 	{
-		DelclaredVariable& var = variables[varName];
+		DeclaredVariable& var = variables[varName];
 		if (var.isRect())
 		{
 			r = var.toRect();
@@ -1028,7 +1067,7 @@ bool NSParser::readStringVar(Symbol *symbol, NSParser::VariableList &variables, 
 	QString varName = readVar(symbol);
 	if (variables.contains(varName))
 	{
-		DelclaredVariable& var = variables[varName];
+		DeclaredVariable& var = variables[varName];
 		if (var.isString())
 		{
 			str = var.toString();
@@ -1043,7 +1082,7 @@ bool NSParser::readStringVar(Symbol *symbol, NSParser::VariableList &variables, 
 	return result;
 }
 
-bool NSParser::readCallArg(Symbol *symbol, VariableList &variables, NSParser::DelclaredVariable& callArgVariable)
+bool NSParser::readCallArg(Symbol *symbol, VariableList &variables, NSParser::DeclaredVariable& callArgVariable)
 {
 	bool result = true;
 	switch(symbol->symbolIndex)
@@ -1064,40 +1103,47 @@ bool NSParser::readCallArg(Symbol *symbol, VariableList &variables, NSParser::De
 		case SYM_FIXED_POINT:
 		{
 			Tools::RPoint p = readPoint(symbol);
-			callArgVariable = DelclaredVariable::fromPoint(p);
+			callArgVariable = DeclaredVariable::fromPoint(p);
 			break;
 		}
 		case SYM_RECT2:
 		case SYM_FIXED_RECT:
 		{
-			QRectF r = readRect(symbol);
-			callArgVariable = DelclaredVariable::fromRect(r);
+			QRectF r = readRect(symbol, variables);
+			callArgVariable = DeclaredVariable::fromRect(r);
 			break;
 		}
 		case SYM_SENSOR_IDENTIFIER:
 		{
 			int type = -1, id = 0;
 			readSensorIdentifier(symbol, type, id);
-			callArgVariable = DelclaredVariable::fromSensor(id, type);
+			callArgVariable = DeclaredVariable::fromSensor(id, type);
 			break;
 		}
 		case SYM_PARAMETER_IDENTIFIER:
 		{
 			int paramId = readSubId(symbol);
-			callArgVariable = DelclaredVariable::fromParameter(paramId);
+			callArgVariable = DeclaredVariable::fromParameter(paramId);
 			break;
 		}
 		case SYM_AX12_IDENTIFIER:
 		{
 			int ax12Id = readSubId(symbol);
-			callArgVariable = DelclaredVariable::fromAx12(ax12Id);
+			callArgVariable = DeclaredVariable::fromAx12(ax12Id);
 			break;
 		}
 		case SYM_ACTION2:
 		{
 			int actionId, param, time;
 			readAction(symbol, actionId, param, time);
-			callArgVariable = DelclaredVariable::fromAction(actionId, param, time);
+			callArgVariable = DeclaredVariable::fromAction(actionId, param, time);
+			break;
+		}
+		case SYM_STRING:
+		{
+			QString str = readString(symbol);
+			callArgVariable = DeclaredVariable::fromString(str);
+			break;
 		}
 		case SYM_CALLARG:
 		{
@@ -1122,7 +1168,7 @@ bool NSParser::readCallArg(Symbol *symbol, VariableList &variables, NSParser::De
 	return result;
 }
 
-void NSParser::readCallArgList(Symbol *symbol, VariableList &variables, QList<NSParser::DelclaredVariable>& callArgVariableList)
+void NSParser::readCallArgList(Symbol *symbol, VariableList &variables, QList<NSParser::DeclaredVariable>& callArgVariableList)
 {
 	if (symbol->type == NON_TERMINAL)
 	{
@@ -1134,7 +1180,7 @@ void NSParser::readCallArgList(Symbol *symbol, VariableList &variables, QList<NS
 				default:
 				case SYM_CALLARG:
 				{
-					NSParser::DelclaredVariable var;
+					NSParser::DeclaredVariable var;
 					readCallArg(child, variables, var);
 					if (var.isValid())
 						callArgVariableList << var;
