@@ -317,8 +317,13 @@ void NSParser::readVariable(Symbol* symbol, VariableList& variables)
 				}
 				case SYM_SENSOR_IDENTIFIER:
 				{
-					int type = -1, id = 0;
+					int type = -1, id = -1;
 					readSensorIdentifier(child, type, id);
+					if (id <= 0)
+					{
+						addError(NSParsingError::invalidSensorId(child));
+						return;
+					}
 					var = DeclaredVariable::fromSensor(id, type);
 					break;
 				}
@@ -569,6 +574,11 @@ AbstractAction *NSParser::buildEnableSensorAction(Symbol *symbol, NSParser::Vari
 			sensorId = 0;
 			ok = true;
 		}
+		else if (sensorId == 0)
+		{
+			addError(NSParsingError::invalidSensorId(symbol));
+			return nullptr;
+		}
 
 		if (ok && _factory)
 		{
@@ -618,6 +628,11 @@ AbstractAction *NSParser::buildDisableSensorAction(Symbol *symbol, NSParser::Var
 		{
 			sensorId = 0;
 			ok = true;
+		}
+		else if (sensorId == 0)
+		{
+			addError(NSParsingError::invalidSensorId(symbol));
+			return nullptr;
 		}
 
 		if (ok && _factory)

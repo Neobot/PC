@@ -540,6 +540,12 @@ NSParser::ConditionInfo NSParser::readCondition(Symbol *symbol, VariableList& va
 						else if (sensorType == Comm::MicroswitchSensor)
 							info.type = ConditionInfo::MicroswitchValueCondition;
 						break;
+
+						if (info.sensorId <= 0)
+						{
+							info.setInvalid();
+							addError(NSParsingError::invalidSensorId(c));
+						}
 					}
 					case SYM_COLORSENSORVALUE:
 					case SYM_MICROSWITCHVALUE:
@@ -596,6 +602,12 @@ NSParser::ConditionInfo NSParser::readCondition(Symbol *symbol, VariableList& va
 								{
 									info.setInvalid();
 									addError(NSParsingError::invalidVariableTypeError(varName, "sensor", c));
+								}
+
+								if (info.sensorId <= 0)
+								{
+									info.setInvalid();
+									addError(NSParsingError::invalidSensorId(c));
 								}
 							}
 

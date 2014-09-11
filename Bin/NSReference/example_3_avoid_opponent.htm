@@ -46,10 +46,6 @@ html, body {
    background: #FFFFFF; 
   }  
 
-html {
-  overflow-x: auto; overflow-y: scroll;
-}
-
 div#printheader { 
    display: none;
    }
@@ -104,63 +100,61 @@ span.f_Heading1 { color: black; }
 <body>
 <!--ZOOMSTOP-->
 
+<div id="printheader"><h1 class="p_Heading1"><span class="f_Heading1">Example 3: Avoid opponent</span></h1>
+</div>
+<div id="idheader">
+<div id="idheaderbg">
+<table width="100%" border="0" cellspacing="0" cellpadding="0" 
+       style="margin: 0px; background: url(header_bg.jpg);">
+
+  <tr valign="bottom">
+    <td align="left" valign="bottom" class="topichead">
+   <p class="crumbs" id="idnav"><b>Navigation:</b>&nbsp;
+   
+   Examples&nbsp;&gt;</p>
+   <h1 class="p_Heading1"><span class="f_Heading1">Example 3: Avoid opponent</span></h1>
+
+    </td>
+    <td align="right" width="120" valign="middle" class="topichead" id="idnav">
+    
+     <a href="example_2_turn_around.htm"
+        onmouseover="document.images.prev.src='btn_prev_h.gif'" 
+        onmouseout="document.images.prev.src='btn_prev_n.gif'"
+        ><img name=prev src="btn_prev_n.gif" border=0 alt="Previous page"
+        ></a><a href="syntax.htm"
+        onmouseover="document.images.main.src='btn_home_h.gif'" 
+        onmouseout="document.images.main.src='btn_home_n.gif'"><img name=main src="btn_home_n.gif" border=0 alt="Return to chapter overview"
+        ></a><a href="example_4_arm_movement_while_m.htm"
+        onmouseover="document.images.next.src='btn_next_h.gif'" 
+        onmouseout="document.images.next.src='btn_next_n.gif'"><img name=next src="btn_next_n.gif" border=0 alt="Next page"
+        ></a>
+    </td>
+  </tr>
+  <tr><td colspan="2" style="height: 3px; background: url(header_bg_shadow.gif)"></td></tr>
+</table>
+</div>
+
+<!-- The following code displays Expand All/Collapse All links  below the header in topics containing toggles -->
+  
+
+</div>  
+
 <div id="idcontent"><div id="innerdiv"> 
 <!--ZOOMRESTART-->
-<p class="p_CodeExample"><span class="f_CodeExample">//Avoid&nbsp;the&nbsp;opponent&nbsp;by&nbsp;going&nbsp;where&nbsp;he&nbsp;is&nbsp;not&nbsp;going</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">//A&nbsp;beacon&nbsp;is&nbsp;required&nbsp;to&nbsp;locate&nbsp;the&nbsp;opponent</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;auto&nbsp;reverse&nbsp;0,0,1000,1500&nbsp;as&nbsp;zone1</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;auto&nbsp;reverse&nbsp;0,1500,1000,1500&nbsp;as&nbsp;zone2</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;auto&nbsp;reverse&nbsp;1000,0,1000,1500&nbsp;as&nbsp;zone3</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">declare&nbsp;auto&nbsp;reverse&nbsp;1000,1500,1000,1500&nbsp;as&nbsp;zone4</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">teleport&nbsp;1000,1500</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">function&nbsp;takeDecision</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">{</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">if&nbsp;opponent&nbsp;in&nbsp;zone1</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">{</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">if&nbsp;position&nbsp;not&nbsp;in&nbsp;zone4</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">{</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">go&nbsp;to&nbsp;1500,2500&nbsp;//go&nbsp;to&nbsp;zone&nbsp;4</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">rotate&nbsp;to&nbsp;225deg</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">}</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">}</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">else&nbsp;if&nbsp;opponent&nbsp;in&nbsp;zone2</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">{</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">if&nbsp;position&nbsp;not&nbsp;in&nbsp;zone3</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">{</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">go&nbsp;to&nbsp;1500,500&nbsp;//go&nbsp;to&nbsp;zone&nbsp;3</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">rotate&nbsp;to&nbsp;135deg</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">}</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">}</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">else&nbsp;if&nbsp;opponent&nbsp;in&nbsp;zone3</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">{</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">if&nbsp;position&nbsp;not&nbsp;in&nbsp;zone2</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">{</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">go&nbsp;to&nbsp;500,2500&nbsp;//go&nbsp;to&nbsp;zone&nbsp;2</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">rotate&nbsp;to&nbsp;315deg</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">}</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">}</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">else&nbsp;if&nbsp;opponent&nbsp;in&nbsp;zone4</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">{</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">if&nbsp;position&nbsp;not&nbsp;in&nbsp;zone1</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">{</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">go&nbsp;to&nbsp;500,500&nbsp;//go&nbsp;to&nbsp;zone&nbsp;1</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">rotate&nbsp;to&nbsp;45deg</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">}</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">}</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">wait&nbsp;1s</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">}</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">while&nbsp;true</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">{</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">takeDecision()</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">}</span></p>
+<p style="margin: 0px 0px 6px 0px;">&nbsp;</p>
+<p style="margin: 0px 0px 6px 0px;">Donec ut eros faucibus lorem lobortis sodales. Nam vitae lectus id lectus tincidunt ornare. Aliquam sodales suscipit velit. Nullam leo erat, iaculis vehicula, dignissim vel, rhoncus id, velit. Nulla facilisi. Fusce tortor lorem, mollis sed, scelerisque eget, faucibus sed, dui. Quisque eu nisi. Etiam sed erat id lorem placerat feugiat. Pellentesque vitae orci at odio porta pretium. Cras quis tellus eu pede auctor iaculis. Donec suscipit venenatis mi. </p>
+<p style="margin: 0px 0px 6px 0px;">Aliquam erat volutpat. Sed congue feugiat tellus. Praesent ac nunc non nisi eleifend cursus. Sed nisi massa, mattis eu, elementum ac, luctus a, lacus. Nunc luctus malesuada ipsum. Morbi aliquam, massa eget gravida fermentum, eros nisi volutpat neque, nec placerat nisi nunc non mi. Quisque tincidunt quam nec nibh sagittis eleifend. Duis malesuada dignissim ante. Aliquam erat volutpat. Proin risus lectus, pharetra vel, mollis sit amet, suscipit ac, sapien. Fusce egestas. Curabitur ut tortor id massa egestas ullamcorper. Cum sociis natoque penatibus et magnis dis parturient montes, nascetur ridiculus mus. Donec fermentum. Curabitur ut ligula ac ante scelerisque consectetuer. Nullam at turpis quis nisl eleifend aliquam. Sed odio sapien, semper eget, rutrum a, tempor in, nibh.</p>
 
 <!--ZOOMSTOP-->
 </div></div>
 <script type="text/javascript">
+
+var lastSlashPos = document.URL.lastIndexOf("/") > document.URL.lastIndexOf("\\") ? document.URL.lastIndexOf("/") : document.URL.lastIndexOf("\\");
+if( document.URL.substring(lastSlashPos + 1, lastSlashPos + 4).toLowerCase() != "~hh" )
+{
+ if (document.all) setTimeout(function() {nsrInit();},20); 
+    else nsrInit();
+ } 
 
 
 </script>

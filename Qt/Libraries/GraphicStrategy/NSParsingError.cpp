@@ -62,6 +62,11 @@ NSParsingError NSParsingError::undeclaredFunctionError(const QString &functionNa
 	return error(QString("The function '").append(functionName).append("' is not declared."), symbol);
 }
 
+NSParsingError NSParsingError::invalidSensorId(Symbol *symbol)
+{
+	return error(QString("Sensors id starts  at 1."), symbol);
+}
+
 NSParsingError NSParsingError::functionAlreadyDefinedError(const QString &functionName, Symbol *symbol)
 {
 	return error(QString("The function '").append(functionName).append("'' is already defined."), symbol);

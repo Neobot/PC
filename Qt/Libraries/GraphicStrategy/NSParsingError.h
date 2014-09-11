@@ -32,6 +32,8 @@ public:
 	static NSParsingError invalidNumberOfArguments(const QString& functionName, int nbExpectedArgs, int nbFoundArgs, Symbol* symbol);
 	static NSParsingError undeclaredFunctionError(const QString& variableName, Symbol* symbol);
 
+	static NSParsingError invalidSensorId(Symbol* symbol);
+
 	QString print() const;
 
 	ErrorType getType() const;

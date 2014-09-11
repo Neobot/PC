@@ -157,8 +157,8 @@ span.f_Heading1 { color: black; }
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">do&nbsp;startPumpAction</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">make&nbsp;ax12&nbsp;movement&nbsp;arm&nbsp;mvt</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">do&nbsp;stopPumpAction</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">make&nbsp;ax12&nbsp;movement&nbsp;arm&nbsp;&quot;scan&quot;</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
+<p class="p_CodeExample"><span style="width:48px">&nbsp;</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">}</span></p>
 <p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
 <p class="p_CodeExample"><span class="f_CodeExample">fuction&nbsp;moveAndScan(destination)</span></p>
 <p class="p_CodeExample"><span class="f_CodeExample">{</span></p>
@@ -173,7 +173,7 @@ span.f_Heading1 { color: black; }
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">while&nbsp;leftSensor&nbsp;is&nbsp;not&nbsp;green</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">{</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">wait&nbsp;50ms</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">}&nbsp;</span></p>
+<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">while&nbsp;rightSensor&nbsp;is&nbsp;not&nbsp;green</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">{</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">wait&nbsp;50ms</span></p>
@@ -183,10 +183,10 @@ span.f_Heading1 { color: black; }
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">//Do&nbsp;an&nbsp;action&nbsp;with&nbsp;the&nbsp;ax12&nbsp;depending&nbsp;on&nbsp;what&nbsp;has&nbsp;been&nbsp;found&nbsp;by&nbsp;the&nbsp;sensors</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">concurrent&nbsp;AllActionFinished</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">{</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
+<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">if&nbsp;leftSensor&nbsp;is&nbsp;red</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">{</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">moveArm(&quot;leftArm&quot;,&nbsp;&quot;turn&quot;,&nbsp;startLeftPump,&nbsp;stopLeftPump)</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">}</span></p>
+<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">else&nbsp;if&nbsp;leftSensor&nbsp;is&nbsp;yellow</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">{</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">moveArm(&quot;leftArm&quot;,&nbsp;&quot;move&quot;,&nbsp;startLeftPump,&nbsp;stopLeftPump)</span></p>
@@ -198,13 +198,13 @@ span.f_Heading1 { color: black; }
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">}</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">else&nbsp;if&nbsp;rightSensor&nbsp;is&nbsp;yellow</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">{</span></p>
-<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
+<p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">moveArm(&quot;rightArm&quot;,&nbsp;&quot;move&quot;,&nbsp;startRightPump,&nbsp;stopRightPump)</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">}</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span> &nbsp; &nbsp; &nbsp; &nbsp;<span class="f_CodeExample">}</span></p>
 <p class="p_CodeExample"><span style="width:48px">&nbsp;</span><span class="f_CodeExample">}</span></p>
 <p class="p_CodeExample"><span class="f_CodeExample">}</span></p>
 <p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
-<p class="p_CodeExample"><span class="f_CodeExample">&nbsp;</span></p>
+<p class="p_CodeExample"><span class="f_CodeExample">teleport&nbsp;origin</span></p>
 <p class="p_CodeExample"><span class="f_CodeExample">moveAndScan([2000,3000])</span></p>
 <p class="p_CodeExample"><span class="f_CodeExample">moveAndScan(origin)</span></p>
 <p>&nbsp;</p>
