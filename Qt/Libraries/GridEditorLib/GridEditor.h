@@ -35,6 +35,7 @@ public slots:
 	void set2012Table();
 	void set2013Table();
     void set2014Table();
+	void set2015Table();
 
 signals:
 	void accepted();

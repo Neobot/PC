@@ -24,7 +24,9 @@ int main(int argc, char *argv[])
 			w.open(file);
 
 		QString table = a.arguments().value(2);
-        if (table == "2014")
+		if (table == "2015")
+			w.set2015Table();
+		else if (table == "2014")
             w.set2014Table();
         else if (table == "2013")
 			w.set2013Table();

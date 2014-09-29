@@ -30,7 +30,7 @@ void StrategyScene::setMap(Tools::DataMap* map)
 
 
 	QGraphicsScene::clear();
-    _tableItem = new QGraphicsPixmapItem(QPixmap(":/tables/table2014"));
+	_tableItem = new QGraphicsPixmapItem(QPixmap(":/tables/table2015"));
 	_tableItem->setZValue(-1);
 	_tableItem->setPos(0, 0);
 	addItem(_tableItem);

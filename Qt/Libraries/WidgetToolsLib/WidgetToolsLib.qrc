@@ -4,6 +4,7 @@
         <file alias="table2012">Resources/Table2012.png</file>
         <file alias="table2013">Resources/Table2013.png</file>
         <file alias="table2014">Resources/Table2014.png</file>
+        <file alias="table2015">Resources/Table2015.png</file>
     </qresource>
     <qresource prefix="/objects">
         <file alias="robot2011">Resources/Neobot.png</file>

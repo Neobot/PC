@@ -151,6 +151,7 @@ void GridEditor::initActions(bool singleEditionMode)
 	ui->menuView->addAction("Set 2012 background", this, SLOT(set2012Table()));
 	ui->menuView->addAction("Set 2013 background", this, SLOT(set2013Table()));
     ui->menuView->addAction("Set 2014 background", this, SLOT(set2014Table()));
+	ui->menuView->addAction("Set 2015 background", this, SLOT(set2015Table()));
 	ui->menuView->addSeparator();
 	QAction* setBackgroundAction = ui->menuView->addAction(QIcon(":/toolbar/background"), "Change background...", this, SLOT(changeBackground()));
 
@@ -418,6 +419,11 @@ void GridEditor::set2013Table()
 void GridEditor::set2014Table()
 {
     _scene->setBackground(QPixmap(":/tables/table2014"));
+}
+
+void GridEditor::set2015Table()
+{
+	_scene->setBackground(QPixmap(":/tables/table2015"));
 }
 
 void GridEditor::nodeMoved(const QList<QGraphicsItem*>& selectedNodes, NodeItem* focusedNode, const QPointF &oldPosition, const QPointF &newPosition)
