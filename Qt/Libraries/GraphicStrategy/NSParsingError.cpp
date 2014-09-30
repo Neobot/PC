@@ -3,19 +3,25 @@
 #include "NonTerminal.h"
 #include "Terminal.h"
 
+NSParsingError::NSParsingError(NSParsingError::ErrorType errorType, const QString &errorFilename, Symbol *symbol, const QString &errorMessage)
+	: NSParsingError(errorType, errorFilename, 0, 0, 0, errorMessage)
+{
+	setSymbol(symbol);
+}
+
 NSParsingError NSParsingError::warning(const QString& warningMessage, Symbol *symbol)
 {
-    return NSParsingError(Warning, QString(),  symbol->line, symbol->col - 1, findSymbolLength(symbol), warningMessage);
+	return NSParsingError(Warning, QString(), symbol, warningMessage);
 }
 
 NSParsingError NSParsingError::error(const QString& errorMessage, Symbol *symbol)
 {
-    return NSParsingError(Error, QString(),  symbol->line, symbol->col - 1, findSymbolLength(symbol), errorMessage);
+	return NSParsingError(Error, QString(), symbol, errorMessage);
 }
 
 NSParsingError NSParsingError::info(const QString& infoMessage, Symbol *symbol)
 {
-    return NSParsingError(Info, QString(), symbol->line, symbol->col - 1, findSymbolLength(symbol), infoMessage);
+	return NSParsingError(Info, QString(), symbol, infoMessage);
 }
 
 NSParsingError NSParsingError::fromGPError(GPError* e)
@@ -134,6 +140,13 @@ int NSParsingError::getLength() const
 const QString &NSParsingError::getMessage() const
 {
 	return _message;
+}
+
+void NSParsingError::setSymbol(Symbol *symbol)
+{
+	_line = symbol->line;
+	_column = symbol->col - 1;
+	_length = findSymbolLength(symbol);
 }
 
 void NSParsingError::setFilename(const QString &filename)

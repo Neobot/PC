@@ -20,6 +20,8 @@ public:
 	NSParsingError(ErrorType errorType, const QString& errorFilename, int errorLine, int errorColumn, int errorLength, const QString& errorMessage)
 		: _type(errorType), _filename(errorFilename), _line(errorLine), _column(errorColumn), _length(errorLength), _message(errorMessage) {}
 
+	NSParsingError(ErrorType errorType, const QString& errorFilename, Symbol* symbol, const QString& errorMessage);
+
 	static NSParsingError warning(const QString& warningMessage, Symbol* symbol);
 	static NSParsingError error(const QString& errorMessage, Symbol* symbol);
 	static NSParsingError info(const QString& infoMessage, Symbol* symbol);
@@ -42,6 +44,8 @@ public:
 	int getColumn() const;
 	int getLength() const;
 	const QString& getMessage() const;
+
+	void setSymbol(Symbol* symbol);
 
 	void setFilename(const QString& filename);
 

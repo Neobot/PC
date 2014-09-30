@@ -4,6 +4,8 @@
 #include <QStringList>
 #include <QTextStream>
 #include <QRectF>
+#include <QFileInfo>
+#include <QStack>
 
 #include "RPoint.h"
 #include "RMovement.h"
@@ -36,6 +38,9 @@ public:
 	const QList<NSParsingError>& getErrors() const;
 	
 	void print(QTextStream& out);
+
+	void addSearchDirectory(const QDir& dir);
+	void removeSearchDirectory(const QDir& dir);
 
 protected:
 	struct DeclaredVariable
@@ -127,9 +132,14 @@ protected:
 
 	typedef QHash<QString, FunctionInfo> FunctionList;
 	
+	void initParsing();
+
 	bool parse(const QString& scriptCode, QList<AbstractAction*>& actions, const QString& originalFilename);
+	bool parseSubFile(Symbol *symbol, const QString &filepath, QList<AbstractAction *> &actions, VariableList& variables, FunctionList& functions);
+
 	Symbol* getParsedTree(const QString& scriptCode);
 	void buildActions(Symbol* symbol, QList<AbstractAction*>& actions, VariableList& variables, FunctionList &functions);
+
 	
 	//Action parsers
 	AbstractAction* buildWaitAction(Symbol* symbol);
@@ -148,6 +158,7 @@ protected:
 	AbstractAction *buildIfAction(Symbol *symbol, VariableList variables, FunctionList functions);
 	AbstractAction *buildWhileAction(Symbol *symbol, VariableList variables, FunctionList functions);
 	AbstractAction* buildCalledFunctionActions(Symbol *symbol, VariableList variables, FunctionList functions);
+	AbstractAction* buildImportActions(Symbol *symbol, VariableList &variables, FunctionList &functions);
 	void readVariable(Symbol* symbol, VariableList& variables);
 	void readFunction(Symbol* symbol, VariableList variables, FunctionList& functions);
 
@@ -214,6 +225,10 @@ protected:
 	bool isMirrored() const;
 	int getTableWidth() const;
 
+	bool hasCurrentFile() const;
+	QFileInfo getCurrentFile() const;
+	QString getFileInKnownDirectories(QString filePath) const;
+
 private:
 	CGTFile _cgtFile;
 	bool _invalidGrammar;
@@ -221,7 +236,10 @@ private:
 	Symbol* _tree;
 	ActionFactory* _factory;
 
-	QString _currentFile;
+	QStack<QFileInfo> _fileStack;
+	Symbol* _rootSymbol;
+	QList<QDir> _searchDirs;
+
 	QList<NSParsingError> _errors;
 };
 

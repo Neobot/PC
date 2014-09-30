@@ -46,7 +46,12 @@ void NSParser::setActionFactory(ActionFactory* factory)
 void NSParser::addError(const NSParsingError &error)
 {
 	NSParsingError errorCopy(error);
-	errorCopy.setFilename(_currentFile);
+	if (hasCurrentFile())
+		errorCopy.setFilename(getCurrentFile().fileName());
+
+	if (_rootSymbol)
+		errorCopy.setSymbol(_rootSymbol);
+
 	_errors << errorCopy;
 }
 
@@ -66,38 +71,46 @@ int NSParser::getTableWidth() const
 		return 3000;
 }
 
+bool NSParser::hasCurrentFile() const
+{
+	return !_fileStack.isEmpty();
+}
+
+QFileInfo NSParser::getCurrentFile() const
+{
+	return _fileStack.top();
+}
+
+QString NSParser::getFileInKnownDirectories(QString filePath) const
+{
+	QList<QDir> searchDirs(_searchDirs);
+	if (hasCurrentFile())
+		searchDirs.prepend(getCurrentFile().absoluteDir());
+
+	for(const QDir& d : searchDirs)
+	{
+		if (d.exists(filePath))
+			return d.absoluteFilePath(filePath);
+	}
+
+	return QString();
+}
+
 const QList<NSParsingError> &NSParser::getErrors() const
 {
 	return _errors;
 }
 
-bool NSParser::parse(const QString &scriptCode, QList<AbstractAction *> &actions, const QString &originalFilename)
-{
-	_errors.clear();
-	_currentFile = QFileInfo(originalFilename).fileName();
-
-	if (_tree)
-		delete _tree;
-
-	_tree = getParsedTree(QString(scriptCode).append("\n")); //Add a cariage return which is mandatory at the end
-
-	if (_tree)
-	{
-		VariableList variables;
-		FunctionList functions;
-		buildActions(_tree, actions, variables, functions);
-	}
-
-	return _errors.isEmpty();
-}
-
 bool NSParser::parse(const QString &scriptCode, QList<AbstractAction *> &actions)
 {
+	initParsing();
 	return parse(scriptCode, actions, QString());
 }
 
 bool NSParser::parseFile(const QString &filepath, QList<AbstractAction *> &actions)
 {
+	initParsing();
+
 	QFile file(filepath);
 	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
 	{
@@ -124,6 +137,22 @@ void NSParser::print(QTextStream& out)
 {
 	if (_tree)
 		printTree(out, _tree, 0);
+}
+
+void NSParser::addSearchDirectory(const QDir &dir)
+{
+	_searchDirs << dir;
+}
+
+void NSParser::removeSearchDirectory(const QDir &dir)
+{
+	_searchDirs.removeAll(dir);
+}
+
+void NSParser::initParsing()
+{
+	_errors.clear();
+	_rootSymbol = nullptr;
 }
 
 Symbol *NSParser::getParsedTree(const QString &scriptCode)
@@ -211,6 +240,27 @@ void NSParser::printTree(QTextStream& out, Symbol *s, int level)
 	}
 }
 
+bool NSParser::parse(const QString &scriptCode, QList<AbstractAction *> &actions, const QString &originalFilename)
+{
+	_fileStack.push(QFileInfo(originalFilename));
+
+	if (_tree)
+		delete _tree;
+
+	_tree = getParsedTree(QString(scriptCode).append("\n")); //Add a cariage return which is mandatory at the end
+
+	if (_tree)
+	{
+		VariableList variables;
+		FunctionList functions;
+		buildActions(_tree, actions, variables, functions);
+	}
+
+	_fileStack.pop();
+
+	return _errors.isEmpty();
+}
+
 void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, VariableList& variables, FunctionList& functions)
 {
 	AbstractAction* action = nullptr;
@@ -272,6 +322,9 @@ void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, Var
 			break;
 		case SYM_TIMEOUTSTATEMENT:
 			action = buildTimeoutAction(symbol, variables, functions);
+			break;
+		case SYM_IMPORTSTATEMENT:
+			action = buildImportActions(symbol, variables, functions);
 			break;
 		default:
 		{
@@ -1045,6 +1098,70 @@ AbstractAction* NSParser::buildCalledFunctionActions(Symbol *symbol, VariableLis
 				addError(NSParsingError::undeclaredFunctionError(functionName, symbol));
 			}
 		}
+	}
+
+	return nullptr;
+}
+
+bool NSParser::parseSubFile(Symbol *symbol, const QString &filepath, QList<AbstractAction *> &actions, VariableList& variables, FunctionList& functions)
+{
+	QFile file(filepath);
+	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+	{
+		_errors << NSParsingError::error("The file cannot be opened", symbol);
+		return false;
+	}
+
+	bool isRoot = !_rootSymbol;
+
+	if (isRoot)
+		_rootSymbol = symbol;
+
+	bool result = parse(filepath, actions, filepath);
+
+	if (isRoot)
+		_rootSymbol = nullptr;
+
+	return result;
+}
+
+AbstractAction *NSParser::buildImportActions(Symbol *symbol, VariableList& variables, FunctionList& functions)
+{
+	if (symbol->type == NON_TERMINAL)
+	{
+		QList<AbstractAction*> actions;
+		QString filename;
+		NonTerminal* nt = static_cast<NonTerminal*>(symbol);
+		for(Symbol* child: nt->children)
+		{
+			switch(child->symbolIndex)
+			{
+				case SYM_STRING:
+					filename = readString(child);
+					break;
+			}
+		}
+
+		QString knownFile = getFileInKnownDirectories(filename);
+		if (!knownFile.isEmpty())
+		{
+			VariableList subVariables;
+			FunctionList subFunctions;
+			parseSubFile(symbol, knownFile, actions, subVariables, subFunctions);
+
+			for(VariableList::const_iterator it = subVariables.constBegin(); it != subVariables.constEnd(); ++it)
+			{
+				variables[it.key()] = *it;
+			}
+
+			for(FunctionList::const_iterator it = subFunctions.constBegin(); it != subFunctions.constEnd(); ++it)
+			{
+				functions[it.key()] = *it;
+			}
+		}
+
+		if (_factory && !actions.isEmpty())
+			return _factory->actionList(actions);
 	}
 
 	return nullptr;
