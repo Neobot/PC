@@ -66,7 +66,7 @@ bool NSParser::isMirrored() const
 int NSParser::getTableWidth() const
 {
 	if (_factory)
-		return _factory->getManager()->getMap()->getTableRect().width();
+		return _factory->getManager()->getMap()->getTableRect().height();
 	else
 		return 3000;
 }
