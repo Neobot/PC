@@ -51,7 +51,7 @@ QByteArray PersistentFilesManager::getFileData(int setIndex, const QString &file
 
 void PersistentFilesManager::getAllFiles(const QDir& setDir, const QDir& subDir, QStringList& results) const
 {
-	QFileInfoList list = subDir.entryInfoList(QDir::NoDotDot | QDir::Files | QDir::AllDirs);
+	QFileInfoList list = subDir.entryInfoList(QDir::NoDotAndDotDot | QDir::Files | QDir::AllDirs);
 	for(const QFileInfo& info : list)
 	{
 		if (info.isDir())

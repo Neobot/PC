@@ -3,6 +3,7 @@
 #include <QtDebug>
 #include <QStandardPaths>
 #include <QTransform>
+#include <QTemporaryFile>
 
 using namespace Tools;
 
@@ -236,7 +237,3 @@ QDir Tools::getDataDirectory()
 
 	return d;
 }
-
-
-
-

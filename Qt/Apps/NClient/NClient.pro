@@ -54,7 +54,8 @@ SOURCES += main.cpp\
     Ax12View.cpp \
     GraphsView.cpp \
     ScriptView.cpp \
-    NSEditor.cpp
+    NSEditor.cpp \
+    FileEnvReplicator.cpp
 
 HEADERS  += NClient.h \
     NetworkClientCommInterface.h \
@@ -73,7 +74,8 @@ HEADERS  += NClient.h \
     Ax12View.h \
     GraphsView.h \
     ScriptView.h \
-    NSEditor.h
+    NSEditor.h \
+    FileEnvReplicator.h
 
 FORMS    += NClient.ui \
     ConnectionView.ui \

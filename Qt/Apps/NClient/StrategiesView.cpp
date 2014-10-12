@@ -97,6 +97,9 @@ void StrategiesView::setStrategies(const QStringList &strategies)
 
 void StrategiesView::configurationFiles(int category, const QStringList &filenames)
 {
+	if (category < Comm::FirstStrategy || category > Comm::LastStrategy)
+		return;
+
 	ui->tableWidget->clear();
 	if (category == ui->cbStrategies->currentIndex())
 	{
@@ -158,6 +161,9 @@ void StrategiesView::configurationFiles(int category, const QStringList &filenam
 
 void StrategiesView::configurationFileData(int category, const QString &filename, const QByteArray &data)
 {
+	if (category < Comm::FirstStrategy || category > Comm::LastStrategy)
+		return;
+
 	if (_askFileContext == Edition)
 	{
 		QTemporaryFile tmp(QString("StratXXXXXX_").append(filename));

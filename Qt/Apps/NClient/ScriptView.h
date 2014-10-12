@@ -2,6 +2,7 @@
 #define SCRIPTVIEW_H
 
 #include "AbstractView.h"
+#include "FileEnvReplicator.h"
 
 namespace Ui {
 	class ScriptView;
@@ -20,6 +21,7 @@ public slots:
 
 private:
 	Ui::ScriptView *ui;
+	FileEnvReplicator _replicator;
 
 };
 

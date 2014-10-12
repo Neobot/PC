@@ -18,7 +18,6 @@ namespace Tools
 	void trajectoryDiagonalSmoothing(Trajectory& trajectory, double maximumDistance);
 	void trajectoryStopAtDistance(Trajectory& trajectory, const RPoint& objectif, double distance);
 
-
 	double degreeToRadian(double degree);
 	double radianToDegree(double radian);
 
