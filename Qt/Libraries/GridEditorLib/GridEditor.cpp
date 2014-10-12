@@ -426,6 +426,11 @@ void GridEditor::set2015Table()
 	_scene->setBackground(QPixmap(":/tables/table2015"));
 }
 
+void GridEditor::setLastTable()
+{
+	set2015Table();
+}
+
 void GridEditor::nodeMoved(const QList<QGraphicsItem*>& selectedNodes, NodeItem* focusedNode, const QPointF &oldPosition, const QPointF &newPosition)
 {
     MoveNodeCommand* c = new MoveNodeCommand(_scene, _inspector->getNodeInspector(), selectedNodes, focusedNode, oldPosition, newPosition);
