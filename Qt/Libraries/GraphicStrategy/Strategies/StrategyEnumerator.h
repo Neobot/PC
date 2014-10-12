@@ -24,8 +24,9 @@ public:
 
 	QStringList askStrategyFiles(Strategy strategy) const;
 	QByteArray askStrategyFileData(Strategy strategy, const QString &filename) const;
-	void setStrategyFileData(Strategy strategy, const QString &filename, const QByteArray &data) const;
-	void resetStrategyFile(Strategy strategy, const QString &filename);
+	bool setStrategyFileData(Strategy strategy, const QString &filename, const QByteArray &data) const;
+	bool resetStrategyFile(Strategy strategy, const QString &filename);
+	bool hasStrategyFile(Strategy strategy, const QString &filename);
 
 	QString getDataDirectory() const;
 

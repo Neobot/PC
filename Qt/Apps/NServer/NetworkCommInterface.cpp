@@ -49,11 +49,11 @@ void NetworkCommInterface::sendStrategies()
 	getProtocol(0)->sendMessage(Comm::SEND_STRATEGIES, d);
 }
 
-void NetworkCommInterface::sendFiles(quint8 strategyNum, const QStringList& filenames)
+void NetworkCommInterface::sendFiles(quint8 category, const QStringList& filenames)
 {
 	quint8 count = qMin<int>(filenames.count(), 255);
 	Data data;
-	data.add(strategyNum);
+	data.add(category);
 	data.add(count);
 	for(int i = 0; i < count; ++i)
 	{
@@ -64,10 +64,10 @@ void NetworkCommInterface::sendFiles(quint8 strategyNum, const QStringList& file
 	getProtocol(0)->sendMessage(CONFIGURATION_FILES, data);
 }
 
-void NetworkCommInterface::sendFileData(quint8 strategyNum, const QString& filename, const QByteArray& fileData)
+void NetworkCommInterface::sendFileData(quint8 category, const QString& filename, const QByteArray& fileData)
 {
 	Data data;
-	data.add(strategyNum);
+	data.add(category);
 
 	QByteArray name = filename.toLatin1().mid(0, 255);
 	data.add(name);
@@ -76,10 +76,10 @@ void NetworkCommInterface::sendFileData(quint8 strategyNum, const QString& filen
 	getProtocol(0)->sendMessage(CONFIGURATION_FILE_DATA, data);
 }
 
-void NetworkCommInterface::sendFileEvent(quint8 strategyNum, const QString &filename, quint8 event)
+void NetworkCommInterface::sendFileEvent(quint8 category, const QString &filename, quint8 event)
 {
 	Data data;
-	data.add(strategyNum);
+	data.add(category);
 
 	QByteArray name = filename.toLatin1().mid(0, 255);
 	data.add(name);
@@ -316,7 +316,7 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 			QByteArray fileName = d.left(filenameSize);
 			QByteArray fileData = d.mid(filenameSize);
 
-			_listener->setFileData(cat, fileName, fileData);
+			_listener->setFileData(cat, fileName, fileData, this);
 			break;
 		}
 		case ASK_FILE_DATA:
@@ -349,7 +349,7 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 			d.take(cat);
 
 			QString fileName = d;
-			_listener->resetFile(cat, fileName);
+			_listener->resetFile(cat, fileName, this);
 			break;
 		}
 

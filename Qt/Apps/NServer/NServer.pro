@@ -36,11 +36,13 @@ win32:LIBS += -lsetupapi -ladvapi32 -luser32
 SOURCES += main.cpp \
     NServer.cpp \
     NetworkCommInterface.cpp \
-    ServerAX12RequestManager.cpp
+    ServerAX12RequestManager.cpp \
+    PersistentFilesManager.cpp
 
 HEADERS += \
     NServer.h \
     NetworkCommInterface.h \
     NetworkCommListener.h \
-    ServerAX12RequestManager.h
+    ServerAX12RequestManager.h \
+    PersistentFilesManager.h
 

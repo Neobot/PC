@@ -20,8 +20,8 @@ public:
 
 	virtual QStringList askFiles(int category) = 0;
 	virtual QByteArray askFileData(int category, const QString& filename) = 0;
-	virtual void setFileData(int category, const QString& filename, const QByteArray& data) = 0;
-	virtual void resetFile(int category, const QString& filename) = 0;
+	virtual void setFileData(int category, const QString& filename, const QByteArray& data, NetworkCommInterface* sender) = 0;
+	virtual void resetFile(int category, const QString& filename, NetworkCommInterface* sender) = 0;
 
 	virtual bool startStrategy(int strategyNum, bool mirror) = 0;
 	virtual bool stopStrategy(int& currentStrategyNum) = 0;

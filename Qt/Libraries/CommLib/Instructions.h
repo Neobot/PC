@@ -149,9 +149,9 @@ namespace Comm
 
 	enum SeverFileEvent
 	{
-		Changed = 1,
-		Added = 2,
-		Removed = 3
+		FileChanged = 1,
+		FileAdded = 2,
+		FileRemoved = 3
 	};
 
 	class Instruction

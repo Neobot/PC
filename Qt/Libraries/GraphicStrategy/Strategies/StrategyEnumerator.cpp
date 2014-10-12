@@ -101,34 +101,39 @@ QByteArray StrategyEnumerator::askStrategyFileData(Strategy strategy, const QStr
 	return QByteArray();
 }
 
-void StrategyEnumerator::setStrategyFileData(Strategy strategy, const QString &filename, const QByteArray &data) const
+bool StrategyEnumerator::setStrategyFileData(Strategy strategy, const QString &filename, const QByteArray &data) const
 {
+	bool ok = false;
 	QDir d;
-	if (!getStrategyDirectory(strategy, d))
-		return;
-
-	QStringList filter(filename + "*");
-	QStringList matchingFiles = d.entryList(filter, QDir::Files | QDir::Readable | QDir::Writable, QDir::Name);
-
-	QString realFileName = d.absoluteFilePath(matchingFiles.value(0, filename));
-
-	QFile file(realFileName);
-	if (file.open(QIODevice::WriteOnly))
+	if (getStrategyDirectory(strategy, d))
 	{
-		file.write(data);
+		QStringList filter(filename + "*");
+		QStringList matchingFiles = d.entryList(filter, QDir::Files | QDir::Readable | QDir::Writable, QDir::Name);
 
-		StrategyInterface* strat = start(strategy, 0);
-		if (strat)
+		QString realFileName = d.absoluteFilePath(matchingFiles.value(0, filename));
+
+		QFile file(realFileName);
+		if (file.open(QIODevice::WriteOnly))
 		{
-			strat->init();
-			delete strat;
+			file.write(data);
+
+			StrategyInterface* strat = start(strategy, 0);
+			if (strat)
+			{
+				strat->init();
+				delete strat;
+				ok = true;
+			}
 		}
-	}
 }
 
-void StrategyEnumerator::resetStrategyFile(StrategyEnumerator::Strategy strategy, const QString &filename)
+	return ok;
+}
+
+bool StrategyEnumerator::resetStrategyFile(StrategyEnumerator::Strategy strategy, const QString &filename)
 {
 	QDir d;
+	bool ok = false;
 	if (getStrategyDirectory(strategy, d))
 	{
 		QStringList filter(filename + "*");
@@ -144,9 +149,27 @@ void StrategyEnumerator::resetStrategyFile(StrategyEnumerator::Strategy strategy
 			{
 				strat->init();
 				delete strat;
+				ok = true;
 			}
 		}
 	}
+
+	return ok;
+}
+
+bool StrategyEnumerator::hasStrategyFile(StrategyEnumerator::Strategy strategy, const QString &filename)
+{
+	QDir d;
+	bool ok = false;
+	if (getStrategyDirectory(strategy, d))
+	{
+		QStringList filter(filename + "*");
+		QStringList matchingFiles = d.entryList(filter, QDir::Files | QDir::Readable | QDir::Writable, QDir::Name);
+
+		ok = !matchingFiles.isEmpty();
+	}
+
+	return ok;
 }
 
 QString StrategyEnumerator::getDataDirectory() const

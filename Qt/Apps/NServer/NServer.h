@@ -17,6 +17,7 @@
 #include "AX12StatusListener.h"
 #include "ServerAX12RequestManager.h"
 #include "CommDispatcher.h"
+#include "PersistentFilesManager.h"
 
 class Pather;
 class NSRunner;
@@ -35,6 +36,7 @@ private:
 	QDir _dataDirectory;
 	QSettings _settings;
 	QSettings _parametersSettings;
+	PersistentFilesManager _fileManager;
 	QByteArray _autoStartMessage;
 
 	QTcpServer* _tcpServer;
@@ -66,6 +68,7 @@ private:
     void initServerSettings();
 
 	void sendGlobalAnnoucement(const QByteArray &message);
+	void notifyFileChanged(int category, const QString& filename, Comm::SeverFileEvent event, NetworkCommInterface* modifier);
 
 	void cleanRobotConnection();
 	void updateRobotConnection();
@@ -78,8 +81,8 @@ private:
 	bool updateServer(const QByteArray &data);
 	QStringList askFiles(int category);
 	QByteArray askFileData(int category, const QString& filename);
-	void setFileData(int category, const QString& filename, const QByteArray &data);
-	void resetFile(int category, const QString& filename);
+	void setFileData(int category, const QString& filename, const QByteArray &data, NetworkCommInterface* sender);
+	void resetFile(int category, const QString& filename, NetworkCommInterface* sender);
 
     void askAx12Positions(NetworkCommInterface* networkInterface, const QList<quint8>& ids, bool recursive);
 	void moveAx12(float maxSpeed, QList<Comm::Ax12Info>& ax12s);

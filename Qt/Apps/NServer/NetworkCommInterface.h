@@ -22,9 +22,9 @@ public:
 	void sendAnnouncement(const QByteArray& message);
 
 	void sendStrategies();
-	void sendFiles(quint8 strategyNum, const QStringList& filenames);
-	void sendFileData(quint8 strategyNum, const QString &filename, const QByteArray& fileData);
-	void sendFileEvent(quint8 strategyNum, const QString &filename, quint8 event);
+	void sendFiles(quint8 category, const QStringList& filenames);
+	void sendFileData(quint8 category, const QString &filename, const QByteArray& fileData);
+	void sendFileEvent(quint8 category, const QString &filename, quint8 event);
 
 	void sendStrategyStatus(quint8 strategyNum, bool isRunning);
 	void sendAutoStrategyInfo(bool enabled, quint8 strategyNum, const QByteArray &robotPort, const QByteArray &ax12Port, bool simulation, bool mirror, quint8 delayInSeconds);

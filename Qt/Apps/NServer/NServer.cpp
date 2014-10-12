@@ -35,6 +35,8 @@ NServer::NServer(Tools::AbstractLogger *logger, QObject *parent) :
 	_dispatcher.registerResponder(this);
 
     initServerSettings();
+
+	_fileManager.addSet(Comm::GlobalScripts, "GlobalScripts");
 }
 
 NServer::~NServer()
@@ -135,6 +137,16 @@ void NServer::sendGlobalAnnoucement(const QByteArray &message)
 	{
 		NetworkCommInterface* i = *it;
 		i->sendAnnouncement(message);
+	}
+}
+
+void NServer::notifyFileChanged(int category, const QString &filename, Comm::SeverFileEvent event, NetworkCommInterface *modifier)
+{
+	for(QMap<unsigned int, NetworkCommInterface*>::const_iterator it = _connections.constBegin(); it != _connections.constEnd(); ++it)
+	{
+		NetworkCommInterface* i = *it;
+		if (i != modifier)
+			i->sendFileEvent(category, filename, event);
 	}
 }
 
@@ -372,24 +384,51 @@ QStringList NServer::askFiles(int category)
 {
 	if (category >= Comm::FirstStrategy && category <= Comm::LastStrategy)
 		return _strategiesEnumerator.askStrategyFiles((StrategyEnumerator::Strategy)category);
+	else if (category == Comm::GlobalScripts)
+		return _fileManager.getFiles(category);
+
+	return QStringList();
 }
 
 QByteArray NServer::askFileData(int category, const QString &filename)
 {
 	if (category >= Comm::FirstStrategy && category <= Comm::LastStrategy)
 		return _strategiesEnumerator.askStrategyFileData((StrategyEnumerator::Strategy)category, filename);
+	else if (category == Comm::GlobalScripts)
+		return _fileManager.getFileData(category, filename);
+
+	return QByteArray();
 }
 
-void NServer::setFileData(int category, const QString &filename, const QByteArray &data)
+void NServer::setFileData(int category, const QString &filename, const QByteArray &data, NetworkCommInterface *sender)
 {
+	bool fileExist = false;
+	bool ok = false;
 	if (category >= Comm::FirstStrategy && category <= Comm::LastStrategy)
-		_strategiesEnumerator.setStrategyFileData((StrategyEnumerator::Strategy)category, filename, data);
+	{
+		fileExist = _strategiesEnumerator.hasStrategyFile((StrategyEnumerator::Strategy)category, filename);
+		ok = _strategiesEnumerator.setStrategyFileData((StrategyEnumerator::Strategy)category, filename, data);
+	}
+	else if (category == Comm::GlobalScripts)
+	{
+		fileExist = _fileManager.hasFile(category, filename);
+		ok = _fileManager.setFile(category, filename, data);
+	}
+
+	if (ok)
+		notifyFileChanged(category, filename, fileExist ? Comm::FileChanged : Comm::FileAdded, sender);
 }
 
-void NServer::resetFile(int category, const QString &filename)
+void NServer::resetFile(int category, const QString &filename, NetworkCommInterface *sender)
 {
+	bool ok = false;
 	if (category >= Comm::FirstStrategy && category <= Comm::LastStrategy)
-		_strategiesEnumerator.resetStrategyFile((StrategyEnumerator::Strategy)category, filename);
+		ok = _strategiesEnumerator.resetStrategyFile((StrategyEnumerator::Strategy)category, filename);
+	else if (category == Comm::GlobalScripts)
+		ok = _fileManager.removeFile(category, filename);
+
+	if (ok)
+		notifyFileChanged(category, filename, Comm::FileRemoved, sender);
 }
 
 void NServer::askAx12Positions(NetworkCommInterface *networkInterface, const QList<quint8> &ids, bool recursive)
