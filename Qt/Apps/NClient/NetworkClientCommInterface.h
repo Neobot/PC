@@ -21,10 +21,11 @@ public:
 	void sendPingToServer();
 
 	void askStrategies();
-	void askStrategyFiles(quint8 strategyNum);
-	void askStrategyFileData(quint8 strategyNum, const QString& filename);
-	void sendStrategyFileData(quint8 strategyNum, const QString& filename, const QByteArray& data);
-	void resetStrategyFileData(quint8 strategyNum, const QString& filename);
+
+	void askFiles(quint8 category);
+	void askFileData(quint8 category, const QString& filename);
+	void sendFileData(quint8 category, const QString& filename, const QByteArray& data);
+	void resetFileData(quint8 category, const QString& filename);
 
 	void startStrategy(quint8 strategyNum, bool mirror);
 	void stopStrategy();

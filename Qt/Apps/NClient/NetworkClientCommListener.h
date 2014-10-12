@@ -12,8 +12,10 @@ public:
 	virtual void networkNoticeOfReceipt(quint8 instruction, bool result) {Q_UNUSED(instruction); Q_UNUSED(result);}
 
 	virtual void setStrategies(const QStringList& strategies) {Q_UNUSED(strategies);}
-	virtual void setStrategyFiles(int strategyNum, const QStringList& filenames) {Q_UNUSED(strategyNum); Q_UNUSED(filenames);}
-	virtual void setStrategyFileData(int strategyNum, const QString& filename, const QByteArray& data) {Q_UNUSED(strategyNum); Q_UNUSED(filename); Q_UNUSED(data);}
+
+	virtual void configurationFiles(int category, const QStringList& filenames) {Q_UNUSED(category); Q_UNUSED(filenames);}
+	virtual void configurationFileData(int category, const QString& filename, const QByteArray& data) {Q_UNUSED(category); Q_UNUSED(filename); Q_UNUSED(data);}
+	virtual void configurationFileEvent(int category, const QString& filename, int event) {Q_UNUSED(category); Q_UNUSED(filename); Q_UNUSED(event);}
 
 	virtual void strategyStatusUpdated(int strategyNum, bool isRunning) {Q_UNUSED(strategyNum); Q_UNUSED(isRunning);}
 	virtual void autoStrategyInfo(bool enabled, int strategyNum, const QString &robotPort, const QString &ax12Port, bool simulation, bool mirror, int delayInSeconds) {Q_UNUSED(strategyNum); Q_UNUSED(enabled);

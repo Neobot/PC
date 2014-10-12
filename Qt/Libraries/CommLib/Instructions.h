@@ -106,13 +106,14 @@ namespace Comm
 	//Server -> Client
 	const quint8 ANNOUNCEMENT = 180;
 	const quint8 SEND_STRATEGIES = 181;
-	const quint8 SEND_STRATEGY_FILES = 182;
-	const quint8 SEND_STRATEGY_FILE_DATA = 183;
-	const quint8 SERIAL_PORTS = 184;
-	const quint8 AX12_POSITIONS = 185;
-	const quint8 STRATEGY_STATUS = 186;
-	const quint8 AUTO_STRATEGY_INFO = 187;
-	const quint8 AX12_MVT_FILE = 188;
+	const quint8 CONFIGURATION_FILES = 182;
+	const quint8 CONFIGURATION_FILE_DATA = 183;
+	const quint8 CONFIGURATION_FILE_EVENT = 184;
+	const quint8 SERIAL_PORTS = 185;
+	const quint8 AX12_POSITIONS = 186;
+	const quint8 STRATEGY_STATUS = 187;
+	const quint8 AUTO_STRATEGY_INFO = 188;
+	const quint8 AX12_MVT_FILE = 189;
 
 	//Client -> Server
 	const quint8 CONNECT = 200;
@@ -120,10 +121,10 @@ namespace Comm
 	const quint8 UPDATE_SERVER = 202;
 	const quint8 PING_SERVER = 203;
 	const quint8 ASK_STRATEGIES = 204;
-	const quint8 ASK_STRATEGY_FILES = 205;
-	const quint8 ASK_STRATEGY_FILE_DATA = 206;
-	const quint8 SET_STRATEGY_FILE_DATA = 207;
-	const quint8 RESET_STRATEGY_FILE = 208;
+	const quint8 ASK_FILES = 205;
+	const quint8 ASK_FILE_DATA = 206;
+	const quint8 SET_FILE_DATA = 207;
+	const quint8 RESET_FILE = 208;
 	const quint8 ASK_SERIAL_PORTS = 209;
 	const quint8 MOVE_AX12 = 210;
 	const quint8 ASK_AX12_POSITIONS = 211;
@@ -138,6 +139,20 @@ namespace Comm
 	const quint8 LOCK_AX12 = 220;
 	const quint8 RESET_PARAMETERS = 221;
 	const quint8 RUN_SCRIPT = 222;
+
+	enum ServerFilesCategory
+	{
+		FirstStrategy = 0,
+		LastStrategy = 128,
+		GlobalScripts = 129
+	};
+
+	enum SeverFileEvent
+	{
+		Changed = 1,
+		Added = 2,
+		Removed = 3
+	};
 
 	class Instruction
 	{

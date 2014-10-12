@@ -58,8 +58,8 @@ private:
 	AskStrategyFileContext _askFileContext;
 
 	void setStrategies(const QStringList &strategies);
-	void setStrategyFiles(int strategyNum, const QStringList &filenames);
-	void setStrategyFileData(int strategyNum, const QString &filename, const QByteArray &data);
+	void configurationFiles(int category, const QStringList &filenames);
+	void configurationFileData(int category, const QString &filename, const QByteArray &data);
 
 	bool editionInProgress() const;
 	QDialog* createEditionDialog(QWidget* mainWidget);

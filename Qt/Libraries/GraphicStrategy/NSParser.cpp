@@ -242,6 +242,13 @@ void NSParser::printTree(QTextStream& out, Symbol *s, int level)
 
 bool NSParser::parse(const QString &scriptCode, QList<AbstractAction *> &actions, const QString &originalFilename)
 {
+	VariableList variables;
+	FunctionList functions;
+	return parse(scriptCode, actions, originalFilename, variables, functions);
+}
+
+bool NSParser::parse(const QString& scriptCode, QList<AbstractAction*>& actions, const QString& originalFilename, VariableList& variables, FunctionList& functions)
+{
 	_fileStack.push(QFileInfo(originalFilename));
 
 	if (_tree)
@@ -251,8 +258,6 @@ bool NSParser::parse(const QString &scriptCode, QList<AbstractAction *> &actions
 
 	if (_tree)
 	{
-		VariableList variables;
-		FunctionList functions;
 		buildActions(_tree, actions, variables, functions);
 	}
 
@@ -1117,7 +1122,7 @@ bool NSParser::parseSubFile(Symbol *symbol, const QString &filepath, QList<Abstr
 	if (isRoot)
 		_rootSymbol = symbol;
 
-	bool result = parse(filepath, actions, filepath);
+	bool result = parse(filepath, actions, filepath, variables, functions);
 
 	if (isRoot)
 		_rootSymbol = nullptr;

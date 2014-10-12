@@ -135,6 +135,7 @@ protected:
 	void initParsing();
 
 	bool parse(const QString& scriptCode, QList<AbstractAction*>& actions, const QString& originalFilename);
+	bool parse(const QString& scriptCode, QList<AbstractAction*>& actions, const QString& originalFilename, VariableList& variables, FunctionList& functions);
 	bool parseSubFile(Symbol *symbol, const QString &filepath, QList<AbstractAction *> &actions, VariableList& variables, FunctionList& functions);
 
 	Symbol* getParsedTree(const QString& scriptCode);

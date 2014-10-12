@@ -76,10 +76,10 @@ private:
 	bool connectToRobot(NetworkCommInterface* networkInterface, bool simulation, const QString& robotPort, const QString& ax12Port, QByteArray &message);
 	bool disconnectToRobot(NetworkCommInterface* networkInterface);
 	bool updateServer(const QByteArray &data);
-	QStringList askStrategyFiles(int strategyNum);
-	QByteArray askStrategyFileData(int strategyNum, const QString& filename);
-	void setStrategyFileData(int strategyNum, const QString& filename, const QByteArray &data);
-	void resetStrategyFile(int strategyNum, const QString& filename);
+	QStringList askFiles(int category);
+	QByteArray askFileData(int category, const QString& filename);
+	void setFileData(int category, const QString& filename, const QByteArray &data);
+	void resetFile(int category, const QString& filename);
 
     void askAx12Positions(NetworkCommInterface* networkInterface, const QList<quint8>& ids, bool recursive);
 	void moveAx12(float maxSpeed, QList<Comm::Ax12Info>& ax12s);

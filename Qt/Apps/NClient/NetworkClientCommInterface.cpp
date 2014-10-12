@@ -58,39 +58,39 @@ void NetworkClientCommInterface::askStrategies()
 	getProtocol()->sendMessage(ASK_STRATEGIES, Data());
 }
 
-void NetworkClientCommInterface::askStrategyFiles(quint8 strategyNum)
+void NetworkClientCommInterface::askFiles(quint8 category)
 {
 	Data d;
-	d.add(strategyNum);
-	getProtocol()->sendMessage(ASK_STRATEGY_FILES, d);
+	d.add(category);
+	getProtocol()->sendMessage(ASK_FILES, d);
 }
 
-void NetworkClientCommInterface::askStrategyFileData(quint8 strategyNum, const QString &filename)
+void NetworkClientCommInterface::askFileData(quint8 category, const QString &filename)
 {
 	Data d;
-	d.add(strategyNum);
+	d.add(category);
 	d.append(filename.toLatin1());
-	getProtocol()->sendMessage(ASK_STRATEGY_FILE_DATA, d);
+	getProtocol()->sendMessage(ASK_FILE_DATA, d);
 }
 
-void NetworkClientCommInterface::sendStrategyFileData(quint8 strategyNum, const QString &filename, const QByteArray &data)
+void NetworkClientCommInterface::sendFileData(quint8 category, const QString &filename, const QByteArray &data)
 {
 	Data d;
-	d.add(strategyNum);
+	d.add(category);
 
 	QByteArray name = filename.toLatin1().mid(0, 255);
 	d.add(name);
 	d.append(data);
 
-	getProtocol()->sendMessage(SET_STRATEGY_FILE_DATA, d);
+	getProtocol()->sendMessage(SET_FILE_DATA, d);
 }
 
-void NetworkClientCommInterface::resetStrategyFileData(quint8 strategyNum, const QString &filename)
+void NetworkClientCommInterface::resetFileData(quint8 category, const QString &filename)
 {
 	Data d;
-	d.add(strategyNum);
+	d.add(category);
 	d.append(filename.toLatin1());
-	getProtocol()->sendMessage(RESET_STRATEGY_FILE, d);
+	getProtocol()->sendMessage(RESET_FILE, d);
 }
 
 void NetworkClientCommInterface::startStrategy(quint8 strategyNum, bool mirror)
@@ -275,21 +275,33 @@ void NetworkClientCommInterface::read(quint8 instruction, const Comm::Data &data
 			break;
 
 		}
-		case SEND_STRATEGY_FILE_DATA:
+		case CONFIGURATION_FILE_EVENT:
 		{
-			quint8 stratNum, filenameSize;
-			d.take(stratNum).take(filenameSize);
-
+			quint8 category, event;
 			QByteArray filename;
-			d.take(filename, filenameSize);
+			d.take(category);
+			d.take(filename);
+			d.take(event);
 
-			QByteArray fileData = d;
-
-			_listener->setStrategyFileData(stratNum, filename, fileData);
+			_listener->configurationFileEvent(category, filename, event);
 
 			break;
 		}
-		case SEND_STRATEGY_FILES:
+		case CONFIGURATION_FILE_DATA:
+		{
+			quint8 category;
+			d.take(category);
+
+			QByteArray filename;
+			d.take(filename);
+
+			QByteArray fileData = d;
+
+			_listener->configurationFileData(category, filename, fileData);
+
+			break;
+		}
+		case CONFIGURATION_FILES:
 		{
 			quint8 stratNum, nbFiles;
 			d.take(stratNum).take(nbFiles);
@@ -303,7 +315,7 @@ void NetworkClientCommInterface::read(quint8 instruction, const Comm::Data &data
 				files << filename;
 			}
 
-			_listener->setStrategyFiles(stratNum, files);
+			_listener->configurationFiles(stratNum, files);
 
 			break;
 		}

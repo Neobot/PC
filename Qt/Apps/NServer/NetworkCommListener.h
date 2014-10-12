@@ -18,10 +18,10 @@ public:
 	virtual bool disconnectToRobot(NetworkCommInterface* networkInterface) = 0;
 	virtual bool updateServer(const QByteArray& data) = 0;
 
-	virtual QStringList askStrategyFiles(int strategyNum) = 0;
-	virtual QByteArray askStrategyFileData(int strategyNum, const QString& filename) = 0;
-	virtual void setStrategyFileData(int strategyNum, const QString& filename, const QByteArray& data) = 0;
-	virtual void resetStrategyFile(int strategyNum, const QString& filename) = 0;
+	virtual QStringList askFiles(int category) = 0;
+	virtual QByteArray askFileData(int category, const QString& filename) = 0;
+	virtual void setFileData(int category, const QString& filename, const QByteArray& data) = 0;
+	virtual void resetFile(int category, const QString& filename) = 0;
 
 	virtual bool startStrategy(int strategyNum, bool mirror) = 0;
 	virtual bool stopStrategy(int& currentStrategyNum) = 0;

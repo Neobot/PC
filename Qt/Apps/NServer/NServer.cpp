@@ -368,24 +368,28 @@ bool NServer::updateServer(const QByteArray &data)
 	return true;
 }
 
-QStringList NServer::askStrategyFiles(int strategyNum)
+QStringList NServer::askFiles(int category)
 {
-	return _strategiesEnumerator.askStrategyFiles((StrategyEnumerator::Strategy)strategyNum);
+	if (category >= Comm::FirstStrategy && category <= Comm::LastStrategy)
+		return _strategiesEnumerator.askStrategyFiles((StrategyEnumerator::Strategy)category);
 }
 
-QByteArray NServer::askStrategyFileData(int strategyNum, const QString &filename)
+QByteArray NServer::askFileData(int category, const QString &filename)
 {
-	return _strategiesEnumerator.askStrategyFileData((StrategyEnumerator::Strategy)strategyNum, filename);
+	if (category >= Comm::FirstStrategy && category <= Comm::LastStrategy)
+		return _strategiesEnumerator.askStrategyFileData((StrategyEnumerator::Strategy)category, filename);
 }
 
-void NServer::setStrategyFileData(int strategyNum, const QString &filename, const QByteArray &data)
+void NServer::setFileData(int category, const QString &filename, const QByteArray &data)
 {
-	_strategiesEnumerator.setStrategyFileData((StrategyEnumerator::Strategy)strategyNum, filename, data);
+	if (category >= Comm::FirstStrategy && category <= Comm::LastStrategy)
+		_strategiesEnumerator.setStrategyFileData((StrategyEnumerator::Strategy)category, filename, data);
 }
 
-void NServer::resetStrategyFile(int strategyNum, const QString &filename)
+void NServer::resetFile(int category, const QString &filename)
 {
-	_strategiesEnumerator.resetStrategyFile((StrategyEnumerator::Strategy)strategyNum, filename);
+	if (category >= Comm::FirstStrategy && category <= Comm::LastStrategy)
+		_strategiesEnumerator.resetStrategyFile((StrategyEnumerator::Strategy)category, filename);
 }
 
 void NServer::askAx12Positions(NetworkCommInterface *networkInterface, const QList<quint8> &ids, bool recursive)

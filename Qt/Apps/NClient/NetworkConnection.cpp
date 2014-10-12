@@ -116,16 +116,16 @@ void NetworkConnection::setStrategies(const QStringList &strategies)
 		responder->setStrategies(strategies);
 }
 
-void NetworkConnection::setStrategyFiles(int strategyNum, const QStringList &filenames)
+void NetworkConnection::configurationFiles(int category, const QStringList &filenames)
 {
 	foreach(NetworkClientCommListener* responder, _networkResponders)
-		responder->setStrategyFiles(strategyNum, filenames);
+		responder->configurationFiles(category, filenames);
 }
 
-void NetworkConnection::setStrategyFileData(int strategyNum, const QString &filename, const QByteArray &data)
+void NetworkConnection::configurationFileData(int category, const QString &filename, const QByteArray &data)
 {
 	foreach(NetworkClientCommListener* responder, _networkResponders)
-		responder->setStrategyFileData(strategyNum, filename, data);
+		responder->configurationFileData(category, filename, data);
 }
 
 void NetworkConnection::setSerialPorts(const QStringList &ports)

@@ -60,8 +60,8 @@ private:
 	void serverAnnouncement(const QByteArray& message);
 	void networkNoticeOfReceipt(quint8 instruction, bool result);
 	void setStrategies(const QStringList& strategies);
-	void setStrategyFiles(int strategyNum, const QStringList& filenames);
-	void setStrategyFileData(int strategyNum, const QString& filename, const QByteArray& data);
+	void configurationFiles(int category, const QStringList& filenames);
+	void configurationFileData(int category, const QString& filename, const QByteArray& data);
 	void setSerialPorts(const QStringList& ports);
 	void setAx12Positions(const QList<int> ids, const QList<float>& positions, const QList<float>& loads);
 	void setAx12MovementsFile(const QByteArray& data);

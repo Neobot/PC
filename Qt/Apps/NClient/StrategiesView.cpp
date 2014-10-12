@@ -95,10 +95,10 @@ void StrategiesView::setStrategies(const QStringList &strategies)
 	ui->cbStrategies->addItems(strategies);
 }
 
-void StrategiesView::setStrategyFiles(int strategyNum, const QStringList &filenames)
+void StrategiesView::configurationFiles(int category, const QStringList &filenames)
 {
 	ui->tableWidget->clear();
-	if (strategyNum == ui->cbStrategies->currentIndex())
+	if (category == ui->cbStrategies->currentIndex())
 	{
 		ui->tableWidget->setColumnCount(5);
 		ui->tableWidget->setRowCount(filenames.count());
@@ -156,7 +156,7 @@ void StrategiesView::setStrategyFiles(int strategyNum, const QStringList &filena
 	}
 }
 
-void StrategiesView::setStrategyFileData(int strategyNum, const QString &filename, const QByteArray &data)
+void StrategiesView::configurationFileData(int category, const QString &filename, const QByteArray &data)
 {
 	if (_askFileContext == Edition)
 	{
@@ -205,7 +205,7 @@ void StrategiesView::setStrategyFileData(int strategyNum, const QString &filenam
 			{
 				_currentEditionData.filename = filename;
 				_currentEditionData.localFile = tmpFilePath;
-				_currentEditionData.num = strategyNum;
+				_currentEditionData.num = category;
 			}
 			else
 			{
@@ -286,7 +286,7 @@ void StrategiesView::askStrategyFiles(int num)
 {
 	ui->tableWidget->clear();
 	if (num >= 0)
-		_connection->getComm()->askStrategyFiles(num);
+		_connection->getComm()->askFiles(num);
 }
 
 void StrategiesView::rowDoubleClicked(int row)
@@ -301,7 +301,7 @@ void StrategiesView::editionFinished()
 	if (f.open(QIODevice::ReadOnly))
 	{
 		QByteArray data = f.readAll();
-		_connection->getComm()->sendStrategyFileData(_currentEditionData.num, _currentEditionData.filename, data);
+		_connection->getComm()->sendFileData(_currentEditionData.num, _currentEditionData.filename, data);
 		f.close();
 		f.remove();
 	}
@@ -324,7 +324,7 @@ void StrategiesView::exportFile(const QString &file)
 {
 	_askFileContext = Export;
 	int num = ui->cbStrategies->currentIndex();
-	_connection->getComm()->askStrategyFileData(num, file);
+	_connection->getComm()->askFileData(num, file);
 }
 
 void StrategiesView::importFile(const QString &file)
@@ -338,7 +338,7 @@ void StrategiesView::importFile(const QString &file)
 		if (f.open(QIODevice::ReadOnly))
 		{
 			QByteArray data = f.readAll();
-			_connection->getComm()->sendStrategyFileData(num, file, data);
+			_connection->getComm()->sendFileData(num, file, data);
 			f.close();
 		}
 	}
@@ -350,7 +350,7 @@ void StrategiesView::resetFile(const QString &file)
 						  QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
 	{
 		int num = ui->cbStrategies->currentIndex();
-		_connection->getComm()->resetStrategyFileData(num, file);
+		_connection->getComm()->resetFileData(num, file);
 	}
 }
 
@@ -360,6 +360,6 @@ void StrategiesView::editFile(const QString &file)
 	{
 		_askFileContext = Edition;
 		int num = ui->cbStrategies->currentIndex();
-		_connection->getComm()->askStrategyFileData(num, file);
+		_connection->getComm()->askFileData(num, file);
 	}
 }
