@@ -5,12 +5,16 @@
 #include <QSignalMapper>
 #include <QPlainTextEdit>
 
+#include "NetworkClientCommListener.h"
+
 namespace Ui {
 	class FileEditionWidget;
 }
 
 class GridEditor;
 namespace Tools {class NSettingsPropertyBrowser;}
+class NSEditor;
+class NetworkConnection;
 
 class ButtonWidget : public QWidget
 {
@@ -26,7 +30,7 @@ signals:
 	void editFile();
 };
 
-class FileEditionWidget : public QWidget
+class FileEditionWidget : public QWidget, public NetworkClientCommListener
 {
 	Q_OBJECT
 
@@ -34,16 +38,27 @@ public:
 	explicit FileEditionWidget(QWidget *parent = 0);
 	~FileEditionWidget();
 
+    void setNetworkConnection(NetworkConnection* connection);
+    void setFileCategory(int category);
+	void addAllowedExtension(const QString& extension);
+
 	void clear();
 	void setFiles(const QStringList& filenames);
 	QString getFileAtRow(int row) const;
 
 	void editData(const QString& filename, const QByteArray& data);
 
-	bool editionInProgress() const;
+    bool editionInProgress() const;
+
+public slots:
+	void refresh();
 
 private:
 	Ui::FileEditionWidget *ui;
+
+    NetworkConnection* _connection;
+    int _category;
+	QStringList _allowedExtensions;
 
 	QSignalMapper* _editMapper;
 	QSignalMapper* _exportMapper;
@@ -60,26 +75,31 @@ private:
 	{
 		QString localFile;
 		QString filename;
+        QWidget* editor = nullptr;
 	};
 	EditionData _currentEditionData;
 
+    enum AskStrategyFileContext
+    {
+		None,
+        Edition,
+        Export
+    };
+    AskStrategyFileContext _askFileContext;
+
 	GridEditor* _gridEditor;
-	Tools::NSettingsPropertyBrowser* _propertiesBrowser;
-	QDialog* _propertyDialog;
-	QPlainTextEdit* _plainTextEditor;
-	QDialog* _textDialog;
+    Tools::NSettingsPropertyBrowser* _propertiesBrowser;
+    QDialog* _propertyDialog;
+    QPlainTextEdit* _plainTextEditor;
+    QDialog* _textDialog;
+    NSEditor* _nsEditor;
+    QDialog* _nsDialog;
 
 	QDialog* createEditionDialog(QWidget* mainWidget);
+	QString buildFileFilter();
 
-signals:
-	void editFile(const QString& file);
-	void exportFile(const QString& file);
-	void importFile(const QString& file);
-	void resetFile(const QString& file);
-	void addFile(const QString& file);
-	void newFile(const QString& name);
-
-	void editionDone(const QString& filename, const QByteArray& data);
+    void configurationFiles(int category, const QStringList &filenames);
+    void configurationFileData(int category, const QString &filename, const QByteArray &data);
 
 private slots:
 	void importFromDisk();
@@ -87,9 +107,13 @@ private slots:
 
 	void editionFinished();
 	void editionCanceled();
-	void parametersEditionFinished();
 
 	void rowDoubleClicked(int row);
+
+    void editFile(const QString& file);
+    void exportFile(const QString& file);
+    void importFile(const QString& file);
+    void resetFile(const QString& file);
 };
 
 #endif // FILEEDITIONWIDGET_H

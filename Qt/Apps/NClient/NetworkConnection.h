@@ -8,7 +8,7 @@
 #include "CommDispatcher.h"
 
 class NetworkClientCommInterface;
-
+class FileEnvReplicator;
 
 class NetworkConnection : public QObject, public Comm::CommDispatcher, public NetworkClientCommListener
 {
@@ -46,6 +46,8 @@ public:
 
 	NetworkClientCommInterface* getComm() const;
 
+    FileEnvReplicator* getNsEnvReplicator() const;
+
 private:
 	NetworkClientCommInterface* _comm;
 	QTcpSocket*	_socket;
@@ -53,6 +55,8 @@ private:
 	ConnectionStatus _status;
 
 	QList<NetworkClientCommListener*> _networkResponders;
+
+    FileEnvReplicator* _nsReplicator;
 
 	void changeStatus(ConnectionStatus status);
 

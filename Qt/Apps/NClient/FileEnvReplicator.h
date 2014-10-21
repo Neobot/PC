@@ -16,6 +16,8 @@ public:
 	bool isValid() const;
 
 	void refresh();
+	void refresh(const QString& filename);
+	void refreshWithData(const QString& filename, const QByteArray& data);
 
 	const QDir& getReplicatedDir() const;
 	QStringList getFileNames() const;

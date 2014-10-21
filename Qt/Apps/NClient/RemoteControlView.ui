@@ -250,8 +250,8 @@
               <rect>
                <x>0</x>
                <y>0</y>
-               <width>385</width>
-               <height>243</height>
+               <width>400</width>
+               <height>247</height>
               </rect>
              </property>
              <layout class="QVBoxLayout" name="pointsLayout">

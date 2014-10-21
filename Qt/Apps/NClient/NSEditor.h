@@ -16,6 +16,7 @@ public:
 
 	Tools::NCodeEdit* codeEdit() const;
 	QString getScript() const;
+    void setScript(const QString& script);
 
 private:
 	Tools::NCodeEdit* _codeEdit;

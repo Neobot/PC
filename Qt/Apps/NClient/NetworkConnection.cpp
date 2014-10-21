@@ -2,11 +2,13 @@
 #include "NetworkProtocol.h"
 #include "NetworkClientCommInterface.h"
 #include "Instructions.h"
+#include "FileEnvReplicator.h"
 
 #include <QHostAddress>
 
 NetworkConnection::NetworkConnection()
 {
+    _nsReplicator = nullptr;
 	_status = Disconnected;
 	_socket = new QTcpSocket;
 	connect(_socket, SIGNAL(connected()), this, SLOT(socketConnected()));
@@ -22,6 +24,9 @@ NetworkConnection::~NetworkConnection()
 	delete _comm->getProtocol();
 	delete _comm;
 	delete _socket;
+
+    delete _nsReplicator;
+    _nsReplicator = nullptr;
 }
 
 void NetworkConnection::connectToServer(const QString &adress, int port)
@@ -77,13 +82,32 @@ NetworkConnection::ConnectionStatus NetworkConnection::getConnectionStatus() con
 
 NetworkClientCommInterface *NetworkConnection::getComm() const
 {
-	return _comm;
+    return _comm;
+}
+
+FileEnvReplicator *NetworkConnection::getNsEnvReplicator() const
+{
+    return _nsReplicator;
 }
 
 void NetworkConnection::changeStatus(NetworkConnection::ConnectionStatus status)
 {
-	_status = status;
-	emit statusChanged(_status);
+    if (_status != status)
+    {
+        _status = status;
+        if (_status == Connected)
+        {
+            _nsReplicator = new FileEnvReplicator(this, Comm::GlobalScripts, "ns");
+            _nsReplicator->refresh();
+        }
+        else if (_status == Disconnected)
+        {
+            delete _nsReplicator;
+            _nsReplicator = nullptr;
+        }
+
+        emit statusChanged(_status);
+     }
 }
 
 void NetworkConnection::serverAnnouncement(const QByteArray &message)

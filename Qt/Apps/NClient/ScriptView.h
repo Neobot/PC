@@ -2,13 +2,14 @@
 #define SCRIPTVIEW_H
 
 #include "AbstractView.h"
-#include "FileEnvReplicator.h"
+#include "NetworkClientCommListener.h"
+
 
 namespace Ui {
 	class ScriptView;
 }
 
-class ScriptView : public AbstractView
+class ScriptView : public AbstractView, public NetworkClientCommListener
 {
 	Q_OBJECT
 
@@ -21,8 +22,6 @@ public slots:
 
 private:
 	Ui::ScriptView *ui;
-	FileEnvReplicator _replicator;
-
 };
 
 #endif // SCRIPTVIEW_H

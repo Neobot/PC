@@ -32,7 +32,12 @@ Tools::NCodeEdit *NSEditor::codeEdit() const
 
 QString NSEditor::getScript() const
 {
-	return _codeEdit->toPlainText();
+    return _codeEdit->toPlainText();
+}
+
+void NSEditor::setScript(const QString &script)
+{
+    _codeEdit->setPlainText(script);
 }
 
 void NSEditor::setupUi()

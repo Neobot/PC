@@ -18,11 +18,24 @@ FileEnvReplicator::FileEnvReplicator(NetworkConnection *connection, int category
 
 FileEnvReplicator::~FileEnvReplicator()
 {
+    _connection->unregisterNetworkResponder(this);
 }
 
 void FileEnvReplicator::refresh()
 {
 	_connection->getComm()->askFiles(_category);
+}
+
+void FileEnvReplicator::refresh(const QString &filename)
+{
+	if (_filenames.contains(filename))
+		_connection->getComm()->askFileData(_category, filename);
+}
+
+void FileEnvReplicator::refreshWithData(const QString &filename, const QByteArray &data)
+{
+	if (_filenames.contains(filename))
+		saveFile(filename, data);
 }
 
 const QDir &FileEnvReplicator::getReplicatedDir() const
@@ -44,6 +57,7 @@ void FileEnvReplicator::configurationFiles(int category, const QStringList& file
 {
 	if (_category == category)
 	{
+		_filenames.clear();
 		for(const QString& fileName : fileList)
 		{
 			QFileInfo info(fileName);

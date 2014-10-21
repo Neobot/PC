@@ -3,6 +3,10 @@
 
 #include "GridEditor.h"
 #include "NSettingsPropertyBrowser.h"
+#include "NSEditor.h"
+#include "NetworkConnection.h"
+#include "NetworkClientCommInterface.h"
+#include "FileEnvReplicator.h"
 
 #include <QHeaderView>
 #include <QFileDialog>
@@ -13,29 +17,53 @@
 
 FileEditionWidget::FileEditionWidget(QWidget *parent) :
 	QWidget(parent),
-	ui(new Ui::FileEditionWidget), _gridEditor(nullptr), _propertiesBrowser(nullptr), _propertyDialog(nullptr), _plainTextEditor(nullptr), _textDialog(nullptr)
+	ui(new Ui::FileEditionWidget),  _askFileContext(None), _gridEditor(nullptr), _propertiesBrowser(nullptr),
+    _propertyDialog(nullptr), _plainTextEditor(nullptr), _textDialog(nullptr),
+	_nsEditor(nullptr), _nsDialog(nullptr)
 {
 	ui->setupUi(this);
 
 	_editMapper = new QSignalMapper(this);
-	connect(_editMapper, SIGNAL(mapped(QString)), this, SIGNAL(editFile(QString)));
+    connect(_editMapper, SIGNAL(mapped(QString)), this, SLOT(editFile(QString)));
 	connect(ui->tableWidget, SIGNAL(cellDoubleClicked(int,int)), this, SLOT(rowDoubleClicked(int)));
 
 	_exportMapper = new QSignalMapper(this);
-	connect(_exportMapper, SIGNAL(mapped(QString)), this, SIGNAL(exportFile(QString)));
+    connect(_exportMapper, SIGNAL(mapped(QString)), this, SLOT(exportFile(QString)));
 
 	_importMapper = new QSignalMapper(this);
-	connect(_importMapper, SIGNAL(mapped(QString)), this, SIGNAL(importFile(QString)));
+    connect(_importMapper, SIGNAL(mapped(QString)), this, SLOT(importFile(QString)));
 
 	_resetMapper = new QSignalMapper(this);
-	connect(_resetMapper, SIGNAL(mapped(QString)), this, SIGNAL(resetFile(QString)));
+    connect(_resetMapper, SIGNAL(mapped(QString)), this, SLOT(resetFile(QString)));
 
-	connect(ui->btnImportFile, SIGNAL(clicked()), this, SIGNAL(importFromDisk()));
+    connect(ui->btnImportFile, SIGNAL(clicked()), this, SLOT(importFromDisk()));
+    connect(ui->btnNewFile, SIGNAL(clicked()), this, SLOT(newFile()));
 }
 
 FileEditionWidget::~FileEditionWidget()
 {
-	delete ui;
+    delete ui;
+}
+
+void FileEditionWidget::setNetworkConnection(NetworkConnection *connection)
+{
+    _connection = connection;
+    _connection->registerNetworkResponder(this);
+}
+
+void FileEditionWidget::setFileCategory(int category)
+{
+	_category = category;
+}
+
+void FileEditionWidget::addAllowedExtension(const QString &extension)
+{
+	_allowedExtensions << extension;
+}
+
+void FileEditionWidget::refresh()
+{
+	_connection->getComm()->askFiles(_category);
 }
 
 void FileEditionWidget::clear()
@@ -96,7 +124,7 @@ void FileEditionWidget::editData(const QString &filename, const QByteArray &data
 		{
 			if (!_gridEditor)
 			{
-				_gridEditor = new GridEditor(this, true, true);
+                _gridEditor = new GridEditor(this, true, true);
 				_gridEditor->setLastTable();
 				_gridEditor->setWindowModality(Qt::WindowModal);
 				connect(_gridEditor, SIGNAL(accepted()), this, SLOT(editionFinished()));
@@ -108,6 +136,7 @@ void FileEditionWidget::editData(const QString &filename, const QByteArray &data
 				_gridEditor->open(tmpFilePath);
 				_gridEditor->show();
 				editionOK = true;
+                _currentEditionData.editor = _gridEditor;
 			}
 		}
 		else if (info.suffix() == "nsettings")
@@ -117,7 +146,7 @@ void FileEditionWidget::editData(const QString &filename, const QByteArray &data
 				_propertiesBrowser = new Tools::NSettingsPropertyBrowser(this);
 				_propertyDialog = createEditionDialog(_propertiesBrowser);
 				_propertyDialog->setWindowModality(Qt::WindowModal);
-				connect(_propertyDialog, SIGNAL(accepted()), this, SLOT(parametersEditionFinished()));
+                connect(_propertyDialog, SIGNAL(accepted()), this, SLOT(editionFinished()));
 				connect(_propertyDialog, SIGNAL(rejected()), this, SLOT(editionCanceled()));
 			}
 
@@ -128,8 +157,28 @@ void FileEditionWidget::editData(const QString &filename, const QByteArray &data
 				_propertiesBrowser->setSettings(settings);
 				_propertyDialog->show();
 				editionOK = true;
+                _currentEditionData.editor = _propertiesBrowser;
 			}
 		}
+        else if (info.suffix() == "ns")
+        {
+            if (!_nsDialog)
+            {
+                _nsEditor = new NSEditor(this);
+                _nsDialog = createEditionDialog(_nsEditor);
+                _nsDialog->setWindowModality(Qt::WindowModal);
+                connect(_nsDialog, SIGNAL(accepted()), this, SLOT(editionFinished()));
+                connect(_nsDialog, SIGNAL(rejected()), this, SLOT(editionCanceled()));
+            }
+
+            if (!_nsDialog->isVisible())
+            {
+                _nsEditor->setScript(data);
+                _nsDialog->show();
+                editionOK = true;
+                _currentEditionData.editor = _nsEditor;
+            }
+        }
 		else
 		{
 			if (!_textDialog)
@@ -146,6 +195,7 @@ void FileEditionWidget::editData(const QString &filename, const QByteArray &data
 				_plainTextEditor->setPlainText(data);
 				_textDialog->show();
 				editionOK = true;
+                _currentEditionData.editor = _plainTextEditor;
 			}
 		}
 
@@ -158,6 +208,7 @@ void FileEditionWidget::editData(const QString &filename, const QByteArray &data
 		{
 			_currentEditionData.filename.clear();
 			_currentEditionData.localFile.clear();
+            _currentEditionData.editor = nullptr;
 			QMessageBox::critical(this, "Edition failed", QString("Cannot edit ").append(filename));
 		}
 	}
@@ -165,32 +216,85 @@ void FileEditionWidget::editData(const QString &filename, const QByteArray &data
 
 void FileEditionWidget::importFromDisk()
 {
-	QString file = QFileDialog::getOpenFileName(this, "Select a file to import");
+	QString file = QFileDialog::getOpenFileName(this, "Select a file to import", QString(), buildFileFilter());
 	if (!file.isEmpty())
-		emit addFile(file);
+    {
+        QFile f(file);
+        if (f.open(QIODevice::ReadOnly))
+        {
+            QByteArray data = f.readAll();
+            _connection->getComm()->sendFileData(_category, QFileInfo(file).fileName(), data);
+			QTimer::singleShot(500, this, SLOT(refresh()));
+            f.close();
+        }
+    }
 }
 
 void FileEditionWidget::newFile()
 {
 	QString name = QInputDialog::getText(this, "New file", "Type the name and extension of the file.", QLineEdit::Normal, "New File");
 	if (!name.isEmpty())
-		emit newFile(name);
+	{
+		QFileInfo info(name);
+		if (!_allowedExtensions.isEmpty() && (info.suffix().isEmpty() || (!_allowedExtensions.contains(info.suffix()) && !_allowedExtensions.contains(QString()))))
+		{
+				QString defaultExt = _allowedExtensions.value(0);
+				if (!defaultExt.isEmpty())
+				{
+					name += ".";
+					name += defaultExt;
+				}
+		}
+
+		_connection->getComm()->sendFileData(_category, name, QByteArray());
+		QTimer::singleShot(500, this, SLOT(refresh()));
+	}
 }
 
 void FileEditionWidget::editionFinished()
 {
-	QFile f(_currentEditionData.localFile);
-	if (f.open(QIODevice::ReadOnly))
-	{
-		QByteArray data = f.readAll();
-		emit editionDone(_currentEditionData.filename, data);
-		f.close();
-		f.remove();
-	}
+    bool readFromTmpFile = false;
+	_askFileContext = None;
+
+    QByteArray data;
+    if (_currentEditionData.editor == _nsEditor)
+    {
+        data = _nsEditor->getScript().toLatin1();
+    }
+    else if (_currentEditionData.editor == _propertiesBrowser)
+    {
+        Tools::NSettings settings = _propertiesBrowser->getSettings();
+        settings.writeTo(_currentEditionData.localFile);
+        readFromTmpFile = true;
+    }
+    else if (_currentEditionData.editor == _plainTextEditor)
+    {
+         data = _plainTextEditor->toPlainText().toLatin1();
+    }
+    else
+    {
+        readFromTmpFile = true;
+    }
+
+    if (readFromTmpFile)
+    {
+        QFile f(_currentEditionData.localFile);
+        if (f.open(QIODevice::ReadOnly))
+        {
+           data = f.readAll();
+           f.close();
+        }
+    }
+
+    QFile::remove(_currentEditionData.localFile);
+	if (_category == Comm::GlobalScripts)
+		_connection->getNsEnvReplicator()->refreshWithData(_currentEditionData.filename, data);
+	_connection->getComm()->sendFileData(_category, _currentEditionData.filename, data);
 }
 
 void FileEditionWidget::editionCanceled()
 {
+	_askFileContext = None;
 	QFile::remove(_currentEditionData.localFile);
 }
 
@@ -268,23 +372,105 @@ QDialog *FileEditionWidget::createEditionDialog(QWidget *mainWidget)
 	return d;
 }
 
-void FileEditionWidget::parametersEditionFinished()
+QString FileEditionWidget::buildFileFilter()
 {
-	Tools::NSettings settings = _propertiesBrowser->getSettings();
-	settings.writeTo(_currentEditionData.localFile);
+	QString filter;
+	foreach(const QString& ext, _allowedExtensions)
+	{
+		filter += " *.";
 
-	editionFinished();
+		if (ext.isEmpty())
+			filter += "*";
+		else
+			filter += ext;
+	}
+
+	return filter;
+}
+
+void FileEditionWidget::configurationFiles(int category, const QStringList &filenames)
+{
+    if (_category == category)
+    {
+        clear();
+        setFiles(filenames);
+    }
+}
+
+void FileEditionWidget::configurationFileData(int category, const QString &filename, const QByteArray &data)
+{
+    if (_category == category)
+    {
+        if (_askFileContext == Edition)
+        {
+           editData(filename, data);
+        }
+        else if (_askFileContext == Export)
+        {
+            QString filter = QString(".*").append(QFileInfo(filename).suffix());
+            QString localFile = QFileDialog::getSaveFileName(this, "Select a location", filename, filter);
+            if (!localFile.isEmpty())
+            {
+                QFile file(localFile);
+                if (file.open(QIODevice::WriteOnly))
+                    file.write(data);
+                else
+                    QMessageBox::critical(this, "Error", QString("Export in ").append(filename).append(" failed!"));
+            }
+        }
+    }
 }
 
 bool FileEditionWidget::editionInProgress() const
 {
 	return (_gridEditor && _gridEditor->isVisible())
 			|| (_propertyDialog && _propertyDialog->isVisible())
-			|| (_textDialog && _textDialog->isVisible());
+            || (_textDialog && _textDialog->isVisible());
 }
 
 void FileEditionWidget::rowDoubleClicked(int row)
 {
 	QString file = getFileAtRow(row);
-	emit editFile(file);
+    editFile(file);
+}
+
+void FileEditionWidget::exportFile(const QString &file)
+{
+    _askFileContext = Export;
+    _connection->getComm()->askFileData(_category, file);
+}
+
+void FileEditionWidget::importFile(const QString &file)
+{
+    QString filter = QString("*.").append(QFileInfo(file).suffix());
+    QString localFile = QFileDialog::getOpenFileName(this, "Select a file", QString(), filter);
+    if (!localFile.isEmpty())
+    {
+        QFile f(localFile);
+        if (f.open(QIODevice::ReadOnly))
+        {
+            QByteArray data = f.readAll();
+            _connection->getComm()->sendFileData(_category, file, data);
+            f.close();
+        }
+    }
+}
+
+void FileEditionWidget::resetFile(const QString &file)
+{
+    if (QMessageBox::question(this, "Reset/Remove a file", QString("Are you sure, you want to remove the file ").append(file).append("?"),
+                          QMessageBox::Yes | QMessageBox::No, QMessageBox::Yes) == QMessageBox::Yes)
+    {
+        _connection->getComm()->resetFileData(_category, file);
+		refresh();
+    }
+}
+
+void FileEditionWidget::editFile(const QString &file)
+{
+	if (!editionInProgress())
+    {
+        _askFileContext = Edition;
+        _connection->getComm()->askFileData(_category, file);
+    }
 }

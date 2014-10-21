@@ -326,8 +326,7 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 
 			QString fileName = d;
 			QByteArray data = _listener->askFileData(cat, fileName);
-			if (!data.isEmpty())
-				sendFileData(cat, fileName, data);
+			sendFileData(cat, fileName, data);
 
 			break;
 		}
