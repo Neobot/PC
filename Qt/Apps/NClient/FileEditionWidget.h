@@ -4,6 +4,7 @@
 #include <QWidget>
 #include <QSignalMapper>
 #include <QPlainTextEdit>
+#include <QSettings>
 
 #include "NetworkClientCommListener.h"
 
@@ -52,6 +53,9 @@ public:
 
     bool editionInProgress() const;
 
+	void loadSettings(QSettings* settings);
+	void saveSettings(QSettings* settings);
+
 public slots:
 	void refresh();
 
@@ -90,12 +94,21 @@ private:
     AskStrategyFileContext _askFileContext;
 
 	GridEditor* _gridEditor;
+	QByteArray _gridEditorGeometry;
+	QByteArray _gridEditorState;
+	double _gridEditorZoom = 1.0;
+
     Tools::NSettingsPropertyBrowser* _propertiesBrowser;
     QDialog* _propertyDialog;
+	QByteArray _propertyDialogGeometry;
+
     QPlainTextEdit* _plainTextEditor;
     QDialog* _textDialog;
+	QByteArray _textDialogGeometry;
+
     NSEditor* _nsEditor;
     QDialog* _nsDialog;
+	QByteArray _nsDialogGeometry;
 
 	QDialog* createEditionDialog(QWidget* mainWidget);
 	QString buildFileFilter();

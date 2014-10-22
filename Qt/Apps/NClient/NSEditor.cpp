@@ -5,6 +5,7 @@
 #include <QToolBar>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QAction>
 
 #include "NSParser.h"
 #include "NSHelpDialog.h"
@@ -37,12 +38,18 @@ QString NSEditor::getScript() const
 
 void NSEditor::setScript(const QString &script)
 {
-    _codeEdit->setPlainText(script);
+	_codeEdit->setPlainText(script);
 }
 
 void NSEditor::addSearchDirectory(const QDir &dir)
 {
-    _searchDirectories << dir;
+	_searchDirectories << dir;
+}
+
+void NSEditor::setFileManagementEnabled(bool value)
+{
+	for(QAction* action : _fileManegementActions)
+		action->setEnabled(value);
 }
 
 void NSEditor::setupUi()
@@ -52,11 +59,11 @@ void NSEditor::setupUi()
 	layout->setSpacing(0);
 
 	QToolBar* toolBar = new QToolBar("NSEditor", this);
-	toolBar->addAction("New", this, SLOT(newFile()));
+	_fileManegementActions << toolBar->addAction("New", this, SLOT(newFile()));
 	toolBar->addSeparator();
-	toolBar->addAction("Open", this, SLOT(open()));
-	toolBar->addAction("Save", this, SLOT(save()));
-	toolBar->addAction("Save As", this, SLOT(saveAs()));
+	_fileManegementActions << toolBar->addAction("Open", this, SLOT(open()));
+	_fileManegementActions << toolBar->addAction("Save", this, SLOT(save()));
+	_fileManegementActions << toolBar->addAction("Save As", this, SLOT(saveAs()));
 	toolBar->addSeparator();
 	toolBar->addAction("Reference", this, SLOT(openReference()));
 

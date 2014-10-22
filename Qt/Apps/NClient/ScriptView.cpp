@@ -36,3 +36,21 @@ void ScriptView::connectionStatusChanged(NetworkConnection::ConnectionStatus sta
             break;
     }
 }
+
+void ScriptView::loadSettings(QSettings *settings)
+{
+	settings->beginGroup("GlobalScripts");
+	settings->beginGroup("FileEditor");
+	ui->filesView->loadSettings(settings);
+	settings->endGroup();
+	settings->endGroup();
+}
+
+void ScriptView::saveSettings(QSettings *settings)
+{
+	settings->beginGroup("GlobalScripts");
+	settings->beginGroup("FileEditor");
+	ui->filesView->saveSettings(settings);
+	settings->endGroup();
+	settings->endGroup();
+}

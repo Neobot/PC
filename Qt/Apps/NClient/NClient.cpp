@@ -80,16 +80,15 @@ void NClient::initTooBar()
 	action->setChecked(false);
 	action->setShortcut(QKeySequence(Qt::Key_F6));
 
-	action = ui->mainToolBar->addAction(QIcon(":/toolbar/upload"), "Parameters", this, SLOT(changeView()));
-	addView(action, new ParametersView(_connection, this));
+	action = ui->mainToolBar->addAction(QIcon(":/toolbar/script"), "Scripts", this, SLOT(changeView()));
+	addView(action, new ScriptView(_connection, this));
 	action->setChecked(false);
 	action->setShortcut(QKeySequence(Qt::Key_F7));
 
-	action = ui->mainToolBar->addAction(QIcon(":/toolbar/script"), "Script", this, SLOT(changeView()));
-	addView(action, new ScriptView(_connection, this));
+	action = ui->mainToolBar->addAction(QIcon(":/toolbar/upload"), "Parameters", this, SLOT(changeView()));
+	addView(action, new ParametersView(_connection, this));
 	action->setChecked(false);
 	action->setShortcut(QKeySequence(Qt::Key_F8));
-	//action->setEnabled(false);
 
 	action = ui->mainToolBar->addAction(QIcon(":/toolbar/connection"), "Connection", this, SLOT(changeView()));
 	_activeView = new ConnectionView(_connection, this);

@@ -21,6 +21,8 @@ public:
 
     void addSearchDirectory(const QDir& dir);
 
+	void setFileManagementEnabled(bool value);
+
 private:
 	Tools::NCodeEdit* _codeEdit;
 	Tools::SignalDelayer* _codeChangedSignalDelayer;
@@ -31,6 +33,7 @@ private:
 	bool _hasModifications;
 
     QList<QDir> _searchDirectories;
+	QList<QAction*> _fileManegementActions;
 
 	void setupUi();
 

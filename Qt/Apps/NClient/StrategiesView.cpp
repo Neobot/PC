@@ -76,12 +76,18 @@ void StrategiesView::setStrategies(const QStringList &strategies)
 void StrategiesView::loadSettings(QSettings *settings)
 {
 	settings->beginGroup("Strategies");
+	settings->beginGroup("FileEditor");
+	ui->fileEditionWidget->loadSettings(settings);
+	settings->endGroup();
 	settings->endGroup();
 }
 
 void StrategiesView::saveSettings(QSettings *settings)
 {
 	settings->beginGroup("Strategies");
+	settings->beginGroup("FileEditor");
+	ui->fileEditionWidget->saveSettings(settings);
+	settings->endGroup();
 	settings->endGroup();
 }
 

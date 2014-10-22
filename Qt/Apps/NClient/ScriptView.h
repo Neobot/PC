@@ -22,6 +22,9 @@ public slots:
 
 private:
 	Ui::ScriptView *ui;
+
+	void loadSettings(QSettings *settings);
+	void saveSettings(QSettings *settings);
 };
 
 #endif // SCRIPTVIEW_H

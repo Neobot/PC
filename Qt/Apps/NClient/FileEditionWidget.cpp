@@ -134,6 +134,9 @@ void FileEditionWidget::editData(const QString &filename, const QByteArray &data
                 _gridEditor = new GridEditor(this, true, true);
 				_gridEditor->setLastTable();
 				_gridEditor->setWindowModality(Qt::WindowModal);
+				_gridEditor->restoreGeometry(_gridEditorGeometry);
+				_gridEditor->restoreState(_gridEditorState);
+				_gridEditor->setZoom(_gridEditorZoom);
 				connect(_gridEditor, SIGNAL(accepted()), this, SLOT(editionFinished()));
 				connect(_gridEditor, SIGNAL(rejected()), this, SLOT(editionCanceled()));
 			}
@@ -153,6 +156,7 @@ void FileEditionWidget::editData(const QString &filename, const QByteArray &data
 				_propertiesBrowser = new Tools::NSettingsPropertyBrowser(this);
 				_propertyDialog = createEditionDialog(_propertiesBrowser);
 				_propertyDialog->setWindowModality(Qt::WindowModal);
+				_propertyDialog->restoreGeometry(_propertyDialogGeometry);
                 connect(_propertyDialog, SIGNAL(accepted()), this, SLOT(editionFinished()));
 				connect(_propertyDialog, SIGNAL(rejected()), this, SLOT(editionCanceled()));
 			}
@@ -173,8 +177,10 @@ void FileEditionWidget::editData(const QString &filename, const QByteArray &data
             {
                 _nsEditor = new NSEditor(this);
                 _nsEditor->addSearchDirectory(_connection->getGlobalScriptDirectory());
+				_nsEditor->setFileManagementEnabled(false);
                 _nsDialog = createEditionDialog(_nsEditor);
                 _nsDialog->setWindowModality(Qt::WindowModal);
+				_nsDialog->restoreGeometry(_nsDialogGeometry);
                 connect(_nsDialog, SIGNAL(accepted()), this, SLOT(editionFinished()));
                 connect(_nsDialog, SIGNAL(rejected()), this, SLOT(editionCanceled()));
             }
@@ -194,6 +200,7 @@ void FileEditionWidget::editData(const QString &filename, const QByteArray &data
 				_plainTextEditor = new QPlainTextEdit(this);
 				_textDialog = createEditionDialog(_plainTextEditor);
 				_textDialog->setWindowModality(Qt::WindowModal);
+				_textDialog->restoreGeometry(_textDialogGeometry);
 				connect(_textDialog, SIGNAL(accepted()), this, SLOT(editionFinished()));
 				connect(_textDialog, SIGNAL(rejected()), this, SLOT(editionCanceled()));
 			}
@@ -433,7 +440,36 @@ bool FileEditionWidget::editionInProgress() const
 {
 	return (_gridEditor && _gridEditor->isVisible())
 			|| (_propertyDialog && _propertyDialog->isVisible())
-            || (_textDialog && _textDialog->isVisible());
+			|| (_textDialog && _textDialog->isVisible());
+}
+
+void FileEditionWidget::loadSettings(QSettings *settings)
+{
+	_gridEditorGeometry = settings->value("GridEditorGeometry").toByteArray();
+	_gridEditorState = settings->value("GridEditorState").toByteArray();
+	_gridEditorZoom = settings->value("GridEditorZoom", 0.25).toDouble();
+	_propertyDialogGeometry = settings->value("PropertiesEditorGeometry").toByteArray();
+	_textDialogGeometry = settings->value("TextEditorGeometry").toByteArray();
+	_nsDialogGeometry = settings->value("NSEditorGeometry").toByteArray();
+}
+
+void FileEditionWidget::saveSettings(QSettings *settings)
+{
+	if (_gridEditor)
+	{
+		settings->setValue("GridEditorGeometry", _gridEditor->saveGeometry());
+		settings->setValue("GridEditorState", _gridEditor->saveState());
+		settings->setValue("GridEditorZoom", _gridEditor->getZoom());
+	}
+
+	if (_propertyDialog)
+		settings->setValue("PropertiesEditorGeometry", _propertyDialog->saveGeometry());
+
+	if (_textDialog)
+		settings->setValue("TextEditorGeometry", _textDialog->saveGeometry());
+
+	if (_nsDialog)
+		settings->setValue("NSEditorGeometry", _nsDialog->saveGeometry());
 }
 
 void FileEditionWidget::rowDoubleClicked(int row)
