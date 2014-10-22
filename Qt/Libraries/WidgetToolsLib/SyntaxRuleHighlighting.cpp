@@ -138,7 +138,7 @@ SyntaxRuleHighlighting *SyntaxRuleHighlighting::nsSyntaxRules(TextHighlighter *p
 	syntax->addSyntaxRule("function", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("rotate", keywordColor, fontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("timeout", keywordColor, fontWeigth, Qt::CaseInsensitive);
-
+	syntax->addSyntaxRule("import", keywordColor, fontWeigth, Qt::CaseInsensitive);
 
 	QColor enumColor = Qt::darkRed;
 	int enumFontWeigth = QFont::Bold;

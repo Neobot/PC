@@ -40,6 +40,11 @@ void NSEditor::setScript(const QString &script)
     _codeEdit->setPlainText(script);
 }
 
+void NSEditor::addSearchDirectory(const QDir &dir)
+{
+    _searchDirectories << dir;
+}
+
 void NSEditor::setupUi()
 {
 	QVBoxLayout* layout = new QVBoxLayout(this);
@@ -72,6 +77,7 @@ void NSEditor::check()
 
 	_codeEdit->clearErrors();
 	NSParser parser;
+    parser.setSearchDirectories(_searchDirectories);
 
 	bool ok = parser.verify(code);
 

@@ -63,6 +63,11 @@ void StrategyManager::disconnectFromRobot()
     _robot->setListener(nullptr);
 }
 
+void StrategyManager::addScriptsSearchDirectory(const QDir &dir)
+{
+    _scriptsSearchDirectories << dir;
+}
+
 void StrategyManager::setStrategy(StrategyInterface* strategy)
 {
 	_strategy = strategy;
@@ -427,6 +432,7 @@ void StrategyManager::addActionsFromScript(const QString &scriptCode)
 {
     QList<AbstractAction*> actions;
 	NSParser parser(getActionFactory());
+    parser.setSearchDirectories(_scriptsSearchDirectories);
 	if (parser.parse(scriptCode, actions))
     {
        _actions << actions;

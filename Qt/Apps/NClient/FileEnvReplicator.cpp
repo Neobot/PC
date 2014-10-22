@@ -1,5 +1,6 @@
 #include "FileEnvReplicator.h"
 #include "NetworkClientCommInterface.h"
+#include "NetworkConnection.h"
 #include "ToolsLib.h"
 
 #include <QtDebug>
@@ -32,7 +33,7 @@ void FileEnvReplicator::refresh(const QString &filename)
 		_connection->getComm()->askFileData(_category, filename);
 }
 
-void FileEnvReplicator::refreshWithData(const QString &filename, const QByteArray &data)
+void FileEnvReplicator::refreshWithData(const QString &filename, const QByteArray &data) const
 {
 	if (_filenames.contains(filename))
 		saveFile(filename, data);
@@ -95,7 +96,7 @@ void FileEnvReplicator::configurationFileEvent(int category, const QString& file
 	}
 }
 
-void FileEnvReplicator::saveFile(const QString& fileName,  const QByteArray& data)
+void FileEnvReplicator::saveFile(const QString& fileName,  const QByteArray& data) const
 {
 	_repDir.mkpath(QFileInfo(fileName).absolutePath());
 	QFile f(_repDir.absoluteFilePath(fileName));

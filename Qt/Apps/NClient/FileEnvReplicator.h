@@ -2,10 +2,11 @@
 #define FILEENVREPLICATOR_H
 
 #include "NetworkClientCommListener.h"
-#include "NetworkConnection.h"
 
 #include <QDir>
 #include <QTemporaryDir>
+
+class NetworkConnection;
 
 class FileEnvReplicator : public NetworkClientCommListener
 {
@@ -17,7 +18,7 @@ public:
 
 	void refresh();
 	void refresh(const QString& filename);
-	void refreshWithData(const QString& filename, const QByteArray& data);
+	void refreshWithData(const QString& filename, const QByteArray& data) const;
 
 	const QDir& getReplicatedDir() const;
 	QStringList getFileNames() const;
@@ -34,7 +35,7 @@ private:
 	void configurationFileData(int category, const QString& filename, const QByteArray& data);
 	void configurationFileEvent(int category, const QString& filename, int event);
 
-	void saveFile(const QString &fileName, const QByteArray &data);
+	void saveFile(const QString &fileName, const QByteArray &data) const;
 	void removeFile(const QString &fileName);
 };
 

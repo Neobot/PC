@@ -39,6 +39,7 @@ public:
 	
 	void print(QTextStream& out);
 
+    void setSearchDirectories(const QList<QDir>& dirs);
 	void addSearchDirectory(const QDir& dir);
 	void removeSearchDirectory(const QDir& dir);
 
@@ -133,10 +134,11 @@ protected:
 	typedef QHash<QString, FunctionInfo> FunctionList;
 	
 	void initParsing();
+    void clearParsingData();
 
-	bool parse(const QString& scriptCode, QList<AbstractAction*>& actions, const QString& originalFilename);
-	bool parse(const QString& scriptCode, QList<AbstractAction*>& actions, const QString& originalFilename, VariableList& variables, FunctionList& functions);
-	bool parseSubFile(Symbol *symbol, const QString &filepath, QList<AbstractAction *> &actions, VariableList& variables, FunctionList& functions);
+    bool parseMainFile(const QString& scriptCode, QList<AbstractAction*>& actions, const QString& originalFilename);
+    void parseSubFile(Symbol *importStatementSymbol, const QString &filepath, QList<AbstractAction *> &actions, VariableList& variables, FunctionList& functions);
+    Symbol* parseTree(const QString& scriptCode, QList<AbstractAction*>& actions, const QString& originalFilename, VariableList& variables, FunctionList& functions);
 
 	Symbol* getParsedTree(const QString& scriptCode);
 	void buildActions(Symbol* symbol, QList<AbstractAction*>& actions, VariableList& variables, FunctionList &functions);
@@ -162,6 +164,7 @@ protected:
 	AbstractAction* buildImportActions(Symbol *symbol, VariableList &variables, FunctionList &functions);
 	void readVariable(Symbol* symbol, VariableList& variables);
 	void readFunction(Symbol* symbol, VariableList variables, FunctionList& functions);
+    void readGrid(Symbol* symbol, const QString& gridFile, VariableList& variables);
 
 	//Variable parsers
 	bool readParameterOrVar(Symbol* symbol, VariableList &variables, int &paramId);
@@ -235,6 +238,7 @@ private:
 	bool _invalidGrammar;
 	
 	Symbol* _tree;
+    QList<Symbol*> _subtrees;
 	ActionFactory* _factory;
 
 	QStack<QFileInfo> _fileStack;

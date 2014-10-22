@@ -15,7 +15,16 @@ PersistentFilesManager::PersistentFilesManager()
 void PersistentFilesManager::addSet(int setIndex, const QString& name)
 {
 	_mainDir.mkdir(name);
-	_sets[setIndex] = name;
+    _sets[setIndex] = name;
+}
+
+QDir PersistentFilesManager::getSetDirectory(int setIndex) const
+{
+    QDir setDir(_mainDir);
+    if (_sets.contains(setIndex))
+        setDir.cd(_sets[setIndex]);
+
+    return setDir;
 }
 
 QStringList PersistentFilesManager::getFiles(int setIndex) const

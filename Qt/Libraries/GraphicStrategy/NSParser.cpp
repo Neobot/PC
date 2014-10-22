@@ -35,7 +35,7 @@ NSParser::NSParser(ActionFactory* factory) : _invalidGrammar(false), _tree(nullp
 
 NSParser::~NSParser()
 {
-	delete _tree;
+    clearParsingData();
 }
 
 void NSParser::setActionFactory(ActionFactory* factory)
@@ -104,7 +104,7 @@ const QList<NSParsingError> &NSParser::getErrors() const
 bool NSParser::parse(const QString &scriptCode, QList<AbstractAction *> &actions)
 {
 	initParsing();
-	return parse(scriptCode, actions, QString());
+    return parseMainFile(scriptCode, actions, QString());
 }
 
 bool NSParser::parseFile(const QString &filepath, QList<AbstractAction *> &actions)
@@ -118,7 +118,7 @@ bool NSParser::parseFile(const QString &filepath, QList<AbstractAction *> &actio
 		return false;
 	}
 
-	return	parse(filepath, actions, filepath);
+	return	parseMainFile(filepath, actions, filepath);
 }
 
 bool NSParser::verify(const QString &scriptCode)
@@ -136,7 +136,12 @@ bool NSParser::verifyFile(const QString &filepath)
 void NSParser::print(QTextStream& out)
 {
 	if (_tree)
-		printTree(out, _tree, 0);
+        printTree(out, _tree, 0);
+}
+
+void NSParser::setSearchDirectories(const QList<QDir> &dirs)
+{
+    _searchDirs = dirs;
 }
 
 void NSParser::addSearchDirectory(const QDir &dir)
@@ -152,7 +157,18 @@ void NSParser::removeSearchDirectory(const QDir &dir)
 void NSParser::initParsing()
 {
 	_errors.clear();
-	_rootSymbol = nullptr;
+    _rootSymbol = nullptr;
+}
+
+void NSParser::clearParsingData()
+{
+    if (_tree)
+        delete _tree;
+
+    qDeleteAll(_subtrees);
+    _subtrees.clear();
+
+    _rootSymbol = nullptr;
 }
 
 Symbol *NSParser::getParsedTree(const QString &scriptCode)
@@ -240,30 +256,53 @@ void NSParser::printTree(QTextStream& out, Symbol *s, int level)
 	}
 }
 
-bool NSParser::parse(const QString &scriptCode, QList<AbstractAction *> &actions, const QString &originalFilename)
+bool NSParser::parseMainFile(const QString &scriptCode, QList<AbstractAction *> &actions, const QString &originalFilename)
 {
-	VariableList variables;
-	FunctionList functions;
-	return parse(scriptCode, actions, originalFilename, variables, functions);
+   clearParsingData();
+
+    VariableList variables;
+    FunctionList functions;
+	_tree = parseTree(scriptCode, actions, originalFilename, variables, functions);
+
+    return _errors.isEmpty();
 }
 
-bool NSParser::parse(const QString& scriptCode, QList<AbstractAction*>& actions, const QString& originalFilename, VariableList& variables, FunctionList& functions)
+void NSParser::parseSubFile(Symbol *importStatementSymbol, const QString &filepath, QList<AbstractAction *> &actions, VariableList& variables, FunctionList& functions)
 {
+    QFile file(filepath);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    {
+		_errors << NSParsingError::error("The file cannot be opened", importStatementSymbol);
+		return;
+    }
+
+    bool isRoot = !_rootSymbol;
+
+    if (isRoot)
+        _rootSymbol = importStatementSymbol;
+
+	Symbol* subfileTree = parseTree(file.readAll(), actions, filepath, variables, functions);
+    _subtrees << subfileTree;
+
+    if (isRoot)
+        _rootSymbol = nullptr;
+}
+
+Symbol* NSParser::parseTree(const QString& scriptCode, QList<AbstractAction*>& actions, const QString& originalFilename, VariableList& variables, FunctionList& functions)
+{
+    Symbol* resultTree = nullptr;
 	_fileStack.push(QFileInfo(originalFilename));
 
-	if (_tree)
-		delete _tree;
+    resultTree = getParsedTree(QString(scriptCode).append("\n")); //Add a cariage return which is mandatory at the end
 
-	_tree = getParsedTree(QString(scriptCode).append("\n")); //Add a cariage return which is mandatory at the end
-
-	if (_tree)
+    if (resultTree)
 	{
-		buildActions(_tree, actions, variables, functions);
+        buildActions(resultTree, actions, variables, functions);
 	}
 
 	_fileStack.pop();
 
-	return _errors.isEmpty();
+    return resultTree;
 }
 
 void NSParser::buildActions(Symbol* symbol, QList<AbstractAction*>& actions, VariableList& variables, FunctionList& functions)
@@ -1035,7 +1074,35 @@ void NSParser::readFunction(Symbol* symbol, VariableList variables, FunctionList
 			else
 				addError(NSParsingError::functionAlreadyDefinedError(functionName, symbol));
 		}
-	}
+    }
+}
+
+void NSParser::readGrid(Symbol *symbol, const QString &gridFile, NSParser::VariableList &variables)
+{
+    Tools::NGrid grid;
+    if (grid.readFromFile(gridFile))
+    {
+        for(const QString& alias : grid.getAllAliases())
+        {
+            Tools::NGridNode* node = grid.getNode(alias);
+            node->getPosition();
+            DeclaredVariable varPoint = DeclaredVariable::fromPoint(Tools::RPoint(node->getPosition()));
+            variables[alias] = varPoint;
+        }
+
+		for(QHash<QString, Tools::NGridArea*>::const_iterator it = grid.getAreas().constBegin(); it != grid.getAreas().constEnd(); ++it)
+        {
+            QString areaName = it.key();
+			const Tools::NGridArea* area = *it;
+
+            DeclaredVariable varRect = DeclaredVariable::fromRect(area->getRect());
+            variables[areaName] = varRect;
+        }
+    }
+    else
+    {
+        addError(NSParsingError::loadingFileError(gridFile, symbol));
+    }
 }
 
 AbstractAction* NSParser::buildCalledFunctionActions(Symbol *symbol, VariableList variables, FunctionList functions)
@@ -1108,28 +1175,6 @@ AbstractAction* NSParser::buildCalledFunctionActions(Symbol *symbol, VariableLis
 	return nullptr;
 }
 
-bool NSParser::parseSubFile(Symbol *symbol, const QString &filepath, QList<AbstractAction *> &actions, VariableList& variables, FunctionList& functions)
-{
-	QFile file(filepath);
-	if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-	{
-		_errors << NSParsingError::error("The file cannot be opened", symbol);
-		return false;
-	}
-
-	bool isRoot = !_rootSymbol;
-
-	if (isRoot)
-		_rootSymbol = symbol;
-
-	bool result = parse(filepath, actions, filepath, variables, functions);
-
-	if (isRoot)
-		_rootSymbol = nullptr;
-
-	return result;
-}
-
 AbstractAction *NSParser::buildImportActions(Symbol *symbol, VariableList& variables, FunctionList& functions)
 {
 	if (symbol->type == NON_TERMINAL)
@@ -1150,19 +1195,27 @@ AbstractAction *NSParser::buildImportActions(Symbol *symbol, VariableList& varia
 		QString knownFile = getFileInKnownDirectories(filename);
 		if (!knownFile.isEmpty())
 		{
-			VariableList subVariables;
-			FunctionList subFunctions;
-			parseSubFile(symbol, knownFile, actions, subVariables, subFunctions);
+            QFileInfo info(knownFile);
+            if (info.suffix().toLower() == "ngrid")
+            {
+                readGrid(symbol, knownFile, variables);
+            }
+            else
+            {
+                VariableList subVariables;
+                FunctionList subFunctions;
+                parseSubFile(symbol, knownFile, actions, subVariables, subFunctions);
 
-			for(VariableList::const_iterator it = subVariables.constBegin(); it != subVariables.constEnd(); ++it)
-			{
-				variables[it.key()] = *it;
-			}
+                for(VariableList::const_iterator it = subVariables.constBegin(); it != subVariables.constEnd(); ++it)
+                {
+                    variables[it.key()] = *it;
+                }
 
-			for(FunctionList::const_iterator it = subFunctions.constBegin(); it != subFunctions.constEnd(); ++it)
-			{
-				functions[it.key()] = *it;
-			}
+                for(FunctionList::const_iterator it = subFunctions.constBegin(); it != subFunctions.constEnd(); ++it)
+                {
+                    functions[it.key()] = *it;
+                }
+            }
 		}
 
 		if (_factory && !actions.isEmpty())

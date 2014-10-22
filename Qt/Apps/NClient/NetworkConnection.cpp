@@ -6,9 +6,8 @@
 
 #include <QHostAddress>
 
-NetworkConnection::NetworkConnection()
+NetworkConnection::NetworkConnection() : _nsReplicator(this, Comm::GlobalScripts, "ns")
 {
-    _nsReplicator = nullptr;
 	_status = Disconnected;
 	_socket = new QTcpSocket;
 	connect(_socket, SIGNAL(connected()), this, SLOT(socketConnected()));
@@ -24,9 +23,6 @@ NetworkConnection::~NetworkConnection()
 	delete _comm->getProtocol();
 	delete _comm;
 	delete _socket;
-
-    delete _nsReplicator;
-    _nsReplicator = nullptr;
 }
 
 void NetworkConnection::connectToServer(const QString &adress, int port)
@@ -85,9 +81,14 @@ NetworkClientCommInterface *NetworkConnection::getComm() const
     return _comm;
 }
 
-FileEnvReplicator *NetworkConnection::getNsEnvReplicator() const
+const FileEnvReplicator& NetworkConnection::getNsEnvReplicator() const
 {
     return _nsReplicator;
+}
+
+QDir NetworkConnection::getGlobalScriptDirectory() const
+{
+    return _nsReplicator.getReplicatedDir();
 }
 
 void NetworkConnection::changeStatus(NetworkConnection::ConnectionStatus status)
@@ -97,13 +98,7 @@ void NetworkConnection::changeStatus(NetworkConnection::ConnectionStatus status)
         _status = status;
         if (_status == Connected)
         {
-            _nsReplicator = new FileEnvReplicator(this, Comm::GlobalScripts, "ns");
-            _nsReplicator->refresh();
-        }
-        else if (_status == Disconnected)
-        {
-            delete _nsReplicator;
-            _nsReplicator = nullptr;
+            _nsReplicator.refresh();
         }
 
         emit statusChanged(_status);

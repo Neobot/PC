@@ -175,6 +175,11 @@ QString Tools::NGrid::getAlias(Tools::NGridNode *node)
     return _alias.key(node);
 }
 
+QStringList NGrid::getAllAliases() const
+{
+    return _alias.keys();
+}
+
 Tools::NGridNode * Tools::NGrid::getNode(const QString &alias) const
 {
     return _alias.value(alias, 0);

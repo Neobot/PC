@@ -65,7 +65,12 @@ NSParsingError NSParsingError::invalidNumberOfArguments(const QString &functionN
 
 NSParsingError NSParsingError::undeclaredFunctionError(const QString &functionName, Symbol *symbol)
 {
-	return error(QString("The function '").append(functionName).append("' is not declared."), symbol);
+    return error(QString("The function '").append(functionName).append("' is not declared."), symbol);
+}
+
+NSParsingError NSParsingError::loadingFileError(const QString &fileName, Symbol *symbol)
+{
+     return error(QString("An error occured while loading the file '").append(fileName).append("'."), symbol);
 }
 
 NSParsingError NSParsingError::invalidSensorId(Symbol *symbol)

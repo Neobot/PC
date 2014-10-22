@@ -10,6 +10,7 @@ public:
 	PersistentFilesManager();
 	void addSet(int setIndex, const QString& name);
 
+    QDir getSetDirectory(int setIndex) const;
 	QStringList getFiles(int setIndex) const;
 	QByteArray getFileData(int setIndex, const QString& filename) const;
 

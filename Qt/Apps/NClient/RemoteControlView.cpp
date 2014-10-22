@@ -31,6 +31,8 @@ RemoteControlView::RemoteControlView(NetworkConnection *connection, QWidget *par
 	ui->lePosition->setReadOnly(true);
 	ui->leObjective->setReadOnly(true);
 
+    ui->nsEditor->addSearchDirectory(_connection->getGlobalScriptDirectory());
+
 	_map = new Tools::DataMap(QSizeF(2000, 3000), 350/2, RobotGroup, 350/2, OpponentGroup);
 	ui->graphicsView->getScene()->setMap(_map);
 	ui->graphicsView->setRefreshInterval(100);

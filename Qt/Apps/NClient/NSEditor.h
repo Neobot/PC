@@ -5,6 +5,7 @@
 #include "SignalDelayer.h"
 
 #include <QWidget>
+#include <QDir>
 
 class NSEditor : public QWidget
 {
@@ -18,6 +19,8 @@ public:
 	QString getScript() const;
     void setScript(const QString& script);
 
+    void addSearchDirectory(const QDir& dir);
+
 private:
 	Tools::NCodeEdit* _codeEdit;
 	Tools::SignalDelayer* _codeChangedSignalDelayer;
@@ -26,6 +29,8 @@ private:
 	QString _currentFileName;
 
 	bool _hasModifications;
+
+    QList<QDir> _searchDirectories;
 
 	void setupUi();
 

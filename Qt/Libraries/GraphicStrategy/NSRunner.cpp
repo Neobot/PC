@@ -30,6 +30,7 @@ bool NSRunner::parseScript(const QString& scriptCode)
 		QList<AbstractAction*> actions;
 
 		NSParser parser(_manager->_actionFactory);
+		parser.setSearchDirectories(_searchDirectories);
 		if (parser.parse(scriptCode, actions))
 		{
 			ok = true;
@@ -60,6 +61,11 @@ StrategyManager *NSRunner::getInternalManager() const
 bool NSRunner::isRunning() const
 {
 	return _manager->isRunning();
+}
+
+void NSRunner::addSearchDirectory(const QDir &dir)
+{
+	_searchDirectories << dir;
 }
 
 void NSRunner::strategyFinished()

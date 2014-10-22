@@ -38,6 +38,8 @@ public:
 	explicit FileEditionWidget(QWidget *parent = 0);
 	~FileEditionWidget();
 
+	void setInteractionEnabled(bool value);
+
     void setNetworkConnection(NetworkConnection* connection);
     void setFileCategory(int category);
 	void addAllowedExtension(const QString& extension);

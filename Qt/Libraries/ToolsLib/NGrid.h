@@ -69,6 +69,7 @@ namespace Tools
         void addAlias(NGridNode* node, const QString& alias);
         void removeAlias(NGridNode* node);
         QString getAlias(NGridNode* node);
+        QStringList getAllAliases() const;
 
 		NGridNode* getNode(const QString& alias) const;
         const QList<NGridNode*>& getNodes() const;

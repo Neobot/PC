@@ -3,12 +3,13 @@
 
 #include <QObject>
 #include <QTcpSocket>
+#include <QDir>
 
 #include "NetworkClientCommListener.h"
 #include "CommDispatcher.h"
+#include "FileEnvReplicator.h"
 
 class NetworkClientCommInterface;
-class FileEnvReplicator;
 
 class NetworkConnection : public QObject, public Comm::CommDispatcher, public NetworkClientCommListener
 {
@@ -46,7 +47,8 @@ public:
 
 	NetworkClientCommInterface* getComm() const;
 
-    FileEnvReplicator* getNsEnvReplicator() const;
+    const FileEnvReplicator &getNsEnvReplicator() const;
+    QDir getGlobalScriptDirectory() const;
 
 private:
 	NetworkClientCommInterface* _comm;
@@ -56,7 +58,7 @@ private:
 
 	QList<NetworkClientCommListener*> _networkResponders;
 
-    FileEnvReplicator* _nsReplicator;
+    FileEnvReplicator _nsReplicator;
 
 	void changeStatus(ConnectionStatus status);
 

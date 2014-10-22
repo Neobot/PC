@@ -33,6 +33,7 @@ public:
 	static NSParsingError functionAlreadyDefinedError(const QString& functionName, Symbol* symbol);
 	static NSParsingError invalidNumberOfArguments(const QString& functionName, int nbExpectedArgs, int nbFoundArgs, Symbol* symbol);
 	static NSParsingError undeclaredFunctionError(const QString& variableName, Symbol* symbol);
+    static NSParsingError loadingFileError(const QString& fileName, Symbol* symbol);
 
 	static NSParsingError invalidSensorId(Symbol* symbol);
 

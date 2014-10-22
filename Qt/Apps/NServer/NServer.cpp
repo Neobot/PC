@@ -323,11 +323,13 @@ bool NServer::connectToRobot(NetworkCommInterface* networkInterface, bool simula
 
 		_pather = new NMicropather(_commLogger, NMicropather::Euclidean, 1000.0);
 		_strategyManager = new StrategyManager(_robotInterface, _pather, _commLogger);
+        _strategyManager->addScriptsSearchDirectory(_fileManager.getSetDirectory(Comm::GlobalScripts));
 		_strategyManager->setDebugMode(false, false, false, false);
 		connect(_strategyManager, SIGNAL(strategyFinished()), this, SLOT(strategyFinished()));
 		_strategyManager->setAx12MovementManager(&_ax12Movements);
 
 		_nsRunner = new NSRunner(_robotInterface, _pather, &_ax12Movements);
+		_nsRunner->addSearchDirectory(_fileManager.getSetDirectory(Comm::GlobalScripts));
 		connect(_nsRunner, SIGNAL(scriptFinished()), this, SLOT(scriptFinished()));
 
 		_robotInterface->ping();

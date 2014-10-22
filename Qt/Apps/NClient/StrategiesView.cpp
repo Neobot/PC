@@ -31,6 +31,7 @@ StrategiesView::StrategiesView(NetworkConnection *connection, QWidget *parent) :
 	 ui->fileEditionWidget->addAllowedExtension("ngrid");
 	 ui->fileEditionWidget->addAllowedExtension("nsettings");
 	 ui->fileEditionWidget->addAllowedExtension("");
+	 ui->fileEditionWidget->setInteractionEnabled(false);
 }
 
 StrategiesView::~StrategiesView()
@@ -49,14 +50,17 @@ void StrategiesView::connectionStatusChanged(NetworkConnection::ConnectionStatus
 			ui->cbStrategies->blockSignals(false);
 			ui->fileEditionWidget->clear();
 			ui->cbStrategies->setEnabled(false);
+			ui->fileEditionWidget->setInteractionEnabled(false);
 			break;
 		case NetworkConnection::Connected:
 			_connection->getComm()->askStrategies();
 			ui->cbStrategies->setEnabled(true);
+			ui->fileEditionWidget->setInteractionEnabled(true);
 			break;
 		case NetworkConnection::Controled:
 			_connection->getComm()->askStrategyStatus();
 			ui->cbStrategies->setEnabled(true);
+			ui->fileEditionWidget->setInteractionEnabled(true);
 			break;
 	}
 }

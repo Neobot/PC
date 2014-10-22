@@ -11,6 +11,7 @@
 #include <QQueue>
 #include <QMap>
 #include <QTimer>
+#include <QDir>
 
 
 namespace Comm
@@ -39,6 +40,8 @@ public:
 
 	void connectToRobot();
 	void disconnectFromRobot();
+
+    void addScriptsSearchDirectory(const QDir& dir);
 
     void setStrategy(StrategyInterface* strategy);
 	
@@ -126,6 +129,8 @@ private:
     GameState           _currentState;
 	QList<float>		_parameters;
 	QStringList			_parameterNames;
+
+    QList<QDir> _scriptsSearchDirectories;
 
     //Objects used to perform calculation on a future state of the game
     Pather*		_futurePather;

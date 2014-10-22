@@ -337,8 +337,7 @@ void NetworkCommInterface::read(quint8 instruction, const Comm::Data &data)
 			d.take(cat);
 
 			QStringList files = _listener->askFiles(cat);
-			if (!files.isEmpty())
-				sendFiles(cat, files);
+			sendFiles(cat, files);
 
 			break;
 		}

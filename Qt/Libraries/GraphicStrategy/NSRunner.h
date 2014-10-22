@@ -3,6 +3,8 @@
 
 #include "AbstractLogger.h"
 
+#include <QDir>
+
 class StrategyManager;
 class Pather;
 
@@ -25,9 +27,11 @@ public:
 
 	bool isRunning() const;
 
+	void addSearchDirectory(const QDir& dir);
 
 private:
 	StrategyManager* _manager;
+	QList<QDir> _searchDirectories;
 
 signals:
 	void scriptFinished();

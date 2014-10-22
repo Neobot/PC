@@ -42,7 +42,14 @@ FileEditionWidget::FileEditionWidget(QWidget *parent) :
 
 FileEditionWidget::~FileEditionWidget()
 {
-    delete ui;
+	delete ui;
+}
+
+void FileEditionWidget::setInteractionEnabled(bool value)
+{
+	ui->btnImportFile->setEnabled(value);
+	ui->btnNewFile->setEnabled(value);
+	ui->tableWidget->setEnabled(value);
 }
 
 void FileEditionWidget::setNetworkConnection(NetworkConnection *connection)
@@ -165,6 +172,7 @@ void FileEditionWidget::editData(const QString &filename, const QByteArray &data
             if (!_nsDialog)
             {
                 _nsEditor = new NSEditor(this);
+                _nsEditor->addSearchDirectory(_connection->getGlobalScriptDirectory());
                 _nsDialog = createEditionDialog(_nsEditor);
                 _nsDialog->setWindowModality(Qt::WindowModal);
                 connect(_nsDialog, SIGNAL(accepted()), this, SLOT(editionFinished()));
@@ -288,7 +296,7 @@ void FileEditionWidget::editionFinished()
 
     QFile::remove(_currentEditionData.localFile);
 	if (_category == Comm::GlobalScripts)
-		_connection->getNsEnvReplicator()->refreshWithData(_currentEditionData.filename, data);
+		_connection->getNsEnvReplicator().refreshWithData(_currentEditionData.filename, data);
 	_connection->getComm()->sendFileData(_category, _currentEditionData.filename, data);
 }
 

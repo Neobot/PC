@@ -10,6 +10,7 @@ ScriptView::ScriptView(NetworkConnection *connection, QWidget *parent) :
     _connection->registerNetworkResponder(this);
      ui->filesView->setNetworkConnection(_connection);
 	 ui->filesView->addAllowedExtension("ns");
+	 ui->filesView->setInteractionEnabled(false);
 }
 
 ScriptView::~ScriptView()
@@ -23,12 +24,15 @@ void ScriptView::connectionStatusChanged(NetworkConnection::ConnectionStatus sta
     {
         case NetworkConnection::Lookup:
         case NetworkConnection::Disconnected:
+			ui->filesView->setInteractionEnabled(false);
             break;
         case NetworkConnection::Connected:
             ui->filesView->setFileCategory(Comm::GlobalScripts);
 			ui->filesView->refresh();
+			ui->filesView->setInteractionEnabled(true);
             break;
         case NetworkConnection::Controled:
+			ui->filesView->setInteractionEnabled(true);
             break;
     }
 }
