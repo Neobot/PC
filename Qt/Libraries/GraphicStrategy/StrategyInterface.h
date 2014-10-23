@@ -59,6 +59,8 @@ public:
 
 	void init();
 
+    QDir getStrategyDirectory() const;
+
 	virtual bool load(StrategyManager* manager, bool mirror);
 	StrategyManager* manager() const {return _manager;}
 
@@ -93,6 +95,11 @@ protected:
 	Tools::NGrid* _grid;
 	bool _mirrored;
 
+    QHash<int, QString> _additionalFiles;
+
+    void registerAdditionalFile(int additionalFileIndex, const QString& additionalFileName);
+
+    virtual void writeDefaultAdditionalFile(int additionalFileIndex, const QString& filePath);
 	virtual void writeDefaultGrid(const QString &filePath);
 	virtual bool checkGrid(const Tools::NGrid* grid) const {Q_UNUSED(grid); return true;}
 	virtual void readAndDefineParameters(Tools::NSettings& settings);

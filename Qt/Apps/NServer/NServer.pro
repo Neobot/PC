@@ -29,6 +29,7 @@ INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/Simulation
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/Micropather
+INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/gpengine/include
 
 macx:LIBS += -framework IOKit -framework CoreFoundation
 win32:LIBS += -lsetupapi -ladvapi32 -luser32

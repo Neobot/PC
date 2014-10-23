@@ -6,6 +6,7 @@
 #include "ActionFactory.h"
 #include "Sharp.h"
 #include "GameState.h"
+#include "NSParser.h"
 
 #include <QObject>
 #include <QQueue>
@@ -103,6 +104,7 @@ public:
     StrategyMap* getMap() const;
     ActionFactory* getActionFactory() const;
     Tools::NGrid* getGrid() const;
+    NSParser    getScriptParser() const;
 
     bool isMirrored() const;
     int getMatchTime();

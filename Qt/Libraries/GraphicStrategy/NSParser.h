@@ -24,10 +24,59 @@ class ActionFactory;
 class NSParser
 {
 public:
+    struct DeclaredVariable
+    {
+        enum DeclaredType
+        {
+            None,
+            Point,
+            Rect,
+            Action,
+            Ax12,
+            Param,
+            Sensor,
+            String
+        };
+
+        DeclaredType type;
+        QVariantList data;
+
+        DeclaredVariable() : type(None) {}
+        bool isValid() const {return type != None;}
+
+        Tools::RPoint toPoint() const;
+        QRectF toRect() const;
+        int toAx12() const;
+        int toParameter() const;
+        void toSensor(int& id, int& type) const;
+        void toAction(int& id, int& param, int& timeMs) const;
+        QString toString() const;
+
+        bool isPoint() const {return type == Point;}
+        bool isRect() const {return type == Rect;}
+        bool isAction() const {return type == Action;}
+        bool isAx12() const {return type == Ax12;}
+        bool isParameter() const {return type == Param;}
+        bool isSensor() const {return type == Sensor;}
+        bool isString() const {return type == String;}
+        bool isDefined() const {return type != None;}
+
+        static DeclaredVariable fromPoint(const Tools::RPoint& p);
+        static DeclaredVariable fromRect(const QRectF& rect);
+        static DeclaredVariable fromAction(int id, int param, int timeMs);
+        static DeclaredVariable fromAx12(int id);
+        static DeclaredVariable fromParameter(int id);
+        static DeclaredVariable fromSensor(int id, int type);
+        static DeclaredVariable fromString(const QString& str);
+    };
+
 	NSParser(ActionFactory* factory = nullptr);
 	virtual ~NSParser();
 	
 	void setActionFactory(ActionFactory* factory);
+
+	void addVariable(const QString &name, const DeclaredVariable& variable);
+    void clearVariables();
 
 	bool parse(const QString& scriptCode, QList<AbstractAction*>& actions);
 	bool parseFile(const QString& filepath, QList<AbstractAction*>& actions);
@@ -41,55 +90,10 @@ public:
 
     void setSearchDirectories(const QList<QDir>& dirs);
 	void addSearchDirectory(const QDir& dir);
+    void addSearchDirectories(const QList<QDir>& dirs);
 	void removeSearchDirectory(const QDir& dir);
 
 protected:
-	struct DeclaredVariable
-	{
-		enum DeclaredType
-		{
-			None,
-			Point,
-			Rect,
-			Action,
-			Ax12,
-			Param,
-			Sensor,
-			String
-		};
-		
-		DeclaredType type;
-		QVariantList data;
-
-		DeclaredVariable() : type(None) {}
-		bool isValid() const {return type != None;}
-		
-		Tools::RPoint toPoint() const;
-		QRectF toRect() const;
-		int toAx12() const;
-		int toParameter() const;
-		void toSensor(int& id, int& type) const;
-		void toAction(int& id, int& param, int& timeMs) const;
-		QString toString() const;
-
-		bool isPoint() const {return type == Point;}
-		bool isRect() const {return type == Rect;}
-		bool isAction() const {return type == Action;}
-		bool isAx12() const {return type == Ax12;}
-		bool isParameter() const {return type == Param;}
-		bool isSensor() const {return type == Sensor;}
-		bool isString() const {return type == String;}
-		bool isDefined() const {return type != None;}
-		
-		static DeclaredVariable fromPoint(const Tools::RPoint& p);
-		static DeclaredVariable fromRect(const QRectF& rect);
-		static DeclaredVariable fromAction(int id, int param, int timeMs);
-		static DeclaredVariable fromAx12(int id);
-		static DeclaredVariable fromParameter(int id);
-		static DeclaredVariable fromSensor(int id, int type);
-		static DeclaredVariable fromString(const QString& str);
-	};
-	
 	typedef QHash<QString, DeclaredVariable> VariableList;
 
 	struct ConditionInfo
@@ -239,6 +243,9 @@ private:
 	
 	Symbol* _tree;
     QList<Symbol*> _subtrees;
+
+    VariableList _variables;
+
 	ActionFactory* _factory;
 
 	QStack<QFileInfo> _fileStack;

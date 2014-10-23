@@ -66,7 +66,20 @@ void StrategyInterface::init()
 	QString gridPath = _strategyDirectory.absoluteFilePath(_standardParameters.grid);
 	if (!_strategyDirectory.exists(gridPath))
 		writeDefaultGrid(gridPath);
-	parametersSettings.endGroup();
+    parametersSettings.endGroup();
+
+    for(QHash<int, QString>::const_iterator it = _additionalFiles.constBegin(); it != _additionalFiles.constEnd(); ++it)
+    {
+        int fileKey = it.key();
+        QString filePath = _strategyDirectory.absoluteFilePath(*it);
+        if (!QFile::exists(filePath))
+            writeDefaultAdditionalFile(fileKey, filePath);
+    }
+}
+
+QDir StrategyInterface::getStrategyDirectory() const
+{
+    return _strategyDirectory;
 }
 
 QList<QPointF> StrategyInterface::doDetection(const QMap<int, const Sharp *> &activatedSharps) const
@@ -171,4 +184,18 @@ Tools::RPoint StrategyInterface::getStartPosition() const
 Tools::NGrid *StrategyInterface::getGrid() const
 {
 	return _grid;
+}
+
+void StrategyInterface::registerAdditionalFile(int additionalFileIndex, const QString &additionalFileName)
+{
+    _additionalFiles[additionalFileIndex] = additionalFileName;
+}
+
+void StrategyInterface::writeDefaultAdditionalFile(int additionalFileIndex, const QString& filePath)
+{
+    Q_UNUSED(additionalFileIndex);
+
+    //Generate an empty file
+    QFile file(filePath);
+    file.open(QIODevice::WriteOnly);
 }

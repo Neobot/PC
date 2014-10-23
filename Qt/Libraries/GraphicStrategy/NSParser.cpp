@@ -40,7 +40,17 @@ NSParser::~NSParser()
 
 void NSParser::setActionFactory(ActionFactory* factory)
 {
-	_factory = factory;
+    _factory = factory;
+}
+
+void NSParser::addVariable(const QString& name, const NSParser::DeclaredVariable &variable)
+{
+	_variables[name] = variable;
+}
+
+void NSParser::clearVariables()
+{
+    _variables.clear();
 }
 
 void NSParser::addError(const NSParsingError &error)
@@ -146,7 +156,12 @@ void NSParser::setSearchDirectories(const QList<QDir> &dirs)
 
 void NSParser::addSearchDirectory(const QDir &dir)
 {
-	_searchDirs << dir;
+    _searchDirs << dir;
+}
+
+void NSParser::addSearchDirectories(const QList<QDir> &dirs)
+{
+    _searchDirs << dirs;
 }
 
 void NSParser::removeSearchDirectory(const QDir &dir)
@@ -260,9 +275,9 @@ bool NSParser::parseMainFile(const QString &scriptCode, QList<AbstractAction *> 
 {
    clearParsingData();
 
-    VariableList variables;
-    FunctionList functions;
-	_tree = parseTree(scriptCode, actions, originalFilename, variables, functions);
+   FunctionList functions;
+   VariableList variables(_variables);
+    _tree = parseTree(scriptCode, actions, originalFilename, variables, functions);
 
     return _errors.isEmpty();
 }

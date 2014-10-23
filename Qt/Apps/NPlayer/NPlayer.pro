@@ -31,6 +31,7 @@ INCLUDEPATH += $${LIBS_HEADER_DIR}/CommLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/WidgetToolsLib
 INCLUDEPATH += $${LIBS_HEADER_DIR}/ToolsLib
 INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/Micropather
+INCLUDEPATH += $${EXT_LIBS_HEADER_DIR}/gpengine/include
 
 SOURCES += main.cpp\
         NPlayer.cpp \

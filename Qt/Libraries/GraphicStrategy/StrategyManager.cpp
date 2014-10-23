@@ -7,7 +7,6 @@
 #include "RobotCommInterface.h"
 #include "ToolsLib.h"
 #include "NMicropather.h"
-#include "NSParser.h"
 
 using namespace Tools;
 
@@ -431,8 +430,7 @@ int StrategyManager::getActionCount() const
 void StrategyManager::addActionsFromScript(const QString &scriptCode)
 {
     QList<AbstractAction*> actions;
-	NSParser parser(getActionFactory());
-    parser.setSearchDirectories(_scriptsSearchDirectories);
+    NSParser parser = getScriptParser();
 	if (parser.parse(scriptCode, actions))
     {
        _actions << actions;
@@ -670,7 +668,16 @@ ActionFactory * StrategyManager::getActionFactory() const
 
 NGrid *StrategyManager::getGrid() const
 {
-	return _grid;
+    return _grid;
+}
+
+NSParser StrategyManager::getScriptParser() const
+{
+    NSParser parser(getActionFactory());
+    if (_strategy)
+        parser.addSearchDirectory(_strategy->getStrategyDirectory());
+    parser.addSearchDirectories(_scriptsSearchDirectories);
+    return parser;
 }
 
 bool StrategyManager::isMirrored() const
