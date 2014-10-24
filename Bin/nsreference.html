@@ -1,0 +1,1076 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+<style>
+body {
+  font-family: Helvetica, arial, sans-serif;
+  font-size: 14px;
+  line-height: 1.6;
+  padding-top: 10px;
+  padding-bottom: 10px;
+  background-color: white;
+  padding: 30px; }
+
+body > *:first-child {
+  margin-top: 0 !important; }
+body > *:last-child {
+  margin-bottom: 0 !important; }
+
+a {
+  color: #4183C4; }
+a.absent {
+  color: #cc0000; }
+a.anchor {
+  display: block;
+  padding-left: 30px;
+  margin-left: -30px;
+  cursor: pointer;
+  position: absolute;
+  top: 0;
+  left: 0;
+  bottom: 0; }
+
+h1, h2, h3, h4, h5, h6 {
+  margin: 20px 0 10px;
+  padding: 0;
+  font-weight: bold;
+  -webkit-font-smoothing: antialiased;
+  cursor: text;
+  position: relative; }
+
+h1:hover a.anchor, h2:hover a.anchor, h3:hover a.anchor, h4:hover a.anchor, h5:hover a.anchor, h6:hover a.anchor {
+  background: url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAA09pVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMy1jMDExIDY2LjE0NTY2MSwgMjAxMi8wMi8wNi0xNDo1NjoyNyAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNiAoMTMuMCAyMDEyMDMwNS5tLjQxNSAyMDEyLzAzLzA1OjIxOjAwOjAwKSAgKE1hY2ludG9zaCkiIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OUM2NjlDQjI4ODBGMTFFMTg1ODlEODNERDJBRjUwQTQiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OUM2NjlDQjM4ODBGMTFFMTg1ODlEODNERDJBRjUwQTQiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo5QzY2OUNCMDg4MEYxMUUxODU4OUQ4M0REMkFGNTBBNCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo5QzY2OUNCMTg4MEYxMUUxODU4OUQ4M0REMkFGNTBBNCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PsQhXeAAAABfSURBVHjaYvz//z8DJYCRUgMYQAbAMBQIAvEqkBQWXI6sHqwHiwG70TTBxGaiWwjCTGgOUgJiF1J8wMRAIUA34B4Q76HUBelAfJYSA0CuMIEaRP8wGIkGMA54bgQIMACAmkXJi0hKJQAAAABJRU5ErkJggg==) no-repeat 10px center;
+  text-decoration: none; }
+
+h1 tt, h1 code {
+  font-size: inherit; }
+
+h2 tt, h2 code {
+  font-size: inherit; }
+
+h3 tt, h3 code {
+  font-size: inherit; }
+
+h4 tt, h4 code {
+  font-size: inherit; }
+
+h5 tt, h5 code {
+  font-size: inherit; }
+
+h6 tt, h6 code {
+  font-size: inherit; }
+
+h1 {
+  font-size: 28px;
+  color: black; }
+
+h2 {
+  font-size: 24px;
+  border-bottom: 1px solid #cccccc;
+  color: black; }
+
+h3 {
+  font-size: 18px; }
+
+h4 {
+  font-size: 16px; }
+
+h5 {
+  font-size: 14px; }
+
+h6 {
+  color: #777777;
+  font-size: 14px; }
+
+p, blockquote, ul, ol, dl, li, table, pre {
+  margin: 15px 0; }
+
+hr {
+  background: transparent url(data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAYAAAAECAYAAACtBE5DAAAAGXRFWHRTb2Z0d2FyZQBBZG9iZSBJbWFnZVJlYWR5ccllPAAAAyJpVFh0WE1MOmNvbS5hZG9iZS54bXAAAAAAADw/eHBhY2tldCBiZWdpbj0i77u/IiBpZD0iVzVNME1wQ2VoaUh6cmVTek5UY3prYzlkIj8+IDx4OnhtcG1ldGEgeG1sbnM6eD0iYWRvYmU6bnM6bWV0YS8iIHg6eG1wdGs9IkFkb2JlIFhNUCBDb3JlIDUuMC1jMDYwIDYxLjEzNDc3NywgMjAxMC8wMi8xMi0xNzozMjowMCAgICAgICAgIj4gPHJkZjpSREYgeG1sbnM6cmRmPSJodHRwOi8vd3d3LnczLm9yZy8xOTk5LzAyLzIyLXJkZi1zeW50YXgtbnMjIj4gPHJkZjpEZXNjcmlwdGlvbiByZGY6YWJvdXQ9IiIgeG1sbnM6eG1wPSJodHRwOi8vbnMuYWRvYmUuY29tL3hhcC8xLjAvIiB4bWxuczp4bXBNTT0iaHR0cDovL25zLmFkb2JlLmNvbS94YXAvMS4wL21tLyIgeG1sbnM6c3RSZWY9Imh0dHA6Ly9ucy5hZG9iZS5jb20veGFwLzEuMC9zVHlwZS9SZXNvdXJjZVJlZiMiIHhtcDpDcmVhdG9yVG9vbD0iQWRvYmUgUGhvdG9zaG9wIENTNSBNYWNpbnRvc2giIHhtcE1NOkluc3RhbmNlSUQ9InhtcC5paWQ6OENDRjNBN0E2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiIHhtcE1NOkRvY3VtZW50SUQ9InhtcC5kaWQ6OENDRjNBN0I2NTZBMTFFMEI3QjRBODM4NzJDMjlGNDgiPiA8eG1wTU06RGVyaXZlZEZyb20gc3RSZWY6aW5zdGFuY2VJRD0ieG1wLmlpZDo4Q0NGM0E3ODY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIgc3RSZWY6ZG9jdW1lbnRJRD0ieG1wLmRpZDo4Q0NGM0E3OTY1NkExMUUwQjdCNEE4Mzg3MkMyOUY0OCIvPiA8L3JkZjpEZXNjcmlwdGlvbj4gPC9yZGY6UkRGPiA8L3g6eG1wbWV0YT4gPD94cGFja2V0IGVuZD0iciI/PqqezsUAAAAfSURBVHjaYmRABcYwBiM2QSA4y4hNEKYDQxAEAAIMAHNGAzhkPOlYAAAAAElFTkSuQmCC) repeat-x 0 0;
+  border: 0 none;
+  color: #cccccc;
+  height: 4px;
+  padding: 0;
+}
+
+body > h2:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+body > h1:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+  body > h1:first-child + h2 {
+    margin-top: 0;
+    padding-top: 0; }
+body > h3:first-child, body > h4:first-child, body > h5:first-child, body > h6:first-child {
+  margin-top: 0;
+  padding-top: 0; }
+
+a:first-child h1, a:first-child h2, a:first-child h3, a:first-child h4, a:first-child h5, a:first-child h6 {
+  margin-top: 0;
+  padding-top: 0; }
+
+h1 p, h2 p, h3 p, h4 p, h5 p, h6 p {
+  margin-top: 0; }
+
+li p.first {
+  display: inline-block; }
+li {
+  margin: 0; }
+ul, ol {
+  padding-left: 30px; }
+
+ul :first-child, ol :first-child {
+  margin-top: 0; }
+
+dl {
+  padding: 0; }
+  dl dt {
+    font-size: 14px;
+    font-weight: bold;
+    font-style: italic;
+    padding: 0;
+    margin: 15px 0 5px; }
+    dl dt:first-child {
+      padding: 0; }
+    dl dt > :first-child {
+      margin-top: 0; }
+    dl dt > :last-child {
+      margin-bottom: 0; }
+  dl dd {
+    margin: 0 0 15px;
+    padding: 0 15px; }
+    dl dd > :first-child {
+      margin-top: 0; }
+    dl dd > :last-child {
+      margin-bottom: 0; }
+
+blockquote {
+  border-left: 4px solid #dddddd;
+  padding: 0 15px;
+  color: #777777; }
+  blockquote > :first-child {
+    margin-top: 0; }
+  blockquote > :last-child {
+    margin-bottom: 0; }
+
+table {
+  padding: 0;border-collapse: collapse; }
+  table tr {
+    border-top: 1px solid #cccccc;
+    background-color: white;
+    margin: 0;
+    padding: 0; }
+    table tr:nth-child(2n) {
+      background-color: #f8f8f8; }
+    table tr th {
+      font-weight: bold;
+      border: 1px solid #cccccc;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr td {
+      border: 1px solid #cccccc;
+      margin: 0;
+      padding: 6px 13px; }
+    table tr th :first-child, table tr td :first-child {
+      margin-top: 0; }
+    table tr th :last-child, table tr td :last-child {
+      margin-bottom: 0; }
+
+img {
+  max-width: 100%; }
+
+span.frame {
+  display: block;
+  overflow: hidden; }
+  span.frame > span {
+    border: 1px solid #dddddd;
+    display: block;
+    float: left;
+    overflow: hidden;
+    margin: 13px 0 0;
+    padding: 7px;
+    width: auto; }
+  span.frame span img {
+    display: block;
+    float: left; }
+  span.frame span span {
+    clear: both;
+    color: #333333;
+    display: block;
+    padding: 5px 0 0; }
+span.align-center {
+  display: block;
+  overflow: hidden;
+  clear: both; }
+  span.align-center > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: center; }
+  span.align-center span img {
+    margin: 0 auto;
+    text-align: center; }
+span.align-right {
+  display: block;
+  overflow: hidden;
+  clear: both; }
+  span.align-right > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px 0 0;
+    text-align: right; }
+  span.align-right span img {
+    margin: 0;
+    text-align: right; }
+span.float-left {
+  display: block;
+  margin-right: 13px;
+  overflow: hidden;
+  float: left; }
+  span.float-left span {
+    margin: 13px 0 0; }
+span.float-right {
+  display: block;
+  margin-left: 13px;
+  overflow: hidden;
+  float: right; }
+  span.float-right > span {
+    display: block;
+    overflow: hidden;
+    margin: 13px auto 0;
+    text-align: right; }
+
+code, tt {
+  margin: 0 2px;
+  padding: 0 5px;
+  white-space: nowrap;
+  border: 1px solid #eaeaea;
+  background-color: #f8f8f8;
+  border-radius: 3px; }
+
+pre code {
+  margin: 0;
+  padding: 0;
+  white-space: pre;
+  border: none;
+  background: transparent; }
+
+.highlight pre {
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px; }
+
+pre {
+  background-color: #f8f8f8;
+  border: 1px solid #cccccc;
+  font-size: 13px;
+  line-height: 19px;
+  overflow: auto;
+  padding: 6px 10px;
+  border-radius: 3px; }
+  pre code, pre tt {
+    background-color: transparent;
+    border: none; }
+
+sup {
+    font-size: 0.83em;
+    vertical-align: super;
+    line-height: 0;
+}
+* {
+	-webkit-print-color-adjust: exact;
+}
+@media screen and (min-width: 914px) {
+    body {
+        width: 854px;
+        margin:0 auto;
+    }
+}
+@media print {
+	table, pre {
+		page-break-inside: avoid;
+	}
+	pre {
+		word-wrap: break-word;
+	}
+}
+</style>
+<title>[Neobot Script Reference](id:top)</title>
+
+</head>
+<body>
+<h1><span id="top">Neobot Script Reference</span></h1>
+
+<h2>Table of content</h2>
+
+<ul>
+<li><a href="#intro">Introduction</a></li>
+<li><a href="#imports">Imports</a></li>
+<li><a href="#types">BasicTypes</a></li>
+<li><a href="#aliases">Aliases</a></li>
+<li><a href="#basic">Basic Actions</a></li>
+<li><a href="#movements">Movements</a></li>
+<li><a href="#sensors">Sensors</a></li>
+<li><a href="#actuators">Actuators</a></li>
+<li><a href="#lists">Lists</a></li>
+<li><a href="#conditions">Conditions</a></li>
+<li><a href="#functions">Functions</a></li>
+<li><a href="#examples">Examples</a></li>
+</ul>
+
+
+<hr />
+
+<h2><span id="intro">Introduction</span></h2>
+
+<h4>Neobot Script</h4>
+
+<p>Neobot Script is an interpreted language which generates actions that can be send to the robot.</p>
+
+<h4>Language Syntax</h4>
+
+<ul>
+<li>Statements are separated by carriage returns or by a semi-colon</li>
+<li>Commented lines starts by with '//'</li>
+</ul>
+
+
+<h4>Imports</h4>
+
+<p><strong>Importing an external script file:</strong> import "&lt;filename.ns>"<br>
+<strong>Importing a grid:</strong> import "&lt;filename>.ngrid"</p>
+
+<p><em>Notes:</em></p>
+
+<blockquote><ul>
+<li>The file extension is used to make the distinction between a grid and a script file: "ngrid" for a grid and any other extension for a script.</li>
+<li>When a grid is imported, every defined node aliases are imported as point <a href="#aliases">aliases</a> (with a null angle), and every defined areas are imported as rectangle <a href="#aliases">aliases</a>.</li>
+</ul>
+</blockquote>
+
+<p><br><a href="#top">Back to top</a></p>
+
+<hr />
+
+<h2><span id="types">Basic Types</span></h2>
+
+<h4>Angles</h4>
+
+<p><strong>Fixed angle:</strong> &lt;value> [deg|rad]<br>
+<strong>Reversed angle:</strong> reversed &lt;value>[deg|rad]<br>
+<strong>Auto reversed angle:</strong> auto reversed &lt;value>[deg|rad]<br></p>
+
+<h6>Examples:</h6>
+
+<pre><code>45deg
+90
+reversed 72deg
+</code></pre>
+
+<h4>Points</h4>
+
+<p><strong>Fixed point:</strong> &lt;x>,&lt;y>,[&lt;angle>]<br>
+<strong>Reversed point:</strong> reversed &lt;x>,&lt;y>,[&lt;angle>]<br>
+<strong>Auto reversed point:</strong> auto reversed &lt;x>,&lt;y>,[&lt;angle>]<br></p>
+
+<h6>Examples:</h6>
+
+<pre><code>0,0
+auto reversed 200,250,45
+</code></pre>
+
+<h4>Rectangles</h4>
+
+<p><strong>Fixed rectangle:</strong> rect &lt;x>,&lt;y>,&lt;width>,&lt;height><br>
+<strong>reversed rectangle:</strong> rect &lt;x>,&lt;y>,&lt;width>,&lt;height><br>
+<strong>Auto reversed rectangle:</strong> auto reversed rect &lt;x>,&lt;y>,&lt;width>,&lt;height><br>
+<strong>Rectangle constructed from a circle:</strong> circle &lt;center>,&lt;radius><br></p>
+
+<p><em>Notes:</em></p>
+
+<blockquote><p>When using the circle construction, points coordinates need to be surrounded by '[' ']'.
+A point <a href="#aliases">alias</a> can also be used to define the "circle" center.</p></blockquote>
+
+<h6>Examples:</h6>
+
+<pre><code>rect 0,0,500,500
+reversed 50,50,10,30
+auto reversed 1000,300,200,300
+circle [200,1000],150
+auto reversed circle [900,550],10
+declare 1000,1500 as center
+circle center,300
+</code></pre>
+
+<h4>Time</h4>
+
+<p><strong>Time:</strong> &lt;value>s|ms<br></p>
+
+<h6>Examples:</h6>
+
+<pre><code>500ms
+3s
+</code></pre>
+
+<p><br><a href="#top">Back to top</a></p>
+
+<hr />
+
+<h2><span id="aliases">Aliases</span></h2>
+
+<p>Aliases are custom variables which can be used as shortcuts.</p>
+
+<h4>Point alias</h4>
+
+<p><strong>Declare an alias to a point:</strong> declare &lt;point> as &lt;name></p>
+
+<h6>Examples:</h6>
+
+<pre><code>declare auto reversed 0,0 as origin
+declare 1000,1500 as center
+</code></pre>
+
+<h4>Rectangle alias</h4>
+
+<p><strong>Declare an alias to a rectangle:</strong> declare &lt;rectangle> as &lt;name></p>
+
+<h6>Examples:</h6>
+
+<pre><code>declare auto reversed 0,0,500,500 as startZone
+</code></pre>
+
+<h4>Sensor alias</h4>
+
+<p><strong>Declare an alias to a sensor:</strong> declare &lt;sensor typer> &lt;sensor id> as &lt;name></p>
+
+<h6>Examples:</h6>
+
+<pre><code>declare color sensor 0 as leftSensor    declare microswitch 1 as middleSwitch
+</code></pre>
+
+<h4>Parameter alias</h4>
+
+<p><strong>Declare an alias to a robot parameter:</strong> declare parameter &lt;parameter id> as &lt;name></p>
+
+<h6>Examples:</h6>
+
+<pre><code>declare parameter 0 as maxSpeed
+</code></pre>
+
+<h4>Action alias</h4>
+
+<p><strong>Declare an alias to a robot actuator action:</strong> declare action &lt;action id>,&lt;action parameter>,&lt;estimated time> as &lt;name></p>
+
+<h6>Examples:</h6>
+
+<pre><code>declare action 0,0,200ms takePawn
+</code></pre>
+
+<h4>AX-12 alias</h4>
+
+<p><strong>Declare an alias to an AX-12:</strong> declare ax12  &lt;ax12_id> as &lt;name></p>
+
+<h6>Examples:</h6>
+
+<pre><code>declare ax12 1 as leftAx12
+</code></pre>
+
+<h4>String alias</h4>
+
+<p><strong>Declare an alias to a string:</strong> declare &lt;string> as &lt;name></p>
+
+<h6>Examples:</h6>
+
+<pre><code>declare "leftArm" as arm
+Time alias
+Angle alias
+</code></pre>
+
+<p><br><a href="#top">Back to top</a></p>
+
+<hr />
+
+<h2><span id="basic">Basic Actions</span></h2>
+
+<h4>Wait</h4>
+
+<p><strong>Wait for a time period:</strong> wait &lt;time></p>
+
+<h6>Examples:</h6>
+
+<pre><code>wait 500ms
+wait 3s
+</code></pre>
+
+<h4>Timeout</h4>
+
+<p><strong>Define a timeout for an action:</strong> timeout &lt;time> [&lt;newline>] &lt;statement></p>
+
+<p><em>Note:</em></p>
+
+<blockquote><p>The statement which use a timeout can be any other statement, including a list</p></blockquote>
+
+<h6>Examples:</h6>
+
+<pre><code>timeout 500ms go to 300,300
+timeout 90s
+{
+  go to 50,50
+  ...
+}
+</code></pre>
+
+<h4>Parameter change</h4>
+
+<p>Set a parameter in the robot: set parameter &lt;id> = &lt;value></p>
+
+<p><em>Note:</em></p>
+
+<blockquote><p>A parameter <a href="#aliases">alias</a> can be used to define a parameter.</p></blockquote>
+
+<h6>Examples:</h6>
+
+<pre><code>set parameter 2 = 42.42
+declare parameter 1 as speed //alias declaration
+set speed = 80
+</code></pre>
+
+<p><br><a href="#top">Back to top</a></p>
+
+<hr />
+
+<h2><span id="movements">Movements</span></h2>
+
+<h4>Teleport</h4>
+
+<p><strong>Teleport the robot to a point:</strong> teleport &lt;point></p>
+
+<p><em>Note:</em></p>
+
+<blockquote><p>A point <a href="#aliases">alias</a> can be used to define the point.</p></blockquote>
+
+<h6>Examples:</h6>
+
+<pre><code>declare auto reversed 0,0 as origin //alias declaration
+teleport origin
+teleport 300,450,90deg
+</code></pre>
+
+<h4>Go to</h4>
+
+<p><strong>Send the robot to a point:</strong> go to &lt;point> [speed &lt;value>%] [&lt;direction=forward|backward|auto>]</p>
+
+<p><em>Notes:</em></p>
+
+<blockquote><ul>
+<li>A point <a href="#aliases">alias</a> can be used to define the point.</li>
+<li>Speed and direction are optional, default speed is 100% and default direction is auto.</li>
+</ul>
+</blockquote>
+
+<h6>Examples:</h6>
+
+<pre><code>declare 1000,1500 as center //alias declaration
+go to center
+go to 1800, 1500 speed 50% forward
+go to 1800 2300 backward
+go to 0,0 speed 10%
+</code></pre>
+
+<h4>Rotate</h4>
+
+<p><strong>Rotate the robot to an absolute angle:</strong> rotate to &lt;angle></p>
+
+<h6>Examples:</h6>
+
+<pre><code>rotate to 90deg
+rotate to auto reversed 30deg
+</code></pre>
+
+<p><br><a href="#top">Back to top</a></p>
+
+<hr />
+
+<h2><span id="sensors">Sensors</span></h2>
+
+<h4>Sensor activation</h4>
+
+<p><strong>Activate a sensor:</strong> enable &lt;sensor type> &lt;sensor id><br>
+<strong>Deactivate a sensor:</strong> disable &lt;sensor type> &lt;sensor id><br>
+<strong>Activate all sensors of a type:</strong> enable all &lt;sensor type><br>
+<strong>Deactivate all sensors of a type:</strong> disable all &lt;sensor type><br></p>
+
+<p><strong>type of sensor:</strong> color sensor, sharp, microswitch</p>
+
+<p><em>Notes:</em></p>
+
+<blockquote><ul>
+<li>A sensor sensor <a href="#aliases">alias</a> can be used to define the sensor (type + id).<br></li>
+<li>Sensors ids starts at 1 (each sensor type has its enumeration of sensors starting at 1).</li>
+</ul>
+</blockquote>
+
+<h6>Examples:</h6>
+
+<pre><code>enable color sensor 1
+disable microswitch 2
+declare sharp 4 as middleSharp //alias declaration
+enable middlesharp
+enable all microswitch
+disable all color sensor
+</code></pre>
+
+<p><br><a href="#top">Back to top</a></p>
+
+<hr />
+
+<h2><span id="actuators">Actuators</span></h2>
+
+<p><strong>Make an action:</strong> do action &lt;id>, &lt;param>, &lt;estimated_time></p>
+
+<p><em>Note:</em></p>
+
+<blockquote><p>An action <a href="#aliases">alias</a> can be used to define an action.</p></blockquote>
+
+<h6>Examples:</h6>
+
+<pre><code>do action 1,0,500ms
+declare action 2,42,1s as takePawn //alias declaration
+do takePawn
+</code></pre>
+
+<h4>Single AX-12</h4>
+
+<p><strong>move an ax12:</strong> move ax12 &lt;ax12_id> to &lt;angle> [speed &lt;value>%]</p>
+
+<p><em>Note:</em></p>
+
+<blockquote><p>An ax12 <a href="#aliases">alias</a> can be used to define the ax12 id.</p></blockquote>
+
+<h6>Examples:</h6>
+
+<pre><code>move ax12 4 to 180deg speed 50%
+move ax12 7 to 220deg
+declare ax12 2 as mainAx12 //alias declaration
+move mainAx12 to 30deg
+</code></pre>
+
+<h4>AX-12 movements</h4>
+
+<p><strong>Make a movement:</strong> make ax12 movement  "&lt;group>" "&lt;movement_name>" [speed &lt;value>%]<br>
+<strong>Make an asynchronous movement:</strong> make ax12 async movement  "&lt;group>" "&lt;movement_name>" [speed &lt;value>%]<br></p>
+
+<p><em>Note:</em></p>
+
+<blockquote><p>A string <a href="#aliases">alias</a> can be used to define the group or/and the movement name.</p></blockquote>
+
+<h6>Examples:</h6>
+
+<pre><code>make ax12 movement "leftArm" "takePawn"
+make ax12 movement "leftArm" "takePawn" 50%
+declare "rightArm" as group //alias declaration
+make ax12 movement group "takePawn"
+make ax12 async movement "leftArm" "takePawn"
+</code></pre>
+
+<p><br><a href="#top">Back to top</a></p>
+
+<pre><code>---
+</code></pre>
+
+<h2><span id="lists">Lists</span></h2>
+
+<h4>List of synchronous actions</h4>
+
+<p><strong>List of actions:</strong> { [&lt;newline>] &lt;statements> [&lt;newline>]}</p>
+
+<p><em>Note:</em></p>
+
+<blockquote><p>&lt;statements> is a succession of any kind of statement defined in this reference.</p></blockquote>
+
+<h6>Example:</h6>
+
+<pre><code>{
+   teleport 500,500
+   go to 800,500
+}
+</code></pre>
+
+<h4>List of asynchronous actions</h4>
+
+<p><strong>List of asynchronous actions:</strong> concurrent [&lt;stop_condition>] [&lt;newline>] { [&lt;newline>] &lt;statements> [&lt;newline>] }</p>
+
+<p><strong>Stop conditions:</strong> AllActionsFinished | OneActionFinished | FirstActionFinished | LastActionFinished</p>
+
+<p><em>Notes:</em></p>
+
+<blockquote><ul>
+<li>All statements are launched at the same time. Can contain any other statements, including synchronous lists.</li>
+<li>Default stop condition is AllActionFinished.</li>
+</ul>
+</blockquote>
+
+<h6>Examples:</h6>
+
+<pre><code>//Equivalent to a timeout of 3s on a go to action
+concurrent OneActionFinished
+{
+   wait 3s
+   go to 800,500
+}
+
+concurrent AllActionsFinished
+{
+   run ax12 4 to 80deg
+   run ax12 6 to 180deg
+}
+
+concurrent FirstActionFinished
+{
+   wait 5s
+   {
+      go to 400,400
+      go to 800,500
+   }
+}
+</code></pre>
+
+<p><br><a href="#top">Back to top</a></p>
+
+<hr />
+
+<h2><span id="conditions">Conditions</span></h2>
+
+<h6>Supported conditions in <em>if</em> and <em>while</em> statements:</h6>
+
+<p><strong>Condition on robot position:</strong> position in &lt;rect><br>
+<strong>Condition on robot orientation:</strong> orientation in &lt;angleMin>-&lt;angleMax><br>
+<strong>Condition on opponent position:</strong> opponent in &lt;rect><br>
+<strong>Condition on sensor value:</strong> &lt;sensor> is &lt;sensor value><br>
+<strong>Condition on strategy color:</strong> strategy is reversed<br></p>
+
+<p><strong>Reversed condition:</strong> replace "in" by "not in" and "is" by "is not"</p>
+
+<h6>Acceptable values for sensors in conditions:</h6>
+
+<p><strong>Values for color sensors:</strong> unknown, red, green, blue, yellow, white, black
+<strong>Values for sharps:</strong> close, dectected, far
+<strong>Values for microswitches:</strong> on, off</p>
+
+<p><em>Note:</em></p>
+
+<blockquote><p>Conditions on opponent position require a beacon installed on the opponent robot.</p></blockquote>
+
+<h4>If statement</h4>
+
+<p><strong>"if" condition:</strong> if &lt;condition> [&lt;newline>] &lt;action><br>
+<strong>"if / else" condition:</strong> if &lt;condition> [&lt;newline>] &lt;action> [&lt;newline>] else [&lt;newline>] &lt;action></p>
+
+<h6>Examples:</h6>
+
+<pre><code>if position in rect 0,0,300,300
+   go to 500,500
+
+if orientation in 0-90
+{
+   rotate 90deg
+   wait 1s
+   rotate 0deg
+}
+else
+{
+   rotate 270deg
+   wait 1s
+   rotate 0deg
+}
+
+declare color sensor 1 as leftColorSensor
+if leftColorSensor is red
+    make ax12 movement "leftArm" "takePawn"
+</code></pre>
+
+<h4>While loop</h4>
+
+<p><strong>while loop:</strong> while &lt;condition> &lt;action><br>
+<strong>infinite loop:</strong> while true &lt;action></p>
+
+<h6>Examples:</h6>
+
+<pre><code>//wait for the robot to be in the middle of the table, check every 200ms
+while position not in rect 950,1450,100,100
+   wait 200ms
+
+//wait for the color sensor 1 to be green
+while color sensor 1 is green
+   wait 200ms
+
+while microswitch 1 is off
+{
+   go to 600,600
+   make ax12 movement "leftArm" "drop" 
+   go to 0,0
+}
+</code></pre>
+
+<p><br><a href="#top">Back to top</a></p>
+
+<hr />
+
+<h2><span id="functions">Functions</span></h2>
+
+<p><strong>Function declaration:</strong> function &lt;name> ( &lt;parameter names> ) [&lt;newline>] { [&lt;newline>] &lt;actions> [&lt;newline>] }<br>
+<strong>Function call:</strong> &lt;name> (&lt;parameters>)<br></p>
+
+<p><em>Notes:</em></p>
+
+<blockquote><ul>
+<li>Function declaration must be done before the call.</li>
+<li>Parameters can be any types of <a href="#aliases">alias</a>.</li>
+<li>In function call, points and rects shall be surrounded by "[" "]".</li>
+</ul>
+</blockquote>
+
+<h6>Examples:</h6>
+
+<pre><code>function doAction(arm)
+{
+   make ax12 movement arm "take"
+   wait 1s
+   make ax12 movement arm "drop"
+}
+
+doAction("rightArm")
+
+function checkColorSensorAtPosition(sensor, pos)
+{
+   go to pos
+   enable cs
+   if sensor is red
+      do action 1,0,300ms //activate pump
+   disable cs
+}
+
+checkColorSensorAtPosition(color sensor 1, [300,400]);
+checkColorSensorAtPosition(color sensor 2, [800,900]);
+</code></pre>
+
+<p><br><a href="#top">Back to top</a></p>
+
+<hr />
+
+<h2><span id="examples">Examples</span></h2>
+
+<h4>Example 1: Move and scan</h4>
+
+<pre><code>//The robot moves toward a destination while scanning the table with its color sensors
+//The table is green, table elements are red or yellow
+
+declare color sensor 1 as leftSensor
+declare color sensor 2 as rightSensor
+
+declare action 1,0,500ms as stopLeftPump
+declare action 2,1,500ms as startRightPump
+declare action 2,0,500ms as stopRightPump
+
+function moveArm(arm, mvt, startPumpAction, stopPumpAction)
+{
+    make ax12 movement arm "pump"
+    do startPumpAction
+    make ax12 movement arm mvt
+    do stopPumpAction
+    make ax12 movement arm "scan"
+}
+
+fuction moveAndScan(destination)
+{
+    declare circle destination,50 as destRect
+    while position not in destRect
+    {
+        //Go the the destination while scanning with both sensors every 50ms
+        //Stop when something is found or when destination reached
+        concurrent OneActionFishished
+        {
+            go to destination
+
+            while leftSensor is not green
+            {
+                wait 50ms
+            } 
+
+            while rightSensor is not green
+            {
+                wait 50ms
+            }
+        }
+
+        //Do an action with the ax12 depending on what has been found by the sensors
+        concurrent AllActionFinished
+        {
+            if leftSensor is red
+            {
+                moveArm("leftArm", "turn", startLeftPump, stopLeftPump)
+            }
+            else if leftSensor is yellow
+
+                moveArm("leftArm", "move", startLeftPump, stopLeftPump)
+            }
+
+            if rightSensor is red
+            {
+                moveArm("rightArm", "turn", startRightPump, stopRightPump)
+            }
+            else if rightSensor is yellow
+            {
+                moveArm("rightArm", "move", startRightPump, stopRightPump)
+            }
+        }
+    }
+}
+
+teleport origin
+moveAndScan([2000,3000])
+moveAndScan(origin)
+</code></pre>
+
+<h4>Example 2: Turn around</h4>
+
+<pre><code>//Turn around the table during 90 seconds
+//Stop during at least 1 second if the sharp 1 is detecting something
+declare 200,200 as startPos
+declare sharp 1 as avoidingSharp
+
+function smartGoto(destination)
+{
+    declare circle destination,30 as destinationZone
+    while position not in destinationZone
+    {
+        // stop 
+        if sharp 1 is not close
+        {
+            concurrent OneActionFishished
+            {
+                //Advance toward the destination while testing the sharp every 100ms
+                //Stop when arrived or when teh sharp is detecting something
+                go to destination
+                while avoidingSharp is not close
+                    wait 100ms
+            }
+        }
+        else
+        {
+            wait 1s
+        }
+    }
+}
+
+teleport startPos
+timeout 90s
+{
+    while true
+    {
+        smartGoto([auto reversed 500,500])
+        smartGoto([auto reversed 1500,500])
+        smartGoto([auto reversed 1500,2500]])
+        smartGoto([auto reversed 500,2500])
+        smartGoto([auto reversed 500,500])
+    }
+}
+</code></pre>
+
+<h4>Example 3: Avoid opponent</h4>
+
+<pre><code>//Avoid the opponent by going where he is not going
+//A beacon is required to locate the opponent
+//Note: there are obvious flaws to this logic, it is just worth as an example
+
+declare auto reverse 0,0,1000,1500 as zone1
+declare auto reverse 0,1500,1000,1500 as zone2
+declare auto reverse 1000,0,1000,1500 as zone3
+declare auto reverse 1000,1500,1000,1500 as zone4
+
+declare auto reverse 500,750 as zone1_middle
+declare auto reverse 500,2250 as zone2_middle
+declare auto reverse 1500,750 as zone3_middle
+declare auto reverse 1500,2250 as zone4_middle
+
+teleport 1000,1500 //Starts on the middle of the table
+
+function takeDecision()
+{
+    if opponent in zone1
+    {
+        if position not in zone4
+        {
+            go to zone4_middle //go to zone 4
+            rotate to 225deg
+        }
+    }
+    else if opponent in zone2
+    {
+        if position not in zone3
+        {
+            go to zone3_middle //go to zone 3
+            rotate to 135deg
+        }
+    }
+    else if opponent in zone3
+    {
+        if position not in zone2
+        {
+            go to zone2_middle //go to zone 2
+            rotate to 315deg
+        }
+    }
+    else if opponent in zone4
+    {
+        if position not in zone1
+        {
+            go to zone1_middle //go to zone 1
+            rotate to 45deg
+        }
+    }
+}
+
+while true
+{
+    takeDecision()
+    wait 1s
+}
+</code></pre>
+
+<h4>Example 4: Arm movement while moving</h4>
+
+<pre><code>//Move along a line and make movements with an ax12 arm 
+//at specific positions without stopping
+declare rect 0,950,2000,100 zone1
+declare rect 0,1950,2000,100 zone2
+
+teleport 1400,300
+concurrent FirstActionFinished 
+{
+    go to 1400,2700
+    while true 
+    {
+        //Infinite loop. But because it is inside a concurrent action list, 
+        //it will be stopped when the go to statement is finished
+
+        if position in zone1
+        {
+            make ax12 movement "arm" "shoot"
+        }
+        else if position in zone2
+        {
+            make ax12 movement "arm" "shoot"
+        }
+    }
+}
+</code></pre>
+</body>
+</html>

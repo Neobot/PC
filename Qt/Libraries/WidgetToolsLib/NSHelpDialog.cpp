@@ -9,7 +9,7 @@ NSHelpDialog::NSHelpDialog(QWidget *parent) :
 {
 	ui->setupUi(this);
 	QDir d(qApp->applicationDirPath());
-	QString helpLocation = d.absoluteFilePath("NSReference/index.html");
+	QString helpLocation = d.absoluteFilePath("nsreference.html");
 	ui->webView->load(QUrl::fromLocalFile(helpLocation));
 }
 
