@@ -20,23 +20,23 @@
 ## [Introduction](id:intro)
 
 #### Neobot Script
-Neobot Script is an interpreted language which generates actions that can be send to the robot.
+Neobot Script is an interpreted language which generates actions that can be send to the robot. It can execute complex sequences of basic actions. However, the level of intelligence which can be contained in a program is very limited. 
 
+#### How to read this reference
+- Words between \< > have to be replace by an appropriate value. The type of the value is generally obvious or defined in the document.
+- Words between [ ] are optional.
+- The character | means *"or"*.
+- Other words have to be written as is.
+- Examples:
+	- [\<newline>] means an optional carriage return.
+	- [deg|rad] means the word *"deg"* or the word *"rad"* or nothing.
+	- \<statement> means any statement defined in this document.
+	
 #### Language Syntax
 - Statements are separated by carriage returns or by a semi-colon
 - Commented lines starts by with '//'
 
-#### Imports
-**Importing an external script file:** import "\<filename.ns>"<br>
-**Importing a grid:** import "\<filename>.ngrid"
-
-*Notes:*
-> - The file extension is used to make the distinction between a grid and a script file: "ngrid" for a grid and any other extension for a script.
-- When a grid is imported, every defined node aliases are imported as point [aliases](#aliases) (with a null angle), and every defined areas are imported as rectangle [aliases](#aliases).
-
-
 <br>[Back to top](#top)
-
 
 ---
 
@@ -52,6 +52,9 @@ Neobot Script is an interpreted language which generates actions that can be sen
 	90
 	reversed 72deg
 	
+*Note*
+> The default unit is the degree.
+
 #### Points
 
 **Fixed point:** \<x>,\<y>,[\<angle>]<br>
@@ -146,6 +149,15 @@ Aliases are custom variables which can be used as shortcuts.
 ---
 
 ## [Basic Actions](id:basic)
+
+#### Imports
+**Importing an external script file:** import "\<filename.ns>"<br>
+**Importing a grid:** import "\<filename>.ngrid"
+
+*Notes:*
+> - The file extension is used to make the distinction between a grid and a script file: "ngrid" for a grid and any other extension for a script.
+> - When a script is imported, all actions it contain are executed. All top level variables and functions are imported.
+> - When a grid is imported, every defined node aliases are imported as point [aliases] (#aliases) (with a null angle), and every defined areas are imported as rectangle [aliases](#aliases).
 
 #### Wait
 **Wait for a time period:** wait \<time>
@@ -348,12 +360,12 @@ Set a parameter in the robot: set parameter \<id> = \<value>
 **Condition on sensor value:** \<sensor> is \<sensor value><br>
 **Condition on strategy color:** strategy is reversed<br>
  
-**Reversed condition:** replace "in" by "not in" and "is" by "is not"
+**Reversed condition:** replace *"in"* by *"not in*" and *"is"* by *"is not"*
  
 ###### Acceptable values for sensors in conditions:
-**Values for color sensors:** unknown, red, green, blue, yellow, white, black
-**Values for sharps:** close, dectected, far
-**Values for microswitches:** on, off
+**Values for color sensors:** unknown, red, green, blue, yellow, white, black  
+**Values for sharps:** nearby, on, off  
+**Values for microswitches:** on, off  
  
 *Note:*
 > Conditions on opponent position require a beacon installed on the opponent robot.
