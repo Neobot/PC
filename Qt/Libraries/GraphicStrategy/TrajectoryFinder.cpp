@@ -342,7 +342,7 @@ void TrajectoryFinder::isArrivedAtIntermediatePoint(const Tools::RPoint& pos)
 
 	if (_currentDestinations.isEmpty())
 	{
-		//logger() << "WARNING: The robot is arrived at an unforcasted position !!!" << Tools::endl;
+		//logger() << "WARNING: The robot has arrived at an unexpected position !!!" << Tools::endl;
 		return;
 	}
 
@@ -357,7 +357,7 @@ void TrajectoryFinder::isArrivedAtIntermediatePoint(const Tools::RPoint& pos)
 	_previousPoint = arrivedPoint;
 	if (!_isManual && !pointsEqualsInPather(pos, _currentDestinations.first()))
 	{
-		logger() << "WARNING: The robot say that it is arrived but it's look like is not." << Tools::endl;
+		logger() << "WARNING: The robot says it has arrived but it looks like that is not the case." << Tools::endl;
 		logger() << "Expected point is Point(" << arrivedPoint.getX() << "," << arrivedPoint.getY() << ")" << Tools::endl;
 	}
 
