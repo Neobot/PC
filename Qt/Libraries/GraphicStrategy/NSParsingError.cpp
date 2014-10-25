@@ -59,8 +59,8 @@ NSParsingError NSParsingError::invalidSensorValueError(const QString &value, Sym
 
 NSParsingError NSParsingError::invalidNumberOfArguments(const QString &functionName, int nbExpectedArgs, int nbFoundArgs, Symbol *symbol)
 {
-	return error(QString("The function '").append(functionName).append("' has not the right number of arguments: expected '")
-				 .append(QString::number(nbExpectedArgs)).append(", have ").append(QString::number(nbFoundArgs)).append("."), symbol);
+	return error(QString("Function '").append(functionName).append("' wrong number of arguments: expected '")
+				 .append(QString::number(nbExpectedArgs)).append(", found ").append(QString::number(nbFoundArgs)), symbol);
 }
 
 NSParsingError NSParsingError::undeclaredFunctionError(const QString &functionName, Symbol *symbol)
@@ -75,7 +75,7 @@ NSParsingError NSParsingError::loadingFileError(const QString &fileName, Symbol 
 
 NSParsingError NSParsingError::invalidSensorId(Symbol *symbol)
 {
-	return error(QString("Sensors id starts  at 1."), symbol);
+	return error(QString("Sensor id should start at 1"), symbol);
 }
 
 NSParsingError NSParsingError::functionAlreadyDefinedError(const QString &functionName, Symbol *symbol)
