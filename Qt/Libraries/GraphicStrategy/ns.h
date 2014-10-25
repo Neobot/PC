@@ -29,7 +29,7 @@
    SYM_BLACK                      =  26, // black
    SYM_BLUE                       =  27, // blue
    SYM_CIRCLE                     =  28, // circle
-   SYM_CLOSE                      =  29, // close
+   SYM_CLOSE                      =  29, // close (i.e. nearby)
    SYM_COLOR                      =  30, // color
    SYM_CONCURRENT                 =  31, // concurrent
    SYM_DECLARE                    =  32, // declare

@@ -110,7 +110,7 @@ Comment Line  = '//'
 <sensor_or_var> ::=  <sensor_identifier> | <var>                   
    
 <colorSensorValue> ::= 'unknown' | 'red' | 'green' | 'blue' | 'yellow' | 'white' | 'black'
-<sharpValue> ::= 'detected' | 'far' | 'close'        
+<sharpValue> ::= 'detected' | 'far' | 'close'  ! (with 'close' meaning 'nearby'...)
 <microSwitchValue> ::= 'on' | 'off'                       
 <sensorValue> ::= <colorSensorValue> | <sharpValue> | <microSwitchValue> | <num>
  
