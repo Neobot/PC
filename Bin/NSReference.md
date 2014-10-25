@@ -6,7 +6,7 @@
 - [Imports](#imports)
 - [BasicTypes](#types)
 - [Aliases](#aliases)
-- [Basic Actions](#basic)
+- [Basic actions](#basic)
 - [Movements](#movements)
 - [Sensors](#sensors)
 - [Actuators](#actuators)
@@ -20,19 +20,19 @@
 ## [Introduction](id:intro)
 
 #### Neobot Script
-Neobot Script is an interpreted language which generates actions that can be send to the robot.
+Neobot Script is an interpreted language which generates actions that can be sent to the robot.
 
-#### Language Syntax
+#### Language syntax
 - Statements are separated by carriage returns or by a semi-colon
-- Commented lines starts by with '//'
+- Commented lines start with '//'
 
 #### Imports
 **Importing an external script file:** import "\<filename.ns>"<br>
 **Importing a grid:** import "\<filename>.ngrid"
 
 *Notes:*
-> - The file extension is used to make the distinction between a grid and a script file: "ngrid" for a grid and any other extension for a script.
-- When a grid is imported, every defined node aliases are imported as point [aliases](#aliases) (with a null angle), and every defined areas are imported as rectangle [aliases](#aliases).
+> - The filename extension is used to make the distinction between a grid and a script file: "ngrid" for a grid and any other extension for a script.
+- When a grid is imported, all defined node aliases are imported as point [aliases](#aliases) (with a null angle), and all defined areas are imported as rectangle [aliases](#aliases).
 
 
 <br>[Back to top](#top)
@@ -40,7 +40,7 @@ Neobot Script is an interpreted language which generates actions that can be sen
 
 ---
 
-## [Basic Types](id:types)
+## [Basic types](id:types)
 
 #### Angles
 **Fixed angle:** \<value> [deg|rad]<br>
@@ -64,13 +64,13 @@ Neobot Script is an interpreted language which generates actions that can be sen
 
 #### Rectangles
 **Fixed rectangle:** rect \<x>,\<y>,\<width>,\<height><br>
-**reversed rectangle:** rect \<x>,\<y>,\<width>,\<height><br>
+**Reversed rectangle:** rect \<x>,\<y>,\<width>,\<height><br>
 **Auto reversed rectangle:** auto reversed rect \<x>,\<y>,\<width>,\<height><br>
 **Rectangle constructed from a circle:** circle \<center>,\<radius><br> 
 
 *Notes:*
-> When using the circle construction, points coordinates need to be surrounded by '[' ']'. 
-A point [alias](#aliases) can also be used to define the "circle" center.
+> When using the circle construction, point coordinates need to be surrounded by '[' ']'. 
+A point [alias](#aliases) can also be used to define the circle center.
 
 ###### Examples:
 	rect 0,0,500,500
@@ -110,10 +110,11 @@ Aliases are custom variables which can be used as shortcuts.
 	declare auto reversed 0,0,500,500 as startZone
 
 #### Sensor alias
-**Declare an alias to a sensor:** declare \<sensor typer> \<sensor id> as \<name>
+**Declare an alias to a sensor:** declare \<sensor type> \<sensor id> as \<name>
 
 ###### Examples:
-	declare color sensor 0 as leftSensor	declare microswitch 1 as middleSwitch
+	declare color sensor 0 as leftSensor
+   declare microswitch 1 as middleSwitch
 
 #### Parameter alias
 **Declare an alias to a robot parameter:** declare parameter \<parameter id> as \<name>
@@ -138,14 +139,15 @@ Aliases are custom variables which can be used as shortcuts.
 
 ###### Examples:
 	declare "leftArm" as arm
-	Time alias
-	Angle alias
+   
+Time alias
+Angle alias
 
 <br>[Back to top](#top)
 
 ---
 
-## [Basic Actions](id:basic)
+## [Basic actions](id:basic)
 
 #### Wait
 **Wait for a time period:** wait \<time>
@@ -158,7 +160,7 @@ Aliases are custom variables which can be used as shortcuts.
 **Define a timeout for an action:** timeout \<time> [\<newline>] \<statement>
 
 *Note:*
-> The statement which use a timeout can be any other statement, including a list
+> The statement controlled by a timeout can be any other statement, including a list
 
 ###### Examples:
 	timeout 500ms go to 300,300
@@ -169,7 +171,7 @@ Aliases are custom variables which can be used as shortcuts.
 	}
 
 #### Parameter change
-Set a parameter in the robot: set parameter \<id> = \<value>
+Set a robot parameter: set parameter \<id> = \<value>
 
 *Note:*
 > A parameter [alias](#aliases) can be used to define a parameter.
@@ -201,7 +203,7 @@ Set a parameter in the robot: set parameter \<id> = \<value>
 
 *Notes:*
 > - A point [alias](#aliases) can be used to define the point.
-- Speed and direction are optional, default speed is 100% and default direction is auto.
+- Speed and direction is optional, default speed is 100% and default direction is auto.
 
 ###### Examples:
 	declare 1000,1500 as center //alias declaration
@@ -287,7 +289,7 @@ Set a parameter in the robot: set parameter \<id> = \<value>
 
 <br>[Back to top](#top)
 
-	---
+---
 
 ## [Lists](id:lists)
 
@@ -352,7 +354,7 @@ Set a parameter in the robot: set parameter \<id> = \<value>
  
 ###### Acceptable values for sensors in conditions:
 **Values for color sensors:** unknown, red, green, blue, yellow, white, black
-**Values for sharps:** close, dectected, far
+**Values for sharps:** close, detected, far
 **Values for microswitches:** on, off
  
 *Note:*
@@ -416,7 +418,7 @@ Set a parameter in the robot: set parameter \<id> = \<value>
 *Notes:*
 > - Function declaration must be done before the call.
 - Parameters can be any types of [alias](#aliases).
-- In function call, points and rects shall be surrounded by "[" "]".
+- In function call, points and rects must be surrounded by "[" "]".
 
 ###### Examples:
 	function doAction(arm)
@@ -569,7 +571,7 @@ Set a parameter in the robot: set parameter \<id> = \<value>
 
 	//Avoid the opponent by going where he is not going
 	//A beacon is required to locate the opponent
-	//Note: there are obvious flaws to this logic, it is just worth as an example
+	//Note: there are obvious flaws in this logic, it just serves as an example
 	
 	declare auto reverse 0,0,1000,1500 as zone1
 	declare auto reverse 0,1500,1000,1500 as zone2
@@ -640,8 +642,8 @@ Set a parameter in the robot: set parameter \<id> = \<value>
 		go to 1400,2700
 		while true 
 		{
-			//Infinite loop. But because it is inside a concurrent action list, 
-			//it will be stopped when the go to statement is finished
+			//Infinite loop. But because this happens inside a concurrent action list, 
+			//it will terminate when the go to statement finishes
 			
 			if position in zone1
 			{
