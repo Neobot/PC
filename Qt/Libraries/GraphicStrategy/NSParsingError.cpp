@@ -70,7 +70,7 @@ NSParsingError NSParsingError::undeclaredFunctionError(const QString &functionNa
 
 NSParsingError NSParsingError::loadingFileError(const QString &fileName, Symbol *symbol)
 {
-     return error(QString("An error occured while loading the file '").append(fileName).append("'."), symbol);
+     return error(QString("An error occured while loading '").append(fileName).append("'."), symbol);
 }
 
 NSParsingError NSParsingError::invalidSensorId(Symbol *symbol)
