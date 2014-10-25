@@ -209,7 +209,7 @@ protected:
 	void readAngleRangeInRadian(Symbol *symbol, double& min, double& max);
 	int readConcurrencyStopCondition(Symbol *symbol);
 	ConditionInfo readCondition(Symbol *symbol, VariableList& variables);
-	int readSensorValue(Symbol *symbol, Comm::SensorType &type);
+	int readSensorValue(Symbol *symbol, Comm::SensorType &type, Comm::SensorType expectedType);
 	bool readCallArg(Symbol *symbol, VariableList &variables, NSParser::DeclaredVariable& callArgVariable);
 	void readCallArgList(Symbol *symbol, VariableList &variables, QList<NSParser::DeclaredVariable>& callArgVariableList);
 

@@ -3,6 +3,12 @@
 
 #include <QDir>
 
+void NSHelpDialog::openReference()
+{
+	static NSHelpDialog dialog;
+	dialog.show();
+}
+
 NSHelpDialog::NSHelpDialog(QWidget *parent) :
 	QDialog(parent),
 	ui(new Ui::NSHelpDialog)

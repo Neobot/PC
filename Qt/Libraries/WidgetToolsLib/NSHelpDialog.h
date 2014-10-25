@@ -12,10 +12,12 @@ class NSHelpDialog : public QDialog
 	Q_OBJECT
 
 public:
+	static void openReference();
+
+private:
 	explicit NSHelpDialog(QWidget *parent = 0);
 	~NSHelpDialog();
 
-private:
 	Ui::NSHelpDialog *ui;
 };
 

@@ -170,9 +170,7 @@ SyntaxRuleHighlighting *SyntaxRuleHighlighting::nsSyntaxRules(TextHighlighter *p
 	syntax->addSyntaxRule("yellow", valueColor, valueFontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("white", valueColor, valueFontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("black", valueColor, valueFontWeigth, Qt::CaseInsensitive);
-	syntax->addSyntaxRule("far", valueColor, valueFontWeigth, Qt::CaseInsensitive);
-	syntax->addSyntaxRule("detected", valueColor, valueFontWeigth, Qt::CaseInsensitive);
-	syntax->addSyntaxRule("close", valueColor, valueFontWeigth, Qt::CaseInsensitive);
+	syntax->addSyntaxRule("nearby", valueColor, valueFontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("on", valueColor, valueFontWeigth, Qt::CaseInsensitive);
 	syntax->addSyntaxRule("off", valueColor, valueFontWeigth, Qt::CaseInsensitive);
 

@@ -76,7 +76,7 @@ namespace Comm
 	{
 		SharpNothingDetected,
 		SharpObjectDetected,
-		SharpObjectVeryClose,
+		SharpObjectNearby,
 	};
 
 	enum MicroswicthState

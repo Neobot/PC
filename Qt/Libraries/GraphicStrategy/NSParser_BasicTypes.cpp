@@ -553,7 +553,7 @@ NSParser::ConditionInfo NSParser::readCondition(Symbol *symbol, VariableList& va
 					case SYM_SENSORVALUE:
 					{
 						Comm::SensorType valueSensorType;
-						info.sensorValue = readSensorValue(c, valueSensorType);
+						info.sensorValue = readSensorValue(c, valueSensorType, (Comm::SensorType)sensorType);
 						if (valueSensorType != sensorType)
 						{
 							addError(NSParsingError::invalidSensorValueError(readTerminals(c), c));
@@ -633,7 +633,7 @@ NSParser::ConditionInfo NSParser::readCondition(Symbol *symbol, VariableList& va
 	return info;
 }
 
-int NSParser::readSensorValue(Symbol *symbol, Comm::SensorType& type)
+int NSParser::readSensorValue(Symbol *symbol, Comm::SensorType& type, Comm::SensorType expectedType)
 {
 	int value = -1;
 	type = Comm::UnknownedSensor;
@@ -659,11 +659,25 @@ int NSParser::readSensorValue(Symbol *symbol, Comm::SensorType& type)
 		case SYM_YELLOW:	type = Comm::ColorSensor; value = Comm::ColorYellow; break;
 		case SYM_WHITE:		type = Comm::ColorSensor; value = Comm::ColorWhite; break;
 		case SYM_BLACK:		type = Comm::ColorSensor; value = Comm::ColorBlack; break;
-		case SYM_FAR:		type = Comm::SharpSensor; value = Comm::SharpNothingDetected; break;
-		case SYM_DETECTED:	type = Comm::SharpSensor; value = Comm::SharpObjectDetected; break;
-		case SYM_CLOSE:		type = Comm::SharpSensor; value = Comm::SharpObjectVeryClose; break;
-		case SYM_OFF:		type = Comm::MicroswitchSensor; value = Comm::MicroswicthOff; break;
-		case SYM_ON:		type = Comm::MicroswitchSensor; value = Comm::MicroswicthOn; break;
+		case SYM_NEARBY:	type = Comm::SharpSensor; value = Comm::SharpObjectNearby; break;
+		case SYM_OFF:
+			type = expectedType;
+			if (expectedType == Comm::SharpSensor)
+				value = Comm::SharpNothingDetected;
+			else if (expectedType == Comm::MicroswitchSensor)
+				value = Comm::MicroswicthOff;
+			else
+				type = Comm::UnknownedSensor;
+			break;
+		case SYM_ON:
+			type = expectedType;
+			if (expectedType == Comm::SharpSensor)
+				value = Comm::SharpObjectDetected;
+			else if (expectedType == Comm::MicroswitchSensor)
+				value = Comm::MicroswicthOn;
+			else
+				type = Comm::UnknownedSensor;
+			break;
 	}
 
 	return value;

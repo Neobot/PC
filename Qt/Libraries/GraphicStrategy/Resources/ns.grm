@@ -39,7 +39,9 @@ Float  = {Digit}+ '.' {Digit}+
 Comment Start = '/*'
 Comment End   = '*/'
 Comment Line  = '//'
-
+            
+on = 'on'
+off = 'off'   
 
 
 ! -------------------------------------------------
@@ -110,9 +112,9 @@ Comment Line  = '//'
 <sensor_or_var> ::=  <sensor_identifier> | <var>                   
    
 <colorSensorValue> ::= 'unknown' | 'red' | 'green' | 'blue' | 'yellow' | 'white' | 'black'
-<sharpValue> ::= 'detected' | 'far' | 'close'        
+<sharpValue> ::= 'nearby' | 'on' | 'off'        
 <microSwitchValue> ::= 'on' | 'off'                       
-<sensorValue> ::= <colorSensorValue> | <sharpValue> | <microSwitchValue> | <num>
+<sensorValue> ::= <colorSensorValue> | 'nearby' | 'on' | 'off' | <num>
  
 <concurrencyCondition> ::= 'AllActionsFinished' | 'OneActionFinished' | 'FirstActionFinished' | 'LastActionFinished'          
 

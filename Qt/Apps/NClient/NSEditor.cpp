@@ -185,8 +185,7 @@ void NSEditor::saveAs()
 
 void NSEditor::openReference()
 {
-	NSHelpDialog dialog(this);
-	dialog.exec();
+	NSHelpDialog::openReference();
 }
 
 bool NSEditor::checkOnClose()
