@@ -312,10 +312,9 @@ sup {
 
 <ul>
 <li><a href="#intro">Introduction</a></li>
-<li><a href="#imports">Imports</a></li>
 <li><a href="#types">BasicTypes</a></li>
 <li><a href="#aliases">Aliases</a></li>
-<li><a href="#basic">Basic Actions</a></li>
+<li><a href="#basic">Basic actions</a></li>
 <li><a href="#movements">Movements</a></li>
 <li><a href="#sensors">Sensors</a></li>
 <li><a href="#actuators">Actuators</a></li>
@@ -332,9 +331,27 @@ sup {
 
 <h4>Neobot Script</h4>
 
-<p>Neobot Script is an interpreted language which generates actions that can be send to the robot.</p>
+<p>Neobot Script is an interpreted language which generates actions that can be sent to the robot. It can execute complex sequences of basic actions. However, the level of intelligence which can be contained in a program is very limited.</p>
 
-<h4>Language Syntax</h4>
+<h4>How to read this reference</h4>
+
+<ul>
+<li>Words between &lt; > have to be replace by an appropriate value. The type of the value is generally obvious or defined in the document.</li>
+<li>Words between [ ] are optional.</li>
+<li>The character | means <em>"or"</em>.</li>
+<li>Other words have to be written as is.</li>
+<li>Examples:
+
+<ul>
+<li>[&lt;newline>] means an optional carriage return.</li>
+<li>[deg|rad] means the word <em>"deg"</em> or the word <em>"rad"</em> or nothing.</li>
+<li>&lt;statement> means any statement defined in this document.</li>
+</ul>
+</li>
+</ul>
+
+
+<h4>Language syntax</h4>
 
 <ul>
 <li>Statements are separated by carriage returns or by a semi-colon</li>
@@ -342,24 +359,11 @@ sup {
 </ul>
 
 
-<h4>Imports</h4>
-
-<p><strong>Importing an external script file:</strong> import "&lt;filename.ns>"<br>
-<strong>Importing a grid:</strong> import "&lt;filename>.ngrid"</p>
-
-<p><em>Notes:</em></p>
-
-<blockquote><ul>
-<li>The file extension is used to make the distinction between a grid and a script file: "ngrid" for a grid and any other extension for a script.</li>
-<li>When a grid is imported, every defined node aliases are imported as point <a href="#aliases">aliases</a> (with a null angle), and every defined areas are imported as rectangle <a href="#aliases">aliases</a>.</li>
-</ul>
-</blockquote>
-
 <p><br><a href="#top">Back to top</a></p>
 
 <hr />
 
-<h2><span id="types">Basic Types</span></h2>
+<h2><span id="types">Basic types</span></h2>
 
 <h4>Angles</h4>
 
@@ -373,6 +377,10 @@ sup {
 90
 reversed 72deg
 </code></pre>
+
+<p><em>Note</em></p>
+
+<blockquote><p>The default unit is the degree.</p></blockquote>
 
 <h4>Points</h4>
 
@@ -389,13 +397,13 @@ auto reversed 200,250,45
 <h4>Rectangles</h4>
 
 <p><strong>Fixed rectangle:</strong> rect &lt;x>,&lt;y>,&lt;width>,&lt;height><br>
-<strong>reversed rectangle:</strong> rect &lt;x>,&lt;y>,&lt;width>,&lt;height><br>
+<strong>Reversed rectangle:</strong> rect &lt;x>,&lt;y>,&lt;width>,&lt;height><br>
 <strong>Auto reversed rectangle:</strong> auto reversed rect &lt;x>,&lt;y>,&lt;width>,&lt;height><br>
 <strong>Rectangle constructed from a circle:</strong> circle &lt;center>,&lt;radius><br></p>
 
 <p><em>Notes:</em></p>
 
-<blockquote><p>When using the circle construction, points coordinates need to be surrounded by '[' ']'.
+<blockquote><p>When using the circle construction, point coordinates need to be surrounded by '[' ']'.
 A point <a href="#aliases">alias</a> can also be used to define the "circle" center.</p></blockquote>
 
 <h6>Examples:</h6>
@@ -448,11 +456,12 @@ declare 1000,1500 as center
 
 <h4>Sensor alias</h4>
 
-<p><strong>Declare an alias to a sensor:</strong> declare &lt;sensor typer> &lt;sensor id> as &lt;name></p>
+<p><strong>Declare an alias to a sensor:</strong> declare &lt;sensor type> &lt;sensor id> as &lt;name></p>
 
 <h6>Examples:</h6>
 
-<pre><code>declare color sensor 0 as leftSensor    declare microswitch 1 as middleSwitch
+<pre><code>declare color sensor 0 as leftSensor    
+declare microswitch 1 as middleSwitch
 </code></pre>
 
 <h4>Parameter alias</h4>
@@ -489,15 +498,27 @@ declare 1000,1500 as center
 <h6>Examples:</h6>
 
 <pre><code>declare "leftArm" as arm
-Time alias
-Angle alias
 </code></pre>
 
 <p><br><a href="#top">Back to top</a></p>
 
 <hr />
 
-<h2><span id="basic">Basic Actions</span></h2>
+<h2><span id="basic">Basic actions</span></h2>
+
+<h4>Imports</h4>
+
+<p><strong>Importing an external script file:</strong> import "&lt;filename.ns>"<br>
+<strong>Importing a grid:</strong> import "&lt;filename>.ngrid"</p>
+
+<p><em>Notes:</em></p>
+
+<blockquote><ul>
+<li>The filename extension is used to make the distinction between a grid and a script file: "ngrid" for a grid and any other extension for a script.</li>
+<li>When a script is imported, all actions it contain are executed. All top level variables and functions are imported.</li>
+<li>When a grid is imported, all defined node aliases are imported as point [aliases] (#aliases) (with a null angle), and every defined areas are imported as rectangle <a href="#aliases">aliases</a>.</li>
+</ul>
+</blockquote>
 
 <h4>Wait</h4>
 
@@ -515,7 +536,7 @@ wait 3s
 
 <p><em>Note:</em></p>
 
-<blockquote><p>The statement which use a timeout can be any other statement, including a list</p></blockquote>
+<blockquote><p>The statement controlled by a timeout can be any other statement, including a list.</p></blockquote>
 
 <h6>Examples:</h6>
 
@@ -529,7 +550,7 @@ timeout 90s
 
 <h4>Parameter change</h4>
 
-<p>Set a parameter in the robot: set parameter &lt;id> = &lt;value></p>
+<p><strong>Set a robot parameter:</strong> set parameter &lt;id> = &lt;value></p>
 
 <p><em>Note:</em></p>
 
@@ -571,7 +592,7 @@ teleport 300,450,90deg
 
 <blockquote><ul>
 <li>A point <a href="#aliases">alias</a> can be used to define the point.</li>
-<li>Speed and direction are optional, default speed is 100% and default direction is auto.</li>
+<li>Speed and direction is optional, default speed is 100% and default direction is auto.</li>
 </ul>
 </blockquote>
 
@@ -682,8 +703,7 @@ make ax12 async movement "leftArm" "takePawn"
 
 <p><br><a href="#top">Back to top</a></p>
 
-<pre><code>---
-</code></pre>
+<hr />
 
 <h2><span id="lists">Lists</span></h2>
 
@@ -756,12 +776,12 @@ concurrent FirstActionFinished
 <strong>Condition on sensor value:</strong> &lt;sensor> is &lt;sensor value><br>
 <strong>Condition on strategy color:</strong> strategy is reversed<br></p>
 
-<p><strong>Reversed condition:</strong> replace "in" by "not in" and "is" by "is not"</p>
+<p><strong>Reversed condition:</strong> replace <em>"in"</em> by <em>"not in</em>" and <em>"is"</em> by <em>"is not"</em></p>
 
 <h6>Acceptable values for sensors in conditions:</h6>
 
-<p><strong>Values for color sensors:</strong> unknown, red, green, blue, yellow, white, black
-<strong>Values for sharps:</strong> close, dectected, far
+<p><strong>Values for color sensors:</strong> unknown, red, green, blue, yellow, white, black<br/>
+<strong>Values for sharps:</strong> nearby, on, off<br/>
 <strong>Values for microswitches:</strong> on, off</p>
 
 <p><em>Note:</em></p>
@@ -833,7 +853,7 @@ while microswitch 1 is off
 <blockquote><ul>
 <li>Function declaration must be done before the call.</li>
 <li>Parameters can be any types of <a href="#aliases">alias</a>.</li>
-<li>In function call, points and rects shall be surrounded by "[" "]".</li>
+<li>In function call, points and rects must be surrounded by "[" "]".</li>
 </ul>
 </blockquote>
 
@@ -872,6 +892,7 @@ checkColorSensorAtPosition(color sensor 2, [800,900]);
 <pre><code>//The robot moves toward a destination while scanning the table with its color sensors
 //The table is green, table elements are red or yellow
 
+declare 50,50 as origin
 declare color sensor 1 as leftSensor
 declare color sensor 2 as rightSensor
 
@@ -1058,16 +1079,16 @@ concurrent FirstActionFinished
     go to 1400,2700
     while true 
     {
-        //Infinite loop. But because it is inside a concurrent action list, 
-        //it will be stopped when the go to statement is finished
+        //Infinite loop. But because this happens inside a concurrent action list, 
+        //it will terminate when the go to statement finishes
 
         if position in zone1
         {
-            make ax12 movement "arm" "shoot"
+            make ax12 movement "arm1" "shoot"
         }
         else if position in zone2
         {
-            make ax12 movement "arm" "shoot"
+            make ax12 movement "arm2" "shoot"
         }
     }
 }

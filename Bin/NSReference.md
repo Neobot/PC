@@ -3,7 +3,6 @@
 ## Table of content
 
 - [Introduction](#intro)
-- [Imports](#imports)
 - [BasicTypes](#types)
 - [Aliases](#aliases)
 - [Basic actions](#basic)
@@ -169,7 +168,7 @@ Aliases are custom variables which can be used as shortcuts.
 **Define a timeout for an action:** timeout \<time> [\<newline>] \<statement>
 
 *Note:*
-> The statement controlled by a timeout can be any other statement, including a list
+> The statement controlled by a timeout can be any other statement, including a list.
 
 ###### Examples:
 	timeout 500ms go to 300,300
@@ -462,6 +461,7 @@ Aliases are custom variables which can be used as shortcuts.
 	//The robot moves toward a destination while scanning the table with its color sensors
 	//The table is green, table elements are red or yellow
 
+	declare 50,50 as origin
 	declare color sensor 1 as leftSensor
 	declare color sensor 2 as rightSensor
 
@@ -656,11 +656,11 @@ Aliases are custom variables which can be used as shortcuts.
 			
 			if position in zone1
 			{
-				make ax12 movement "arm" "shoot"
+				make ax12 movement "arm1" "shoot"
 			}
 			else if position in zone2
 			{
-				make ax12 movement "arm" "shoot"
+				make ax12 movement "arm2" "shoot"
 			}
 		}
 	}
