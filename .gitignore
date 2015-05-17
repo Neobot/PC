@@ -45,3 +45,9 @@ Bin/GridEditor.app/Contents/Info.plist
 Bin/GridEditor.app/Contents/PkgInfo
 Bin/GridEditor.app/Contents/MacOS/GridEditor
 Bin/GridEditor.app/Contents/Resources/empty.lproj
+
+bin/NAcquisitor
+
+bin/NeobotMain-d
+
+bin/NHexClient

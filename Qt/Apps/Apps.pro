@@ -11,6 +11,5 @@ SUBDIRS = \
           NPlayer \
           AX12Playground \
           NServer \
-          NClient
-
-
+		  NClient \
+		  NHexClient
