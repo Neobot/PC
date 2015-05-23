@@ -72,13 +72,6 @@ void ConnectionView::noticeOfReceipt(quint8 instruction, bool result)
 	}
 }
 
-void ConnectionView::coordinates(qint16 x, qint16 y, double theta, quint8 forward)
-{
-	Q_UNUSED(forward);
-
-	qDebug() << "x:" << x << " y:" << y << "theta:" << theta;
-}
-
 void ConnectionView::setSerialPorts(const QStringList &ports)
 {
 	ui->cbRobotPorts->clear();

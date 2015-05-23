@@ -8,7 +8,7 @@
 #include "CommDispatcher.h"
 #include "RobotCommInterface.h"
 #include "RobotProtocol.h"
-
+#include "FileEnvReplicator.h"
 
 class CommInterface : public QObject, public Comm::CommDispatcher
 {
@@ -19,6 +19,7 @@ private:
 	Comm::RobotProtocol* _protocol;
 	QIODevice* _port;
 	bool _connected;
+	FileEnvReplicator _nsReplicator;
 
 private slots:
 	void handleSerialError(QSerialPort::SerialPortError error);
@@ -30,6 +31,9 @@ public:
 	bool closePort();
 	Comm::RobotCommInterface* getComm() const;
 	void changeStatus(bool connected);
+	const FileEnvReplicator &getNsEnvReplicator() const;
+	QDir getGlobalScriptDirectory() const;
+	bool getConnectionStatus() const;
 
 signals:
 	void statusChanged(bool connected);

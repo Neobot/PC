@@ -41,15 +41,31 @@ SOURCES += main.cpp\
 		NHexClient.cpp \
     ConnectionView.cpp \
 	AbstractView.cpp \
-    CommInterface.cpp
+	CommInterface.cpp \
+	RemoteControlView.cpp \
+	TeleportDialog.cpp \
+	NSEditor.cpp \
+	FileEnvReplicator.cpp \
+	FileEditionWidget.cpp \
+	StoredTrajectoriesManagerDialog.cpp
 
 HEADERS  += NHexClient.h \
     ConnectionView.h \
 	AbstractView.h \
-    CommInterface.h
+	CommInterface.h\
+	RemoteControlView.h \
+	TeleportDialog.h \
+	NSEditor.h \
+	FileEnvReplicator.h \
+	FileEditionWidget.h \
+	StoredTrajectoriesManagerDialog.h
 
 FORMS    += NHexClient.ui \
-	ConnectionView.ui
+	ConnectionView.ui\
+	RemoteControlView.ui \
+	TeleportDialog.ui \
+	FileEditionWidget.ui \
+	StoredTrajectoriesManagerDialog.ui
 
 RESOURCES += \
 	NHexClient.qrc

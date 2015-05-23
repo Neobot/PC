@@ -2,7 +2,7 @@
 #include "RobotProtocol.h"
 #include "AX12CommManager.h"
 
-CommInterface::CommInterface() : _comm(0), _connected(false)
+CommInterface::CommInterface() : _comm(0), _connected(false), _nsReplicator(this, Comm::GlobalScripts, "ns")
 {
 }
 
@@ -95,4 +95,19 @@ void CommInterface::changeStatus(bool connected)
 		_connected = connected;
 		emit statusChanged(_connected);
 	 }
+}
+
+const FileEnvReplicator& CommInterface::getNsEnvReplicator() const
+{
+	return _nsReplicator;
+}
+
+QDir CommInterface::getGlobalScriptDirectory() const
+{
+	return _nsReplicator.getReplicatedDir();
+}
+
+bool CommInterface::getConnectionStatus() const
+{
+	return _connected;
 }

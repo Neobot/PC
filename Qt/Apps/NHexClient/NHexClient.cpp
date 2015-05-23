@@ -1,6 +1,7 @@
 #include "NHexClient.h"
 #include "ui_NHexClient.h"
 #include "ConnectionView.h"
+#include "RemoteControlView.h"
 
 #include <QDockWidget>
 
@@ -39,6 +40,11 @@ void NClient::initTooBar()
 	_mainBarActionGroup = new QActionGroup(this);
 	_mainBarActionGroup->setExclusive(true);
 	QAction* action = 0;
+
+	action = ui->mainToolBar->addAction(QIcon(":/toolbar/control"), "Remote control", this, SLOT(changeView()));
+	addView(action, new RemoteControlView(_connection, this));
+	action->setChecked(false);
+	action->setShortcut(QKeySequence(Qt::Key_F1));
 
 	action = ui->mainToolBar->addAction(QIcon(":/toolbar/connection"), "Connection", this, SLOT(changeView()));
 	_activeView = new ConnectionView(_connection, this);

@@ -4,7 +4,6 @@
 #include <QElapsedTimer>
 
 #include "AbstractView.h"
-#include "CommInterface.h"
 
 namespace Ui {
 	class ConnectionView;
@@ -32,7 +31,6 @@ private:
 	QString _preferedRobotPort;
 
 	void noticeOfReceipt(quint8 instruction, bool result);
-	void coordinates(qint16 x, qint16 y, double theta, quint8 direction);
 	void setSerialPorts(const QStringList& ports);
 	void refreshSerialPorts();
 
