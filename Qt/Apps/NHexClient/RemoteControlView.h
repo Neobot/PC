@@ -58,6 +58,7 @@ public:
 
 public slots:
 	void connectionStatusChanged(bool connected);
+	void activeStatusChanged(bool isActive);
 
 private:
 	Ui::RemoteControlView *ui;

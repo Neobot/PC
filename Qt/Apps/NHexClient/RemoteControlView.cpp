@@ -84,6 +84,11 @@ void RemoteControlView::connectionStatusChanged(bool connected)
 	ui->btnRunScript->setEnabled(connected && !_isMoving);
 }
 
+void RemoteControlView::activeStatusChanged(bool isActive)
+{
+	ui->graphicsView->setRefreshEnabled(isActive);
+}
+
 void RemoteControlView::saveSettings(QSettings *settings)
 {
 	settings->beginGroup("RemoteControl");
